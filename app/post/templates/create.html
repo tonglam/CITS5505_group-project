@@ -1,0 +1,68 @@
+{% extends "layout.html" %} {% block title %}Home{% endblock %} {% block head %}
+{{ super() }}<link
+  href="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/css/style.css"
+  rel="stylesheet"
+/>
+
+<style>
+  #editor—wrapper {
+    border: 1px solid #ccc;
+  }
+  #toolbar-container {
+    border-bottom: 1px solid #ccc;
+  }
+  #editor-container {
+    height: 500px;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="contain">
+  <p>Create</p>
+
+  <div style="border: 1px solid #ccc">
+    <div id="editor-toolbar" style="border-bottom: 1px solid #ccc"></div>
+    <div id="editor-text-area" style="height: 500px"></div>
+  </div>
+
+  <p style="background-color: #f1f1f1">
+    Text length: <span id="total-length"></span>Selected text length:
+    <span id="selected-length"></span>
+  </p>
+</div>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/index.min.js"
+></script>
+<script>
+  const E = window.wangEditor;
+
+  E.i18nChangeLanguage("en");
+
+  window.editor = E.createEditor({
+    selector: "#editor-text-area",
+    html: "<p><br></p>",
+    config: {
+      placeholder: "Rely here...",
+      MENU_CONF: {
+        uploadImage: {
+          fieldName: "your-fileName",
+          base64LimitSize: 10 * 1024 * 1024,
+        },
+      },
+      onChange(editor) {
+        const selectionText = editor.getSelectionText();
+        document.getElementById("selected-length").innerHTML =
+          selectionText.length;
+        const text = editor.getText().replace(/\n|\r/gm, "");
+        document.getElementById("total-length").innerHTML = text.length;
+      },
+    },
+  });
+
+  window.toolbar = E.createToolbar({
+    editor,
+    selector: "#editor-toolbar",
+    config: {},
+  });
+</script>
+{% endblock %}

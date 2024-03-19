@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% block head %}
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='/style/layout.css')}}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{url_for('static', filename='favicon.ico')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css"
+    />
+
+    <title>{% block title %}{% endblock %} - Flask Demo</title>
+    {% endblock %}
+  </head>
+
+  <body>
+    <header>
+      <nav
+        class="navbar navbar-expand-lg navbar-light bg-body-tertiary"
+        id="navMenu"
+      >
+        <div class="container-fluid justify-content-between mx-0 mx-md-2">
+          <div class="d-flex">
+            <a
+              class="navbar-brand me-2 mb-1 d-flex align-items-center rounded-circle"
+              href="/"
+            >
+              <img
+                id="logo"
+                src="https://www.premierleague.com/resources/rebrand/v7.129.2/i/elements/pl-main-logo.png"
+                height="30"
+                width="30"
+                alt="Logo"
+                loading="lazy"
+              />
+            </a>
+
+            <ul class="navbar-nav flex-row d-none d-md-flex">
+              <li class="nav-item me-3 me-lg-1 active">
+                <a class="nav-link active" aria-current="page" href="/"
+                  >Home
+                </a>
+              </li>
+
+              <li class="nav-item me-3 me-lg-1">
+                <a class="nav-link" href="{{url_for('popular.popular')}}"
+                  >Popular</a
+                >
+              </li>
+
+              <li class="nav-item me-3 me-lg-1">
+                <a class="nav-link" href="{{url_for('community.community')}}"
+                  >Community</a
+                >
+              </li>
+            </ul>
+
+            <div
+              class="container-fluid input-group w-100 my-auto d-none d-sm-flex"
+              id="search"
+            >
+              <span class="input-group-text border-0"
+                ><i class="fas fa-search"></i
+              ></span>
+              <input
+                autocomplete="off"
+                type="search"
+                class="form-control rounded-pill"
+                placeholder="Search for Anything..."
+              />
+            </div>
+          </div>
+
+          <ul class="navbar-nav flex-row">
+            <li class="nav-item me-3 me-lg-1 d-none d-lg-flex">
+              <button
+                type="button"
+                class="btn btn-outline-dark rounded-pill w-auto fs-8"
+                href="{{url_for('post.create')}}"
+              >
+                +&nbsp;&nbsp;Create
+              </button>
+            </li>
+            <li class="nav-item mx-3 mx-lg-1">
+              <a
+                class="nav-link"
+                href="{{url_for('notice.notice')}}"
+                role="button"
+              >
+                <i class="fa-solid fa-bell fa-lg"></i>
+                <span class="badge rounded-pill badge-notification bg-danger"
+                  >12</span
+                >
+              </a>
+            </li>
+            <li class="nav-item me-3 me-lg-1 ml-2" id="login">
+              <!-- <div id="loginButton">
+                <a
+                  class="btn btn-primary border-0 rounded-pill"
+                  href="{{url_for('auth.auth')}}"
+                  role="button"
+                >
+                  Login
+                </a>
+              </div> -->
+            </li>
+
+            <li class="nav-item dropdown">
+              <button
+                class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
+                id="useDropdown"
+                type="button"
+                aria-expanded="false"
+                data-bs-toggle="dropdown"
+                style="margin-top: -5px"
+              >
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                  class="rounded-circle"
+                  style="height: 30px; border: none; box-shadow: none"
+                  alt="User Avatar"
+                />
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end useDropdown">
+                <li>
+                  <a
+                    class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
+                    href="{{url_for('user.user')}}"
+                    role="button"
+                  >
+                    <i class="fa-solid fa-user fa-lg"></i>
+                    User
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
+                    href="{{url_for('auth.logout')}}"
+                    role="button"
+                  >
+                    <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+                    Login
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-fluid vw-50 p-4">
+      <div
+        id="alert"
+        class="sticky-top alert alert-success text-center d-none"
+        role="alert"
+      >
+        {{ alert_message }}
+      </div>
+      <content>{% block content %}{% endblock %}</content>
+    </main>
+
+    <footer>
+      <div
+        class="navbar navbar-light bg-body-tertiary d-sm-flex d-md-none fixed-bottom"
+      >
+        <a
+          data-mdb-ripple-init
+          class="btn btn-outline-dark border-0 m-1"
+          href="/"
+          role="button"
+          data-mdb-ripple-init
+          data-mdb-tooltip-init
+          data-mdb-placement="top"
+          title="Home"
+          ><i class="fa-solid fa-house fa-xl"></i>
+        </a>
+
+        <a
+          data-mdb-ripple-init
+          class="btn btn-outline-dark border-0 m-1"
+          href="{{url_for('popular.popular')}}"
+          role="button"
+          data-mdb-ripple-init
+          data-mdb-tooltip-init
+          data-mdb-placement="top"
+          title="Popular"
+          ><i class="fa-solid fa-bolt fa-xl"></i>
+        </a>
+
+        <a
+          data-mdb-ripple-init
+          class="btn btn-danger rounded m-1 px-3"
+          href="{{url_for('post.create')}}"
+          role="button"
+          data-mdb-ripple-init
+          data-mdb-tooltip-init
+          data-mdb-placement="top"
+          title="Create"
+          ><i class="fa-solid fa-plus fa-2xl"></i>
+        </a>
+
+        <a
+          data-mdb-ripple-init
+          class="btn btn-outline-dark border-0 m-1"
+          href="{{url_for('community.community')}}"
+          role="button"
+          data-mdb-ripple-init
+          data-mdb-tooltip-init
+          data-mdb-placement="top"
+          title="Community"
+          ><i class="fa-solid fa-users fa-xl"></i>
+        </a>
+
+        <a
+          data-mdb-ripple-init
+          class="btn btn-outline-dark border-0 m-1"
+          href="{{url_for('search.search')}}"
+          role="button"
+          data-mdb-ripple-init
+          data-mdb-tooltip-init
+          data-mdb-placement="top"
+          title="Search"
+          ><i class="fa-solid fa-magnifying-glass fa-xl"></i>
+        </a>
+      </div>
+    </footer>
+
+    <script
+      type="text/javascript"
+      href="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+    ></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
+    ></script>
+
+    <script>
+      const { Input, Tab, Dropdown, Tooltip, Ripple, initMDB } = mdb;
+      initMDB({ Input, Tab, Dropdown, Tooltip, Ripple });
+    </script>
+
+    <!-- script for develop html -->
+    <!-- <script>
+      function autoRefresh() {
+        window.location = window.location.href;
+      }
+      setInterval("autoRefresh()", 2000);
+    </script> -->
+  </body>
+</html>
