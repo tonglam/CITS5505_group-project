@@ -3,7 +3,7 @@
 from flask import render_template
 from flask_login import login_required
 
-from ..search import search_bp
+from app.search import search_bp
 
 
 @login_required

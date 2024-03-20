@@ -3,7 +3,7 @@
 from flask import render_template
 from flask_login import login_required
 
-from ..notice import notice_bp
+from app.notice import notice_bp
 
 
 @login_required

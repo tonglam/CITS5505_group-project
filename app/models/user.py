@@ -23,6 +23,7 @@ class User(db.Model):
     create_at: datetime = db.Column(db.DateTime, default=generate_time())
     update_at: datetime = db.Column(db.DateTime, default=generate_time())
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         username: str,

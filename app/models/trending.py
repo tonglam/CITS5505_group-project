@@ -11,7 +11,7 @@ class Trending(db.Model):
     """Trending model"""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
+    request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     title = db.Column(db.String(40), nullable=False)
     author = db.Column(db.String(36), db.ForeignKey("user.userId"), nullable=False)
     reply_num = db.Column(db.Integer, default=0)
@@ -19,9 +19,9 @@ class Trending(db.Model):
     update_at = db.Column(db.DateTime, default=generate_time())
 
     def __init__(
-        self, request: int, title: str, author: str, reply_num: int = 0
+        self, request_id: int, title: str, author: str, reply_num: int = 0
     ) -> None:
-        self.request = request
+        self.request_id = request_id
         self.title = title
         self.author = author
         self.reply_num = reply_num

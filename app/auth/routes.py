@@ -16,13 +16,10 @@ from flask import (
 )
 from flask_login import current_user, login_required, login_user, logout_user
 
-from app.auth import auth_bp
+from app.auth import auth_bp, service
 from app.constant import OAuthProviderEnum
 from app.extensions import db, login_manager
 from app.models.user import User
-
-from ..auth import auth_bp
-from . import service
 
 
 @login_manager.user_loader
