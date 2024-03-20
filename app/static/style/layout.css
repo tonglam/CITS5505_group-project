@@ -1,0 +1,24 @@
+.logo {
+  margin-top: 2px;
+}
+
+.login {
+}
+
+.useDropdown {
+  display: inline-block;
+}
+
+.userDropdownItem {
+  display: inline-block;
+}
+
+.user a {
+  margin-top: -5px;
+}
+
+.user img {
+  height: 32px;
+  border: none;
+  box-shadow: none;
+}
