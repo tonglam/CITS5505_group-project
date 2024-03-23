@@ -6,11 +6,9 @@
 
 Fill this up (NA if not available). If a certain criteria is not met, can you please give a reason.
 
-- [x] The pull request title has an issue number
 - [ ] The change has quick testing
-- [ ] The change has tests
+- [ ] The change has unit tests
 - [ ] The change has Wiki
-- [ ] The change has documentation
 
 # Other Information
 
