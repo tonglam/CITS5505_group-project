@@ -3,25 +3,6 @@
 {% endblock %} {% block content %}
 <div class="d-flex flex-column text-center">
   <h1>Home</h1>
-  <a href="/login">You need to Login</a>
-  <div class="col-auto">
-    <button type="button" class="btn btn-primary">Google Login</button>
-  </div>
-  <div class="col-auto">
-    <button type="button" class="btn btn-secondary">Github Login</button>
-  </div>
-  <div class="col-auto">
-    <a href="{{url_for('ai.chat')}}"> ChatGpt </a>
-  </div>
-  <div class="">
-    Remote Image
-    <img
-      src="https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/hello-2931-f57025dc6182c4960b8284d30cd06d83@2x.jpg"
-      alt="Hello"
-      width="100"
-      height="100"
-    />
-  </div>
-  <p class="important">Welcome to my awesome homepage.</p>
+  <p class="important">Welcome to my awesome homepage. {{ user.username }}</p>
 </div>
 {% endblock %}

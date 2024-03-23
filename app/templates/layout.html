@@ -7,11 +7,11 @@
     {% block head %}
     <link
       rel="stylesheet"
-      href="{{url_for('static', filename='/style/layout.css')}}"
+      href="{{ url_for('static', filename='style/layout.css') }}"
     />
     <link
       rel="shortcut icon"
-      href="{{url_for('static', filename='favicon.ico')}}"
+      href="{{ url_for('static', filename='favicon.ico') }}"
     />
     <link
       rel="stylesheet"
@@ -30,7 +30,13 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css"
     />
 
-    <title>{% block title %}{% endblock %} - Flask Demo</title>
+    <title>{% block title %}{% endblock %} - Request Forum</title>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
     {% endblock %}
   </head>
 
@@ -64,13 +70,13 @@
               </li>
 
               <li class="nav-item me-3 me-lg-1">
-                <a class="nav-link" href="{{url_for('popular.popular')}}"
+                <a class="nav-link" href="{{ url_for('popular.popular') }}"
                   >Popular</a
                 >
               </li>
 
               <li class="nav-item me-3 me-lg-1">
-                <a class="nav-link" href="{{url_for('community.community')}}"
+                <a class="nav-link" href="{{ url_for('community.community') }}"
                   >Community</a
                 >
               </li>
@@ -97,7 +103,7 @@
               <button
                 type="button"
                 class="btn btn-outline-dark rounded-pill w-auto fs-8"
-                href="{{url_for('post.create')}}"
+                href="{{ url_for('post.create') }}"
               >
                 +&nbsp;&nbsp;Create
               </button>
@@ -105,7 +111,7 @@
             <li class="nav-item mx-3 mx-lg-1">
               <a
                 class="nav-link"
-                href="{{url_for('notice.notice')}}"
+                href="{{ url_for('notice.notice') }}"
                 role="button"
               >
                 <i class="fa-solid fa-bell fa-lg"></i>
@@ -114,17 +120,21 @@
                 >
               </a>
             </li>
+
+            {% if not current_user.is_authenticated %}
             <li class="nav-item me-3 me-lg-1 ml-2" id="login">
-              <!-- <div id="loginButton">
+              <div id="loginButton">
                 <a
                   class="btn btn-primary border-0 rounded-pill"
-                  href="{{url_for('auth.auth')}}"
+                  href="{{ url_for('auth.login') }}"
                   role="button"
                 >
                   Login
                 </a>
-              </div> -->
+              </div>
             </li>
+
+            {% else %}
 
             <li class="nav-item dropdown">
               <button
@@ -134,9 +144,10 @@
                 aria-expanded="false"
                 data-bs-toggle="dropdown"
                 style="margin-top: -5px"
+                title="Hello, {{ user.username }}"
               >
                 <img
-                  src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                  src="{{ user.avatar_url }}"
                   class="rounded-circle"
                   style="height: 30px; border: none; box-shadow: none"
                   alt="User Avatar"
@@ -146,7 +157,7 @@
                 <li>
                   <a
                     class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
-                    href="{{url_for('user.user')}}"
+                    href="{{ url_for('user.user') }}"
                     role="button"
                   >
                     <i class="fa-solid fa-user fa-lg"></i>
@@ -156,7 +167,7 @@
                 <li>
                   <a
                     class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
-                    href="{{url_for('auth.logout')}}"
+                    href="{{ url_for('auth.logout') }}"
                     role="button"
                   >
                     <i class="fa-solid fa-right-from-bracket fa-lg"></i>
@@ -165,19 +176,31 @@
                 </li>
               </ul>
             </li>
+
+            {% endif %}
           </ul>
         </div>
       </nav>
     </header>
 
     <main class="container-fluid vw-50 p-4">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
       <div
         id="alert"
-        class="sticky-top alert alert-success text-center d-none"
+        class="sticky-top alert {{ category }} alert-dismissible text-center fade show"
         role="alert"
       >
-        {{ alert_message }}
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
+      {% endfor %} {% endif %} {% endwith %}
+
       <content>{% block content %}{% endblock %}</content>
     </main>
 
@@ -200,7 +223,7 @@
         <a
           data-mdb-ripple-init
           class="btn btn-outline-dark border-0 m-1"
-          href="{{url_for('popular.popular')}}"
+          href="{{ url_for('popular.popular') }}"
           role="button"
           data-mdb-ripple-init
           data-mdb-tooltip-init
@@ -212,7 +235,7 @@
         <a
           data-mdb-ripple-init
           class="btn btn-danger rounded m-1 px-3"
-          href="{{url_for('post.create')}}"
+          href="{{ url_for('post.create') }}"
           role="button"
           data-mdb-ripple-init
           data-mdb-tooltip-init
@@ -224,7 +247,7 @@
         <a
           data-mdb-ripple-init
           class="btn btn-outline-dark border-0 m-1"
-          href="{{url_for('community.community')}}"
+          href="{{ url_for('community.community') }}"
           role="button"
           data-mdb-ripple-init
           data-mdb-tooltip-init
@@ -236,7 +259,7 @@
         <a
           data-mdb-ripple-init
           class="btn btn-outline-dark border-0 m-1"
-          href="{{url_for('search.search')}}"
+          href="{{ url_for('search.search') }}"
           role="button"
           data-mdb-ripple-init
           data-mdb-tooltip-init
@@ -246,11 +269,6 @@
         </a>
       </div>
     </footer>
-
-    <script
-      type="text/javascript"
-      href="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
-    ></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -269,17 +287,9 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
     ></script>
 
-    <script>
-      const { Input, Tab, Dropdown, Tooltip, Ripple, initMDB } = mdb;
-      initMDB({ Input, Tab, Dropdown, Tooltip, Ripple });
-    </script>
-
-    <!-- script for develop html -->
-    <!-- <script>
-      function autoRefresh() {
-        window.location = window.location.href;
-      }
-      setInterval("autoRefresh()", 2000);
-    </script> -->
+    {% block javascript %}
+    <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    {% endblock %}
   </body>
 </html>
