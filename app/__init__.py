@@ -1,11 +1,12 @@
 """Main application module."""
 
-from flask import Flask, render_template
-from flask_login import login_required
+from flask import Flask, g, render_template
+from flask_login import current_user, login_required
 
 from app.auth import auth_bp
 from app.community import community_bp
-from app.extensions import bcrypt, db, login_manager, scheduler
+from app.extensions import bcrypt, db, login_manager, migrate, scheduler
+from app.models.user import User
 from app.notice import notice_bp
 from app.popular import popular_bp
 from app.post import post_bp
@@ -20,7 +21,49 @@ def create_app():
 
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
-    app.config["OAUTH2_PROVIDERS"] = {
+    app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
+
+    # extensions
+    bcrypt.init_app(app)
+    db.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
+
+    # scheduled tasks
+    scheduler.init_app(app)
+
+    # blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(search_bp)
+    app.register_blueprint(notice_bp)
+    app.register_blueprint(post_bp, url_prefix="/post")
+    app.register_blueprint(popular_bp, url_prefix="/popular")
+    app.register_blueprint(community_bp, url_prefix="/community")
+    app.register_blueprint(user_bp, url_prefix="/user")
+
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+
+    @app.route("/")
+    @login_required
+    def index():
+        return render_template("index.html")
+
+    @app.route("/test/<email>")
+    def test(email):
+        return {"message": email}
+
+    @app.context_processor
+    def inject_user():
+        return {"user": current_user}
+
+    return app
+
+
+def get_oauth2_config():
+    """Get OAuth2 configuration."""
+    return {
         "google": {
             "client_id": get_config("GOOGLE", "CLIENT_ID"),
             "client_secret": get_config("GOOGLE", "CLIENT_SECRET"),
@@ -47,31 +90,3 @@ def create_app():
             "scopes": ["user"],
         },
     }
-
-    # extensions
-    bcrypt.init_app(app)
-    db.init_app(app)
-    login_manager.init_app(app)
-
-    # scheduled tasks
-    scheduler.init_app(app)
-
-    # blueprints
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(search_bp)
-    app.register_blueprint(notice_bp)
-    app.register_blueprint(post_bp, url_prefix="/post")
-    app.register_blueprint(popular_bp, url_prefix="/popular")
-    app.register_blueprint(community_bp, url_prefix="/community")
-    app.register_blueprint(user_bp, url_prefix="/user")
-
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-
-    @app.route("/")
-    @login_required
-    def index():
-        return render_template("index.html")
-
-    return app

@@ -6,8 +6,8 @@ from flask_login import login_required
 from app.popular import popular_bp
 
 
-@login_required
 @popular_bp.route("/")
+@login_required
 def popular():
     """Render the popular page."""
     return render_template("popular.html")

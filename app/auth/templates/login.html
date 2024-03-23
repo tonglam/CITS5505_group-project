@@ -1,0 +1,108 @@
+{% extends "layout.html" %} {% block title %}Home{% endblock %} {% block head %}
+{{ super() }} {% endblock %} {% block content %}
+
+<div class="row mt-2">
+  {% for error in form.errors %} {% for message in form.errors.get(error) %}
+  <div
+    id="alert"
+    class="sticky-top alert alert-danger alert-dismissible text-center fade show"
+    role="alert"
+  >
+    {{ "[{}] Error: {}".format(error.upper(), message) }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %} {% endfor %}
+
+  <div class="col-0 col-lg-4" id="leftContainer"></div>
+
+  <div class="col-0 col-lg-4" id="centerContainer">
+    <form action="{{ url_for('auth.login') }}" method="post">
+      {{ form.csrf_token }}
+
+      <div class="text-center mb-3">
+        <p>Sign in with:</p>
+
+        <a
+          data-mdb-ripple-init
+          class="btn text-white btn-floating btn-lg m-1"
+          style="background-color: #dd4b39"
+          href="{{ url_for('auth.authorize', provider='google') }}"
+          role="button"
+          ><i class="fab fa-google fa-2xl"></i
+        ></a>
+
+        <a
+          data-mdb-ripple-init
+          class="btn text-white btn-floating btn-lg m-1"
+          style="background-color: #333333"
+          href="{{ url_for('auth.authorize', provider='github') }}"
+          role="button"
+          ><i class="fab fa-github fa-2xl"></i
+        ></a>
+      </div>
+
+      <p class="text-center">or:</p>
+
+      <div data-mdb-input-init class="form-outline mb-4">
+        <input
+          type="text"
+          id="email"
+          name="email"
+          class="form-control"
+          autocomplete="on"
+        />
+        <label class="form-label" for="email">Email</label>
+      </div>
+
+      <div data-mdb-input-init class="form-outline mb-4">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+        />
+        <label class="form-label" for="password">Password</label>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col d-flex justify-content-center">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="rememberMe"
+              checked
+            />
+            <label class="form-check-label" for="rememberMe">
+              Remember me
+            </label>
+          </div>
+        </div>
+
+        <div class="col">
+          <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      </div>
+
+      <div class="text-center pt-3">
+        <p>
+          Not a member? <a href="{{ url_for('auth.register') }}">Register</a>
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-0 col-lg-4" id="rightContainer"></div>
+</div>
+
+{% endblock %}

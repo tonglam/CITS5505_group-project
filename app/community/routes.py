@@ -6,8 +6,8 @@ from flask_login import login_required
 from app.community import community_bp
 
 
-@login_required
 @community_bp.route("/")
+@login_required
 def community():
     """Render the community page."""
     return render_template("community.html")
