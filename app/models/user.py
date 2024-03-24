@@ -72,7 +72,9 @@ class User(UserMixin, db.Model):
         """Check if the user is the user."""
         return User.query.filter_by(email=email).first() is not None
 
-    def to_json(self):
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the user."""
         return {
             "userId": self.user_id,
             "username": self.username,

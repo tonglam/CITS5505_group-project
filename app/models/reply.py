@@ -40,6 +40,21 @@ class Reply(db.Model):
     def __repr__(self) -> str:
         return f"<Reply {self.content}>"
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the reply."""
+        return {
+            "id": self.id,
+            "request": self.request,
+            "replier": self.replier,
+            "content": self.content,
+            "source": self.source,
+            "like_num": self.like_num,
+            "save_num": self.save_num,
+            "create_at": self.create_at,
+            "update_at": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(Reply, "before_insert")

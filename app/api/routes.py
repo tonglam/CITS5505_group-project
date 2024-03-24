@@ -1,7 +1,5 @@
 """Routes for api."""
 
-import json
-
 from app.api import api_bp
 from app.models.user import User
 
@@ -28,7 +26,7 @@ def forgot_password_user(email: str):
     if user is None:
         return {"message": "User not found"}
 
-    return {"message": "User found", "user": user.to_json()}
+    return {"message": "User found", "user": user.to_dict()}
 
 
 # Api for user module.

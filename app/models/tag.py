@@ -1,4 +1,4 @@
-"""Model for Type."""
+"""Model for Tag."""
 
 from sqlalchemy import event
 
@@ -8,7 +8,7 @@ from app.utils import generate_time
 
 # pylint: disable=too-few-public-methods
 class Tag(db.Model):
-    """Type model."""
+    """Tag model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20), nullable=False)
@@ -18,12 +18,21 @@ class Tag(db.Model):
         self.name = name
 
     def __repr__(self) -> str:
-        return f"<Type {self.name}>"
+        return f"<Tag {self.name}>"
+
+    # genrated by copilot
+    def to_dict(self) -> dict:
+        """Return a JSON format of the tag."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "create_at": self.create_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
 
 
 # pylint: disable=unused-argument
 @event.listens_for(Tag, "before_insert")
 def before_insert_listener(mapper, connect, target):
-    """Update the create time before inserting a new type."""
+    """Update the create time before inserting a new tag."""
 
     target.create_at = generate_time()
