@@ -1,5 +1,7 @@
 """Routes for api."""
 
+import json
+
 from app.api import api_bp
 from app.models.user import User
 
@@ -19,14 +21,14 @@ def check_email_exists(email: str):
 
 
 @api_bp.route("/forgot_password_user/<email>")
-def query_forgot_password_user(email: str):
+def forgot_password_user(email: str):
     """Query the user for forgot password."""
     user = User.query.filter_by(email=email).first()
 
     if user is None:
         return {"message": "User not found"}
 
-    return {"message": "User found", "user": user}
+    return {"message": "User found", "user": user.to_json()}
 
 
 # Api for user module.
