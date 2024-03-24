@@ -47,6 +47,7 @@ def create_app():
         db.create_all()
 
     @app.route("/")
+    @app.route("/index")
     @login_required
     def index():
         return render_template("index.html")

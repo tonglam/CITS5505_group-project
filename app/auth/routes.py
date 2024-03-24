@@ -87,6 +87,9 @@ def login():
     form = forms.LoginForm(request.form)
 
     if form.validate_on_submit():
+        print("email:", form.email.data)
+        print("remember:", request.form.get("rememberMe"))
+
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
@@ -108,7 +111,11 @@ def login():
             )
             return redirect(url_for("auth.login"))
 
-        login_user(user, remember=True)
+        remember = request.form.get("rememberMe") == "checked"
+
+        print("login remember:", remember)
+
+        login_user(user, remember=remember)
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
         return redirect(url_for("index"))
 

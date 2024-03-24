@@ -13,7 +13,7 @@ async function checkEmail(email) {
     console.log("Invalid email");
   }
 
-  const response = await fetch("/api/v1/check_email_exists/" + email);
+  const response = await fetch("/api/v1/email_exists/" + email);
   const res = await response.json();
   console.log(res);
 }

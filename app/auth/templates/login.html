@@ -1,5 +1,5 @@
-{% extends "layout.html" %} {% block title %}Home{% endblock %} {% block head %}
-{{ super() }} {% endblock %} {% block content %}
+{% extends "layout.html" %} {% block title %}Sign In{% endblock %} {% block head
+%} {{ super() }} {% endblock %} {% block content %}
 
 <div class="row mt-2">
   {% for error in form.errors %} {% for message in form.errors.get(error) %}
@@ -75,8 +75,9 @@
             <input
               class="form-check-input"
               type="checkbox"
-              value=""
+              value="checked"
               id="rememberMe"
+              name="rememberMe"
               checked
             />
             <label class="form-check-label" for="rememberMe">

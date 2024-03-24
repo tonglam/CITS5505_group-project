@@ -1,0 +1,210 @@
+{% macro render_navBar(user, current_user) -%}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary" id="navMenu">
+  <div class="container-fluid justify-content-between mx-0 mx-md-2">
+    <div class="d-flex">
+      <!-- logo -->
+      {{
+      logo("https://www.premierleague.com/resources/rebrand/v7.129.2/i/elements/pl-main-logo.png")
+      }}
+
+      <!-- navlinks -->
+      <ul class="navbar-nav flex-row d-none d-md-flex">
+        <!-- home navlink -->
+        {{ navlink_item("Home", "/", "nav-item me-3 me-lg-1 active", True) }}
+
+        <!-- popular navlink -->
+        {{ navlink_item("Popular", url_for('popular.popular'))}}
+
+        <!-- community navlink -->
+        {{ navlink_item("Community", url_for('community.community')) }}
+      </ul>
+
+      <!-- search bar -->
+      {{ search_bar() }}
+    </div>
+
+    <!-- right bar -->
+    <ul class="navbar-nav flex-row">
+      <!-- create button -->
+      {{ create_button(url_for('post.create')) }}
+
+      <!-- github icon -->
+      {{ icon_button("github",
+      "https://github.com/tonglam/CITS5505_group-project", "fa-brands fa-github
+      fa-lg", targetBlank=True) }}
+
+      <!-- notice icon -->
+      {{ icon_button("notice", url_for('notice.notice'), "fa-solid fa-bell
+      fa-lg", showBadge = True, badgeNum = 14) }}
+
+      <!-- login bar -->
+
+      <!-- not authenticated -->
+      {% if not current_user.is_authenticated %}
+
+      <!-- login icon -->
+      {{ icon_button("login", url_for('auth.login'), "fa-solid
+      fa-arrow-right-to-bracket fa-lg") }}
+
+      <!-- authenticated -->
+      {% else %}
+
+      <!-- user dropdown -->
+      {{ user_dropdown(current_user) }}
+
+      <!-- end login bar -->
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+{%- endmacro %}
+
+<!-- logo -->
+{% macro logo(src) -%}
+<a
+  class="navbar-brand me-2 mb-1 d-flex align-items-center rounded-circle"
+  href="/"
+>
+  <img
+    id="logo"
+    src="{{ src }}"
+    height="30"
+    width="30"
+    alt="Logo"
+    loading="lazy"
+  />
+</a>
+{%- endmacro %}
+
+<!-- navlink item -->
+{% macro navlink_item(title, url, item_class = "nav-item me-3 me-lg-1", active =
+False) -%}
+
+<!-- active nalink item -->
+{% if active %}
+<li class="nav-item me-3 me-lg-1 active">
+  <a class="nav-link active" aria-current="page" href="{{ url }}"
+    >{{ title }}</a
+  >
+</li>
+
+<!-- inactive nalink item -->
+{% else %}
+<li class="{{ item_class }}">
+  <a class="nav-link" href="{{ url }}">{{ title }}</a>
+</li>
+
+{% endif %}
+
+<!-- end navlink item -->
+{%- endmacro %}
+
+<!-- search bar -->
+{% macro search_bar() -%}
+<div
+  class="container-fluid input-group w-100 my-auto d-none d-sm-flex"
+  id="search"
+>
+  <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
+  <input
+    autocomplete="on"
+    type="search"
+    class="form-control rounded-pill"
+    placeholder="Search for Anything..."
+  />
+</div>
+{%- endmacro %}
+
+<!-- create button -->
+{% macro create_button(url) -%}
+<li class="nav-item me-3 me-lg-1 d-none d-lg-flex">
+  <button
+    type="button"
+    class="btn btn-outline-dark rounded-pill w-auto fs-8"
+    href="{{ url }}"
+  >
+    +&nbsp;&nbsp;Create
+  </button>
+</li>
+{%- endmacro %}
+
+<!-- icon button -->
+{% macro icon_button(title, url, icon_class, targetBlank = False, showBadge =
+False, badgeNum = 0) -%}
+<li class="nav-item mx-2 mx-lg-1">
+  {% if targetBlank %}
+  <a
+    class="nav-link"
+    href="{{ url }}"
+    target="_blank"
+    title="{{ title }}"
+    role="button"
+  >
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if showBadge %}
+    <span class="badge rounded-pill badge-notification bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
+  </a>
+  {% else %}
+  <a class="nav-link" href="{{ url }}" title="{{ title }}" role="button">
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if showBadge %}
+    <span class="badge rounded-pill badge-notification bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
+  </a>
+  {% endif %}
+</li>
+{%- endmacro %}
+
+<!-- user dropdown -->
+{% macro user_dropdown(user) -%}
+<li class="nav-item dropdown">
+  <button
+    class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
+    id="useDropdown"
+    type="button"
+    aria-expanded="false"
+    data-bs-toggle="dropdown"
+    style="margin-top: -5px"
+    title="Hello, {{ user.username }}"
+  >
+    <img
+      src="{{ user.avatar_url }}"
+      class="rounded-circle"
+      style="height: 30px; border: none; box-shadow: none"
+      alt="User Avatar"
+    />
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end useDropdown">
+    <!-- user -->
+    {{ user_dropdown_item("User", url_for('user.user'), "fa-solid fa-user
+    fa-lg") }}
+
+    <!-- logout -->
+    {{ user_dropdown_item("Logout", url_for('auth.logout'), "fa-solid
+    fa-right-to-bracket fa-lg") }}
+  </ul>
+</li>
+{%- endmacro %}
+
+<!-- user dropdown item -->
+{% macro user_dropdown_item(title, url, icon_class) -%}
+<li>
+  <a
+    class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
+    href="{{ url }}"
+    role="button"
+  >
+    <i class="{{ icon_class }}"></i>
+    {{ title }}
+  </a>
+</li>
+{%- endmacro %}
