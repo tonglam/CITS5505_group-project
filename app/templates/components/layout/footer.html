@@ -1,0 +1,49 @@
+<!-- footer -->
+{% macro render_footer() -%}
+
+<footer>
+  <div
+    class="navbar navbar-light bg-body-tertiary d-sm-flex d-md-none fixed-bottom"
+  >
+    <!-- home -->
+    {{ footer_menu_item("Home", "/", "fa-solid fa-house fa-xl") }}
+
+    <!-- popular -->
+    {{ footer_menu_item("Popular", "{{ url_for('popular.popular') }}", "fa-solid
+    fa-bolt fa-xl") }}
+
+    <!-- create -->
+    {{ footer_menu_item("Create", "{{ url_for('post.create') }}", "fa-solid
+    fa-plus fa-xl", "btn btn-danger rounded m-1 px-3") }}
+
+    <!-- community -->
+    {{ footer_menu_item("Community", "{{ url_for('community.community') }}",
+    "fa-solid fa-users fa-xl") }}
+
+    <!-- search -->
+    {{ footer_menu_item("Search", "{{ url_for('search.search') }}", "fa-solid
+    fa-magnifying-glass fa-xl") }}
+  </div>
+</footer>
+
+{%- endmacro %}
+
+<!-- menu item -->
+
+{% macro footer_menu_item(title, url, icon_class, button_class = "btn
+btn-outline-dark border-0 m-1") -%}
+
+<a
+  data-mdb-ripple-init
+  class="{{ button_class }}"
+  href="{{ url }}"
+  role="button"
+  data-mdb-ripple-init
+  data-mdb-tooltip-init
+  data-mdb-placement="top"
+  title="{{ title }}"
+>
+  <i class="{{ icon_class }}"></i>
+</a>
+
+{%- endmacro %}

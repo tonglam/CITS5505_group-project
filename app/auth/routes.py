@@ -81,24 +81,15 @@ def register():
     return render_template("register.html", form=form)
 
 
-@auth_bp.route("/v1/check_email_exists/<email>")
-def check_email_exists(email: str):
-    """Check if the email exists."""
-    print("check email:", email)
-    user = User.query.filter_by(email=email).first()
-
-    if user is not None:
-        return {"message": "Email exists."}
-
-    return {"message": "Email not exists."}
-
-
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     """Log in the user."""
     form = forms.LoginForm(request.form)
 
     if form.validate_on_submit():
+        print("email:", form.email.data)
+        print("remember:", request.form.get("rememberMe"))
+
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
@@ -120,7 +111,11 @@ def login():
             )
             return redirect(url_for("auth.login"))
 
-        login_user(user, remember=True)
+        remember = request.form.get("rememberMe") == "checked"
+
+        print("login remember:", remember)
+
+        login_user(user, remember=remember)
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
         return redirect(url_for("index"))
 
@@ -161,18 +156,7 @@ def forgot_password():
     return render_template("forgotPassword.html", form=form)
 
 
-@auth_bp.route("/v1/query_forgot_password_user/<email>")
-def query_forgot_password_user(email: str):
-    """Query the user for forgot password."""
-    user = User.query.filter_by(email=email).first()
-
-    if user is None:
-        return {"message": "User not found"}
-
-    return {"message": "User found", "user": user}
-
-
-@auth_bp.route("/v1/authorize/<provider>")
+@auth_bp.route("/authorize/<provider>")
 def authorize(provider: str):
     """Redirect to provider's OAuth2 login page."""
     if not current_user.is_anonymous:
@@ -196,7 +180,7 @@ def authorize(provider: str):
     return redirect(provider_data[AUTHORIZE_URL] + "?" + qs)
 
 
-@auth_bp.route("/v1/callback/<provider>")
+@auth_bp.route("/callback/<provider>")
 def callback(provider: str):
     """Receive authorization code from provider and get user info."""
     if not current_user.is_anonymous:

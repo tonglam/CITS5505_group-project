@@ -1,12 +1,12 @@
 """Main application module."""
 
-from flask import Flask, g, render_template
+from flask import Flask, render_template
 from flask_login import current_user, login_required
 
+from app.api import api_bp
 from app.auth import auth_bp
 from app.community import community_bp
 from app.extensions import bcrypt, db, login_manager, migrate, scheduler
-from app.models.user import User
 from app.notice import notice_bp
 from app.popular import popular_bp
 from app.post import post_bp
@@ -33,6 +33,7 @@ def create_app():
     scheduler.init_app(app)
 
     # blueprints
+    app.register_blueprint(api_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(search_bp)
     app.register_blueprint(notice_bp)

@@ -1,0 +1,17 @@
+{% macro render_sticky_alert() -%} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %} {% for category,
+message in messages %}
+<div
+  id="alert"
+  class="sticky-top alert {{ category }} alert-dismissible text-center fade show"
+  role="alert"
+>
+  {{ message }}
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+{% endfor %} {% endif %} {% endwith %} {%- endmacro %}
