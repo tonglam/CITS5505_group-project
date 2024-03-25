@@ -29,6 +29,19 @@ class Trending(db.Model):
     def __repr__(self) -> str:
         return f"<Trending {self.title}>"
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the trending."""
+        return {
+            "id": self.id,
+            "request_id": self.request_id,
+            "title": self.title,
+            "author": self.author,
+            "reply_num": self.reply_num,
+            "date": self.date,
+            "update_at": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(Trending, "before_insert")

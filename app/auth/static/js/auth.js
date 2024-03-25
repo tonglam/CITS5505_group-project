@@ -1,3 +1,5 @@
+import { getFetch } from "../../../static/js/fetch.js";
+
 $(document).ready(function () {
   $("#email").on("blur", function () {
     checkEmail(this.value);
@@ -13,7 +15,7 @@ async function checkEmail(email) {
     console.log("Invalid email");
   }
 
-  const response = await fetch("/api/v1/email_exists/" + email);
-  const res = await response.json();
-  console.log(res);
+  getFetch("/api/v1/auth/email_exists")({ email: email })().then((res) =>
+    console.log("GET response:", res)
+  );
 }

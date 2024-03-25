@@ -31,6 +31,17 @@ class UserRecord(db.Model):
     def __repr__(self) -> str:
         return f"<UserRecord {self.user_id}>"
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the user record."""
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "request_id": self.request_id,
+            "record_type": self.record_type,
+            "update_at": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(UserRecord, "before_insert")

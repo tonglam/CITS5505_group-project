@@ -29,6 +29,19 @@ class Community(db.Model):
     def __repr__(self) -> str:
         return f"<Community {self.name}>"
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the community."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "category": self.category,
+            "description": self.description,
+            "avatar": self.avatar,
+            "create_at": self.create_at,
+            "update_at": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(Community, "before_insert")
