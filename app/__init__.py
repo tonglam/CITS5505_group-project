@@ -6,14 +6,13 @@ from flask_login import current_user, login_required
 from app.api import api_bp
 from app.auth import auth_bp
 from app.community import community_bp
-from app.extensions import bcrypt, db, login_manager, scheduler
+from app.extensions import bcrypt, db, migrate, login_manager, scheduler
 from app.notice import notice_bp
 from app.popular import popular_bp
 from app.post import post_bp
 from app.search import search_bp
 from app.user import user_bp
 from app.utils import get_config
-from flask_migrate import Migrate
 
 
 
@@ -28,11 +27,8 @@ def create_app():
     # extensions
     bcrypt.init_app(app)
     db.init_app(app)
-
     login_manager.init_app(app)
-
-    # migrate the db to maintian the data
-    migrate = Migrate(app, db)
+    migrate.init_app(app, db)
 
     # scheduled tasks
     scheduler.init_app(app)
