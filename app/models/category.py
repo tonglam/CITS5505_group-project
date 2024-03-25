@@ -20,6 +20,15 @@ class Category(db.Model):
     def __repr__(self) -> str:
         return f"<Category {self.name}>"
 
+    # genrated by copilot
+    def to_dict(self) -> dict:
+        """Return a JSON format of the category."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "create_at": self.create_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(Category, "before_insert")

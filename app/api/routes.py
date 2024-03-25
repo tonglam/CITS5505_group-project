@@ -31,7 +31,7 @@ def forgot_password_user():
     if user is None:
         return {"message": "User not found"}
 
-    return {"message": "User found", "user": user}
+    return {"message": "User found", "user": user.to_dict()}
 
 
 # Api for user module.

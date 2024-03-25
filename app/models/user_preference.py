@@ -30,6 +30,17 @@ class UserPreference(db.Model):
     def __repr__(self) -> str:
         return f"<UserPreference {self.user_id}>"
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the user preference."""
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "communities": self.communities,
+            "interests": self.interests,
+            "update_at": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(UserPreference, "before_insert")

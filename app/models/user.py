@@ -72,6 +72,23 @@ class User(UserMixin, db.Model):
         """Check if the user is the user."""
         return User.query.filter_by(email=email).first() is not None
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the user."""
+        return {
+            "userId": self.user_id,
+            "username": self.username,
+            "email": self.email,
+            "avatarUrl": self.avatar_url,
+            "useGoogle": self.use_google,
+            "useGithub": self.use_github,
+            "securityQuestion": self.security_question,
+            "securityAnswer": self.security_answer,
+            "status": self.status,
+            "createAt": self.create_at,
+            "updateAt": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(User, "before_insert")

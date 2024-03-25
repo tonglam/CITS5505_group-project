@@ -50,6 +50,24 @@ class Request(db.Model):
     def __repr__(self) -> str:
         return f"<Request {self.title}>"
 
+    # genrated by copilot
+    def to_dict(self):
+        """Return a JSON format of the request."""
+        return {
+            "id": self.id,
+            "community": self.community,
+            "author": self.author,
+            "title": self.title,
+            "content": self.content,
+            "tag": self.tag,
+            "view_num": self.view_num,
+            "like_num": self.like_num,
+            "reply_num": self.reply_num,
+            "save_num": self.save_num,
+            "create_at": self.create_at,
+            "update_at": self.update_at,
+        }
+
 
 # pylint: disable=unused-argument
 @event.listens_for(Request, "before_insert")
