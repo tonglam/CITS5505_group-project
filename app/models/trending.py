@@ -13,7 +13,7 @@ class Trending(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     title = db.Column(db.String(40), nullable=False)
-    author = db.Column(db.String(36), db.ForeignKey("user.userId"), nullable=False)
+    author = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
     reply_num = db.Column(db.Integer, default=0)
     date = db.Column(db.String(10), default=generate_date())
     update_at = db.Column(db.DateTime, default=generate_time())

@@ -13,7 +13,7 @@ class Request(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     community = db.Column(db.Integer, db.ForeignKey("community.id"), nullable=False)
-    author = db.Column(db.String(36), db.ForeignKey("user.userId"), nullable=False)
+    author = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
     title = db.Column(db.String(40), nullable=False)
     content = db.Column(db.String(1000), default="")
     tag = db.Column(db.Integer, db.ForeignKey("tag.id"), nullable=True)

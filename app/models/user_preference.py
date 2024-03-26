@@ -14,7 +14,7 @@ class UserPreference(db.Model):
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id: str = db.Column(
-        db.String(36), db.ForeignKey("user.userId"), nullable=False
+        db.String(36), db.ForeignKey("user.user_id"), nullable=False
     )
     communities: str = db.Column(db.String(80), default="")
     interests: str = db.Column(db.String(80), default="")
