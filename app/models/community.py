@@ -47,7 +47,6 @@ class Community(db.Model):
 @event.listens_for(Community, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new community."""
-
     target.create_at = generate_time()
     target.update_at = generate_time()
 
@@ -55,5 +54,4 @@ def before_insert_listener(mapper, connect, target):
 @event.listens_for(Community, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a community."""
-
     target.update_at = generate_time()

@@ -47,12 +47,10 @@ class Trending(db.Model):
 @event.listens_for(Trending, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new trending."""
-
     target.update_at = generate_time()
 
 
 @event.listens_for(Trending, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a trending."""
-
     target.update_at = generate_time()

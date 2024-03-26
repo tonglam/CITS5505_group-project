@@ -46,12 +46,10 @@ class UserPreference(db.Model):
 @event.listens_for(UserPreference, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user preference."""
-
     target.update_at = generate_time()
 
 
 @event.listens_for(UserPreference, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a user preference."""
-
     target.update_at = generate_time()

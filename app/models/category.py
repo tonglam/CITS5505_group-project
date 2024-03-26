@@ -34,5 +34,4 @@ class Category(db.Model):
 @event.listens_for(Category, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new category."""
-
     target.create_at = generate_time()

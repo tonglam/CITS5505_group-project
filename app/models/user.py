@@ -95,11 +95,11 @@ class User(UserMixin, db.Model):
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user."""
     target.userId = generate_uuid()
-    target.createTime = generate_time()
-    target.updateTime = generate_time()
+    target.create_at = generate_time()
+    target.update_at = generate_time()
 
 
 @event.listens_for(User, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a user."""
-    target.updateTime = generate_time()
+    target.update_at = generate_time()

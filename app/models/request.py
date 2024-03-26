@@ -73,7 +73,6 @@ class Request(db.Model):
 @event.listens_for(Request, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new request."""
-
     target.create_at = generate_time()
     target.update_at = generate_time()
 
@@ -81,5 +80,4 @@ def before_insert_listener(mapper, connect, target):
 @event.listens_for(Request, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a request."""
-
     target.update_at = generate_time()
