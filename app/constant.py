@@ -59,3 +59,7 @@ class OAuthProviderEnum(enum.Enum):
 
     GOOGLE = "google"
     GITHUB = "github"
+
+
+# Gravatar
+GRAVATAR_URL = "https://www.gravatar.com/avatar/"

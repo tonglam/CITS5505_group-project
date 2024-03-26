@@ -113,7 +113,7 @@ class TestApi(TestBase):
 
         # test the email exists API
         print("test email exists")
-        response = client.get(f"/api/v1/email_exists/{self.test_user.email}")
+        response = client.get(f"/api/v1/auth/email_exists?email={self.test_user.email}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["message"], "Email exists.")
 
@@ -122,7 +122,9 @@ class TestApi(TestBase):
 
         # test the forgot password user API
         print("test forgot password user")
-        response = client.get(f"/api/v1/forgot_password_user/{self.test_user.email}")
+        response = client.get(
+            f"/api/v1/auth/forgot_password_user?email={self.test_user.email}"
+        )
         self.assertEqual(response.status_code, 200)
         print(response.json)
         self.assertEqual(response.json["message"], "User found")
