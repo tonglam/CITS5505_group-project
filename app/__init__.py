@@ -48,10 +48,6 @@ def create_app():
     def index():
         return render_template("index.html")
 
-    @app.route("/test/<email>")
-    def test(email):
-        return {"message": email}
-
     @app.context_processor
     def inject_user():
         return {"user": current_user}
