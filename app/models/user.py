@@ -1,11 +1,12 @@
 """User model."""
 
 import datetime
+import hashlib
 
 from flask_login import UserMixin
 from sqlalchemy import event
 
-from app.constant import UserStatusEnum
+from app.constant import GRAVATAR_URL, UserStatusEnum
 from app.extensions import bcrypt, db
 from app.utils import generate_time, generate_uuid
 
@@ -95,11 +96,20 @@ class User(UserMixin, db.Model):
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user."""
     target.userId = generate_uuid()
-    target.createTime = generate_time()
-    target.updateTime = generate_time()
+    target.avatar_url = check_avatar_url(target.avatar_url, target.email)
+    print(target.avatar_url)
+    target.create_at = generate_time()
+    target.update_at = generate_time()
+
+
+def check_avatar_url(avatar_url, email):
+    """Check the avatar url."""
+    if not avatar_url and email:
+        return f"{GRAVATAR_URL}{hashlib.sha256(email.lower().encode()).hexdigest()}"
+    return avatar_url
 
 
 @event.listens_for(User, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a user."""
-    target.updateTime = generate_time()
+    target.update_at = generate_time()
