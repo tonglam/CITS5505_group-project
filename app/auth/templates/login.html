@@ -1,5 +1,10 @@
 {% extends "layout.html" %} {% block title %}Sign In{% endblock %} {% block head
-%} {{ super() }} {% endblock %} {% block content %}
+%} {{ super() }}
+<link
+  rel="stylesheet"
+  href="{{ url_for('auth.static', filename='style/auth.css') }}"
+/>
+{% endblock %} {% block content %}
 
 <div class="row mt-2">
   {% for error in form.errors %} {% for message in form.errors.get(error) %}
@@ -18,36 +23,18 @@
   </div>
   {% endfor %} {% endfor %}
 
-  <div class="col-0 col-lg-4" id="leftContainer"></div>
+  <div class="col-0 col-lg-3" id="leftContainer"></div>
 
-  <div class="col-0 col-lg-4" id="centerContainer">
+  <div class="col-0 col-lg-6" id="centerContainer">
     <form action="{{ url_for('auth.login') }}" method="post">
       {{ form.csrf_token }}
 
       <div class="text-center mb-3">
-        <p>Sign in with:</p>
-
-        <a
-          data-mdb-ripple-init
-          class="btn text-white btn-floating btn-lg m-1"
-          style="background-color: #dd4b39"
-          href="{{ url_for('auth.authorize', provider='google') }}"
-          role="button"
-          ><i class="fab fa-google fa-2xl"></i
-        ></a>
-
-        <a
-          data-mdb-ripple-init
-          class="btn text-white btn-floating btn-lg m-1"
-          style="background-color: #333333"
-          href="{{ url_for('auth.authorize', provider='github') }}"
-          role="button"
-          ><i class="fab fa-github fa-2xl"></i
-        ></a>
+        <h1>Sign In to Your Account</h1>
+        <p>Let's get you signed in and straight to the answer!</p>
       </div>
 
-      <p class="text-center">or:</p>
-
+      <div><i class="fa-regular fa-envelope"></i></div>
       <div data-mdb-input-init class="form-outline mb-4">
         <input
           type="text"
@@ -55,10 +42,12 @@
           name="email"
           class="form-control"
           autocomplete="on"
+          placeholder="e.g youraddress@email.com"
         />
         <label class="form-label" for="email">Email</label>
       </div>
 
+      <div><i class="fa-solid fa-key"></i></div>
       <div data-mdb-input-init class="form-outline mb-4">
         <input
           type="password"
@@ -95,15 +84,38 @@
         <button type="submit" class="btn btn-primary btn-block">Sign In</button>
       </div>
 
-      <div class="text-center pt-3">
+      <div class="text-center pt-2">
         <p>
-          Not a member? <a href="{{ url_for('auth.register') }}">Register</a>
+          No Account?
+          <a class="dotted-underline" href="{{ url_for('auth.register') }}"
+            ><b>&nbsp;&nbsp;Sign Up&nbsp;&nbsp;</b></a
+          >
+          or continue with:
         </p>
+        <a
+          data-mdb-ripple-init
+          class="btn btn-link btn-floating mx-1"
+          href="{{ url_for('auth.authorize', provider='google') }}"
+          role="button"
+          ><i class="fab fa-google fa-2xl"></i
+        ></a>
+
+        <a
+          data-mdb-ripple-init
+          class="btn btn-link btn-floating mx-1"
+          href="{{ url_for('auth.authorize', provider='github') }}"
+          role="button"
+          ><i class="fab fa-github fa-2xl"></i
+        ></a>
       </div>
     </form>
   </div>
 
-  <div class="col-0 col-lg-4" id="rightContainer"></div>
+  <div class="col-0 col-lg-3" id="rightContainer"></div>
+
+  <p class="text-center pt-3" id="policy-font">
+    * By signing up, you agree to our Terms of Use Privacy Policy.
+  </p>
 </div>
 
 {% endblock %}

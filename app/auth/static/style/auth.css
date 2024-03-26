@@ -1,0 +1,8 @@
+#policy-font {
+  font-size: 0.65em;
+  color: lightslategrey;
+}
+
+.dotted-underline {
+  border-bottom: 1px dotted #000;
+}
