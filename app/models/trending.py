@@ -13,7 +13,7 @@ class Trending(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     title = db.Column(db.String(40), nullable=False)
-    author = db.Column(db.String(36), db.ForeignKey("user.userId"), nullable=False)
+    author = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
     reply_num = db.Column(db.Integer, default=0)
     date = db.Column(db.String(10), default=generate_date())
     update_at = db.Column(db.DateTime, default=generate_time())
@@ -47,12 +47,10 @@ class Trending(db.Model):
 @event.listens_for(Trending, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new trending."""
-
     target.update_at = generate_time()
 
 
 @event.listens_for(Trending, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a trending."""
-
     target.update_at = generate_time()

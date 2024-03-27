@@ -12,7 +12,7 @@ class UserRecord(db.Model):
     """UserRecord model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.userId"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
     request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     record_type = db.Column(
         db.String(80),
@@ -47,12 +47,10 @@ class UserRecord(db.Model):
 @event.listens_for(UserRecord, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user record."""
-
     target.update_at = generate_time()
 
 
 @event.listens_for(UserRecord, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a user record."""
-
     target.update_at = generate_time()

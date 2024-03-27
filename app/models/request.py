@@ -13,7 +13,7 @@ class Request(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     community = db.Column(db.Integer, db.ForeignKey("community.id"), nullable=False)
-    author = db.Column(db.String(36), db.ForeignKey("user.userId"), nullable=False)
+    author = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
     title = db.Column(db.String(40), nullable=False)
     content = db.Column(db.String(1000), default="")
     tag = db.Column(db.Integer, db.ForeignKey("tag.id"), nullable=True)
@@ -73,7 +73,6 @@ class Request(db.Model):
 @event.listens_for(Request, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new request."""
-
     target.create_at = generate_time()
     target.update_at = generate_time()
 
@@ -81,5 +80,4 @@ def before_insert_listener(mapper, connect, target):
 @event.listens_for(Request, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a request."""
-
     target.update_at = generate_time()

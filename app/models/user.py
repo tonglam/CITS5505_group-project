@@ -97,7 +97,6 @@ def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user."""
     target.userId = generate_uuid()
     target.avatar_url = check_avatar_url(target.avatar_url, target.email)
-    print(target.avatar_url)
     target.create_at = generate_time()
     target.update_at = generate_time()
 

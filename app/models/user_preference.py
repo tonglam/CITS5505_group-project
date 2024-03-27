@@ -14,7 +14,7 @@ class UserPreference(db.Model):
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id: str = db.Column(
-        db.String(36), db.ForeignKey("user.userId"), nullable=False
+        db.String(36), db.ForeignKey("user.user_id"), nullable=False
     )
     communities: str = db.Column(db.String(80), default="")
     interests: str = db.Column(db.String(80), default="")
@@ -46,12 +46,10 @@ class UserPreference(db.Model):
 @event.listens_for(UserPreference, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user preference."""
-
     target.update_at = generate_time()
 
 
 @event.listens_for(UserPreference, "before_update")
 def before_update_listener(mapper, connect, target):
     """Update the update time before updating a user preference."""
-
     target.update_at = generate_time()
