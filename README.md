@@ -14,12 +14,26 @@ This repository is dedicated to the CITS5505 group project, focused on building 
 
 2. Use `requirements.txt` to install the necessary libaries.
 
-```python
+```shell
 pip install -r requirements.txt
 ```
 
 3. Start the Flask App. The app runs on http://127.0.0.1:5000.
 
-```python
+```shell
 flask run (optional: --debug)
+```
+
+## Testing
+
+1. Install flask-unittest from the requirements.txt.
+
+```shell
+pip install -r requirements.txt
+```
+
+2. run the test.py in a terminal.
+
+```shell
+python test.py
 ```
