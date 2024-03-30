@@ -26,7 +26,9 @@ class User(UserMixin, db.Model):
     security_answer: str = db.Column(db.String(300), nullable=True)
     status: str = db.Column(db.String(20), default=UserStatusEnum.ACTIVE.value)
     create_at: datetime = db.Column(db.DateTime, default=generate_time())
-    update_at: datetime = db.Column(db.DateTime, default=generate_time())
+    update_at: datetime = db.Column(
+        db.DateTime, default=generate_time(), onupdate=generate_time()
+    )
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -97,8 +99,6 @@ def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user."""
     target.userId = generate_uuid()
     target.avatar_url = check_avatar_url(target.avatar_url, target.email)
-    target.create_at = generate_time()
-    target.update_at = generate_time()
 
 
 def check_avatar_url(avatar_url, email):
@@ -106,9 +106,3 @@ def check_avatar_url(avatar_url, email):
     if not avatar_url and email:
         return f"{GRAVATAR_URL}{hashlib.sha256(email.lower().encode()).hexdigest()}"
     return avatar_url
-
-
-@event.listens_for(User, "before_update")
-def before_update_listener(mapper, connect, target):
-    """Update the update time before updating a user."""
-    target.update_at = generate_time()

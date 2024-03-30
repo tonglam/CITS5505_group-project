@@ -1,7 +1,5 @@
 """Trending model"""
 
-from sqlalchemy import event
-
 from app.extensions import db
 from app.utils import generate_date, generate_time
 
@@ -16,7 +14,9 @@ class Trending(db.Model):
     author = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
     reply_num = db.Column(db.Integer, default=0)
     date = db.Column(db.String(10), default=generate_date())
-    update_at = db.Column(db.DateTime, default=generate_time())
+    update_at = db.Column(
+        db.DateTime, default=generate_time(), onupdate=generate_time()
+    )
 
     def __init__(
         self, request_id: int, title: str, author: str, reply_num: int = 0
@@ -41,16 +41,3 @@ class Trending(db.Model):
             "date": self.date,
             "update_at": self.update_at,
         }
-
-
-# pylint: disable=unused-argument
-@event.listens_for(Trending, "before_insert")
-def before_insert_listener(mapper, connect, target):
-    """Update the create time before inserting a new trending."""
-    target.update_at = generate_time()
-
-
-@event.listens_for(Trending, "before_update")
-def before_update_listener(mapper, connect, target):
-    """Update the update time before updating a trending."""
-    target.update_at = generate_time()
