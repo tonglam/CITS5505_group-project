@@ -4,32 +4,15 @@ import secrets
 from urllib.parse import urlencode
 
 import requests
-from flask import (
-    abort,
-    current_app,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import (abort, current_app, flash, redirect, render_template,
+                   request, session, url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import auth_bp, forms
-from app.constant import (
-    AUTHORIZATION_CODE,
-    AUTHORIZE_URL,
-    CLIENT_ID,
-    CLIENT_SECRET,
-    OAUTH2_PROVIDERS,
-    OAUTH2_STATE,
-    RESPONSE_TYPE,
-    SCOPES,
-    TOKEN_URL,
-    FlashAlertTypeEnum,
-    OAuthProviderEnum,
-)
+from app.constant import (AUTHORIZATION_CODE, AUTHORIZE_URL, CLIENT_ID,
+                          CLIENT_SECRET, OAUTH2_PROVIDERS, OAUTH2_STATE,
+                          RESPONSE_TYPE, SCOPES, TOKEN_URL, FlashAlertTypeEnum,
+                          OAuthProviderEnum)
 from app.extensions import db, login_manager
 from app.models.user import User
 
