@@ -113,10 +113,6 @@ jobs:
           API_KEY = ${OPENAI_API_KEY}
           EOF
 
-      - name: Test Configuration
-        run: |
-          cat config.ini
-
       - name: Test with Flask-Unittest
         run: |
           cd $GITHUB_WORKSPACE 
