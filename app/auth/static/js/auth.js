@@ -16,6 +16,6 @@ async function checkEmail(email) {
   }
 
   getFetch("/api/v1/auth/email_exists")({ email: email })().then((res) =>
-    console.log("GET response:", res)
+    console.log("GET response:", res),
   );
 }

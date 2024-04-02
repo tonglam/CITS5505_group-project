@@ -6,14 +6,13 @@ from flask_login import current_user, login_required
 from app.api import api_bp
 from app.auth import auth_bp
 from app.community import community_bp
-from app.extensions import bcrypt, db, migrate, login_manager, scheduler
+from app.extensions import bcrypt, db, login_manager, migrate, scheduler
 from app.notice import notice_bp
 from app.popular import popular_bp
 from app.post import post_bp
 from app.search import search_bp
 from app.user import user_bp
 from app.utils import get_config
-
 
 
 def create_app():
@@ -42,7 +41,6 @@ def create_app():
     app.register_blueprint(popular_bp, url_prefix="/popular")
     app.register_blueprint(community_bp, url_prefix="/community")
     app.register_blueprint(user_bp, url_prefix="/user")
-
 
     @app.route("/")
     @app.route("/index")
