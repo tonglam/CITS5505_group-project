@@ -1,7 +1,5 @@
 """UserRecord model."""
 
-from sqlalchemy import event
-
 from app import constant
 from app.extensions import db
 from app.utils import generate_time
@@ -19,7 +17,9 @@ class UserRecord(db.Model):
         db.Enum(constant.UserRecordEnum),
         default=constant.UserRecordEnum.VIEW,
     )
-    update_at = db.Column(db.DateTime, default=generate_time())
+    update_at = db.Column(
+        db.DateTime, default=generate_time(), onupdate=generate_time()
+    )
 
     def __init__(
         self, user_id: str, request_id: str, record_type: constant.UserRecordEnum
@@ -41,16 +41,3 @@ class UserRecord(db.Model):
             "record_type": self.record_type,
             "update_at": self.update_at,
         }
-
-
-# pylint: disable=unused-argument
-@event.listens_for(UserRecord, "before_insert")
-def before_insert_listener(mapper, connect, target):
-    """Update the create time before inserting a new user record."""
-    target.update_at = generate_time()
-
-
-@event.listens_for(UserRecord, "before_update")
-def before_update_listener(mapper, connect, target):
-    """Update the update time before updating a user record."""
-    target.update_at = generate_time()
