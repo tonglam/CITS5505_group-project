@@ -32,11 +32,11 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint .
+          pylint app
 
       - name: Run isort
         run: |
-          isort project
+          isort app
 
       - name: Install Prettier
         run: npm install --global prettier
