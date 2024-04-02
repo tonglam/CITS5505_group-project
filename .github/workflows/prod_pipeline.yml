@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint project
+          pylint .
 
       - name: Run isort
         run: |
