@@ -2,8 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField
-from wtforms.validators import (DataRequired, Email, EqualTo, Length, Optional,
-                                Regexp)
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, Regexp
 
 
 class RegisterForm(FlaskForm):

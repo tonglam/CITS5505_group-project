@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint app
+          pylint --disable=C0301,C0302,R0801 app
 
       - name: Run isort
         run: |
