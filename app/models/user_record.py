@@ -1,6 +1,6 @@
 """UserRecord model."""
 
-import app.constant as constant
+from app import constant
 from app.extensions import db
 from app.utils import generate_time
 
