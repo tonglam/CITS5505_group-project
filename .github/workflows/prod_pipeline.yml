@@ -142,7 +142,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cits5505_group-project:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cits5505_group-project:lastest
 
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.3
