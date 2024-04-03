@@ -1,6 +1,6 @@
 FROM python:3.11-slim-bullseye
 
-WORKDIR /var/www/CITS5505_group-project
+WORKDIR /var/www/cits5505_group-project
 
 COPY requirements.txt .
 
