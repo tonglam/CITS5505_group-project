@@ -13,7 +13,8 @@ from app.post import post_bp
 from app.search import search_bp
 from app.user import user_bp
 from app.utils import get_config
-
+from app.logs import configure_logging
+from app.errors import register_error_handlers
 
 
 def create_app():
@@ -42,6 +43,11 @@ def create_app():
     app.register_blueprint(popular_bp, url_prefix="/popular")
     app.register_blueprint(community_bp, url_prefix="/community")
     app.register_blueprint(user_bp, url_prefix="/user")
+
+    # error init
+    register_error_handlers(app)
+    # log init
+    configure_logging(app)
 
 
     @app.route("/")
