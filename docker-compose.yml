@@ -1,9 +1,11 @@
-version: "3"
+version: "3.9"
+
 services:
   app:
     build: .
-    command: python -m flask run --host 0.0.0.0 --port 5000
     environment:
-      - FLASK_APP=run.py
+      - FLASK_ENV=prod
     ports:
       - "5000:5000"
+    volumes:
+      - .:/app

@@ -153,5 +153,5 @@ jobs:
           key: ${{ secrets.REMOTE_TOKEN }}
           script_stop: true
           script: |
-            cd /home/workspace/cits5505
+            cd /home/workspace/cits5505/shell
             sh run.sh
