@@ -4,15 +4,33 @@ import secrets
 from urllib.parse import urlencode
 
 import requests
-from flask import (abort, current_app, flash, redirect, render_template,
-                   request, session, url_for)
+from flask import (
+    abort,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import auth_bp, forms
-from app.constant import (AUTHORIZATION_CODE, AUTHORIZE_URL, CLIENT_ID,
-                          CLIENT_SECRET, OAUTH2_PROVIDERS, OAUTH2_STATE,
-                          RESPONSE_TYPE, SCOPES, TOKEN_URL, FlashAlertTypeEnum,
-                          OAuthProviderEnum)
+from app.constant import (
+    AUTHORIZATION_CODE,
+    AUTHORIZE_URL,
+    CALLBACK_URL,
+    CLIENT_ID,
+    CLIENT_SECRET,
+    OAUTH2_PROVIDERS,
+    OAUTH2_STATE,
+    RESPONSE_TYPE,
+    SCOPES,
+    TOKEN_URL,
+    FlashAlertTypeEnum,
+    OAuthProviderEnum,
+)
 from app.extensions import db, login_manager
 from app.models.user import User
 
@@ -154,7 +172,7 @@ def authorize(provider: str):
     qs = urlencode(
         {
             "client_id": provider_data[CLIENT_ID],
-            "redirect_uri": url_for("auth.callback", provider=provider, _external=True),
+            "redirect_uri": provider_data[CALLBACK_URL],
             "response_type": RESPONSE_TYPE,
             "scope": " ".join(provider_data[SCOPES]),
             "state": session[OAUTH2_STATE],

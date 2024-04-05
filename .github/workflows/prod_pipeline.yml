@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    environment:
+      name: prod
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -47,6 +50,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment:
+      name: dev
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -80,10 +86,10 @@ jobs:
           SQLITE_DATABASE_URL: ${{ secrets.SQLITE_DATABASE_URL }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_CALLBACK_URI: ${{ secrets.GOOGLE_CALLBACK_URI }}
+          GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
           GITHUB_CLIENT_ID: ${{ secrets.MY_GITHUB_CLIENT_ID }}
           GITHUB_CLIENT_SECRET: ${{ secrets.MY_GITHUB_CLIENT_SECRET }}
-          GITHUB_CALLBACK_URI: ${{ secrets.MY_GITHUB_CALLBACK_URI }}
+          GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           cat <<EOF > config.ini
@@ -96,7 +102,7 @@ jobs:
           [GOOGLE]
           CLIENT_ID = ${GOOGLE_CLIENT_ID}
           CLIENT_SECRET = ${GOOGLE_CLIENT_SECRET}
-          CALLBACK_URI = ${GOOGLE_CALLBACK_URI}
+          CALLBACK_URL = ${GOOGLE_CALLBACK_URL}
           AUTHORIZE_URL = https://accounts.google.com/o/oauth2/v2/auth
           TOKEN_URL = https://oauth2.googleapis.com/token
           USER_URL = https://www.googleapis.com/oauth2/v3/userinfo
@@ -106,7 +112,7 @@ jobs:
           [GITHUB]
           CLIENT_ID = ${MY_GITHUB_CLIENT_ID}
           CLIENT_SECRET = ${MY_GITHUB_CLIENT_SECRET}
-          CALLBACK_URI = ${MY_GITHUB_CALLBACK_URI}
+          CALLBACK_URL = ${MY_GITHUB_CALLBACK_URL}
           AUTHORIZE_URL = https://github.com/login/oauth/authorize
           TOKEN_URL = https://github.com/login/oauth/access_token
           USER_URL = https://api.github.com/user
@@ -142,7 +148,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cits5505_group-project:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cits5505_group-project:lastest
 
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.3

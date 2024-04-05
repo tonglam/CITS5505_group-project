@@ -11,7 +11,8 @@
       <!-- navlinks -->
       <ul class="navbar-nav flex-row d-none d-md-flex">
         <!-- home navlink -->
-        {{ navlink_item("Home", "/", "nav-item me-3 me-lg-1 active", True) }}
+        {{ navlink_item("Home", url_for('index'), "nav-item me-3 me-lg-1
+        active", True) }}
 
         <!-- popular navlink -->
         {{ navlink_item("Popular", url_for('popular.popular'))}}
@@ -65,7 +66,7 @@
 {% macro logo(src) -%}
 <a
   class="navbar-brand me-2 mb-1 d-flex align-items-center rounded-circle"
-  href="/"
+  href="{{ url_for('index') }}"
 >
   <img
     id="logo"
