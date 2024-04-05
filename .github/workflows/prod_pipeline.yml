@@ -165,5 +165,4 @@ jobs:
           script_stop: true
           script: |
             cd /home/workspace/cits5505
-            which sh
             sh run.sh
