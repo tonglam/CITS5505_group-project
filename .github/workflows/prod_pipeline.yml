@@ -165,4 +165,4 @@ jobs:
           script_stop: true
           script: |
             cd /home/workspace/cits5505
-            sh run.sh
+            cat run.sh
