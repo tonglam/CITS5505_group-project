@@ -77,15 +77,15 @@ jobs:
 
       - name: Fetch Configurations
         env:
-          APP_SECRET_KEY: ${{ env.APP_SECRET_KEY }}
-          SQLITE_DATABASE_URL: ${{ env.SQLITE_DATABASE_URL }}
-          GOOGLE_CLIENT_ID: ${{ env.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ env.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_CALLBACK_URL: ${{ env.GOOGLE_CALLBACK_URL }}
-          GITHUB_CLIENT_ID: ${{ env.MY_GITHUB_CLIENT_ID }}
-          GITHUB_CLIENT_SECRET: ${{ env.MY_GITHUB_CLIENT_SECRET }}
-          GITHUB_CALLBACK_URL: ${{ env.MY_GITHUB_CALLBACK_URL }}
-          OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
+          APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
+          SQLITE_DATABASE_URL: ${{ secrets.SQLITE_DATABASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
+          GITHUB_CLIENT_ID: ${{ secrets.MY_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.MY_GITHUB_CLIENT_SECRET }}
+          GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           cat <<EOF > config.ini
           [APP]
