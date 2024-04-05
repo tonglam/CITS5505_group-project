@@ -43,13 +43,13 @@ flask run --debug
 
 ```shell
 # run docker container
-docker compose up
+docker-compose -f docker-compose.dev.yml up
 
 # run docker container in background
-docker compose up -d
+docker-compose -f docker-compose.dev.yml up -d
 
 # stop docer container
-docker compose down
+ocker-compose -f docker-compose.dev.yml down
 ```
 
 3. If you want to run the docker directly:
