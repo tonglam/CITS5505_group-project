@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: dev
+      name: prod
 
     strategy:
       matrix:
@@ -128,7 +128,12 @@ jobs:
 
   deploy:
     needs: [test]
+
     runs-on: ubuntu-latest
+
+    environment:
+      name: prod
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
