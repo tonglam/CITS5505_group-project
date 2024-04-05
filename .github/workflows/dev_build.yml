@@ -50,6 +50,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment:
+      name: dev
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1

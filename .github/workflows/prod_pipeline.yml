@@ -50,6 +50,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment:
+      name: dev
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
