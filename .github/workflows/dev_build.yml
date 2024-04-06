@@ -87,7 +87,7 @@ jobs:
           GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          cat <<EOF > config.ini
+          cat <<EOF > config_dev.ini
           [APP]
           SECRET_KEY = ${APP_SECRET_KEY}
 
