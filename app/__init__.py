@@ -3,18 +3,18 @@
 from flask import Flask, render_template
 from flask_login import current_user, login_required
 
-from app.api import api_bp
-from app.auth import auth_bp
-from app.community import community_bp
-from app.extensions import bcrypt, db, migrate, login_manager, scheduler
-from app.notice import notice_bp
-from app.popular import popular_bp
-from app.post import post_bp
-from app.search import search_bp
-from app.user import user_bp
-from app.utils import get_config
-from app.logs import configure_logging
-from app.errors import register_error_handlers
+from .api import api_bp
+from .auth import auth_bp
+from .community import community_bp
+from .extensions import bcrypt, db, login_manager, migrate, scheduler
+from .notice import notice_bp
+from .popular import popular_bp
+from .post import post_bp
+from .search import search_bp
+from .user import user_bp
+from .utils import get_config
+from .logs import configure_logging
+from .errors import register_error_handlers
 
 
 def create_app():
@@ -35,23 +35,45 @@ def create_app():
     scheduler.init_app(app)
 
     # blueprints
-    app.register_blueprint(api_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(search_bp)
-    app.register_blueprint(notice_bp)
-    app.register_blueprint(post_bp, url_prefix="/post")
-    app.register_blueprint(popular_bp, url_prefix="/popular")
-    app.register_blueprint(community_bp, url_prefix="/community")
-    app.register_blueprint(user_bp, url_prefix="/user")
-
+    app.register_blueprint(api_bp, url_prefix="/api/v1")
+    app.register_blueprint(
+        auth_bp,
+        static_url_path="/auth/static",
+    )
+    app.register_blueprint(
+        search_bp,
+        static_url_path="/search/static",
+    )
+    app.register_blueprint(
+        notice_bp,
+        static_url_path="/notice/static",
+    )
+    app.register_blueprint(
+        post_bp,
+        url_prefix="/posts",
+        static_url_path="/post/static",
+    )
+    app.register_blueprint(
+        popular_bp,
+        url_prefix="/populars",
+        static_url_path="/popular/static",
+    )
+    app.register_blueprint(
+        community_bp,
+        url_prefix="/communities",
+        static_url_path="/community/static",
+    )
+    app.register_blueprint(
+        user_bp,
+        url_prefix="/users",
+        static_url_path="/user/static",
+    )
     # error init
     register_error_handlers(app)
     # log init
     configure_logging(app)
 
-
     @app.route("/")
-    @app.route("/index")
     @login_required
     def index():
         return render_template("index.html")
@@ -69,6 +91,7 @@ def get_oauth2_config():
         "google": {
             "client_id": get_config("GOOGLE", "CLIENT_ID"),
             "client_secret": get_config("GOOGLE", "CLIENT_SECRET"),
+            "callback_url": get_config("GOOGLE", "CALLBACK_URL"),
             "authorize_url": get_config("GOOGLE", "AUTHORIZE_URL"),
             "token_url": get_config("GOOGLE", "TOKEN_URL"),
             "userinfo": {
@@ -83,6 +106,7 @@ def get_oauth2_config():
         "github": {
             "client_id": get_config("GITHUB", "CLIENT_ID"),
             "client_secret": get_config("GITHUB", "CLIENT_SECRET"),
+            "callback_url": get_config("GITHUB", "CALLBACK_URL"),
             "authorize_url": get_config("GITHUB", "AUTHORIZE_URL"),
             "token_url": get_config("GITHUB", "TOKEN_URL"),
             "userinfo": {

@@ -3,9 +3,10 @@
 from flask_apscheduler import APScheduler
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from app.constant import FlashAlertTypeEnum
+from flask_sqlalchemy import SQLAlchemy
+
+from .constant import FlashAlertTypeEnum
 
 db = SQLAlchemy()
 migrate = Migrate()

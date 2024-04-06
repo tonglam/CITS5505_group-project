@@ -1,7 +1,5 @@
 """Model for Tag."""
 
-from sqlalchemy import event
-
 from app.extensions import db
 from app.utils import generate_time
 
@@ -28,11 +26,3 @@ class Tag(db.Model):
             "name": self.name,
             "create_at": self.create_at.strftime("%Y-%m-%d %H:%M:%S"),
         }
-
-
-# pylint: disable=unused-argument
-@event.listens_for(Tag, "before_insert")
-def before_insert_listener(mapper, connect, target):
-    """Update the create time before inserting a new tag."""
-
-    target.create_at = generate_time()

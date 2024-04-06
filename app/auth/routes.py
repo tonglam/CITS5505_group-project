@@ -20,6 +20,7 @@ from app.auth import auth_bp, forms
 from app.constant import (
     AUTHORIZATION_CODE,
     AUTHORIZE_URL,
+    CALLBACK_URL,
     CLIENT_ID,
     CLIENT_SECRET,
     OAUTH2_PROVIDERS,
@@ -171,7 +172,7 @@ def authorize(provider: str):
     qs = urlencode(
         {
             "client_id": provider_data[CLIENT_ID],
-            "redirect_uri": url_for("auth.callback", provider=provider, _external=True),
+            "redirect_uri": provider_data[CALLBACK_URL],
             "response_type": RESPONSE_TYPE,
             "scope": " ".join(provider_data[SCOPES]),
             "state": session[OAUTH2_STATE],

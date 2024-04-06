@@ -1,0 +1,122 @@
+name: DEV - Build and Unittest
+
+on:
+  push:
+    branches-ignore: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint isort
+          pip install -r requirements.txt
+
+      - name: Install project
+        run: |
+          pip install -e .
+
+      - name: Run Pylint
+        run: |
+          pylint --disable=C0301,C0302,R0801 app
+
+      - name: Run isort
+        run: |
+          isort app
+
+      - name: Install Prettier
+        run: npm install --global prettier
+
+      - name: Run Prettier
+        run: |
+          prettier --write .
+
+  test:
+    needs: [build]
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint isort flask-unittest
+          pip install -r requirements.txt
+
+      - name: Install project
+        run: |
+          pip install -e .
+
+      - name: Fetch Configurations
+        env:
+          APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
+          SQLITE_DATABASE_URL: ${{ secrets.SQLITE_DATABASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
+          GITHUB_CLIENT_ID: ${{ secrets.MY_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.MY_GITHUB_CLIENT_SECRET }}
+          GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          cat <<EOF > config.dev.ini
+          [APP]
+          SECRET_KEY = ${APP_SECRET_KEY}
+
+          [SQLITE]
+          DATABASE_URL = ${SQLITE_DATABASE_URL}
+
+          [GOOGLE]
+          CLIENT_ID = ${GOOGLE_CLIENT_ID}
+          CLIENT_SECRET = ${GOOGLE_CLIENT_SECRET}
+          CALLBACK_URL = ${GOOGLE_CALLBACK_URL}
+          AUTHORIZE_URL = https://accounts.google.com/o/oauth2/v2/auth
+          TOKEN_URL = https://oauth2.googleapis.com/token
+          USER_URL = https://www.googleapis.com/oauth2/v3/userinfo
+          SCOPES_PROFILE = https://www.googleapis.com/auth/userinfo.profile
+          SCOPES_EMAIL = https://www.googleapis.com/auth/userinfo.email
+
+          [GITHUB]
+          CLIENT_ID = ${MY_GITHUB_CLIENT_ID}
+          CLIENT_SECRET = ${MY_GITHUB_CLIENT_SECRET}
+          CALLBACK_URL = ${MY_GITHUB_CALLBACK_URL}
+          AUTHORIZE_URL = https://github.com/login/oauth/authorize
+          TOKEN_URL = https://github.com/login/oauth/access_token
+          USER_URL = https://api.github.com/user
+
+          [OPENAI]
+          API_KEY = ${OPENAI_API_KEY}
+          EOF
+
+      - name: Test with Flask-Unittest
+        run: |
+          cd $GITHUB_WORKSPACE 
+          FLASK_ENV=dev python test.py
