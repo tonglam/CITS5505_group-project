@@ -124,7 +124,7 @@ jobs:
       - name: Test with Flask-Unittest
         run: |
           cd $GITHUB_WORKSPACE 
-          python test.py
+          FLASK_ENV=prod python test.py
 
   deploy:
     needs: [test]
