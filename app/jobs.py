@@ -1,6 +1,6 @@
 """This module contains the job definitions for the application."""
 
-from app.extensions import scheduler
+from .extensions import scheduler
 
 
 @scheduler.task("interval", id="my_job", seconds=10)

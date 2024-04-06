@@ -6,7 +6,7 @@
     class="navbar navbar-light bg-body-tertiary d-sm-flex d-md-none fixed-bottom"
   >
     <!-- home -->
-    {{ footer_menu_item("Home", "/", "fa-solid fa-house fa-xl") }}
+    {{ footer_menu_item("Home", url_for('index'), "fa-solid fa-house fa-xl") }}
 
     <!-- popular -->
     {{ footer_menu_item("Popular", url_for('popular.popular'), "fa-solid fa-bolt
