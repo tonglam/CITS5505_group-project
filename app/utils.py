@@ -12,7 +12,7 @@ def load_config() -> configparser.ConfigParser:
     config = configparser.ConfigParser()
 
     environment = os.environ.get("FLASK_ENV", "dev")
-    config_file = f"config_{environment}.ini"
+    config_file = f"config.{environment}.ini"
 
     if not os.path.exists(config_file):
         config_file = "config.ini"
