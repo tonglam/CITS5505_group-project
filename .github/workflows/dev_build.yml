@@ -129,4 +129,7 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_TOKEN }}
           script_stop: true
-          script: cd /home/workspace/cits5505 && cat run.sh
+          script: |
+            source /etc/profile
+            cd /home/workspace/cits5505
+            sh run.sh
