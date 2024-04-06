@@ -164,5 +164,6 @@ jobs:
           key: ${{ secrets.REMOTE_TOKEN }}
           script_stop: true
           script: |
+            source /etc/profile
             cd /home/workspace/cits5505
-            cat run.sh
+            sh run.sh
