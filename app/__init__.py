@@ -13,6 +13,8 @@ from .post import post_bp
 from .search import search_bp
 from .user import user_bp
 from .utils import get_config
+from .logs import configure_logging
+from .errors import register_error_handlers
 
 
 def create_app():
@@ -66,6 +68,10 @@ def create_app():
         url_prefix="/users",
         static_url_path="/user/static",
     )
+    # error init
+    register_error_handlers(app)
+    # log init
+    configure_logging(app)
 
     @app.route("/")
     @login_required
