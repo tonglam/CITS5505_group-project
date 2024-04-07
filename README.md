@@ -2,7 +2,7 @@
 
 This repository is dedicated to the CITS5505 group project, focused on building a request forum application.
 
-## Get Started
+# Get Started
 
 1. Create a virtual environment (venv) for the project in VSCode:
 
