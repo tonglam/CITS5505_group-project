@@ -15,9 +15,9 @@ from app.utils import generate_time, generate_uuid
 class User(UserMixin, db.Model):
     """User model."""
 
-    user_id: str = db.Column(db.String(36), primary_key=True, default=generate_uuid())
+    id: str = db.Column(db.String(36), primary_key=True, default="")
     username: str = db.Column(db.String(80), unique=True, nullable=False)
-    email: str = db.Column(db.String(120), unique=True, nullable=False)
+    email: str = db.Column(db.String(120), nullable=False)
     password_hash: str = db.Column(db.String(300), nullable=True)
     avatar_url: str = db.Column(db.String(300), default="")
     use_google: bool = db.Column(db.Boolean, default=False)
@@ -68,7 +68,7 @@ class User(UserMixin, db.Model):
 
     def get_id(self) -> str:
         """Get the user id."""
-        return self.user_id
+        return self.id
 
     @staticmethod
     def user_exists(email: str) -> bool:
@@ -79,7 +79,7 @@ class User(UserMixin, db.Model):
     def to_dict(self):
         """Return a JSON format of the user."""
         return {
-            "userId": self.user_id,
+            "id": self.id,
             "username": self.username,
             "email": self.email,
             "avatarUrl": self.avatar_url,
@@ -97,7 +97,7 @@ class User(UserMixin, db.Model):
 @event.listens_for(User, "before_insert")
 def before_insert_listener(mapper, connect, target):
     """Update the create time before inserting a new user."""
-    target.userId = generate_uuid()
+    target.id = generate_uuid()
     target.avatar_url = check_avatar_url(target.avatar_url, target.email)
 
 

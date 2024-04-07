@@ -9,7 +9,7 @@ class UserPreference(db.Model):
     """UserPreference model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     communities = db.Column(db.String(80), default="")
     interests = db.Column(db.String(80), default="")
     update_at = db.Column(
