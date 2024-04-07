@@ -55,8 +55,6 @@ docker-compose -f docker-compose.dev.yml down
 3. If you want to run the docker directly:
 
 ```shell
-docker tag cits5505_group-project tonglam/cits5505_group-project:lastest
-
 docker run -p 5000:5000 tonglam/cits5505_group-project:lastest
 
 docker run -d -p 5000:5000 tonglam/cits5505_group-project:lastest
