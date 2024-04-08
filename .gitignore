@@ -64,7 +64,7 @@ db.sqlite3-journal
 logs/
 
 # Flask stuff:
-# instance/
+instance/
 .webassets-cache
 
 # Scrapy stuff:
@@ -164,5 +164,5 @@ cython_debug/
 # custom
 /.venv
 .DS_Store
-*.ini
+config.*.ini
 .vscode/

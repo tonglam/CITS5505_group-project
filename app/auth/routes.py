@@ -44,7 +44,11 @@ def user_loader(user_id: str):
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     """Register a new user."""
+
     if current_user.is_authenticated:
+        current_app.logger.info(
+            "User is already registered, id: %s.", {current_user.id}
+        )
         flash("You are already registered.", FlashAlertTypeEnum.SUCCESS.value)
         return redirect(url_for("auth.login"))
 
@@ -54,10 +58,14 @@ def register():
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
+            current_app.logger.error(
+                "Email already registered, email: %s.", {form.email.data}
+            )
             flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
             return redirect(url_for("auth.register"))
 
         if form.password.data != form.confirm.data:
+            current_app.logger.error("Passwords must match.")
             flash("Passwords must match.", FlashAlertTypeEnum.DANGER.value)
             return redirect(url_for("auth.resgister"))
 
@@ -65,7 +73,7 @@ def register():
         user = User(
             username=form.username.data,
             email=form.email.data,
-            avatar_url="",
+            avatar_url=form.avatar_url.data,
             use_google=False,
             use_github=False,
             security_question=form.security_question.data,
@@ -76,8 +84,21 @@ def register():
         db.session.commit()
 
         login_user(user, remember=True)
+        current_app.logger.info(
+            "User registered, register email: %s, id: %s.", {user.email}, {user.id}
+        )
         flash("You registered and are now logged in.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("index"))
+        return redirect(url_for("auth.login"))
+
+    if form.errors:
+        for field, errors in form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "Register error in field %s: %s",
+                    {getattr(form, field).label.text},
+                    {error},
+                )
+        return redirect(url_for("auth.register"))
 
     return render_template("register.html", form=form)
 
@@ -88,12 +109,12 @@ def login():
     form = forms.LoginForm(request.form)
 
     if form.validate_on_submit():
-        print("email:", form.email.data)
-        print("remember:", request.form.get("rememberMe"))
-
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
+            current_app.logger.error(
+                "No user with that email exists: %s.", {form.email.data}
+            )
             flash(
                 "No user with that email exists, please register first.",
                 FlashAlertTypeEnum.DANGER.value,
@@ -102,10 +123,16 @@ def login():
 
         if not user.password_hash:
             provide = "Google" if user.use_google else "GitHub"
+            current_app.logger.error(
+                "Please login with %s, email: %s.", {provide}, {form.email.data}
+            )
             flash(f"Please login with {provide}.", FlashAlertTypeEnum.WARNING.value)
             return redirect(url_for("auth.login"))
 
         if not user.verify_password(form.password.data):
+            current_app.logger.error(
+                "Invalid email or password, email: %s.", {form.email.data}
+            )
             flash(
                 "Invalid email or password. Please try a different login method or attempt again.",
                 FlashAlertTypeEnum.DANGER.value,
@@ -114,11 +141,20 @@ def login():
 
         remember = request.form.get("rememberMe") == "checked"
 
-        print("login remember:", remember)
-
         login_user(user, remember=remember)
+        current_app.logger.info("User logged in, id: %s.", {user.id})
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
         return redirect(url_for("index"))
+
+    if form.errors:
+        for field, errors in form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "Login error in field %s: %s",
+                    {getattr(form, field).label.text},
+                    {error},
+                )
+        return redirect(url_for("auth.login"))
 
     return render_template("login.html", form=form)
 
@@ -127,6 +163,7 @@ def login():
 @login_required
 def logout():
     """Log out the user."""
+    current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
     return redirect(url_for("auth.login"))
@@ -141,18 +178,37 @@ def forgot_password():
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
+            current_app.logger.error(
+                "No user with that email exists, email: %s.", {form.email.data}
+            )
             flash("No user with that email exists.", FlashAlertTypeEnum.DANGER.value)
             return redirect(url_for("auth.forgot_password"))
 
         if user.security_answer != form.security_answer.data:
+            current_app.logger.error(
+                "Invalid security answer, email: %s, security answer: %s.",
+                {form.email.data},
+                {form.security_answer.data},
+            )
             flash("Invalid security answer.", FlashAlertTypeEnum.DANGER.value)
             return redirect(url_for("auth.forgot_password"))
 
         user.password = form.password.data
         db.session.commit()
 
+        current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
         return redirect(url_for("auth.login"))
+
+    if form.errors:
+        for field, errors in form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "Forgot password error in field %s: %s",
+                    {getattr(form, field).label.text},
+                    {error},
+                )
+        return redirect(url_for("auth.forgot_password"))
 
     return render_template("forgotPassword.html", form=form)
 
@@ -161,10 +217,12 @@ def forgot_password():
 def authorize(provider: str):
     """Redirect to provider's OAuth2 login page."""
     if not current_user.is_anonymous:
+        current_app.logger.info("User is already logged in, id: %s.", {current_user.id})
         return redirect(url_for("index"))
 
     provider_data = current_app.config[OAUTH2_PROVIDERS].get(provider)
     if provider_data is None:
+        current_app.logger.error("Provider not found: %s.", {provider})
         abort(404)
 
     session[OAUTH2_STATE] = secrets.token_urlsafe(16)
@@ -184,12 +242,8 @@ def authorize(provider: str):
 @auth_bp.route("/callback/<provider>")
 def callback(provider: str):
     """Receive authorization code from provider and get user info."""
-    if not current_user.is_anonymous:
-        return redirect(url_for("index"))
 
     provider_data = current_app.config[OAUTH2_PROVIDERS].get(provider)
-    if provider_data is None:
-        abort(404)
 
     # get token from provider
     response = requests.post(
@@ -206,10 +260,16 @@ def callback(provider: str):
     )
 
     if response.status_code != 200:
+        current_app.logger.error(
+            "Failed to get token from provider: %s, status code: %s.",
+            {provider},
+            {response.status_code},
+        )
         abort(401)
 
     oauth2_token = response.json().get("access_token")
     if not oauth2_token:
+        current_app.logger.error("Failed to get token from provider: %s.", {provider})
         abort(401)
 
     # get user info from provider
@@ -254,5 +314,8 @@ def callback(provider: str):
         db.session.commit()
 
     login_user(user, remember=True)
+    current_app.logger.info(
+        "User logged in with %s, id: %s.", {provider}, {current_user.id}
+    )
     flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
     return redirect(url_for("index"))

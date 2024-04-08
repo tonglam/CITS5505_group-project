@@ -2,7 +2,7 @@
 
 This repository is dedicated to the CITS5505 group project, focused on building a request forum application.
 
-## Get Started
+# Get Started
 
 1. Create a virtual environment (venv) for the project in VSCode:
 
@@ -18,21 +18,21 @@ This repository is dedicated to the CITS5505 group project, focused on building 
 pip install -r requirements.txt
 ```
 
-3. Set up Environment: Use the `config.ini.example` as a template in `config_dev.ini` or `config_prod.ini`. Configure the development or production environment accordingly.
+3. Set up Environment: Use the `config.ini.example` as a template in `config_dev.ini` or `config_prod.ini`. Configure the dev or prod environment accordingly.
 
 ```python
 # using command line
-export FLASK_ENV=development # load config_dev.ini
+export FLASK_ENV=dev # load config.dev.ini
 
-export FLASK_ENV=production # load config_prod.ini
+export FLASK_ENV=prod # load config.prod.ini
 ```
 
 4. Start the Flask App. The app runs on http://127.0.0.1:5000.
 
 ```python
-flask run
+FLASK_ENV=dev flask run
 # or run in debug mode
-flask run --debug
+FLASK_ENV=dev flask run --debug
 ```
 
 # Use Docker
@@ -49,14 +49,12 @@ docker-compose -f docker-compose.dev.yml up
 docker-compose -f docker-compose.dev.yml up -d
 
 # stop docer container
-ocker-compose -f docker-compose.dev.yml down
+docker-compose -f docker-compose.dev.yml down
 ```
 
 3. If you want to run the docker directly:
 
 ```shell
-docker tag cits5505_group-project tonglam/cits5505_group-project:lastest
-
 docker run -p 5000:5000 tonglam/cits5505_group-project:lastest
 
 docker run -d -p 5000:5000 tonglam/cits5505_group-project:lastest
@@ -74,12 +72,18 @@ docker run -d -p 5000:5000 tonglam/cits5505_group-project:lastest
 
 # Run Test
 
-All the tests in this project are located in the `test.py` file.
+All the tests in this project are located in the `/tests/` directory, and file names start with `test_`.
 
-To run the tests, navigate to the root directory of the project and execute the `test.py` file.
+To run the tests, navigate to the root directory of the project and execute the `test.py` file:
 
 ```python
 python test.py
+```
+
+If you want to test a specific module, use the module name as the third argument:
+
+```python
+python test.py [api|auth|community|...]
 ```
 
 # Deployment

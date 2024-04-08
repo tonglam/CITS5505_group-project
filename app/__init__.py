@@ -1,20 +1,22 @@
 """Main application module."""
 
-from flask import Flask, render_template
+import logging
+
+from flask import Flask, render_template, request
 from flask_login import current_user, login_required
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
+from .errors import register_error_handlers
 from .extensions import bcrypt, db, login_manager, migrate, scheduler
+from .logs import configure_logging
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
 from .user import user_bp
 from .utils import get_config
-from .logs import configure_logging
-from .errors import register_error_handlers
 
 
 def create_app():
@@ -77,6 +79,17 @@ def create_app():
     @login_required
     def index():
         return render_template("index.html")
+
+    @app.before_request
+    def log_request_info():
+        app.logger.info("Request: %s %s", request.method, request.url)
+        app.logger.info("Request Headers: %s", request.headers)
+        app.logger.info("Request Body: %s", request.get_data())
+
+    @app.after_request
+    def log_response_info(response):
+        app.logger.info("Response: %s", response.status)
+        return response
 
     @app.context_processor
     def inject_user():
