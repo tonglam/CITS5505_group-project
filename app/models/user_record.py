@@ -10,7 +10,7 @@ class UserRecord(db.Model):
     """UserRecord model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     record_type = db.Column(
         db.String(80),

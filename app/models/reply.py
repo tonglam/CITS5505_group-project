@@ -10,7 +10,7 @@ class Reply(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
-    replier = db.Column(db.String(36), db.ForeignKey("user.user_id"), nullable=False)
+    replier = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.String(1000), default="")
     source = db.Column(db.String(50), default="human")
     like_num = db.Column(db.Integer, default=0)
