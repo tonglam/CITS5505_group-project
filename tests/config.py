@@ -61,8 +61,8 @@ class TestBase(flask_unittest.AppClientTestCase):
 
         print("\nTestBase: Tearing down test case.")
         # clean up test database
-        # with app.app_context():
-        #     db.drop_all()
+        with app.app_context():
+            db.drop_all()
 
 
 class AuthActions:
