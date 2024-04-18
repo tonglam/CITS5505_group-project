@@ -37,7 +37,7 @@ class TestAuth(TestBase):
             "email": "test@example.com",
             "password": "Password@123",
             "confirm": "Password@123",
-            "avatar_url": "",
+            "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=5505",
             "security_question": "What is your favorite color?",
             "security_answer": "blue",
         }

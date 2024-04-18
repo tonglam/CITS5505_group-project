@@ -4,7 +4,6 @@ from app.extensions import db
 from app.utils import generate_time
 
 
-# pylint: disable=too-few-public-methods
 class Tag(db.Model):
     """Tag model."""
 

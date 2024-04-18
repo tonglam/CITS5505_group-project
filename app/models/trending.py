@@ -4,7 +4,6 @@ from app.extensions import db
 from app.utils import generate_date, generate_time
 
 
-# pylint: disable=too-few-public-methods
 class Trending(db.Model):
     """Trending model"""
 
@@ -27,10 +26,11 @@ class Trending(db.Model):
         self.reply_num = reply_num
 
     def __repr__(self) -> str:
+        """Return a string representation of the trending."""
         return f"<Trending {self.title}>"
 
     # genrated by copilot
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Return a JSON format of the trending."""
         return {
             "id": self.id,

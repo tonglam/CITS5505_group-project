@@ -58,17 +58,17 @@ def create_app():
     app.register_blueprint(
         popular_bp,
         url_prefix="/populars",
-        static_url_path="/popular/static",
+        static_url_path="/populars/static",
     )
     app.register_blueprint(
         community_bp,
         url_prefix="/communities",
-        static_url_path="/community/static",
+        static_url_path="/communities/static",
     )
     app.register_blueprint(
         user_bp,
         url_prefix="/users",
-        static_url_path="/user/static",
+        static_url_path="/users/static",
     )
     # error init
     register_error_handlers(app)

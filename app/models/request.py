@@ -4,7 +4,6 @@ from app.extensions import db
 from app.utils import generate_time
 
 
-# pylint: disable=too-few-public-methods
 # pylint: disable=too-many-instance-attributes
 class Request(db.Model):
     """Request model."""
@@ -14,7 +13,7 @@ class Request(db.Model):
     author = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     title = db.Column(db.String(40), nullable=False)
     content = db.Column(db.String(1000), default="")
-    tag = db.Column(db.Integer, db.ForeignKey("tag.id"), nullable=True)
+    category = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=True)
     view_num = db.Column(db.Integer, default=0)
     like_num = db.Column(db.Integer, default=0)
     reply_num = db.Column(db.Integer, default=0)
@@ -31,7 +30,7 @@ class Request(db.Model):
         author: str,
         title: str,
         content: str = "",
-        tag: int = None,
+        category: int = None,
         view_num: int = 0,
         like_num: int = 0,
         reply_num: int = 0,
@@ -41,13 +40,14 @@ class Request(db.Model):
         self.author = author
         self.title = title
         self.content = content
-        self.tag = tag
+        self.category = category
         self.view_num = view_num
         self.like_num = like_num
         self.reply_num = reply_num
         self.save_num = save_num
 
     def __repr__(self) -> str:
+        """Return a string representation of the request."""
         return f"<Request {self.title}>"
 
     # genrated by copilot
@@ -59,7 +59,7 @@ class Request(db.Model):
             "author": self.author,
             "title": self.title,
             "content": self.content,
-            "tag": self.tag,
+            "category": self.category,
             "view_num": self.view_num,
             "like_num": self.like_num,
             "reply_num": self.reply_num,

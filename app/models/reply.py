@@ -1,10 +1,18 @@
 """Reply model."""
 
+import enum
+
 from app.extensions import db
 from app.utils import generate_time
 
 
-# pylint: disable=too-few-public-methods
+class ReplySourceEnum(enum.Enum):
+    """Enum for reply source."""
+
+    HUMAN = "HUMAN"
+    AI = "AI"
+
+
 class Reply(db.Model):
     """Reply model."""
 
@@ -12,7 +20,7 @@ class Reply(db.Model):
     request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     replier = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.String(1000), default="")
-    source = db.Column(db.String(50), default="human")
+    source = db.Column(db.String(50), default=ReplySourceEnum.HUMAN.value)
     like_num = db.Column(db.Integer, default=0)
     save_num = db.Column(db.Integer, default=0)
     create_at = db.Column(db.DateTime, default=generate_time())
@@ -38,10 +46,11 @@ class Reply(db.Model):
         self.save_num = save_num
 
     def __repr__(self) -> str:
+        """Return a string representation of the reply."""
         return f"<Reply {self.content}>"
 
     # genrated by copilot
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Return a JSON format of the reply."""
         return {
             "id": self.id,
