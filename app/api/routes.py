@@ -92,6 +92,25 @@ def user_records(user_id: str) -> ApiResponse:
     return ApiResponse(data={"records": user_record_collection}).json()
 
 
+@api_bp.route("/users/records/<record_id>", methods=["DELETE"])
+def del_users_record(record_id: str) -> ApiResponse:
+    """Delete record by id."""
+
+    record = UserRecord.query.get(record_id)
+
+    if record is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="record not found"
+        ).json()
+
+    db.session.delete(record)
+    db.session.commit()
+
+    return ApiResponse(
+        HttpRequstEnum.NO_CONTENT.value, message="record delete success"
+    ).json()
+
+
 @api_bp.route("/users/preferences/<user_id>", methods=["GET"])
 def user_preferences(user_id: str) -> ApiResponse:
     """Get preferences of a user by id."""

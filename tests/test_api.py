@@ -245,6 +245,32 @@ class TestApi(TestBase):
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response_data["data"]["records"], [])
 
+    def test_delete_user_record(self, app: Flask, client: FlaskClient):
+        """Test the user records DELETE API."""
+
+        url = _PREFIX + "/users/records/"
+
+        # check valid data
+        record = None
+        with app.app_context():
+            record = UserRecord.query.first()
+
+        record_id = record.id
+
+        response = client.delete(url + str(record_id))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NO_CONTENT.value)
+
+        # check db
+        with app.app_context():
+            record = UserRecord.query.get(record_id)
+            self.assertEqual(record, None)
+
+        # check invalid data
+        response = client.delete(url + "invalid_record_id")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
+
     def test_get_user_preferences(self, app: Flask, client: FlaskClient):
         """Test the user preferences GET API."""
 

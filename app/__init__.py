@@ -89,6 +89,8 @@ def create_app():
     @app.after_request
     def log_response_info(response):
         app.logger.info("Response: %s", response.status)
+        app.logger.info("Response Headers: %s", response.headers)
+        app.logger.info("Response Body: %s", response.get_data())
         return response
 
     @app.context_processor
