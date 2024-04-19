@@ -13,7 +13,7 @@ from app.models.user import User
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 
-from .service import update_user_data
+from .service import update_user_data, update_user_preference_data
 
 
 @dataclass
@@ -39,26 +39,17 @@ class ApiResponse:
 def users(user_id: str) -> ApiResponse:
     """Get a user by id."""
 
+    user_entity = User.query.get(user_id)
+
+    if user_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="user not found"
+        ).json()
+
     if request.method == "GET":
-
-        user_entity = User.query.get(user_id)
-
-        if user_entity is None:
-            return ApiResponse(
-                HttpRequstEnum.NOT_FOUND.value, message="user not found"
-            ).json()
-
         return ApiResponse(data={"user": user_entity.to_dict()}).json()
 
     if request.method == "PUT":
-
-        user_entity = User.query.get(user_id)
-
-        if user_entity is None:
-            return ApiResponse(
-                HttpRequstEnum.NOT_FOUND.value, message="user not found"
-            ).json()
-
         request_data = request.json
 
         if request_data is None or request_data == {}:
@@ -69,9 +60,7 @@ def users(user_id: str) -> ApiResponse:
         # update user data
         try:
             update_user_entity = update_user_data(user_entity, request_data)
-        except TypeError as e:
-            return ApiResponse(HttpRequstEnum.BAD_REQUEST.value, message=str(e)).json()
-        except ValueError as e:
+        except (TypeError, ValueError) as e:
             return ApiResponse(HttpRequstEnum.BAD_REQUEST.value, message=str(e)).json()
 
         # update user into database
@@ -80,6 +69,10 @@ def users(user_id: str) -> ApiResponse:
         return ApiResponse(
             data={"user": update_user_entity.to_dict()}, message="user update success"
         ).json()
+
+    return ApiResponse(
+        HttpRequstEnum.METHOD_NOT_ALLOWED.value, message="method not allowed"
+    ).json()
 
 
 @api_bp.route("/users/records/<user_id>", methods=["GET"])
@@ -92,18 +85,18 @@ def user_records(user_id: str) -> ApiResponse:
     return ApiResponse(data={"records": user_record_collection}).json()
 
 
-@api_bp.route("/users/records/<record_id>", methods=["DELETE"])
-def del_users_record(record_id: str) -> ApiResponse:
+@api_bp.route("/users/records/<int:record_id>", methods=["DELETE"])
+def del_users_record(record_id: int) -> ApiResponse:
     """Delete record by id."""
 
-    record = UserRecord.query.get(record_id)
+    record_entity = UserRecord.query.get(record_id)
 
-    if record is None:
+    if record_entity is None:
         return ApiResponse(
             HttpRequstEnum.NOT_FOUND.value, message="record not found"
         ).json()
 
-    db.session.delete(record)
+    db.session.delete(record_entity)
     db.session.commit()
 
     return ApiResponse(
@@ -121,6 +114,45 @@ def user_preferences(user_id: str) -> ApiResponse:
     ]
 
     return ApiResponse(data={"preferences": user_preferences_collection}).json()
+
+
+@api_bp.route("/users/preferences/<int:preference_id>", methods=["PUT"])
+def user_preference(preference_id: int):
+    """Update a preference by id."""
+
+    user_preference_entity = UserPreference.query.get(preference_id)
+    if user_preference_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="preference not found"
+        ).json()
+
+    if request.method == "PUT":
+        request_data = request.json
+
+        if request_data is None or request_data == {}:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value, message="request data is empty"
+            ).json()
+
+        # update user preference data
+        try:
+            update_user_preference_entity = update_user_preference_data(
+                user_preference_entity, request_data
+            )
+        except (TypeError, ValueError) as e:
+            return ApiResponse(HttpRequstEnum.BAD_REQUEST.value, message=str(e)).json()
+
+        # update user preference into database
+        db.session.commit()
+
+        return ApiResponse(
+            data={"preference": update_user_preference_entity.to_dict()},
+            message="preference update success",
+        ).json()
+
+    return ApiResponse(
+        HttpRequstEnum.METHOD_NOT_ALLOWED.value, message="method not allowed"
+    ).json()
 
 
 # Api for community module.
@@ -159,7 +191,7 @@ def category(category_id: int) -> ApiResponse:
 
     if category_entity is None:
         return ApiResponse(
-            HttpRequstEnum.BAD_REQUEST.value, message="category not found"
+            HttpRequstEnum.NOT_FOUND.value, message="category not found"
         ).json()
 
     return ApiResponse(data={"category": category_entity.to_dict()}).json()
@@ -183,7 +215,7 @@ def tag(tag_id: int) -> ApiResponse:
 
     if tag_entity is None:
         return ApiResponse(
-            HttpRequstEnum.BAD_REQUEST.value, message="tag not found"
+            HttpRequstEnum.NOT_FOUND.value, message="tag not found"
         ).json()
 
     return ApiResponse(data={"tag": tag_entity.to_dict()}).json()

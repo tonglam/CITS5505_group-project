@@ -3,6 +3,7 @@
 from email_validator import EmailNotValidError, validate_email
 
 from app.models.user import User, UserStatusEnum
+from app.models.user_preference import UserPreference
 
 # Api service for auth module.
 
@@ -107,6 +108,36 @@ def update_user_data(user_entity: User, update_data: dict) -> User:
             user_entity.status = value
 
     return user_entity
+
+
+def update_user_preference_data(
+    user_preference_entity: UserPreference, update_data: dict
+) -> UserPreference:
+    """Create user preference update data."""
+
+    for key, value in update_data.items():
+        if key == "communities":
+            validate_communities(value)
+            user_preference_entity.communities = value
+        elif key == "interests":
+            validate_interests(value)
+            user_preference_entity.interests = value
+
+    return user_preference_entity
+
+
+def validate_communities(communities: str) -> None:
+    """Update communities."""
+
+    if not isinstance(communities, str):
+        raise TypeError("[communities] must be a string")
+
+
+def validate_interests(interests: str) -> None:
+    """Update interests."""
+
+    if not isinstance(interests, str):
+        raise TypeError("[interests] must be a string")
 
 
 # Api service for community module.

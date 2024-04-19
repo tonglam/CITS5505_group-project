@@ -68,7 +68,6 @@ class TestApi(TestBase):
 
         response = client.put(url + user_id, json=update_data)
         self.assertEqual(response.status_code, 200)
-        print("update", response.json)
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
@@ -117,7 +116,7 @@ class TestApi(TestBase):
 
         user_id = user.id
 
-        # check valid data
+        # check empty data
         response = client.put(url + user_id, json={})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
@@ -267,7 +266,7 @@ class TestApi(TestBase):
             self.assertEqual(record, None)
 
         # check invalid data
-        response = client.delete(url + "invalid_record_id")
+        response = client.delete(url + "9999999999999")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
 
@@ -299,6 +298,65 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response_data["data"]["preferences"], [])
+
+    def test_put_user_preference(self, app: Flask, client: FlaskClient):
+        """Test the user preferences PUT API."""
+
+        url = _PREFIX + "/users/preferences/"
+
+        user_preference = None
+        with app.app_context():
+            user_preference = UserPreference.query.first()
+
+        preference_id = user_preference.id
+
+        update_data = {
+            "communities": "[test_community]",
+            "interests": "[test_interest]",
+        }
+
+        response = client.put(url + str(preference_id), json=update_data)
+        self.assertEqual(response.status_code, 200)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        # check the updated data
+        update_communities = response_data["data"]["preference"]["communities"]
+        update_interests = response_data["data"]["preference"]["interests"]
+
+        self.assertEqual(update_communities, "[test_community]")
+        self.assertEqual(update_interests, "[test_interest]")
+
+        # check db data
+        with app.app_context():
+            update_user = UserPreference.query.get(preference_id)
+            self.assertEqual(update_user.communities, update_communities)
+            self.assertEqual(update_user.interests, update_interests)
+
+        # check empty data
+        update_data = {}
+
+        response = client.put(url + str(preference_id), json=update_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+        self.assertEqual(response.json["message"], "request data is empty")
+
+        # check if the communities is a string
+        update_data = {"communities": 123}
+
+        response = client.put(url + str(preference_id), json=update_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+        self.assertEqual(response.json["message"], "[communities] must be a string")
+
+        # check if the interests is a string
+        update_data = {"interests": 123}
+
+        response = client.put(url + str(preference_id), json=update_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+        self.assertEqual(response.json["message"], "[interests] must be a string")
 
     def test_get_categories(self, _, client: FlaskClient):
         """Test the categories GET API."""
