@@ -4,7 +4,6 @@ from app.extensions import db
 from app.utils import generate_time
 
 
-# pylint: disable=too-few-public-methods
 class Category(db.Model):
     """Category model."""
 
@@ -16,11 +15,14 @@ class Category(db.Model):
         self.name = name
 
     def __repr__(self) -> str:
+        """Return a string representation of the category."""
+
         return f"<Category {self.name}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:
         """Return a JSON format of the category."""
+
         return {
             "id": self.id,
             "name": self.name,

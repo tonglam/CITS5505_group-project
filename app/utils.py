@@ -4,7 +4,7 @@ import configparser
 import logging
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def load_config() -> configparser.ConfigParser:
@@ -35,9 +35,9 @@ def generate_uuid() -> str:
 
 def generate_time() -> datetime:
     """Function to generate current time."""
-    return datetime.now()
+    return datetime.now(tz=timezone.utc)
 
 
 def generate_date() -> str:
     """Function to generate current date."""
-    return datetime.now().strftime("%Y-%m-%d")
+    return datetime.now(tz=timezone.utc).strftime("%Y-%m-%d")

@@ -4,7 +4,6 @@ from app.extensions import db
 from app.utils import generate_time
 
 
-# pylint: disable=too-few-public-methods
 class Community(db.Model):
     """Community model."""
 
@@ -27,11 +26,14 @@ class Community(db.Model):
         self.avatar = avatar
 
     def __repr__(self) -> str:
+        """Return a string representation of the community."""
+
         return f"<Community {self.name}>"
 
     # genrated by copilot
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Return a JSON format of the community."""
+
         return {
             "id": self.id,
             "name": self.name,

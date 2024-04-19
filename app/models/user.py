@@ -1,17 +1,25 @@
 """User model."""
 
 import datetime
+import enum
 import hashlib
 
 from flask_login import UserMixin
 from sqlalchemy import event
 
-from app.constant import GRAVATAR_URL, UserStatusEnum
+from app.constants import GRAVATAR_URL
 from app.extensions import bcrypt, db
 from app.utils import generate_time, generate_uuid
 
 
-# pylint: disable=too-few-public-methods, too-many-instance-attributes
+class UserStatusEnum(enum.Enum):
+    """Enum for user status."""
+
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+
+# pylint: disable=too-many-instance-attributes
 class User(UserMixin, db.Model):
     """User model."""
 
@@ -52,57 +60,65 @@ class User(UserMixin, db.Model):
     @property
     def password(self) -> str:
         """Get the password hash."""
+
         return self.password_hash
 
     @password.setter
     def password(self, password: str) -> None:
         """Set password."""
+
         self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
     def __repr__(self) -> str:
+        """Return the user object."""
+
         return f"<User {self.username}>"
+
+    def to_dict(self) -> dict:
+        """Return a JSON format of the user."""
+
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "avatar_url": self.avatar_url,
+            "use_google": self.use_google,
+            "use_github": self.use_github,
+            "security_question": self.security_question,
+            "security_answer": self.security_answer,
+            "status": self.status,
+            "create_at": self.create_at,
+            "update_at": self.update_at,
+        }
 
     def verify_password(self, password: str) -> bool:
         """Check the password."""
+
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def get_id(self) -> str:
         """Get the user id."""
+
         return self.id
 
     @staticmethod
     def user_exists(email: str) -> bool:
         """Check if the user is the user."""
-        return User.query.filter_by(email=email).first() is not None
 
-    # genrated by copilot
-    def to_dict(self):
-        """Return a JSON format of the user."""
-        return {
-            "id": self.id,
-            "username": self.username,
-            "email": self.email,
-            "avatarUrl": self.avatar_url,
-            "useGoogle": self.use_google,
-            "useGithub": self.use_github,
-            "securityQuestion": self.security_question,
-            "securityAnswer": self.security_answer,
-            "status": self.status,
-            "createAt": self.create_at,
-            "updateAt": self.update_at,
-        }
+        return User.query.get(email=email) is not None
 
 
-# pylint: disable=unused-argument
 @event.listens_for(User, "before_insert")
-def before_insert_listener(mapper, connect, target):
+def before_insert_listener(_, __, target) -> None:
     """Update the create time before inserting a new user."""
+
     target.id = generate_uuid()
     target.avatar_url = check_avatar_url(target.avatar_url, target.email)
 
 
-def check_avatar_url(avatar_url, email):
+def check_avatar_url(avatar_url: str, email: str) -> None:
     """Check the avatar url."""
+
     if not avatar_url and email:
         return f"{GRAVATAR_URL}{hashlib.sha256(email.lower().encode()).hexdigest()}"
     return avatar_url

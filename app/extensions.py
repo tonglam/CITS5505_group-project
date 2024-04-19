@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from .constant import FlashAlertTypeEnum
+from .constants import FlashAlertTypeEnum
 
 db = SQLAlchemy()
 migrate = Migrate()

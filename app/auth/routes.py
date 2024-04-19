@@ -17,7 +17,7 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import auth_bp, forms
-from app.constant import (
+from app.constants import (
     AUTHORIZATION_CODE,
     AUTHORIZE_URL,
     CALLBACK_URL,
@@ -38,6 +38,7 @@ from app.models.user import User
 @login_manager.user_loader
 def user_loader(user_id: str):
     """Given *user_id*, return the associated User object."""
+
     return db.session.get(User, user_id)
 
 
@@ -106,6 +107,7 @@ def register():
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     """Log in the user."""
+
     form = forms.LoginForm(request.form)
 
     if form.validate_on_submit():
@@ -163,6 +165,7 @@ def login():
 @login_required
 def logout():
     """Log out the user."""
+
     current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
@@ -172,6 +175,7 @@ def logout():
 @auth_bp.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
     """Render the forgoet password page."""
+
     form = forms.ForgotPasswordForm(request.form)
 
     if form.validate_on_submit():
@@ -216,6 +220,7 @@ def forgot_password():
 @auth_bp.route("/authorize/<provider>")
 def authorize(provider: str):
     """Redirect to provider's OAuth2 login page."""
+
     if not current_user.is_anonymous:
         current_app.logger.info("User is already logged in, id: %s.", {current_user.id})
         return redirect(url_for("index"))
