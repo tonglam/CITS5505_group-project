@@ -16,11 +16,13 @@ class Category(db.Model):
 
     def __repr__(self) -> str:
         """Return a string representation of the category."""
+
         return f"<Category {self.name}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:
         """Return a JSON format of the category."""
+
         return {
             "id": self.id,
             "name": self.name,

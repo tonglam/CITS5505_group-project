@@ -27,11 +27,13 @@ class Trending(db.Model):
 
     def __repr__(self) -> str:
         """Return a string representation of the trending."""
+
         return f"<Trending {self.title}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:
         """Return a JSON format of the trending."""
+
         return {
             "id": self.id,
             "request_id": self.request_id,

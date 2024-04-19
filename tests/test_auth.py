@@ -5,7 +5,7 @@ import hashlib
 
 from flask.testing import FlaskClient
 
-from app.constant import GRAVATAR_URL
+from app.constants import GRAVATAR_URL
 from app.models.user import User
 from tests.config import AuthActions, TestBase
 from tests.seeds.user_seeds import seed_user_data
@@ -34,7 +34,7 @@ class TestAuth(TestBase):
         # test that successful registration redirects to the login page
         register_data = {
             "username": "test auth",
-            "email": "test@example.com",
+            "email": "test@gmail.com",
             "password": "Password@123",
             "confirm": "Password@123",
             "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=5505",
@@ -61,6 +61,7 @@ class TestAuth(TestBase):
 
     def test_login(self, _, client: FlaskClient):
         """Test the login process."""
+
         login_url = "/login"
 
         # somke test
@@ -115,6 +116,7 @@ class TestAuth(TestBase):
 
     def test_logout(self, _, client: FlaskClient):
         """Test the logout process."""
+
         logout_url = "/logout"
 
         # test that successful logout redirects to the login page
@@ -123,6 +125,7 @@ class TestAuth(TestBase):
 
     def test_forgot_password(self, _, client: FlaskClient):
         """Test the forgot password process."""
+
         forgot_password_url = "/forgot_password"
 
         # smoke test

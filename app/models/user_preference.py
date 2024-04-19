@@ -24,11 +24,13 @@ class UserPreference(db.Model):
 
     def __repr__(self) -> str:
         """Return a string representation of the user preference."""
+
         return f"<UserPreference {self.user_id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:
         """Return a JSON format of the user preference."""
+
         return {
             "id": self.id,
             "user_id": self.user_id,

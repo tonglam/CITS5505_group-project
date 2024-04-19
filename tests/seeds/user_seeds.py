@@ -1,6 +1,7 @@
 """This module seeds the database with initial user data for testing. """
 
 import random
+import string
 
 from faker import Faker
 
@@ -17,7 +18,7 @@ def create_seed_user_data() -> list:
     return [
         {
             "username": faker.name(),
-            "email": faker.email(),
+            "email": generate_test_email(),
             "avatar_url": f"https://api.dicebear.com/5.x/adventurer/svg?seed={random.randint(1, 1000)}",
             "password": "Password@123",
             "security_question": "What is your favorite color?",
@@ -25,6 +26,13 @@ def create_seed_user_data() -> list:
         }
         for _ in range(10)
     ]
+
+
+def generate_test_email(domain="gmail.com", length=10):
+    """Generate a test email."""
+
+    username = "".join(random.choices(string.ascii_letters + string.digits, k=length))
+    return f"{username}@{domain}"
 
 
 seed_user_data = create_seed_user_data()

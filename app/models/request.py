@@ -48,11 +48,13 @@ class Request(db.Model):
 
     def __repr__(self) -> str:
         """Return a string representation of the request."""
+
         return f"<Request {self.title}>"
 
     # genrated by copilot
     def to_dict(self):
         """Return a JSON format of the request."""
+
         return {
             "id": self.id,
             "community": self.community,

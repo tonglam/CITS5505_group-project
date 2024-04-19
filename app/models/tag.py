@@ -20,6 +20,7 @@ class Tag(db.Model):
     # genrated by copilot
     def to_dict(self) -> dict:
         """Return a JSON format of the tag."""
+
         return {
             "id": self.id,
             "name": self.name,

@@ -47,11 +47,13 @@ class Reply(db.Model):
 
     def __repr__(self) -> str:
         """Return a string representation of the reply."""
+
         return f"<Reply {self.content}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:
         """Return a JSON format of the reply."""
+
         return {
             "id": self.id,
             "request": self.request,
