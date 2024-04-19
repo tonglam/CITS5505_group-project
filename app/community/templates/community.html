@@ -1,4 +1,283 @@
-{% extends "layout.html" %} {% block title %}Community{% endblock %} {% block
-head %} {{ super() }} {% endblock %} {% block content %}
-<div class="contain"><p>Community</p></div>
+{% extends "layout.html" %} {% block title %}Search{% endblock %} {% block head
+%} {{ super() }} {% endblock %}
+{% block cuscss %}
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  .card1 {
+    width: 100%;
+    padding: 20px;
+    background-color: black;
+    color: #fff;
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .title_left {
+    display: flex;
+    align-items: center;
+  }
+
+  .bar {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    background-color: blue;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  .title_btn {
+    font-weight: 100;
+    font-size: 16px;
+    padding: 5px 15px;
+    background-color: rgba(255, 255, 255, .3);
+    border-radius: 15px;
+  }
+
+  .card1_text {
+    margin-top: 20px;
+    color: #999;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #999;
+  }
+
+  .card1_list {
+    display: flex;
+    align-items: center;
+    color: #999;
+    margin-top: 20px;
+  }
+
+  .card1_list_item {
+    margin-right: 25px;
+  }
+
+  .item_text {
+    color: #eee;
+  }
+
+  .green {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: green;
+  }
+
+
+
+  .card2 {
+    margin-top: 30px;
+    width: 100%;
+    padding: 20px;
+    background-color: black;
+    color: #fff;
+  }
+
+  .card2_title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .card2_title_left_img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #999;
+    margin-right: 10px;
+    /* background-color: url(""); */
+  }
+
+  .card2_title_text {
+    font-size: 25px;
+    color: #999;
+  }
+
+  .card2_desc {
+    color: #666;
+  }
+
+  .form {
+    margin-top: 20px;
+  }
+
+  .form-control {
+    background-color: rgba(18, 1, 1, 0.3);
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .two_input {
+    margin-top: 20px;
+  }
+
+  .radio_img {
+    width: 30px;
+    height: 30px;
+    background-color: #999;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .radio_text {
+    margin: 0 10px;
+    color: #999;
+  }
+
+  .radio_text div:last-child {
+    color: #666;
+  }
+
+  .one_text {
+    color: #666;
+  }
+
+  .bootom_btn {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .bootom_btn>div {
+    padding: 5px 12px;
+    border-radius: 12px;
+    background-color: #343333;
+    margin-left: 10px;
+    color: #666;
+  }
+
+  .bootom_btn>div:first-child {
+    color: #eee;
+  }
+</style>
+
+{% endblock %}
+{% block content %}
+<div class="contain">
+  <div class="card p-20" style="width: 26rem;">
+    <!-- <img src="..." class="card-img-top" alt="..."> -->
+    <div class="card-body">
+      <h5 class="card-title">Display Component</h5>
+      <p class="card-text">Card based component contains conmunities' name, description, avatar and
+        category(maybe
+        aboostrap tag) .Reference Design from reddit:</p>
+      <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+    </div>
+    <div class="card1 p-10">
+      <div class="title">
+        <div class="title_left">
+          <span class="bar"></span>
+          <span>
+            r/vscode
+          </span>
+        </div>
+
+        <div class="title_btn">
+          Join
+        </div>
+      </div>
+      <div class="card1_text">
+        A subreddit for working with Microsoft's Visual
+        Studio Code
+      </div>
+      <div class="card1_list">
+        <div class="card1_list_item">
+          <div class="item_text">121K</div>
+          <div>Members</div>
+        </div>
+        <div class="card1_list_item">
+          <div class="item_text">102</div>
+          <div>
+            <span class="green">
+
+            </span>
+            <span>Online</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card2" style="width: 26rem;">
+    <div class="card2_title">
+      <div class="card2_title_left_img"></div>
+      <div class="card2_title_text">Create a community</div>
+    </div>
+    <div class="card2_desc">Build and grow a community about something you care about. We'll help you set things
+      up.</div>
+    <div class="form">
+      <div class="one_input">
+        <label for="">Name</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="one_text">Choose wisely. Once you pick a name, it can't be changed</div>
+      <div class="two_input">
+        <label for="">Type</label>
+        <div class="form-check">
+          <div class="radio_img"></div>
+          <div class="radio_text">
+            <div>
+              Public
+            </div>
+            <div>
+              Anyone can view, post, and comment to this community
+            </div>
+          </div>
+          <input type="radio">
+        </div>
+        <div class="form-check">
+          <div class="radio_img"></div>
+          <div class="radio_text">
+            <div>
+              Restricted
+            </div>
+            <div>
+              Anyone can view, but only approved users can contribute
+            </div>
+          </div>
+          <input type="radio">
+        </div>
+        <div class="form-check">
+          <div class="radio_img"></div>
+          <div class="radio_text">
+            <div>
+              Private
+            </div>
+            <div>
+              Only approved users can view and submit to this community
+            </div>
+
+          </div>
+          <input type="radio">
+        </div>
+      </div>
+    </div>
+
+    <div class="bootom_btn">
+      <div>Cancel</div>
+      <div>Create your community</div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block cusjs %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 {% endblock %}

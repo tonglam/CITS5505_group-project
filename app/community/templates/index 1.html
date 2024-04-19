@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"> -->
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card1 {
+        width: 30%;
+        padding: 20px;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .title {
+        font-weight: 700;
+        font-size: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .title_left {
+        display: flex;
+        align-items: center;
+    }
+
+    .bar {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+        background-color: blue;
+        border-radius: 50%;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+
+    .bar_img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
+
+
+    .title_btn {
+        font-weight: 100;
+        font-size: 16px;
+        padding: 5px 15px;
+        background-color: rgba(0, 0, 0);
+        border-radius: 15px;
+        color: #fff;
+    }
+
+    .card1_text {
+        margin-top: 20px;
+        color: #999;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #999;
+    }
+
+    .card1_list {
+        display: flex;
+        align-items: center;
+        color: #999;
+        margin-top: 20px;
+    }
+
+    .card1_list_item {
+        margin-right: 25px;
+    }
+
+    .item_text {
+        color: #999;
+    }
+
+    .green {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        border-radius: 50%;
+        background-color: green;
+    }
+
+
+
+    /* .card2 {
+        margin-top: 30px;
+        width: 100%;
+        padding: 20px;
+        background-color: black;
+        color: #fff;
+    }
+
+    .card2_title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .card2_title_left_img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #999;
+        margin-right: 10px;
+        /* background-color: url(""); */
+    /* } */
+
+    /* .card2_title_text {
+        font-size: 25px;
+        color: #999;
+    }
+
+    .card2_desc {
+        color: #666;
+    }
+
+    .form {
+        margin-top: 20px;
+    }
+
+    .form-control {
+        background-color: rgba(18, 1, 1, 0.3);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .two_input {
+        margin-top: 20px;
+    }
+
+    .radio_img {
+        width: 30px;
+        height: 30px;
+        background-color: #999;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .radio_text {
+        margin: 0 10px;
+        color: #999;
+    }
+
+    .radio_text div:last-child {
+        color: #666;
+    }
+
+    .one_text {
+        color: #666;
+    }
+
+    .bootom_btn {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .bootom_btn>div {
+        padding: 5px 12px;
+        border-radius: 12px;
+        background-color: #343333;
+        margin-left: 10px;
+        color: #666;
+    }
+
+    .bootom_btn>div:first-child {
+        color: #eee;
+    } */
+
+    .flex {
+        display: flex;
+        justify-content: space-evenly;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .card1 {
+        border: solid 1px #000;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+</style>
+
+<body>
+    <div class="contain">
+        <div class="card p-20">
+            <div class="flex">
+                <div class="card1 p-10">
+                    <div class="title">
+                        <div class="title_left">
+                            <span class="bar">
+                                <img class="bar_img" src="./header/tecj.jpeg" />
+                            </span>
+                            <span>
+                                Tech Community Component
+                            </span>
+                        </div>
+
+                        <a class="title_btn" href="./index2.html?component=Tech">
+                            Join
+                        </a>
+                    </div>
+                    <div class="card1_text">
+                        The tech community component is a platform for tech enthusiasts, professionals, and users to
+                        share and discuss tech-related topics. This community may include discussions on the latest tech
+                        trends, coding tutorials, hardware reviews, and experiences in tech entrepreneurship.
+                    </div>
+                    <div class="card1_list">
+                        <div class="card1_list_item">
+                            <div class="item_text">121K</div>
+                            <div>Members</div>
+                        </div>
+                        <div class="card1_list_item">
+                            <div class="item_text">102</div>
+                            <div>
+                                <span class="green">
+
+                                </span>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card1 p-10">
+                    <div class="title">
+                        <div class="title_left">
+                            <span class="bar">
+                                <img class="bar_img" src="./header/art.jpeg" />
+                            </span>
+                            <span>
+                                Art Community Component
+                            </span>
+                        </div>
+
+                        <a class="title_btn" href="./index2.html?component=Art">
+                            Join
+                        </a>
+                    </div>
+                    <div class="card1_text">
+                        The art community component is a space for artists, creators, and art lovers to showcase and
+                        share their works, creativity, and inspiration. This community may cover various art forms such
+                        as painting, photography, music, dance, among others.
+                    </div>
+                    <div class="card1_list">
+                        <div class="card1_list_item">
+                            <div class="item_text">121K</div>
+                            <div>Members</div>
+                        </div>
+                        <div class="card1_list_item">
+                            <div class="item_text">102</div>
+                            <div>
+                                <span class="green">
+
+                                </span>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card1 p-10">
+                    <div class="title">
+                        <div class="title_left">
+                            <span class="bar">
+                                <img class="bar_img" src="./header/travel.jpeg" />
+                            </span>
+                            <span>
+                                Travel Community Component
+                            </span>
+                        </div>
+
+                        <a class="title_btn" href="./index2.html?component=Travel">
+                            Join
+                        </a>
+                    </div>
+                    <div class="card1_text">
+                        The travel community component is a platform for travelers, travel industry professionals, and
+                        travel enthusiasts to share travel experiences, destination guides, and travel tips. Members can
+                        share travel stories, recommend attractions, and discuss travel plans.
+                    </div>
+                    <div class="card1_list">
+                        <div class="card1_list_item">
+                            <div class="item_text">121K</div>
+                            <div>Members</div>
+                        </div>
+                        <div class="card1_list_item">
+                            <div class="item_text">102</div>
+                            <div>
+                                <span class="green">
+
+                                </span>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex">
+                <div class="card1 p-10">
+                    <div class="title">
+                        <div class="title_left">
+                            <span class="bar">
+                                <img class="bar_img" src="./header/astronomy.jpeg" />
+                            </span>
+                            <span>
+                                Astronomy Community Component
+                            </span>
+                        </div>
+
+                        <a class="title_btn" href="./index2.html?component=Astronomy">
+                            Join
+                        </a>
+                    </div>
+                    <div class="card1_text">
+                        The astronomy community component is a platform for astronomy enthusiasts, professional
+                        astronomers, and science enthusiasts to share astronomy knowledge, observation tips, and
+                        astronomical events. This community may include discussions on astronomy principles, observation
+                        experiences, and predictions of celestial phenomena.
+                    </div>
+                    <div class="card1_list">
+                        <div class="card1_list_item">
+                            <div class="item_text">121K</div>
+                            <div>Members</div>
+                        </div>
+                        <div class="card1_list_item">
+                            <div class="item_text">102</div>
+                            <div>
+                                <span class="green">
+
+                                </span>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card1 p-10">
+                    <div class="title">
+                        <div class="title_left">
+                            <span class="bar">
+                                <img class="bar_img" src="./header/medical.jpeg" />
+                            </span>
+                            <span>
+                                Medical Community Component
+                            </span>
+                        </div>
+
+                        <a class="title_btn" href="./index2.html?component=Medical">
+                            Join
+                        </a>
+                    </div>
+                    <div class="card1_text">
+                        he medical community component is a platform for healthcare professionals, patients, and health
+                        enthusiasts to share medical knowledge, health advice, and medical resources. Members can
+                        discuss medical research advancements, health management methods, disease prevention, and
+                        treatment.
+                    </div>
+                    <div class="card1_list">
+                        <div class="card1_list_item">
+                            <div class="item_text">121K</div>
+                            <div>Members</div>
+                        </div>
+                        <div class="card1_list_item">
+                            <div class="item_text">102</div>
+                            <div>
+                                <span class="green">
+
+                                </span>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card1 p-10">
+                    <div class="title">
+                        <div class="title_left">
+                            <span class="bar">
+                                <img class="bar_img" src="./header/ecomoni.jpeg" />
+                            </span>
+                            <span>
+                                Economic Community Component
+                            </span>
+                        </div>
+
+                        <a class="title_btn" href="./index2.html?component=Economic">
+                            Join
+                        </a>
+                    </div>
+                    <div class="card1_text">
+                        The economic community component is a platform for economists, finance professionals, and users
+                        to share economic theories, market analysis, and investment experiences. This community may
+                        cover topics such as macroeconomic trends analysis, stock research, and investment strategies.
+                    </div>
+                    <div class="card1_list">
+                        <div class="card1_list_item">
+                            <div class="item_text">121K</div>
+                            <div>Members</div>
+                        </div>
+                        <div class="card1_list_item">
+                            <div class="item_text">102</div>
+                            <div>
+                                <span class="green">
+
+                                </span>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</body>
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-7ymO4nGrkm372HoSbq1OY2DP4pEZnMiA+E0F3zPr+JQQtQ82gQ1HPY3QIVtztVua"
+    crossorigin="anonymous"></script> -->
+
+</html>

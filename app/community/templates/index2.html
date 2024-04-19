@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+<style>
+  .card2 {
+    margin: 30px auto;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    color: #000;
+  }
+
+  .card2_title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .card2_title_left_img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #999;
+    margin-right: 10px;
+    /* background-color: url(""); */
+  }
+
+  .card2_title_text {
+    font-size: 25px;
+    color: #999;
+  }
+
+  .card2_desc {
+    color: #666;
+  }
+
+  .form {
+    margin-top: 20px;
+  }
+
+  .form-control {
+    background-color: rgba(18, 1, 1, 0.3);
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .two_input {
+    margin-top: 20px;
+  }
+
+  .radio_img {
+    width: 30px;
+    height: 30px;
+    background-color: #999;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .radio_text {
+    margin: 0 10px;
+    color: #999;
+  }
+
+  .radio_text div:last-child {
+    color: #666;
+  }
+
+  .one_text {
+    color: #666;
+  }
+
+  .bootom_btn {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .bootom_btn>div {
+    padding: 5px 12px;
+    border-radius: 12px;
+    background-color: #343333;
+    margin-left: 10px;
+    color: #666;
+  }
+
+  .bootom_btn>div:first-child {
+    color: #666;
+  }
+</style>
+
+<body>
+  <div class="card2" style="width: 26rem">
+    <div class="card2_title">
+      <div class="card2_title_left_img"></div>
+      <div class="card2_title_text" id="comunityTitle">Create a community</div>
+    </div>
+    <div class="card2_desc">
+      Build and grow a community about something you care about. We'll help
+      you set things up.
+    </div>
+    <div class="form">
+      <div class="one_input">
+        <label for="">Name</label>
+        <input type="text" class="form-control" />
+      </div>
+      <div class="one_text">
+        Choose wisely. Once you pick a name, it can't be changed
+      </div>
+      <div class="two_input">
+        <label for="">Type</label>
+        <div class="form-check">
+          <div class="radio_img"></div>
+          <div class="radio_text">
+            <div>Public</div>
+            <div>Anyone can view, post, and comment to this community</div>
+          </div>
+          <input type="radio" />
+        </div>
+        <div class="form-check">
+          <div class="radio_img"></div>
+          <div class="radio_text">
+            <div>Restricted</div>
+            <div>Anyone can view, but only approved users can contribute</div>
+          </div>
+          <input type="radio" />
+        </div>
+        <div class="form-check">
+          <div class="radio_img"></div>
+          <div class="radio_text">
+            <div>Private</div>
+            <div>
+              Only approved users can view and submit to this community
+            </div>
+          </div>
+          <input type="radio" />
+        </div>
+      </div>
+    </div>
+
+    <div class="bootom_btn">
+      <div>Cancel</div>
+      <div>Create your community</div>
+    </div>
+  </div>
+</body>
+<script>
+
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return "";
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  var paramValue = getParameterByName('component');
+
+  console.log(paramValue);
+
+  document.getElementById("comunityTitle").innerHTML = paramValue + ' Community Component';
+
+</script>
+
+</html>
