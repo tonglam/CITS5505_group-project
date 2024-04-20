@@ -33,6 +33,7 @@ from app.constants import (
 )
 from app.extensions import db, login_manager
 from app.models.user import User
+from app.notice.events import notice_event
 
 
 @login_manager.user_loader
@@ -158,6 +159,7 @@ def login():
                 )
         return redirect(url_for("auth.login"))
 
+    notice_event()
     return render_template("login.html", form=form)
 
 

@@ -36,6 +36,37 @@ class FlashAlertTypeEnum(enum.Enum):
     DARK = "alert-dark"
 
 
+class NoticeTypeEnum(enum.Enum):
+    """Enum for notice type."""
+
+    POST_CREATED = "post_created"
+    POST_UPDATED = "post_updated"
+    POST_DELETED = "post_deleted"
+
+    COMMENT_CREATED = "comment_created"
+    COMMENT_UPDATED = "comment_updated"
+    COMMENT_DELETED = "comment_deleted"
+
+    REPLY_CREATED = "reply_created"
+    REPLY_UPDATED = "reply_updated"
+    REPLY_DELETED = "reply_deleted"
+
+    LIKE_CREATED = "like_created"
+    LIKE_CANCEL = "like_cancel"
+
+    FOLLOW_CREATED = "follow_created"
+    FOLLOW_CANCEL = "follow_cancel"
+
+    SAVE_CREATED = "save_created"
+    SAVE_CANCEL = "save_cancel"
+
+    COMMUNITY_CREATED = "community_created"
+    COMMUNITY_UPDATED = "community_updated"
+    COMMUNITY_DELETED = "community_deleted"
+
+    SYSTEM = "system"
+
+
 # OAuth provider
 OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS"
 OAUTH2_STATE = "oauth2_state"

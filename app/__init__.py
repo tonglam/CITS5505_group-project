@@ -1,8 +1,6 @@
 """Main application module."""
 
-import logging
-
-from flask import Flask, render_template, request
+from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
 
 from .api import api_bp
@@ -21,6 +19,7 @@ from .utils import get_config
 
 def create_app():
     """Create the Flask application."""
+
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
@@ -70,9 +69,11 @@ def create_app():
         url_prefix="/users",
         static_url_path="/users/static",
     )
-    # error init
+
+    # error handlers
     register_error_handlers(app)
-    # log init
+
+    # logging
     configure_logging(app)
 
     @app.route("/")
@@ -90,7 +91,10 @@ def create_app():
     def log_response_info(response):
         app.logger.info("Response: %s", response.status)
         app.logger.info("Response Headers: %s", response.headers)
-        app.logger.info("Response Body: %s", response.get_data())
+
+        if "response_body" in g:
+            app.logger.info("Response Body: %s", g.response_body)
+
         return response
 
     @app.context_processor
