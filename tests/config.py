@@ -71,7 +71,7 @@ class AuthActions:
     def __init__(self, client: FlaskClient):
         self._client = client
 
-    def login(self, email: str, password: str):
+    def login(self, email: str = "test@gmail.com", password: str = "Password@123"):
         """Log a user in."""
         return self._client.post(
             "/login",

@@ -3,6 +3,7 @@
 from dataclasses import asdict, dataclass
 
 from flask import jsonify, request
+from flask_login import login_required
 
 from app.api import api_bp
 from app.constants import HttpRequstEnum
@@ -36,6 +37,7 @@ class ApiResponse:
 
 
 @api_bp.route("/users/<user_id>", methods=["GET", "PUT"])
+@login_required
 def users(user_id: str) -> ApiResponse:
     """Get a user by id."""
 
@@ -76,6 +78,7 @@ def users(user_id: str) -> ApiResponse:
 
 
 @api_bp.route("/users/records/<user_id>", methods=["GET"])
+@login_required
 def user_records(user_id: str) -> ApiResponse:
     """Get records of a user by id."""
 
@@ -86,6 +89,7 @@ def user_records(user_id: str) -> ApiResponse:
 
 
 @api_bp.route("/users/records/<int:record_id>", methods=["DELETE"])
+@login_required
 def del_users_record(record_id: int) -> ApiResponse:
     """Delete record by id."""
 
@@ -105,6 +109,7 @@ def del_users_record(record_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/preferences/<user_id>", methods=["GET"])
+@login_required
 def user_preferences(user_id: str) -> ApiResponse:
     """Get preferences of a user by id."""
 
@@ -117,6 +122,7 @@ def user_preferences(user_id: str) -> ApiResponse:
 
 
 @api_bp.route("/users/preferences/<int:preference_id>", methods=["PUT"])
+@login_required
 def user_preference(preference_id: int):
     """Update a preference by id."""
 
@@ -174,6 +180,7 @@ def user_preference(preference_id: int):
 
 
 @api_bp.route("/categories", methods=["GET"])
+@login_required
 def categories() -> ApiResponse:
     """Get all categories."""
 
@@ -184,6 +191,7 @@ def categories() -> ApiResponse:
 
 
 @api_bp.route("/categories/<category_id>", methods=["GET"])
+@login_required
 def category(category_id: int) -> ApiResponse:
     """Get a category by id."""
 
@@ -198,6 +206,7 @@ def category(category_id: int) -> ApiResponse:
 
 
 @api_bp.route("/tags", methods=["GET"])
+@login_required
 def tags() -> ApiResponse:
     """Get all tags."""
 
@@ -208,6 +217,7 @@ def tags() -> ApiResponse:
 
 
 @api_bp.route("/tags/<tag_id>", methods=["GET"])
+@login_required
 def tag(tag_id: int) -> ApiResponse:
     """Get a tag by id."""
 

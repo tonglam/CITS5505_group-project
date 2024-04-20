@@ -15,7 +15,7 @@ faker = Faker()
 def create_seed_user_data() -> list:
     """Create seed user data."""
 
-    return [
+    users = [
         {
             "username": faker.name(),
             "email": generate_test_email(),
@@ -26,6 +26,19 @@ def create_seed_user_data() -> list:
         }
         for _ in range(10)
     ]
+
+    users.append(
+        {
+            "username": "test",
+            "email": "test@gmail.com",
+            "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=5505",
+            "password": "Password@123",
+            "security_question": "What is your favorite color?",
+            "security_answer": "blue",
+        }
+    )
+
+    return users
 
 
 def generate_test_email(domain="gmail.com", length=10):

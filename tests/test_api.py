@@ -9,7 +9,7 @@ from app.models.tag import Tag
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
-from tests.config import TestBase
+from tests.config import AuthActions, TestBase
 
 _PREFIX = "/api/v1"
 
@@ -21,6 +21,9 @@ class TestApi(TestBase):
         """Test the users GET API."""
 
         url = _PREFIX + "/users/"
+
+        # login
+        AuthActions(client).login()
 
         # check valid data
         user = None
@@ -44,10 +47,16 @@ class TestApi(TestBase):
         self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
 
+        # logout
+        AuthActions(client).logout()
+
     def test_put_users(self, app: Flask, client: FlaskClient):
         """Test the users PUT API."""
 
         url = _PREFIX + "/users/"
+
+        # login
+        AuthActions(client).login()
 
         user = None
         with app.app_context():
@@ -105,10 +114,16 @@ class TestApi(TestBase):
             self.assertEqual(update_user.security_answer, update_security_answer)
             self.assertEqual(update_user.status, update_status)
 
+        # logout
+        AuthActions(client).logout()
+
     def test_invalid_put_users(self, app: Flask, client: FlaskClient):
         """Test the invalid users PUT API."""
 
         url = _PREFIX + "/users/"
+
+        # login
+        AuthActions(client).login()
 
         user = None
         with app.app_context():
@@ -215,10 +230,16 @@ class TestApi(TestBase):
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[status] is invalid")
 
+        # logout
+        AuthActions(client).logout()
+
     def test_get_user_records(self, app: Flask, client: FlaskClient):
         """Test the user records GET API."""
 
         url = _PREFIX + "/users/records/"
+
+        # login
+        AuthActions(client).login()
 
         # check valid data
         user_record = None
@@ -244,10 +265,16 @@ class TestApi(TestBase):
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response_data["data"]["records"], [])
 
+        # logout
+        AuthActions(client).logout()
+
     def test_delete_user_record(self, app: Flask, client: FlaskClient):
         """Test the user records DELETE API."""
 
         url = _PREFIX + "/users/records/"
+
+        # login
+        AuthActions(client).login()
 
         # check valid data
         record = None
@@ -270,10 +297,16 @@ class TestApi(TestBase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
 
+        # logout
+        AuthActions(client).logout()
+
     def test_get_user_preferences(self, app: Flask, client: FlaskClient):
         """Test the user preferences GET API."""
 
         url = _PREFIX + "/users/preferences/"
+
+        # login
+        AuthActions(client).login()
 
         # check valid data
         user_preference = None
@@ -299,10 +332,16 @@ class TestApi(TestBase):
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response_data["data"]["preferences"], [])
 
+        # logout
+        AuthActions(client).logout()
+
     def test_put_user_preference(self, app: Flask, client: FlaskClient):
         """Test the user preferences PUT API."""
 
         url = _PREFIX + "/users/preferences/"
+
+        # login
+        AuthActions(client).login()
 
         user_preference = None
         with app.app_context():
@@ -358,10 +397,16 @@ class TestApi(TestBase):
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[interests] must be a string")
 
+        # logout
+        AuthActions(client).logout()
+
     def test_get_categories(self, _, client: FlaskClient):
         """Test the categories GET API."""
 
         url = _PREFIX + "/categories"
+
+        # login
+        AuthActions(client).login()
 
         response = client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -369,10 +414,16 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
 
+        # logout
+        AuthActions(client).logout()
+
     def test_get_category(self, app: Flask, client: FlaskClient):
         """Test the category GET API."""
 
         url = _PREFIX + "/categories/"
+
+        # login
+        AuthActions(client).login()
 
         # check valid data
         category = None
@@ -396,10 +447,16 @@ class TestApi(TestBase):
         self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
 
+        # logout
+        AuthActions(client).logout()
+
     def test_get_tags(self, _, client: FlaskClient):
         """Test the tags GET API."""
 
         url = _PREFIX + "/tags"
+
+        # login
+        AuthActions(client).login()
 
         response = client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -407,10 +464,16 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
 
+        # logout
+        AuthActions(client).logout()
+
     def test_get_tag(self, app: Flask, client: FlaskClient):
         """Test the tag GET API."""
 
         url = _PREFIX + "/tags/"
+
+        # login
+        AuthActions(client).login()
 
         # check valid data
         tag = None
@@ -433,3 +496,6 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
+
+        # logout
+        AuthActions(client).logout()
