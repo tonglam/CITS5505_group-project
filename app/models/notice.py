@@ -2,9 +2,78 @@
 
 import enum
 
-from app.constants import NoticeTypeEnum
 from app.extensions import db
 from app.utils import generate_time
+
+
+class NoticeModuleEnum(enum.Enum):
+    """Enum for notice module."""
+
+    SYSTEM = "System"
+    POST = "Post"
+    COMMENT = "Comment"
+    REPLY = "Reply"
+    LIKE = "Like"
+    FOLLOW = "Follow"
+    SAVE = "Save"
+    COMMUNITY = "Community"
+
+
+class NoticeActionEnum(enum.Enum):
+    """Enum for notice action."""
+
+    CREATED = "Created"
+    UPDATED = "Updated"
+    DELETED = "Deleted"
+    CANCELLED = "Cancelled"
+    ANNOUNCEMENT = "Announcement"
+
+
+class NoticeTypeEnum(enum.Enum):
+    """Enum for notice type."""
+
+    POST_CREATED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.CREATED.value}"
+    POST_UPDATED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.UPDATED.value}"
+    POST_DELETED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.DELETED.value}"
+
+    COMMENT_CREATED = (
+        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.CREATED.value}"
+    )
+    COMMENT_UPDATED = (
+        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.UPDATED.value}"
+    )
+    COMMENT_DELETED = (
+        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.DELETED.value}"
+    )
+
+    REPLY_CREATED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.CREATED.value}"
+    REPLY_UPDATED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.UPDATED.value}"
+    REPLY_DELETED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.DELETED.value}"
+
+    LIKE_CREATED = f"{NoticeModuleEnum.LIKE.value}, {NoticeActionEnum.CREATED.value}"
+    LIKE_CANCEL = f"{NoticeModuleEnum.LIKE.value}, {NoticeActionEnum.CANCELLED.value}"
+
+    FOLLOW_CREATED = (
+        f"{NoticeModuleEnum.FOLLOW.value}, {NoticeActionEnum.CREATED.value}"
+    )
+    FOLLOW_CANCEL = (
+        f"{NoticeModuleEnum.FOLLOW.value}, {NoticeActionEnum.CANCELLED.value}"
+    )
+
+    SAVE_CREATED = f"{NoticeModuleEnum.SAVE.value}, {NoticeActionEnum.CREATED.value}"
+    SAVE_CANCEL = f"{NoticeModuleEnum.SAVE.value}, {NoticeActionEnum.CANCELLED.value}"
+
+    COMMUNITY_CREATED = (
+        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.CREATED.value}"
+    )
+    COMMUNITY_UPDATED = (
+        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.UPDATED.value}"
+    )
+    COMMUNITY_DELETED = (
+        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.DELETED.value}"
+    )
+
+    SYSTEM = f"{NoticeModuleEnum.SYSTEM.value}, {NoticeActionEnum.ANNOUNCEMENT.value}"
 
 
 class NoticeReadStatusEnum(enum.Enum):
@@ -17,9 +86,9 @@ class NoticeReadStatusEnum(enum.Enum):
 class NoticeSendStatusEnum(enum.Enum):
     """Enum for notice send status."""
 
-    WAIT = "WAIT"
-    SENT = "SENT"
-    ERROR = "ERROR"
+    WAIT = "Wait"
+    SENT = "Sent"
+    ERROR = "Error"
 
 
 class Notice(db.Model):
@@ -29,7 +98,7 @@ class Notice(db.Model):
     user = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     subject = db.Column(db.String(100), nullable=False)
     content = db.Column(db.String(1000), default="")
-    notice_type = db.Column(db.String(50), default=NoticeTypeEnum.SYSTEM.value)
+    notice_type = db.Column(db.String(50), default=NoticeModuleEnum.SYSTEM.value)
     read_status = db.Column(db.Boolean, default=NoticeReadStatusEnum.UNREAD.value)
     send_status = db.Column(db.String(50), default=NoticeSendStatusEnum.WAIT.value)
     create_at = db.Column(db.DateTime, default=generate_time())
@@ -43,7 +112,7 @@ class Notice(db.Model):
         user: str,
         subject: str,
         content: str = "",
-        notice_type: str = NoticeTypeEnum.SYSTEM.value,
+        notice_type: str = NoticeModuleEnum.SYSTEM.value,
         read_status: bool = NoticeReadStatusEnum.UNREAD.value,
         send_status: str = NoticeSendStatusEnum.WAIT.value,
     ) -> None:
