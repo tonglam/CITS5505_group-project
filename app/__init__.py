@@ -39,20 +39,23 @@ def create_app():
     app.register_blueprint(api_bp, url_prefix="/api/v1")
     app.register_blueprint(
         auth_bp,
+        url_prefix="/auth",
         static_url_path="/auth/static",
     )
     app.register_blueprint(
         search_bp,
+        url_prefix="/search",
         static_url_path="/search/static",
     )
     app.register_blueprint(
         notice_bp,
+        url_prefix="/notice",
         static_url_path="/notice/static",
     )
     app.register_blueprint(
         post_bp,
         url_prefix="/posts",
-        static_url_path="/post/static",
+        static_url_path="/posts/static",
     )
     app.register_blueprint(
         popular_bp,
@@ -83,14 +86,21 @@ def create_app():
 
     @app.before_request
     def log_request_info():
-        app.logger.info("Request: %s %s", request.method, request.url)
-        app.logger.info("Request Headers: %s", request.headers)
-        app.logger.info("Request Body: %s", request.get_data())
+        if "/static" not in request.path:
+            app.logger.info("Request: %s %s", request.method, request.url)
+            app.logger.info("Request Headers: %s", request.headers)
+            app.logger.info("Request Body: %s", request.get_data())
 
     @app.after_request
     def log_response_info(response):
         app.logger.info("Response: %s", response.status)
-        app.logger.info("Response Headers: %s", response.headers)
+
+        for key, value in response.headers.items():
+            if "filename=" in value and (
+                value.endswith(".css") or value.endswith(".js")
+            ):
+                continue
+            app.logger.info("Response Header - %s: %s", key, value)
 
         if "response_body" in g:
             app.logger.info("Response Body: %s", g.response_body)

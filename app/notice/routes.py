@@ -6,7 +6,7 @@ from flask_login import login_required
 from app.notice import notice_bp
 
 
-@notice_bp.route("/notice")
+@notice_bp.route("/")
 @login_required
 def notice():
     """Render the notice page."""

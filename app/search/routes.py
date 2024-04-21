@@ -6,7 +6,7 @@ from flask_login import login_required
 from app.search import search_bp
 
 
-@search_bp.route("/search")
+@search_bp.route("/")
 @login_required
 def search():
     """Render the search page."""

@@ -33,7 +33,6 @@ from app.constants import (
 )
 from app.extensions import db, login_manager
 from app.models.user import User
-from app.notice.events import notice_event
 
 
 @login_manager.user_loader
@@ -57,34 +56,44 @@ def register():
     form = forms.RegisterForm(request.form)
 
     if form.validate_on_submit():
+        print("start register")
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
-            current_app.logger.error(
-                "Email already registered, email: %s.", {form.email.data}
+            if user.password_hash:
+                # registered with email and password before
+                current_app.logger.error(
+                    "Email already registered, email: %s.", {form.email.data}
+                )
+                flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
+                return redirect(url_for("auth.register"))
+
+            # only login with third party OAuth before
+            print("form.data: ", form.data)
+            user.username = form.username.data
+            user.email = form.email.data
+            user.avatar_url = (
+                form.avatar_url.data if form.avatar_url.data else user.avatar_url
             )
-            flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
-            return redirect(url_for("auth.register"))
+            user.security_question = form.security_question.data
+            user.security_answer = form.security_answer.data
+            user.password = form.password.data
 
-        if form.password.data != form.confirm.data:
-            current_app.logger.error("Passwords must match.")
-            flash("Passwords must match.", FlashAlertTypeEnum.DANGER.value)
-            return redirect(url_for("auth.resgister"))
+        else:
+            # add a new user
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                avatar_url=form.avatar_url.data,
+                use_google=False,
+                use_github=False,
+                security_question=form.security_question.data,
+                security_answer=form.security_answer.data,
+            )
+            user.password = form.password.data
+            db.session.add(user)
 
-        # Create a new user
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            avatar_url=form.avatar_url.data,
-            use_google=False,
-            use_github=False,
-            security_question=form.security_question.data,
-            security_answer=form.security_answer.data,
-        )
-        user.password = form.password.data
-        db.session.add(user)
         db.session.commit()
-
         login_user(user, remember=True)
         current_app.logger.info(
             "User registered, register email: %s, id: %s.", {user.email}, {user.id}
@@ -159,7 +168,6 @@ def login():
                 )
         return redirect(url_for("auth.login"))
 
-    notice_event()
     return render_template("login.html", form=form)
 
 
