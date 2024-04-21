@@ -2,8 +2,8 @@
 
 from dataclasses import asdict, dataclass
 
-from flask import jsonify, request
-from flask_login import login_required
+from flask import abort, jsonify, request
+from flask_login import current_user, login_required
 
 from app.api import api_bp
 from app.constants import HttpRequstEnum
@@ -40,7 +40,7 @@ class ApiResponse:
 @api_bp.route("/users/<user_id>", methods=["GET", "PUT"])
 @login_required
 def users(user_id: str) -> ApiResponse:
-    """Get a user by id."""
+    """Get or PUT a user by id."""
 
     user_entity = User.query.get(user_id)
 
@@ -53,6 +53,10 @@ def users(user_id: str) -> ApiResponse:
         return ApiResponse(data={"user": user_entity.to_dict()}).json()
 
     if request.method == "PUT":
+        # check user permission, only login user can access their own data
+        if current_user.id != user_entity.id:
+            abort(HttpRequstEnum.FORBIDDEN.value)
+
         request_data = request.json
 
         if request_data is None or request_data == {}:
@@ -76,15 +80,17 @@ def users(user_id: str) -> ApiResponse:
             data={"user": update_user_entity.to_dict()}, message="user update success"
         ).json()
 
-    return ApiResponse(
-        HttpRequstEnum.METHOD_NOT_ALLOWED.value, message="method not allowed"
-    ).json()
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
-@api_bp.route("/users/records/<user_id>", methods=["GET"])
+@api_bp.route("/users/<user_id>/records/", methods=["GET"])
 @login_required
 def user_records(user_id: str) -> ApiResponse:
     """Get records of a user by id."""
+
+    # check user permission, only login user can access their own data
+    if current_user.id != user_id:
+        abort(HttpRequstEnum.FORBIDDEN.value)
 
     user_record_entities = UserRecord.query.filter_by(user_id=user_id).all()
     user_record_collection = [record.to_dict() for record in user_record_entities]
@@ -92,30 +98,43 @@ def user_records(user_id: str) -> ApiResponse:
     return ApiResponse(data={"records": user_record_collection}).json()
 
 
-@api_bp.route("/users/records/<int:record_id>", methods=["DELETE"])
+@api_bp.route("/users/<user_id>/records/<int:record_id>", methods=["GET", "DELETE"])
 @login_required
-def del_users_record(record_id: int) -> ApiResponse:
-    """Delete record by id."""
+def users_record(user_id: str, record_id: int) -> ApiResponse:
+    """GET or Delete record by id."""
+
+    # check user permission, only login user can access their own data
+    if current_user.id != user_id:
+        abort(HttpRequstEnum.FORBIDDEN.value)
 
     record_entity = UserRecord.query.get(record_id)
-
     if record_entity is None:
         return ApiResponse(
             HttpRequstEnum.NOT_FOUND.value, message="record not found"
         ).json()
 
-    db.session.delete(record_entity)
-    db.session.commit()
+    if request.method == "GET":
+        return ApiResponse(data={"record": record_entity.to_dict()}).json()
 
-    return ApiResponse(
-        HttpRequstEnum.NO_CONTENT.value, message="record delete success"
-    ).json()
+    if request.method == "DELETE":
+        db.session.delete(record_entity)
+        db.session.commit()
+
+        return ApiResponse(
+            HttpRequstEnum.NO_CONTENT.value, message="record delete success"
+        ).json()
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
-@api_bp.route("/users/preferences/<user_id>", methods=["GET"])
+@api_bp.route("/users/<user_id>/preferences/", methods=["GET"])
 @login_required
 def user_preferences(user_id: str) -> ApiResponse:
     """Get preferences of a user by id."""
+
+    # check user permission, only login user can access their own data
+    if current_user.id != user_id:
+        abort(HttpRequstEnum.FORBIDDEN.value)
 
     user_preference_entities = UserPreference.query.filter_by(user_id=user_id).all()
     user_preferences_collection = [
@@ -125,16 +144,25 @@ def user_preferences(user_id: str) -> ApiResponse:
     return ApiResponse(data={"preferences": user_preferences_collection}).json()
 
 
-@api_bp.route("/users/preferences/<int:preference_id>", methods=["PUT"])
+@api_bp.route(
+    "/users/<user_id>/preferences/<int:preference_id>", methods=["GET", "PUT"]
+)
 @login_required
-def user_preference(preference_id: int):
-    """Update a preference by id."""
+def user_preference(user_id: str, preference_id: int):
+    """Get or PUT a preference by id."""
+
+    # check user permission, only login user can access their own data
+    if current_user.id != user_id:
+        abort(HttpRequstEnum.FORBIDDEN.value)
 
     user_preference_entity = UserPreference.query.get(preference_id)
-    if user_preference_entity is None:
+    if user_preference_entity is None or user_preference_entity.user_id != user_id:
         return ApiResponse(
             HttpRequstEnum.NOT_FOUND.value, message="preference not found"
         ).json()
+
+    if request.method == "GET":
+        return ApiResponse(data={"preference": user_preference_entity.to_dict()}).json()
 
     if request.method == "PUT":
         request_data = request.json
@@ -160,9 +188,7 @@ def user_preference(preference_id: int):
             message="preference update success",
         ).json()
 
-    return ApiResponse(
-        HttpRequstEnum.METHOD_NOT_ALLOWED.value, message="method not allowed"
-    ).json()
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 # Api for community module.
@@ -183,7 +209,7 @@ def user_preference(preference_id: int):
 # Api for others.
 
 
-@api_bp.route("/categories", methods=["GET"])
+@api_bp.route("/categories/", methods=["GET"])
 @login_required
 def categories() -> ApiResponse:
     """Get all categories."""
@@ -209,7 +235,7 @@ def category(category_id: int) -> ApiResponse:
     return ApiResponse(data={"category": category_entity.to_dict()}).json()
 
 
-@api_bp.route("/tags", methods=["GET"])
+@api_bp.route("/tags/", methods=["GET"])
 @login_required
 def tags() -> ApiResponse:
     """Get all tags."""

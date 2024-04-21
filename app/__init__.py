@@ -53,8 +53,8 @@ def create_app():
     )
     app.register_blueprint(
         notice_bp,
-        url_prefix="/notice",
-        static_url_path="/notice/static",
+        url_prefix="/notifications",
+        static_url_path="/notifications/static",
     )
     app.register_blueprint(
         post_bp,

@@ -74,7 +74,7 @@ class AuthActions:
     def login(self, email: str = "test@gmail.com", password: str = "Password@123"):
         """Log a user in."""
         return self._client.post(
-            "/login",
+            "/auth/login",
             data={
                 "email": email,
                 "password": password,
@@ -83,4 +83,4 @@ class AuthActions:
 
     def logout(self) -> FlaskClient:
         """Log a user out."""
-        return self._client.get("/logout")
+        return self._client.get("/auth/logout")
