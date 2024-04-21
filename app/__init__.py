@@ -3,6 +3,9 @@
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
 
+from app.constants import G_NOTICE_NUM, G_USER
+from app.models.notice import Notice
+
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
@@ -22,6 +25,7 @@ def create_app():
 
     app = Flask(__name__)
 
+    # app configuration
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
@@ -73,17 +77,19 @@ def create_app():
         static_url_path="/users/static",
     )
 
-    # error handlers
+    # register error handlers
     register_error_handlers(app)
 
-    # logging
+    # register logging
     configure_logging(app)
 
+    # home page
     @app.route("/")
     @login_required
     def index():
         return render_template("index.html")
 
+    # logging middleware for http request and response
     @app.before_request
     def log_request_info():
         if "/static" not in request.path:
@@ -107,15 +113,30 @@ def create_app():
 
         return response
 
+    # global context processors, to set global variables for all templates
     @app.context_processor
     def inject_user():
-        return {"user": current_user}
+        return {G_USER: current_user}
+
+    @app.context_processor
+    def inject_notice_num():
+        if current_user.is_authenticated:
+            notice_num = Notice.query.filter_by(
+                user=current_user.id, status=False
+            ).count()
+        else:
+            notice_num = 0
+
+        g.notice_num = notice_num
+
+        return {G_NOTICE_NUM: g.notice_num}
 
     return app
 
 
 def get_oauth2_config():
     """Get OAuth2 configuration."""
+
     return {
         "google": {
             "client_id": get_config("GOOGLE", "CLIENT_ID"),

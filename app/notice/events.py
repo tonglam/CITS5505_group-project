@@ -1,24 +1,83 @@
 """Notice events."""
 
+import enum
+
 from blinker import Namespace
-from flask import current_app
+from flask import current_app, g
 from flask_login import current_user
 
+from app.constants import G_NOTICE_NUM
 from app.extensions import db
 from app.models.notice import (
     Notice,
     NoticeActionEnum,
     NoticeModuleEnum,
-    NoticeReadStatusEnum,
-    NoticeSendStatusEnum,
-    NoticeTypeEnum,
+    NoticeStatusEnum,
 )
 
-signals = Namespace()
-notification_signal = signals.signal("notification")
+_signals = Namespace()
+_notification_signal = _signals.signal("notification")
 
 
-def handle_notification(_, **kwargs: dict) -> None:
+class NoticeTypeEnum(enum.Enum):
+    """Enum for notice type."""
+
+    USER_RESET_PASSWORD = (
+        f"{NoticeModuleEnum.USER.value}, {NoticeActionEnum.RESET_PASSWORD.value}"
+    )
+
+    USER_UPDATED_PROFILE = (
+        f"{NoticeModuleEnum.USER.value}, {NoticeActionEnum.UPDATED_PROFILE.value}"
+    )
+
+    POST_CREATED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.CREATED.value}"
+    POST_UPDATED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.UPDATED.value}"
+    POST_DELETED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.DELETED.value}"
+
+    COMMENT_CREATED = (
+        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.CREATED.value}"
+    )
+    COMMENT_UPDATED = (
+        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.UPDATED.value}"
+    )
+    COMMENT_DELETED = (
+        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.DELETED.value}"
+    )
+
+    REPLY_CREATED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.CREATED.value}"
+    REPLY_UPDATED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.UPDATED.value}"
+    REPLY_DELETED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.DELETED.value}"
+
+    LIKE_CREATED = f"{NoticeModuleEnum.LIKE.value}, {NoticeActionEnum.CREATED.value}"
+    LIKE_CANCEL = f"{NoticeModuleEnum.LIKE.value}, {NoticeActionEnum.CANCELLED.value}"
+
+    FOLLOW_CREATED = (
+        f"{NoticeModuleEnum.FOLLOW.value}, {NoticeActionEnum.CREATED.value}"
+    )
+
+    FOLLOW_CANCEL = (
+        f"{NoticeModuleEnum.FOLLOW.value}, {NoticeActionEnum.CANCELLED.value}"
+    )
+
+    SAVE_CREATED = f"{NoticeModuleEnum.SAVE.value}, {NoticeActionEnum.CREATED.value}"
+    SAVE_CANCEL = f"{NoticeModuleEnum.SAVE.value}, {NoticeActionEnum.CANCELLED.value}"
+
+    COMMUNITY_CREATED = (
+        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.CREATED.value}"
+    )
+
+    COMMUNITY_UPDATED = (
+        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.UPDATED.value}"
+    )
+
+    COMMUNITY_DELETED = (
+        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.DELETED.value}"
+    )
+
+    SYSTEM = f"{NoticeModuleEnum.SYSTEM.value}, {NoticeActionEnum.ANNOUNCEMENT.value}"
+
+
+def _handle_notification(_, **kwargs: dict) -> None:
     """Function to handle notification event."""
 
     user_id = kwargs.get("user_id")
@@ -27,12 +86,9 @@ def handle_notification(_, **kwargs: dict) -> None:
         raise ValueError("User id is required")
 
     notice_type = kwargs.get("notice_type")
-    print("notice_type: ", notice_type)
-
     notice_module = notice_type.split(", ")[0].strip()
-    print("notice_module: ", notice_module)
     notice_action = notice_type.split(", ")[1].strip()
-    print("notice_action: ", notice_action)
+    current_app.logger.info(f"Received notification: {notice_module}, {notice_action}")
 
     if notice_module not in [module.value for module in NoticeModuleEnum]:
         current_app.logger.error(f"Invalid notice module: {notice_module}")
@@ -48,19 +104,22 @@ def handle_notification(_, **kwargs: dict) -> None:
         subject=f"Notification: {notice_module}",
         content=f"{notice_action} successfully!",
         notice_type=notice_module,
-        read_status=NoticeReadStatusEnum.UNREAD.value,
-        send_status=NoticeSendStatusEnum.WAIT.value,
+        status=NoticeStatusEnum.UNREAD.value,
     )
-
-    print("Notice: ", notice.to_dict())
 
     db.session.add(notice)
     db.session.commit()
+    current_app.logger.info(
+        f"Notification: {notice_module}, {notice_action} inserted into database"
+    )
 
-    # update layout notification
+    # update layout notification number
+    notice_num = getattr(g, G_NOTICE_NUM, 0) + 1
+    g.notice_num = min(notice_num, 99)
+    current_app.logger.info(f"Notice number updated: [{g.notice_num}]")
 
 
-notification_signal.connect(handle_notification)
+_notification_signal.connect(_handle_notification)
 
 
 def notice_event(
@@ -71,6 +130,4 @@ def notice_event(
     if current_user.is_authenticated:
         user_id = current_user.id
 
-    print("user_id: ", user_id)
-
-    notification_signal.send("app", user_id=user_id, notice_type=notice_type.value)
+    _notification_signal.send("app", user_id=user_id, notice_type=notice_type.value)

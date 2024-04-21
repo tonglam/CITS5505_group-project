@@ -33,6 +33,7 @@ from app.constants import (
 )
 from app.extensions import db, login_manager
 from app.models.user import User
+from app.notice.events import NoticeTypeEnum, notice_event
 
 
 @login_manager.user_loader
@@ -56,7 +57,6 @@ def register():
     form = forms.RegisterForm(request.form)
 
     if form.validate_on_submit():
-        print("start register")
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
@@ -69,7 +69,6 @@ def register():
                 return redirect(url_for("auth.register"))
 
             # only login with third party OAuth before
-            print("form.data: ", form.data)
             user.username = form.username.data
             user.email = form.email.data
             user.avatar_url = (
@@ -208,7 +207,12 @@ def forgot_password():
             return redirect(url_for("auth.forgot_password"))
 
         user.password = form.password.data
+
+        # update user password
         db.session.commit()
+
+        # send notification
+        notice_event(NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)

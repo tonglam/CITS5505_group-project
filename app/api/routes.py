@@ -13,6 +13,7 @@ from app.models.tag import Tag
 from app.models.user import User
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
+from app.notice.events import NoticeTypeEnum, notice_event
 
 from .service import update_user_data, update_user_preference_data
 
@@ -67,6 +68,9 @@ def users(user_id: str) -> ApiResponse:
 
         # update user into database
         db.session.commit()
+
+        # send notification
+        notice_event(notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE)
 
         return ApiResponse(
             data={"user": update_user_entity.to_dict()}, message="user update success"
