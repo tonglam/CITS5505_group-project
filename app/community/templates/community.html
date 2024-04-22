@@ -6,7 +6,7 @@ head %} {{ super() }} {% endblock %} {% block content %}
 {% endblock %}
 <div class="contain">
     <div class="community">
-        {% for item in list %}
+        {% for item in infolist %}
         {% import 'card1.html' as macros %}
         {{ macros.print_card(item) }}
         {% endfor %}

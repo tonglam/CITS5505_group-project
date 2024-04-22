@@ -9,8 +9,8 @@ from app.community import community_bp
 @login_required
 def community():
     """Render the community page."""
-    list = [
-            {"title": "Tech Community Component"}, 
+    infolist = [
+            {"title": "Tech Community Component"},
             {"title": " Art Community Component"},
             {"title": " Travel Community Component"},
             {"title": " Astronomy Community Component"},
@@ -24,6 +24,3 @@ def community():
 def create():
     """Render the create page."""
     return render_template("createCard.html")
-
-
-
