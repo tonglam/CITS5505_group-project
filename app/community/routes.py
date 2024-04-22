@@ -17,7 +17,7 @@ def community():
             {"title": " Medical Community Component"},
             {"title": " Economic Community Component"},
         ]
-    return render_template("community.html",list=list)
+    return render_template("community.html",infolist=infolist)
 
 @community_bp.route("/createCard")
 @login_required
