@@ -2,6 +2,27 @@
 
 INSERT INTO user (id, username, email, password_hash, avatar_url, use_google, use_github, security_question, security_answer, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'tonglam', 'bluedragon00000@gmail.com', '$2b$12$R49DZkkWelMYoCv2.mCQeemIVKkCNrzuA3Vekq6PxMpIk4jqjJbmW', 'https://avatars.githubusercontent.com/u/19681829?v=4', 1, 1, 'What is your favorite color?', 'blue', 'ACTIVE', '2024-04-21 14:36:18.896100', '2024-04-21 15:31:20.425434');
 
+-- Notice
+
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (1, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (2, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (3, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (4, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (5, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (6, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (7, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (8, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (9, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (10, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (11, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (12, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (13, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (14, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (15, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (16, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO notice (id, user, subject, content, notice_type, status, create_at, update_at) VALUES (17, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: System', 'Announcement successfully!', 'System', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+
+
 -- Category
 
 INSERT INTO category (id, name, create_at) VALUES (1, 'movie', '2024-04-22 05:36:18.786973');
