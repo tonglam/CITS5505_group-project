@@ -93,12 +93,12 @@ INSERT INTO user_preference (id, user_id, communities, interests, update_at) VAL
 -- Treading
 
 INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (1, 1, 'Movie Night Suggestions', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 65, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (2, 2, 'Exciting Sports News', 'dc86c2ff-f54a-4b34-9385-1c3dcf07f992', 50, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (3, 3, 'New Music Releases', '47a2ae8c-86c8-4b54-a45f-4bb43e4e72f5', 24, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (4, 4, 'Delicious Recipe Ideas', '9a177ff1-60fd-469a-8d54-16b52ac1895b', 45, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (5, 5, 'Travel Destination Recommendations', 'b021d746-b72a-4f90-9a2a-bb35d1cb4b84', 84, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (6, 6, 'Latest Technological Innovations', 'fbf6e63e-741e-4756-916b-305e8fd92475', 5, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (7, 7, 'Artistic Creations Showcase', '3a7a90a2-fda4-4c85-9c10-22c7b87d5f35', 26, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (8, 8, 'Fitness Tips and Tricks', '09f41371-92b8-439f-bc40-7d01af735cf1', 18, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (9, 9, 'Discussion on Soundtracks', 'b7e72267-169b-4795-9054-ef99b2bc9243', 68, '2024-04-22', '2024-04-22 05:36:18.811157');
-INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (10, 10, 'Culinary Inspiration', '08b7871f-464d-45d3-8103-45db86c20ebd', 43, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (2, 2, 'Exciting Sports News', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 50, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (3, 3, 'New Music Releases', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 24, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (4, 4, 'Delicious Recipe Ideas', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 45, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (5, 5, 'Travel Destination Recommendations', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 84, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (6, 6, 'Latest Technological Innovations', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (7, 7, 'Artistic Creations Showcase', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 26, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (8, 8, 'Fitness Tips and Tricks', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 18, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (9, 9, 'Discussion on Soundtracks', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 68, '2024-04-22', '2024-04-22 05:36:18.811157');
+INSERT INTO trending (id, request_id, title, author, reply_num, date, update_at) VALUES (10, 10, 'Culinary Inspiration', 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 43, '2024-04-22', '2024-04-22 05:36:18.811157');
