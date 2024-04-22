@@ -6,7 +6,7 @@ from flask_login import login_required
 from app.community import community_bp
 
 @community_bp.route("/")
-# @login_required
+@login_required
 def community():
     """Render the community page."""
     list = [
@@ -20,7 +20,7 @@ def community():
     return render_template("community.html",list=list)
 
 @community_bp.route("/createCard")
-# @login_required
+@login_required
 def create():
     """Render the create page."""
     return render_template("createCard.html")
