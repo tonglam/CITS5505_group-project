@@ -320,6 +320,8 @@ def callback(provider: str):
             avatar_url=avatar,
             use_google=provider == OAuthProviderEnum.GOOGLE.value,
             use_github=provider == OAuthProviderEnum.GITHUB.value,
+            security_question="",
+            security_answer="",
         )
         db.session.add(user)
         db.session.commit()
