@@ -46,8 +46,12 @@ class Notice(db.Model):
     user = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     subject = db.Column(db.String(100), nullable=False)
     content = db.Column(db.String(1000), default="")
-    notice_type = db.Column(db.String(50), default=NoticeModuleEnum.SYSTEM.value)
-    status = db.Column(db.Boolean, default=NoticeStatusEnum.UNREAD.value)
+    notice_type = db.Column(
+        db.String(50), db.Enum(NoticeModuleEnum), default=NoticeModuleEnum.SYSTEM.value
+    )
+    status = db.Column(
+        db.Boolean, db.Enum(NoticeStatusEnum), default=NoticeStatusEnum.UNREAD.value
+    )
     create_at = db.Column(db.DateTime, default=generate_time())
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
@@ -73,7 +77,7 @@ class Notice(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the notice."""
 
-        return f"<Notice {self.subject}>"
+        return f"<Notice {self.id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:

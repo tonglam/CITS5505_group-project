@@ -20,11 +20,11 @@ def create_seed_user_preference_data() -> list:
 
     return [
         {
-            "user_id": random.choice(users),
+            "user_id": users[i],
             "communities": create_communities(communities),
             "interests": create_interests(categories),
         }
-        for _ in range(100)
+        for i in range(len(users))
     ]
 
 

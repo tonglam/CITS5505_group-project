@@ -41,7 +41,7 @@ class UserRecord(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the user record."""
 
-        return f"<UserRecord {self.user_id}>"
+        return f"<UserRecord {self.id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:

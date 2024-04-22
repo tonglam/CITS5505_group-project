@@ -18,6 +18,16 @@ def create_seed_tag_data() -> list:
         {"name": "LearningJourney"},
         {"name": "TestPreparation"},
         {"name": "BrainTeasers"},
+        {"name": "LogicalReasoning"},
+        {"name": "DataAnalysis"},
+        {"name": "CriticalThinking"},
+        {"name": "MemoryEnhancement"},
+        {"name": "DecisionMaking"},
+        {"name": "ProblemIdentification"},
+        {"name": "SkillDevelopment"},
+        {"name": "CognitiveTraining"},
+        {"name": "ResearchSkills"},
+        {"name": "MindMapping"},
     ]
 
 

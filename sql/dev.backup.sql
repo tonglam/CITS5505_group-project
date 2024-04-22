@@ -31,6 +31,21 @@ INSERT INTO category (id, name, create_at) VALUES (3, 'music', '2024-04-22 05:36
 INSERT INTO category (id, name, create_at) VALUES (4, 'food', '2024-04-22 05:36:18.786973');
 INSERT INTO category (id, name, create_at) VALUES (5, 'travel', '2024-04-22 05:36:18.786973');
 INSERT INTO category (id, name, create_at) VALUES (6, 'technology', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (7, 'education', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (8, 'health', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (9, 'fashion', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (10, 'art', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (11, 'science', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (12, 'business', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (13, 'history', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (14, 'nature', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (15, 'photography', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (16, 'cooking', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (17, 'gardening', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (18, 'culture', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (19, 'literature', '2024-04-22 05:36:18.786973');
+INSERT INTO category (id, name, create_at) VALUES (20, 'football', '2024-04-22 05:36:18.786973');
+
 
 -- Tag
 
@@ -44,6 +59,17 @@ INSERT INTO tag (id, name, create_at) VALUES (7, 'KnowledgeSeeking', '2024-04-22
 INSERT INTO tag (id, name, create_at) VALUES (8, 'LearningJourney', '2024-04-22 05:23:36.749344');
 INSERT INTO tag (id, name, create_at) VALUES (9, 'TestPreparation', '2024-04-22 05:23:36.749344');
 INSERT INTO tag (id, name, create_at) VALUES (10, 'BrainTeasers', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (11, 'LogicalReasoning', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (12, 'DataAnalysis', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (13, 'CriticalThinking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (14, 'MemoryEnhancement', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (15, 'DecisionMaking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (16, 'ProblemIdentification', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (17, 'SkillDevelopment', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (18, 'CognitiveTraining', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (19, 'ResearchSkills', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (id, name, create_at) VALUES (20, 'MindMapping', '2024-04-22 05:23:36.749344');
+
 
 -- Community
 

@@ -28,17 +28,17 @@ class TestApi(TestBase):
         with app.app_context():
             user = User.query.first()
 
-        user_id = user.id
+        username = user.username
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
 
-        response = client.get(url + user_id)
+        response = client.get(url + username)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["data"]["user"]["id"], user_id)
+        self.assertEqual(response_data["data"]["user"]["username"], username)
 
         # check invalid data
         response = client.get(url + "invalid_user_id")
@@ -60,7 +60,7 @@ class TestApi(TestBase):
         with app.app_context():
             user = User.query.first()
 
-        user_id = user.id
+        username = user.username
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -76,7 +76,7 @@ class TestApi(TestBase):
             "status": UserStatusEnum.INACTIVE.value,
         }
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
@@ -105,7 +105,7 @@ class TestApi(TestBase):
 
         # check db data
         with app.app_context():
-            update_user = User.query.get(user_id)
+            update_user = User.query.filter_by(username=update_username).first()
             self.assertEqual(update_user.username, update_username)
             self.assertEqual(update_user.email, update_email)
             self.assertEqual(update_user.avatar_url, update_avatar_url)
@@ -117,7 +117,7 @@ class TestApi(TestBase):
 
         # check notice
         notice = Notice.query.filter_by(
-            user=user_id, notice_type=NoticeModuleEnum.USER.value, status=False
+            user=user.id, notice_type=NoticeModuleEnum.USER.value, status=False
         ).first()
         self.assertIsNotNone(notice)
 
@@ -133,14 +133,13 @@ class TestApi(TestBase):
         with app.app_context():
             user = User.query.first()
 
-        user_id = user.id
-        print("user_id", user_id)
+        username = user.username
 
         # check permission
         AuthActions(client).login()
 
         response = client.put(
-            url + user_id,
+            url + username,
             json={"username": "test_" + user.username},
         )
         self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
@@ -151,7 +150,7 @@ class TestApi(TestBase):
         AuthActions(client).login(email=user.email, password="Password@123")
 
         # check empty data
-        response = client.put(url + user_id, json={})
+        response = client.put(url + username, json={})
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "request data is empty")
@@ -159,7 +158,7 @@ class TestApi(TestBase):
         # check if the username is a string
         update_data = {"username": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[username] must be a string")
@@ -167,11 +166,11 @@ class TestApi(TestBase):
         # check if the username already exists
         another_user = None
         with app.app_context():
-            another_user = User.query.filter(User.id != user_id).first()
+            another_user = User.query.filter(User.id != user.id).first()
 
         update_data = {"username": another_user.username}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[username] already exists")
@@ -179,7 +178,7 @@ class TestApi(TestBase):
         # check if the email is a string
         update_data = {"email": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[email] must be a string")
@@ -187,7 +186,7 @@ class TestApi(TestBase):
         # check if the email is not a valid email
         update_data = {"email": user.email + ".invalid"}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[email] is invalid")
@@ -195,7 +194,7 @@ class TestApi(TestBase):
         # check if the avatar_url is a string
         update_data = {"avatar_url": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[avatar_url] must be a string")
@@ -203,7 +202,7 @@ class TestApi(TestBase):
         # check if the use_google is a boolean
         update_data = {"use_google": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[use_google] must be a boolean")
@@ -211,7 +210,7 @@ class TestApi(TestBase):
         # check if the use_github is a boolean
         update_data = {"use_github": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[use_github] must be a boolean")
@@ -219,7 +218,7 @@ class TestApi(TestBase):
         # check if the security_question is a string
         update_data = {"security_question": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(
@@ -229,7 +228,7 @@ class TestApi(TestBase):
         # check if the security_answer is a string
         update_data = {"security_answer": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[security_answer] must be a string")
@@ -237,14 +236,14 @@ class TestApi(TestBase):
         # check if the status is a string
         update_data = {"status": 123}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
 
         # check if the status is invalid
         update_data = {"status": "invalid_status"}
 
-        response = client.put(url + user_id, json=update_data)
+        response = client.put(url + username, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[status] is invalid")
@@ -255,32 +254,33 @@ class TestApi(TestBase):
     def test_get_user_records(self, app: Flask, client: FlaskClient):
         """Test the user records GET API."""
 
-        url = _PREFIX + "/users/%s/records/"
+        url = _PREFIX + "/users/records"
 
-        # check valid data
-        user = None
         user_record = None
         with app.app_context():
             user_record = UserRecord.query.first()
             user = User.query.get(user_record.user_id)
 
-        user_id = user.id
-
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
 
-        response = client.get(url % (user_id))
+        # Test case 1: No filter or sorting parameters provided
+        response = client.get(url)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        # Test case 2: Only filter parameters provided
+        response = client.get(f"{url}?request_id=1&record_type=REQUEST")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
-        for record in response_data["data"]["records"]:
-            self.assertEqual(record["user_id"], user_id)
+        # Test case 3: Only sorting parameter provided
+        response = client.get(f"{url}?order_by=update_at")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
-        # check invalid data
-        response = client.get(url % ("invalid_user_id"))
-        self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
+        # Test case 4: Both filter and sorting parameters provided
+        response = client.get(
+            f"{url}?request_id=1&record_type=REQUEST&order_by=update_at"
+        )
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         # logout
         AuthActions(client).logout()
@@ -288,7 +288,7 @@ class TestApi(TestBase):
     def test_user_record(self, app: Flask, client: FlaskClient):
         """Test the user records API."""
 
-        url = _PREFIX + "/users/%s/records/%s"
+        url = _PREFIX + "/users/records/%s"
 
         user = None
         user_record = None
@@ -296,27 +296,20 @@ class TestApi(TestBase):
             user_record = UserRecord.query.first()
             user = User.query.get(user_record.user_id)
 
-        user_id = user.id
         record_id = user_record.id
-
-        # check permission
-        AuthActions(client).login()
-
-        response = client.get(url % ("test@gmail.com", record_id))
-        self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
 
         # check valid data
-        response = client.get(url % (user_id, record_id))
+        response = client.get(url % record_id)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response_data["data"]["record"]["id"], record_id)
 
-        response = client.delete(url % (user_id, record_id))
+        response = client.delete(url % record_id)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.NO_CONTENT.value)
 
@@ -326,42 +319,9 @@ class TestApi(TestBase):
             self.assertEqual(record, None)
 
         # check invalid data
-        response = client.delete(url % (user_id, 9999999999999))
+        response = client.delete(url % 9999999999999)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
-
-        # logout
-        AuthActions(client).logout()
-
-    def test_get_user_preferences(self, app: Flask, client: FlaskClient):
-        """Test the user preferences GET API."""
-
-        url = _PREFIX + "/users/%s/preferences/"
-
-        # check valid data
-        user = None
-        user_record = None
-        with app.app_context():
-            user_record = UserRecord.query.first()
-            user = User.query.get(user_record.user_id)
-
-        user_id = user.id
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        response = client.get(url % (user_id))
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-
-        for record in response_data["data"]["preferences"]:
-            self.assertEqual(record["user_id"], user_id)
-
-        # check invalid data
-        response = client.get(url % ("invalid_user_id"))
-        self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
 
         # logout
         AuthActions(client).logout()
@@ -369,7 +329,7 @@ class TestApi(TestBase):
     def test_user_preference(self, app: Flask, client: FlaskClient):
         """Test the user preferences API."""
 
-        url = _PREFIX + "/users/%s/preferences/%s"
+        url = _PREFIX + "/users/preference"
 
         user = None
         user_preference = None
@@ -377,20 +337,13 @@ class TestApi(TestBase):
             user_preference = UserPreference.query.first()
             user = User.query.get(user_preference.user_id)
 
-        user_id = user.id
         preference_id = user_preference.id
-
-        # check permission
-        AuthActions(client).login()
-
-        response = client.get(url % ("test@gmail.com", preference_id))
-        self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
 
         # check valid data
-        response = client.get(url % (user_id, preference_id))
+        response = client.get(url)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
@@ -402,7 +355,7 @@ class TestApi(TestBase):
             "interests": "[test_interest]",
         }
 
-        response = client.put(url % (user_id, preference_id), json=update_data)
+        response = client.put(url, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
@@ -424,7 +377,7 @@ class TestApi(TestBase):
         # check empty data
         update_data = {}
 
-        response = client.put(url % (user_id, preference_id), json=update_data)
+        response = client.put(url, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "request data is empty")
@@ -432,7 +385,7 @@ class TestApi(TestBase):
         # check if the communities is a string
         update_data = {"communities": 123}
 
-        response = client.put(url % (user_id, preference_id), json=update_data)
+        response = client.put(url, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[communities] must be a string")
@@ -440,7 +393,7 @@ class TestApi(TestBase):
         # check if the interests is a string
         update_data = {"interests": 123}
 
-        response = client.put(url % (user_id, preference_id), json=update_data)
+        response = client.put(url, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
         self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
         self.assertEqual(response.json["message"], "[interests] must be a string")
@@ -451,7 +404,7 @@ class TestApi(TestBase):
     def test_get_categories(self, _, client: FlaskClient):
         """Test the categories GET API."""
 
-        url = _PREFIX + "/categories/"
+        url = _PREFIX + "/categories"
 
         # login
         AuthActions(client).login()
@@ -501,7 +454,7 @@ class TestApi(TestBase):
     def test_get_tags(self, _, client: FlaskClient):
         """Test the tags GET API."""
 
-        url = _PREFIX + "/tags/"
+        url = _PREFIX + "/tags"
 
         # login
         AuthActions(client).login()

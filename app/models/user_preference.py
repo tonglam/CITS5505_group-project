@@ -8,16 +8,16 @@ class UserPreference(db.Model):
     """UserPreference model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    communities = db.Column(db.String(80), default="")
-    interests = db.Column(db.String(80), default="")
+    user_id = db.Column(
+        db.String(36), db.ForeignKey("user.id"), unique=True, nullable=False
+    )
+    communities = db.Column(db.String(200))
+    interests = db.Column(db.String(200))
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
-    def __init__(
-        self, user_id: str, communities: str = "", interests: str = ""
-    ) -> None:
+    def __init__(self, user_id: str, communities: str, interests: str) -> None:
         self.user_id = user_id
         self.communities = communities
         self.interests = interests
