@@ -6,7 +6,7 @@ from app.extensions import db
 from app.utils import generate_time
 
 
-class UserRecordEnum(enum.Enum):
+class UserRecordTypeEnum(enum.Enum):
     """Enum for user record."""
 
     REQUEST = "REQUEST"
@@ -24,15 +24,15 @@ class UserRecord(db.Model):
     request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     record_type = db.Column(
         db.String(80),
-        db.Enum(UserRecordEnum),
-        default=UserRecordEnum.VIEW,
+        db.Enum(UserRecordTypeEnum),
+        default=UserRecordTypeEnum.VIEW,
     )
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
     def __init__(
-        self, user_id: str, request_id: str, record_type: UserRecordEnum
+        self, user_id: str, request_id: str, record_type: UserRecordTypeEnum
     ) -> None:
         self.user_id = user_id
         self.request_id = request_id
