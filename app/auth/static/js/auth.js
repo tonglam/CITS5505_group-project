@@ -1,5 +1,3 @@
-import { getFetch } from "../../../static/js/fetch.js";
-
 $(document).ready(function () {
   $("#email").on("blur", function () {
     checkEmail(this.value);
@@ -14,8 +12,4 @@ async function checkEmail(email) {
   } else {
     console.log("Invalid email");
   }
-
-  getFetch("/api/v1/auth/email_exists")({ email: email })().then((res) =>
-    console.log("GET response:", res)
-  );
 }

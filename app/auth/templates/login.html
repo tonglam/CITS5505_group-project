@@ -27,7 +27,7 @@
 
   <div class="col-0 col-lg-6" id="centerContainer">
     <form action="{{ url_for('auth.login') }}" method="post">
-      {{ form.csrf_token }}
+      {{ form.csrf_token and form.csrf_token() }}
 
       <div class="text-center mb-3">
         <h1>Sign In to Your Account</h1>

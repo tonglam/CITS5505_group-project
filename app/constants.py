@@ -3,30 +3,24 @@
 import enum
 
 
-class HttpRequstErrorEnum(enum.Enum):
-    """Enum for HTTP request error."""
+class HttpRequstEnum(enum.Enum):
+    """Enum for HTTP request."""
 
+    SUCCESS_OK = 200
+    CREATED = 201
+    ACCEPTED = 202
+    NO_CONTENT = 204
+    MOVED_PERMANENTLY = 301
+    FOUND = 302
+    SEE_OTHER = 303
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
+    FORBIDDEN = 403
     NOT_FOUND = 404
+    METHOD_NOT_ALLOWED = 405
     INTERNAL_SERVER_ERROR = 500
-
-
-class UserRecordEnum(enum.Enum):
-    """Enum for user record."""
-
-    REQUEST = "REQUEST"
-    REPLY = "REPLY"
-    VIEW = "VIEW"
-    LIKE = "LIKE"
-    SAVE = "SAVE"
-
-
-class UserStatusEnum(enum.Enum):
-    """Enum for user status."""
-
-    ACTIVE = "ACTIVE"
-    INACTIVE = "INACTIVE"
+    BAD_GATEWAY = 502
+    SERVICE_UNAVAILABLE = 503
 
 
 class FlashAlertTypeEnum(enum.Enum):
@@ -47,6 +41,7 @@ OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS"
 OAUTH2_STATE = "oauth2_state"
 CLIENT_ID = "client_id"
 CLIENT_SECRET = "client_secret"
+CALLBACK_URL = "callback_url"
 RESPONSE_TYPE = "code"
 SCOPES = "scopes"
 AUTHORIZATION_CODE = "authorization_code"
@@ -59,3 +54,7 @@ class OAuthProviderEnum(enum.Enum):
 
     GOOGLE = "google"
     GITHUB = "github"
+
+
+# Gravatar
+GRAVATAR_URL = "https://www.gravatar.com/avatar/"
