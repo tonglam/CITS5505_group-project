@@ -47,6 +47,8 @@ def user_loader(user_id: str):
 def register():
     """Register a new user."""
 
+    print("register method:", request.method)
+
     if current_user.is_authenticated:
         current_app.logger.info(
             "User is already registered, id: %s.", {current_user.id}
@@ -110,6 +112,7 @@ def register():
                 )
         return redirect(url_for("auth.register"))
 
+    print("out of post")
     return render_template("register.html", form=form)
 
 

@@ -1,0 +1,213 @@
+{% extends "layout.html" %} {% block title %}Sign In{% endblock %} {% block head
+%} {{ super() }}
+<link
+  rel="stylesheet"
+  href="{{ url_for('auth.static', filename='style/auth.css') }}"
+/>
+{% endblock %} {% block content %}
+
+<div class="row mt-2">
+  {% for error in form.errors %} {% for message in form.errors.get(error) %}
+  <div
+    id="alert"
+    class="sticky-top alert alert-danger alert-dismissible text-center fade show"
+    role="alert"
+  >
+    {{ "[{}] Error: {}".format(error.upper(), message) }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %} {% endfor %}
+
+  <div class="container d-none d-md-block" id="login_container">
+    <div class="form-container sign-up-container">
+      <form action="{{ url_for('auth.register') }}" method="post">
+        {{ form.csrf_token and form.csrf_token() }}
+
+        <div class="login_header">Create Account</div>
+        <div class="d-flex social-container">
+          <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
+          <a
+            href="{{ url_for('auth.authorize', provider='google') }}"
+            class="social"
+            ><i class="fab fa-google-plus-g"></i
+          ></a>
+          <a
+            href="{{ url_for('auth.authorize', provider='github') }}"
+            class="social"
+            ><i class="fab fa-github"></i
+          ></a>
+        </div>
+        <span class="longin_text_style2"
+          >Or use your email for registration</span
+        >
+        <input type="text" name="username" placeholder="Name" />
+        <input type="email" name="email" placeholder="Email" />
+        <input type="password" name="password" placeholder="Password" />
+        <input type="password" name="rpassword" placeholder="Repeat Password" />
+        <input type="text" name="squestion" placeholder="Security Question" />
+        <input type="text" name="sanswer" placeholder="Security Answer" />
+        <button type="submit" class="login_btn_style">Sign Up</button>
+      </form>
+    </div>
+    <div class="form-container sign-in-container">
+      <form action="{{ url_for('auth.login') }}" method="post">
+        <div class="login_header">Sign in</div>
+        <div class="d-flex social-container">
+          <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
+          <a
+            href="{{ url_for('auth.authorize', provider='google') }}"
+            class="social"
+            ><i class="fab fa-google-plus-g"></i
+          ></a>
+          <a
+            href="{{ url_for('auth.authorize', provider='github') }}"
+            class="social"
+            ><i class="fab fa-github"></i
+          ></a>
+        </div>
+        <span class="longin_text_style2">Or use your account</span>
+        <input type="email" placeholder="Email" />
+        <input type="password" placeholder="Password" />
+        <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+        <button type="submit" class="login_btn_style">Sign In</button>
+      </form>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1 class="login_header1">Welcome Back!</h1>
+          <p class="login_text_style">
+            To keep connected with us please login with your personal info.
+          </p>
+          <button class="ghost login_btn_style" id="signIn" type="submit">
+            Sign In
+          </button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1 class="login_header1">Hi, There!</h1>
+          <p class="login_text_style">
+            Let's get you signed in and straight to the answer!
+          </p>
+          <button class="ghost login_btn_style" id="signUp" type="button">
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav for small screen - login and register -->
+  <div class="d-sm-flex d-md-none text-center">
+    <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link active"
+          id="tab-login"
+          data-mdb-pill-init
+          href="#pills-login"
+          role="tab"
+          aria-controls="pills-login"
+          aria-selected="true"
+          >Login</a
+        >
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link"
+          id="tab-register"
+          data-mdb-pill-init
+          href="#pills-register"
+          role="tab"
+          aria-controls="pills-register"
+          aria-selected="false"
+          >Register</a
+        >
+      </li>
+    </ul>
+    <!-- test sign in -->
+    <div class="tab-content">
+      <div
+        class="tab-pane fade show active"
+        id="pills-login"
+        role="tabpanel"
+        aria-labelledby="tab-login"
+      >
+        <form action="{{ url_for('auth.login') }}" method="post">
+          <div class="login_header">Sign in</div>
+          <div class="d-flex social-container">
+            <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
+            <a
+              href="{{ url_for('auth.authorize', provider='google') }}"
+              class="social"
+              ><i class="fab fa-google-plus-g"></i
+            ></a>
+            <a
+              href="{{ url_for('auth.authorize', provider='github') }}"
+              class="social"
+              ><i class="fab fa-github"></i
+            ></a>
+          </div>
+          <span class="longin_text_style2">Or use your account</span>
+          <input type="email" placeholder="Email" />
+          <input type="password" placeholder="Password" />
+          <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+          <button class="login_btn_style">Sign In</button>
+        </form>
+      </div>
+      <!-- test sign up -->
+      <div
+        class="tab-pane fade"
+        id="pills-register"
+        role="tabpanel"
+        aria-labelledby="tab-register"
+      >
+        <form action="{{ url_for('auth.register') }}" method="post">
+          <div class="login_header">Create Account</div>
+          <div class="d-flex social-container">
+            <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
+            <a
+              href="{{ url_for('auth.authorize', provider='google') }}"
+              class="social"
+              ><i class="fab fa-google-plus-g"></i
+            ></a>
+            <a
+              href="{{ url_for('auth.authorize', provider='github') }}"
+              class="social"
+              ><i class="fab fa-github"></i
+            ></a>
+          </div>
+          <span class="longin_text_style2"
+            >Or use your email for registration</span
+          >
+          <input type="text" name="username" placeholder="Name" />
+          <input type="email" name="email" placeholder="Email" />
+          <input type="password" name="password" placeholder="Password" />
+          <input
+            type="password"
+            name="rpassword"
+            placeholder="Repeat Password"
+          />
+          <input type="text" name="squestion" placeholder="Security Question" />
+          <input type="text" name="sanswer" placeholder="Security Answer" />
+          <div class="pt-2">
+            <button type="submit" class="login_btn_style">Sign Up</button>
+            <p class="text-center" id="policy-font">
+              * By signing up, you agree to our Terms of Use Privacy Policy.
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% block javascript %}
+<script
+  type="module"
+  src="{{ url_for('auth.static', filename='js/auth.js') }}"
+></script>
+{% endblock %} {% endblock %}
