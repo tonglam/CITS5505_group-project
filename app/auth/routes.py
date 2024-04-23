@@ -33,6 +33,7 @@ from app.constants import (
 )
 from app.extensions import db, login_manager
 from app.models.user import User
+from app.notice.events import NoticeTypeEnum, notice_event
 
 
 @login_manager.user_loader
@@ -59,31 +60,39 @@ def register():
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
-            current_app.logger.error(
-                "Email already registered, email: %s.", {form.email.data}
+            if user.password_hash:
+                # registered with email and password before
+                current_app.logger.error(
+                    "Email already registered, email: %s.", {form.email.data}
+                )
+                flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
+                return redirect(url_for("auth.register"))
+
+            # only login with third party OAuth before
+            user.username = form.username.data
+            user.email = form.email.data
+            user.avatar_url = (
+                form.avatar_url.data if form.avatar_url.data else user.avatar_url
             )
-            flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
-            return redirect(url_for("auth.register"))
+            user.security_question = form.security_question.data
+            user.security_answer = form.security_answer.data
+            user.password = form.password.data
 
-        if form.password.data != form.confirm.data:
-            current_app.logger.error("Passwords must match.")
-            flash("Passwords must match.", FlashAlertTypeEnum.DANGER.value)
-            return redirect(url_for("auth.resgister"))
+        else:
+            # add a new user
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                avatar_url=form.avatar_url.data,
+                use_google=False,
+                use_github=False,
+                security_question=form.security_question.data,
+                security_answer=form.security_answer.data,
+            )
+            user.password = form.password.data
+            db.session.add(user)
 
-        # Create a new user
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            avatar_url=form.avatar_url.data,
-            use_google=False,
-            use_github=False,
-            security_question=form.security_question.data,
-            security_answer=form.security_answer.data,
-        )
-        user.password = form.password.data
-        db.session.add(user)
         db.session.commit()
-
         login_user(user, remember=True)
         current_app.logger.info(
             "User registered, register email: %s, id: %s.", {user.email}, {user.id}
@@ -198,7 +207,12 @@ def forgot_password():
             return redirect(url_for("auth.forgot_password"))
 
         user.password = form.password.data
+
+        # update user password
         db.session.commit()
+
+        # send notification
+        notice_event(user_id=user.id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
@@ -306,6 +320,8 @@ def callback(provider: str):
             avatar_url=avatar,
             use_google=provider == OAuthProviderEnum.GOOGLE.value,
             use_github=provider == OAuthProviderEnum.GITHUB.value,
+            security_question="",
+            security_answer="",
         )
         db.session.add(user)
         db.session.commit()

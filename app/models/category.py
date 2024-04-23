@@ -8,7 +8,7 @@ class Category(db.Model):
     """Category model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(20), unique=True, nullable=False)
     create_at = db.Column(db.DateTime, default=generate_time())
 
     def __init__(self, name: str) -> None:

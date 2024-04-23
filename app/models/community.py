@@ -8,10 +8,10 @@ class Community(db.Model):
     """Community model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(20), unique=True, nullable=False)
     category = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
-    description = db.Column(db.String(500), default="")
-    avatar = db.Column(db.String(300), default="")
+    description = db.Column(db.String(500))
+    avatar = db.Column(db.String(300))
     create_at = db.Column(db.DateTime, default=generate_time())
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()

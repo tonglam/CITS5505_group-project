@@ -1,33 +1,52 @@
 """Routes for api."""
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
-from flask import jsonify, request
-from flask_login import login_required
+from flask import abort, jsonify, request
+from flask_login import current_user, login_required
+from flask_sqlalchemy import pagination as Pagination
 
 from app.api import api_bp
 from app.constants import HttpRequstEnum
 from app.extensions import db
 from app.models.category import Category
+from app.models.notice import Notice
 from app.models.tag import Tag
 from app.models.user import User
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
+from app.notice.events import NoticeTypeEnum, notice_event
 
 from .service import update_user_data, update_user_preference_data
 
 
 @dataclass
 class ApiResponse:
-    """Api response template dat class."""
+    """Api response template data class."""
 
     code: HttpRequstEnum = HttpRequstEnum.SUCCESS_OK.value
     data: object = None
     message: str = "success"
+    pagination: Pagination = None
 
     def json(self) -> str:
         """Convert the response to JSON."""
-        return jsonify(asdict(self))
+
+        response_dict = {
+            "code": self.code,
+            "data": self.data,
+            "message": self.message,
+        }
+
+        if self.pagination:
+            response_dict["pagination"] = {
+                "page": self.pagination.page,
+                "per_page": self.pagination.per_page,
+                "total_items": self.pagination.total,
+                "total_pages": self.pagination.pages,
+            }
+
+        return jsonify(response_dict)
 
 
 # Api for auth module.
@@ -36,12 +55,12 @@ class ApiResponse:
 # Api for user module.
 
 
-@api_bp.route("/users/<user_id>", methods=["GET", "PUT"])
+@api_bp.route("/users/<username>", methods=["GET", "PUT"])
 @login_required
-def users(user_id: str) -> ApiResponse:
-    """Get a user by id."""
+def users(username: str) -> ApiResponse:
+    """Get or PUT a user by username."""
 
-    user_entity = User.query.get(user_id)
+    user_entity = db.session.query(User).filter_by(username=username).first()
 
     if user_entity is None:
         return ApiResponse(
@@ -52,6 +71,10 @@ def users(user_id: str) -> ApiResponse:
         return ApiResponse(data={"user": user_entity.to_dict()}).json()
 
     if request.method == "PUT":
+        # check user permission, only login user can access their own data
+        if current_user.id != user_entity.id:
+            abort(HttpRequstEnum.FORBIDDEN.value)
+
         request_data = request.json
 
         if request_data is None or request_data == {}:
@@ -68,69 +91,105 @@ def users(user_id: str) -> ApiResponse:
         # update user into database
         db.session.commit()
 
+        # send notification
+        notice_event(notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE)
+
         return ApiResponse(
             data={"user": update_user_entity.to_dict()}, message="user update success"
         ).json()
 
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+
+
+@api_bp.route("/users/records", methods=["GET"])
+@login_required
+def user_records() -> ApiResponse:
+    """Get all records by user id."""
+
+    user_id = current_user.id
+
+    # get filter parameters
+    request_id_filter = request.args.get("request_id")
+    record_type_filter = request.args.get("record_type")
+
+    # get sort parameters
+    order_by = request.args.get("order_by")
+
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = db.session.query(UserRecord).filter_by(user_id=user_id)
+
+    # apply filters
+    if request_id_filter:
+        query = query.filter(UserRecord.request_id == request_id_filter)
+
+    if record_type_filter:
+        query = query.filter(UserRecord.record_type == record_type_filter)
+
+    # apply sort
+    if order_by == "update_at":
+        query = query.order_by(UserRecord.update_at)
+    elif order_by == "update_at_desc":
+        query = query.order_by(UserRecord.update_at.desc())
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    user_record_collection = [record.to_dict() for record in pagination.items]
+
     return ApiResponse(
-        HttpRequstEnum.METHOD_NOT_ALLOWED.value, message="method not allowed"
+        data={"user_records": user_record_collection}, pagination=pagination
     ).json()
 
 
-@api_bp.route("/users/records/<user_id>", methods=["GET"])
+@api_bp.route("/users/records/<int:record_id>", methods=["GET", "DELETE"])
 @login_required
-def user_records(user_id: str) -> ApiResponse:
-    """Get records of a user by id."""
+def users_record(record_id: int) -> ApiResponse:
+    """GET or Delete record by id."""
 
-    user_record_entities = UserRecord.query.filter_by(user_id=user_id).all()
-    user_record_collection = [record.to_dict() for record in user_record_entities]
-
-    return ApiResponse(data={"records": user_record_collection}).json()
-
-
-@api_bp.route("/users/records/<int:record_id>", methods=["DELETE"])
-@login_required
-def del_users_record(record_id: int) -> ApiResponse:
-    """Delete record by id."""
-
-    record_entity = UserRecord.query.get(record_id)
-
+    record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(id=record_id, user_id=current_user.id)
+        .first()
+    )
     if record_entity is None:
         return ApiResponse(
             HttpRequstEnum.NOT_FOUND.value, message="record not found"
         ).json()
 
-    db.session.delete(record_entity)
-    db.session.commit()
+    if request.method == "GET":
+        return ApiResponse(data={"record": record_entity.to_dict()}).json()
 
-    return ApiResponse(
-        HttpRequstEnum.NO_CONTENT.value, message="record delete success"
-    ).json()
+    if request.method == "DELETE":
+        db.session.delete(record_entity)
+        db.session.commit()
+
+        return ApiResponse(
+            HttpRequstEnum.NO_CONTENT.value, message="record delete success"
+        ).json()
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
-@api_bp.route("/users/preferences/<user_id>", methods=["GET"])
+@api_bp.route("/users/preference", methods=["GET", "PUT"])
 @login_required
-def user_preferences(user_id: str) -> ApiResponse:
-    """Get preferences of a user by id."""
+def user_preference() -> ApiResponse:
+    """Get or PUT a preference by id."""
 
-    user_preference_entities = UserPreference.query.filter_by(user_id=user_id).all()
-    user_preferences_collection = [
-        preference.to_dict() for preference in user_preference_entities
-    ]
-
-    return ApiResponse(data={"preferences": user_preferences_collection}).json()
-
-
-@api_bp.route("/users/preferences/<int:preference_id>", methods=["PUT"])
-@login_required
-def user_preference(preference_id: int):
-    """Update a preference by id."""
-
-    user_preference_entity = UserPreference.query.get(preference_id)
+    user_preference_entity = (
+        db.session.query(UserPreference).filter_by(user_id=current_user.id).first()
+    )
     if user_preference_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="preference not found"
+            HttpRequstEnum.NOT_FOUND.value, message="user preference not found"
         ).json()
+
+    if request.method == "GET":
+        return ApiResponse(data={"preference": user_preference_entity.to_dict()}).json()
 
     if request.method == "PUT":
         request_data = request.json
@@ -156,9 +215,7 @@ def user_preference(preference_id: int):
             message="preference update success",
         ).json()
 
-    return ApiResponse(
-        HttpRequstEnum.METHOD_NOT_ALLOWED.value, message="method not allowed"
-    ).json()
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 # Api for community module.
@@ -176,6 +233,95 @@ def user_preference(preference_id: int):
 # Api for notice module.
 
 
+@api_bp.route("/users/notifications", methods=["GET"])
+def user_notifications() -> ApiResponse:
+    """Get all notifications by user id."""
+
+    user_id = current_user.id
+
+    # get filter parameters
+    notice_type_filter = request.args.get("notice_type")
+    status_filter = request.args.get("status")
+
+    # get sort parameters
+    order_by = request.args.get("order_by")
+
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(Notice)
+        .filter_by(user=user_id)
+        .order_by(Notice.id)
+        .order_by(Notice.status)
+    )
+
+    # apply filters
+    if notice_type_filter:
+        query = query.filter(Notice.notice_type == notice_type_filter)
+    if status_filter:
+        status = 1 if status_filter == "read" else 0
+        query = query.filter(Notice.status == status)
+
+    # apply sort
+    if order_by == "update_at":
+        query = query.order_by(Notice.update_at)
+    elif order_by == "update_at_desc":
+        query = query.order_by(Notice.update_at.desc())
+    elif order_by == "status":
+        query = query.order_by(Notice.status)
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    notice_collection = [notice.to_dict() for notice in pagination.items]
+
+    return ApiResponse(
+        data={"notices": notice_collection}, pagination=pagination
+    ).json()
+
+
+@api_bp.route("/users/notifications/<int:notice_id>", methods=["GET", "PUT"])
+def user_notice(notice_id: int) -> ApiResponse:
+    """GET or PUT a notice by id."""
+
+    notice_entity = db.session.query(Notice).get(notice_id)
+
+    if notice_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="notice not found"
+        ).json()
+
+    if request.method == "GET":
+        return ApiResponse(data={"notice": notice_entity.to_dict()}).json()
+
+    if request.method == "PUT":
+
+        request_data = request.json
+
+        if request_data is None or request_data == {} or "status" not in request_data:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value,
+                message="request data is empty, or missing status field",
+            ).json()
+
+        # update notice status
+        notice_entity.status = request_data["status"]
+
+        # update notice into database
+        db.session.commit()
+
+        return ApiResponse(
+            data={"notice": notice_entity.to_dict()},
+            message="notice status update success",
+        ).json()
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+
+
 # Api for others.
 
 
@@ -184,10 +330,22 @@ def user_preference(preference_id: int):
 def categories() -> ApiResponse:
     """Get all categories."""
 
-    category_entities = Category.query.all()
-    category_collection = [category.to_dict() for category in category_entities]
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
 
-    return ApiResponse(data={"categories": category_collection}).json()
+    # query
+    query = db.session.query(Category).order_by(Category.id)
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    category_collection = [category.to_dict() for category in pagination]
+
+    return ApiResponse(
+        data={"categories": category_collection}, pagination=pagination
+    ).json()
 
 
 @api_bp.route("/categories/<category_id>", methods=["GET"])
@@ -195,7 +353,7 @@ def categories() -> ApiResponse:
 def category(category_id: int) -> ApiResponse:
     """Get a category by id."""
 
-    category_entity = Category.query.get(category_id)
+    category_entity = db.session.query(Category).get(category_id)
 
     if category_entity is None:
         return ApiResponse(
@@ -210,10 +368,20 @@ def category(category_id: int) -> ApiResponse:
 def tags() -> ApiResponse:
     """Get all tags."""
 
-    tag_entities = Tag.query.all()
-    tags_collection = [tag.to_dict() for tag in tag_entities]
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
 
-    return ApiResponse(data={"tags": tags_collection}).json()
+    # query
+    query = db.session.query(Tag).order_by(Tag.id)
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    tags_collection = [tag.to_dict() for tag in pagination.items]
+
+    return ApiResponse(data={"tags": tags_collection}, pagination=pagination).json()
 
 
 @api_bp.route("/tags/<tag_id>", methods=["GET"])
@@ -221,7 +389,7 @@ def tags() -> ApiResponse:
 def tag(tag_id: int) -> ApiResponse:
     """Get a tag by id."""
 
-    tag_entity = Tag.query.get(tag_id)
+    tag_entity = db.session.query(Tag).get(tag_id)
 
     if tag_entity is None:
         return ApiResponse(

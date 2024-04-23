@@ -8,7 +8,9 @@ class Trending(db.Model):
     """Trending model"""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
+    request_id = db.Column(
+        db.Integer, db.ForeignKey("request.id"), unique=True, nullable=False
+    )
     title = db.Column(db.String(40), nullable=False)
     author = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     reply_num = db.Column(db.Integer, default=0)
@@ -28,7 +30,7 @@ class Trending(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the trending."""
 
-        return f"<Trending {self.title}>"
+        return f"<Trending {self.request_id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:
