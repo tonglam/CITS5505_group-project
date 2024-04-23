@@ -4,7 +4,7 @@
 from blinker import Namespace
 from flask import Blueprint, current_app, g
 
-from app.constants import G_NOTICE_NUM
+from app.constants import G_NOTICE_NUM, MAX_NOTICE_NUM
 from app.extensions import db
 from app.models.notice import (
     Notice,
@@ -62,7 +62,7 @@ def handle_notification(_, **kwargs: dict) -> None:
 
     # update layout notification number
     notice_num = getattr(g, G_NOTICE_NUM, 0) + 1
-    g.notice_num = min(notice_num, 99)
+    g.notice_num = min(notice_num, MAX_NOTICE_NUM)
     current_app.logger.info(f"Notice number updated: [{g.notice_num}]")
 
 

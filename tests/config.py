@@ -13,6 +13,7 @@ from app import create_app
 from app.extensions import db
 from tests.seeds.category_seeds import seed_category
 from tests.seeds.community_seeds import seed_community
+from tests.seeds.notice_seeds import seed_notice
 from tests.seeds.reply_seeds import seed_reply
 from tests.seeds.request_seeds import seed_request
 from tests.seeds.tag_seeds import seed_tag
@@ -55,6 +56,7 @@ class TestBase(flask_unittest.AppClientTestCase):
             seed_reply()
             seed_user_record()
             seed_user_preference()
+            seed_notice()
 
     def tearDown(self, app: Flask, _):
         """Tear down the test case."""

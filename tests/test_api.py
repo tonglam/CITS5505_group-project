@@ -1,5 +1,7 @@
 """Tests for the API module."""
 
+from datetime import datetime
+
 from flask import Flask
 from flask.testing import FlaskClient
 
@@ -401,10 +403,14 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_get_categories(self, _, client: FlaskClient):
+    def test_get_categories(self, app: Flask, client: FlaskClient):
         """Test the categories GET API."""
 
         url = _PREFIX + "/categories"
+
+        category_num = 0
+        with app.app_context():
+            category_num = Category.query.count()
 
         # login
         AuthActions(client).login()
@@ -413,7 +419,11 @@ class TestApi(TestBase):
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
+
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response_data["pagination"]["page"], 1)
+        self.assertEqual(response_data["pagination"]["per_page"], 10)
+        self.assertEqual(response_data["pagination"]["total_items"], category_num)
 
         # logout
         AuthActions(client).logout()
@@ -451,10 +461,14 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_get_tags(self, _, client: FlaskClient):
+    def test_get_tags(self, app: Flask, client: FlaskClient):
         """Test the tags GET API."""
 
         url = _PREFIX + "/tags"
+
+        tag_num = 0
+        with app.app_context():
+            tag_num = Tag.query.count()
 
         # login
         AuthActions(client).login()
@@ -464,6 +478,12 @@ class TestApi(TestBase):
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+
+        self.assertEqual(response_data["pagination"]["page"], 1)
+        self.assertEqual(response_data["pagination"]["per_page"], 10)
+        self.assertEqual(response_data["pagination"]["total_items"], tag_num)
 
         # logout
         AuthActions(client).logout()
@@ -492,6 +512,199 @@ class TestApi(TestBase):
 
         # check invalid data
         response = client.get(url + "invalid_tag_id")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
+        self.assertEqual(response_data["data"], None)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_notifications(self, app: Flask, client: FlaskClient):
+        """Test the user notifications GET API."""
+
+        url = _PREFIX + "/users/notifications"
+
+        notice = None
+        user = None
+        with app.app_context():
+            notice = Notice.query.first()
+            user = User.query.filter_by(id=notice.user).first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        # test pagination
+        response = client.get(f"{url}?page=2&per_page=15")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response_data["pagination"]["page"], 2)
+        self.assertEqual(response_data["pagination"]["per_page"], 15)
+
+        # test filter by notice type
+        notifications = Notice.query.filter_by(user=user.id).distinct(
+            Notice.notice_type
+        )
+        for notice in notifications:
+            response = client.get(f"{url}?notice_type={notice.notice_type}")
+            self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+            response_data = response.json
+            self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+            self.assertEqual(
+                response_data["data"]["notices"][0]["notice_type"],
+                notice.notice_type,
+            )
+
+        # test filter by status
+        notifications = Notice.query.filter_by(user=user.id).distinct(Notice.status)
+        for notice in notifications:
+            notice_status = "read" if notice.status is True else "unread"
+            response = client.get(f"{url}?status={notice_status}")
+            self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+            response_data = response.json
+            self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+            self.assertEqual(
+                response_data["data"]["notices"][0]["status"], notice.status
+            )
+
+        # test filter by notice type and status
+        notice_status = "read" if notice.status is True else "unread"
+        response = client.get(
+            f"{url}?notice_type={notifications[0].notice_type}&status={notice_status}"
+        )
+
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(
+            response_data["data"]["notices"][0]["notice_type"],
+            notifications[0].notice_type,
+        )
+        self.assertEqual(
+            response_data["data"]["notices"][0]["status"],
+            notifications[0].status,
+        )
+
+        # test order by update_at and update_at desc
+        response = client.get(f"{url}?order_by=update_at")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertGreaterEqual(
+            datetime.strptime(
+                response_data["data"]["notices"][1]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+            datetime.strptime(
+                response_data["data"]["notices"][0]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+        )
+
+        response = client.get(f"{url}?order_by=update_at_desc")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertGreaterEqual(
+            datetime.strptime(
+                response_data["data"]["notices"][0]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+            datetime.strptime(
+                response_data["data"]["notices"][1]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+        )
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_notification(self, app: Flask, client: FlaskClient):
+        """Test the user notification GET API."""
+
+        url = _PREFIX + "/users/notifications/%s"
+
+        notice = None
+        user = None
+        with app.app_context():
+            notice = Notice.query.first()
+            user = User.query.filter_by(id=notice.user).first()
+
+        notice_id = notice.id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # check valid data
+        response = client.get(url % notice_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response_data["data"]["notice"]["id"], notice_id)
+
+        # check invalid data
+        response = client.get(url % 9999999999999)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
+        self.assertEqual(response_data["data"], None)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_put_user_notification(self, app: Flask, client: FlaskClient):
+        """Test the user notification PUT API."""
+
+        url = _PREFIX + "/users/notifications/%s"
+
+        notice = None
+        user = None
+        with app.app_context():
+            notice = Notice.query.filter_by(status=False).first()
+            user = User.query.filter_by(id=notice.user).first()
+
+        notice_id = notice.id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        update_data = {"status": True}
+
+        response = client.put(url % notice_id, json=update_data)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        # check the updated data
+        update_status = response_data["data"]["notice"]["status"]
+
+        self.assertEqual(update_status, True)
+
+        # check db data
+        with app.app_context():
+            update_notice = Notice.query.get(notice_id)
+            self.assertEqual(update_notice.status, update_status)
+
+        # check invalid data
+        response = client.put(url % 9999999999999, json=update_data)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
