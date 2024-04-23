@@ -9,15 +9,7 @@ from app.community import community_bp
 @login_required
 def community():
     """Render the community page."""
-    infolist = [
-            {"title": "Tech Community Component"},
-            {"title": " Art Community Component"},
-            {"title": " Travel Community Component"},
-            {"title": " Astronomy Community Component"},
-            {"title": " Medical Community Component"},
-            {"title": " Economic Community Component"},
-        ]
-    return render_template("community.html",infolist=infolist)
+    return render_template("community.html")
 
 @community_bp.route("/createCard")
 @login_required
