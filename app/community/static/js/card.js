@@ -10,6 +10,6 @@ function getParameterByName(name, url) {
 
 var paramValue = getParameterByName('component');
 
-console.log(32232332, paramValue);
+
 
 document.getElementById("comunityTitle").innerHTML = paramValue;

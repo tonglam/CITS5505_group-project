@@ -3,3 +3,79 @@
     flex-flow: row wrap;
     justify-content: space-around;
 }
+
+.card1 {
+    width: 30%;
+    padding: 20px;
+    background-color: #fff;
+    color: #000;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title_left {
+    display: flex;
+    align-items: center;
+}
+
+.bar {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    background-color: blue;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.bar_img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+
+.title_btn {
+    font-weight: 100;
+    font-size: 16px;
+    padding: 5px 15px;
+    background-color: rgba(0, 0, 0);
+    border-radius: 15px;
+    color: #fff;
+}
+
+.card1_text {
+    margin-top: 20px;
+    color: #999;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #999;
+}
+
+.card1_list {
+    display: flex;
+    align-items: center;
+    color: #999;
+    margin-top: 20px;
+}
+
+.card1_list_item {
+    margin-right: 25px;
+}
+
+.item_text {
+    color: #999;
+}
+
+.green {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: green;
+}

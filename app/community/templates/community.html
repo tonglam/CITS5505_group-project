@@ -1,13 +1,12 @@
 {% extends "layout.html" %} {% block title %}Community{% endblock %} {% block
 head %} {{ super() }} {% endblock %} {% block content %}
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('community.static', filename='style/card1.css') }}" />
 <link rel="stylesheet" href="{{ url_for('community.static', filename='style/community.css') }}" />
 {% endblock %}
 <div class="contain">
     <div class="community">
         {% for item in infolist %}
-        {% import 'card1.html' as macros %}
+        {% import 'card.html' as macros %}
         {{ macros.print_card(item) }}
         {% endfor %}
     </div>
