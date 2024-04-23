@@ -2,6 +2,7 @@
 
 from .category import Category
 from .community import Community
+from .notice import Notice
 from .reply import Reply
 from .request import Request
 from .tag import Tag

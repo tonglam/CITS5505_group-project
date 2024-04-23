@@ -14,10 +14,10 @@ class Request(db.Model):
     title = db.Column(db.String(40), nullable=False)
     content = db.Column(db.String(1000), default="")
     category = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=True)
-    view_num = db.Column(db.Integer, default=0)
-    like_num = db.Column(db.Integer, default=0)
-    reply_num = db.Column(db.Integer, default=0)
-    save_num = db.Column(db.Integer, default=0)
+    view_num = db.Column(db.Integer)
+    like_num = db.Column(db.Integer)
+    reply_num = db.Column(db.Integer)
+    save_num = db.Column(db.Integer)
     create_at = db.Column(db.DateTime, default=generate_time())
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
@@ -29,12 +29,12 @@ class Request(db.Model):
         community: int,
         author: str,
         title: str,
-        content: str = "",
-        category: int = None,
-        view_num: int = 0,
-        like_num: int = 0,
-        reply_num: int = 0,
-        save_num: int = 0,
+        content: str,
+        category: int,
+        view_num: int,
+        like_num: int,
+        reply_num: int,
+        save_num: int,
     ) -> None:
         self.community = community
         self.author = author
@@ -49,7 +49,7 @@ class Request(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the request."""
 
-        return f"<Request {self.title}>"
+        return f"<Request {self.id}>"
 
     # genrated by copilot
     def to_dict(self):

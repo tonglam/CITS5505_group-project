@@ -64,7 +64,6 @@ db.sqlite3-journal
 logs/
 
 # Flask stuff:
-*.dev.sqlite
 *.test.sqlite
 .webassets-cache
 
