@@ -74,6 +74,10 @@ form {
   width: 100%;
 }
 
+#login_container input:not(.exclude) {
+  border: none;
+}
+
 .container {
   background-color: #fff;
   border-radius: 10px;

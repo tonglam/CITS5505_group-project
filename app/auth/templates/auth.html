@@ -25,7 +25,7 @@
 
   <div class="container d-none d-md-block" id="login_container">
     <div class="form-container sign-up-container">
-      <form action="{{ url_for('auth.register') }}" method="post">
+      <form action="{{ url_for('auth.auth') }}" method="post">
         {{ form.csrf_token and form.csrf_token() }}
 
         <div class="login_header">Create Account</div>
@@ -55,7 +55,8 @@
       </form>
     </div>
     <div class="form-container sign-in-container">
-      <form action="{{ url_for('auth.login') }}" method="post">
+      <form action="{{ url_for('auth.auth') }}" method="post">
+        {{ form.csrf_token and form.csrf_token() }}
         <div class="login_header">Sign in</div>
         <div class="d-flex social-container">
           <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
@@ -71,10 +72,22 @@
           ></a>
         </div>
         <span class="longin_text_style2">Or use your account</span>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
+        <input type="email" name="email" placeholder="Email" />
+        <input type="password" name="password" placeholder="Password" />
         <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+
         <button type="submit" class="login_btn_style">Sign In</button>
+        <div class="form-check">
+          <input
+            class="form-check-input exclude"
+            type="checkbox"
+            value="checked"
+            id="rememberMe"
+            name="rememberMe"
+            checked
+          />
+          <label class="form-check-label" for="rememberMe"> Remember me </label>
+        </div>
       </form>
     </div>
     <div class="overlay-container">
@@ -137,7 +150,8 @@
         role="tabpanel"
         aria-labelledby="tab-login"
       >
-        <form action="{{ url_for('auth.login') }}" method="post">
+        <form action="{{ url_for('auth.auth') }}" method="post">
+          {{ form.csrf_token and form.csrf_token() }}
           <div class="login_header">Sign in</div>
           <div class="d-flex social-container">
             <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
@@ -153,12 +167,19 @@
             ></a>
           </div>
           <span class="longin_text_style2">Or use your account</span>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            autocomplete="on"
+          />
+          <input type="password" name="password" placeholder="Password" />
           <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+
           <button class="login_btn_style">Sign In</button>
         </form>
       </div>
+
       <!-- test sign up -->
       <div
         class="tab-pane fade"
@@ -166,7 +187,8 @@
         role="tabpanel"
         aria-labelledby="tab-register"
       >
-        <form action="{{ url_for('auth.register') }}" method="post">
+        <form action="{{ url_for('auth.auth') }}" method="post">
+          {{ form.csrf_token and form.csrf_token() }}
           <div class="login_header">Create Account</div>
           <div class="d-flex social-container">
             <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->

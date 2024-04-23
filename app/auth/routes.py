@@ -116,13 +116,15 @@ def register():
     return render_template("register.html", form=form)
 
 
-@auth_bp.route("/login", methods=["GET", "POST"])
-def login():
-    """Log in the user."""
+@auth_bp.route("/auth",methods=["GET", "POST"])
+def auth():
+    """verification page."""
 
     form = forms.LoginForm(request.form)
 
     if form.validate_on_submit():
+        print("form.email.data:", form.email.data)
+        print("login post")
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
@@ -133,7 +135,7 @@ def login():
                 "No user with that email exists, please register first.",
                 FlashAlertTypeEnum.DANGER.value,
             )
-            return redirect(url_for("auth.register"))
+            return redirect(url_for("auth.auth"))
 
         if not user.password_hash:
             provide = "Google" if user.use_google else "GitHub"
@@ -141,7 +143,7 @@ def login():
                 "Please login with %s, email: %s.", {provide}, {form.email.data}
             )
             flash(f"Please login with {provide}.", FlashAlertTypeEnum.WARNING.value)
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.auth"))
 
         if not user.verify_password(form.password.data):
             current_app.logger.error(
@@ -151,26 +153,72 @@ def login():
                 "Invalid email or password. Please try a different login method or attempt again.",
                 FlashAlertTypeEnum.DANGER.value,
             )
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.auth"))
 
-        remember = request.form.get("rememberMe") == "checked"
-
-        login_user(user, remember=remember)
+        login_user(user, remember=True)
         current_app.logger.info("User logged in, id: %s.", {user.id})
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
+        print("is_authenticated: ",current_user.is_authenticated)
         return redirect(url_for("index"))
 
-    if form.errors:
-        for field, errors in form.errors.items():
-            for error in errors:
-                current_app.logger.error(
-                    "Login error in field %s: %s",
-                    {getattr(form, field).label.text},
-                    {error},
-                )
-        return redirect(url_for("auth.login"))
+    return render_template("auth.html", form=form)
 
-    return render_template("login.html", form=form)
+
+# @auth_bp.route("/login", methods=["GET", "POST"])
+# def login():
+#     """Log in the user."""
+
+#     form = forms.LoginForm(request.form)
+
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(email=form.email.data).first()
+
+#         if user is None:
+#             current_app.logger.error(
+#                 "No user with that email exists: %s.", {form.email.data}
+#             )
+#             flash(
+#                 "No user with that email exists, please register first.",
+#                 FlashAlertTypeEnum.DANGER.value,
+#             )
+#             return redirect(url_for("auth.register"))
+
+#         if not user.password_hash:
+#             provide = "Google" if user.use_google else "GitHub"
+#             current_app.logger.error(
+#                 "Please login with %s, email: %s.", {provide}, {form.email.data}
+#             )
+#             flash(f"Please login with {provide}.", FlashAlertTypeEnum.WARNING.value)
+#             return redirect(url_for("auth.login"))
+
+#         if not user.verify_password(form.password.data):
+#             current_app.logger.error(
+#                 "Invalid email or password, email: %s.", {form.email.data}
+#             )
+#             flash(
+#                 "Invalid email or password. Please try a different login method or attempt again.",
+#                 FlashAlertTypeEnum.DANGER.value,
+#             )
+#             return redirect(url_for("auth.login"))
+
+#         remember = request.form.get("rememberMe") == "checked"
+
+#         login_user(user, remember=remember)
+#         current_app.logger.info("User logged in, id: %s.", {user.id})
+#         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
+#         return redirect(url_for("index"))
+
+#     if form.errors:
+#         for field, errors in form.errors.items():
+#             for error in errors:
+#                 current_app.logger.error(
+#                     "Login error in field %s: %s",
+#                     {getattr(form, field).label.text},
+#                     {error},
+#                 )
+#         return redirect(url_for("auth.login"))
+
+#     return render_template("login.html", form=form)
 
 
 @auth_bp.route("/logout")
@@ -181,7 +229,7 @@ def logout():
     current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("auth.auth"))
 
 
 @auth_bp.route("/forgot_password", methods=["GET", "POST"])

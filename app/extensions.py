@@ -11,7 +11,7 @@ from .constants import FlashAlertTypeEnum
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = "auth.login"
+login_manager.login_view = "auth.auth"
 login_manager.login_message = "Please log in."
 login_manager.login_message_category = FlashAlertTypeEnum.PRIMARY.value
 bcrypt = Bcrypt()
