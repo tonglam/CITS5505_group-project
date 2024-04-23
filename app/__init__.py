@@ -1,9 +1,10 @@
 """Main application module."""
 
-import logging
-
-from flask import Flask, render_template, request
+from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
+
+from app.constants import G_NOTICE_NUM, G_USER
+from app.models.notice import Notice
 
 from .api import api_bp
 from .auth import auth_bp
@@ -21,8 +22,10 @@ from .utils import get_config
 
 def create_app():
     """Create the Flask application."""
+
     app = Flask(__name__)
 
+    # app configuration
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
@@ -40,20 +43,23 @@ def create_app():
     app.register_blueprint(api_bp, url_prefix="/api/v1")
     app.register_blueprint(
         auth_bp,
+        url_prefix="/auth",
         static_url_path="/auth/static",
     )
     app.register_blueprint(
         search_bp,
+        url_prefix="/search",
         static_url_path="/search/static",
     )
     app.register_blueprint(
         notice_bp,
-        static_url_path="/notice/static",
+        url_prefix="/notifications",
+        static_url_path="/notifications/static",
     )
     app.register_blueprint(
         post_bp,
         url_prefix="/posts",
-        static_url_path="/post/static",
+        static_url_path="/posts/static",
     )
     app.register_blueprint(
         popular_bp,
@@ -70,38 +76,67 @@ def create_app():
         url_prefix="/users",
         static_url_path="/users/static",
     )
-    # error init
+
+    # register error handlers
     register_error_handlers(app)
-    # log init
+
+    # register logging
     configure_logging(app)
 
+    # home page
     @app.route("/")
     @login_required
     def index():
         return render_template("index.html")
 
+    # logging middleware for http request and response
     @app.before_request
     def log_request_info():
-        app.logger.info("Request: %s %s", request.method, request.url)
-        app.logger.info("Request Headers: %s", request.headers)
-        app.logger.info("Request Body: %s", request.get_data())
+        if "/static" not in request.path:
+            app.logger.info("Request: %s %s", request.method, request.url)
+            app.logger.info("Request Headers: %s", request.headers)
+            app.logger.info("Request Body: %s", request.get_data())
 
     @app.after_request
     def log_response_info(response):
         app.logger.info("Response: %s", response.status)
-        app.logger.info("Response Headers: %s", response.headers)
-        app.logger.info("Response Body: %s", response.get_data())
+
+        for key, value in response.headers.items():
+            if "filename=" in value and (
+                value.endswith(".css") or value.endswith(".js")
+            ):
+                continue
+            app.logger.info("Response Header - %s: %s", key, value)
+
+        if "response_body" in g:
+            app.logger.info("Response Body: %s", g.response_body)
+
         return response
 
+    # global context processors, to set global variables for all templates
     @app.context_processor
     def inject_user():
-        return {"user": current_user}
+        return {G_USER: current_user}
+
+    @app.context_processor
+    def inject_notice_num():
+        if current_user.is_authenticated:
+            notice_num = Notice.query.filter_by(
+                user=current_user.id, status=False
+            ).count()
+        else:
+            notice_num = 0
+
+        g.notice_num = notice_num
+
+        return {G_NOTICE_NUM: g.notice_num}
 
     return app
 
 
 def get_oauth2_config():
     """Get OAuth2 configuration."""
+
     return {
         "google": {
             "client_id": get_config("GOOGLE", "CLIENT_ID"),

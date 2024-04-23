@@ -12,20 +12,36 @@ random.seed(5505)
 faker = Faker()
 
 
-def create_seed_community_data() -> list:
+def create_seed_community_data(length: int = 100) -> list:
     """Create seed community data."""
 
-    category_ids = [category.id for category in Category.query.all()]
+    communities = []
 
-    return [
-        {
-            "name": faker.name(),
-            "category": random.choice(category_ids),
-            "description": faker.text(),
-            "avatar": "",
-        }
-        for _ in range(100)
-    ]
+    category_ids = [category.id for category in Category.query.all()]
+    names = generate_community_names(length)
+
+    for i in range(length):
+        communities.append(
+            {
+                "name": names[i],
+                "category": random.choice(category_ids),
+                "description": faker.text(),
+                "avatar": "",
+            }
+        )
+
+    return communities
+
+
+def generate_community_names(length: int) -> list:
+    """Generate community names."""
+
+    names = set()
+
+    while len(names) < length:
+        names.add(faker.name())
+
+    return list(names)
 
 
 def seed_community():

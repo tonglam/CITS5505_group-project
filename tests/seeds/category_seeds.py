@@ -14,6 +14,20 @@ def create_seed_category_data() -> list:
         {"name": "food"},
         {"name": "travel"},
         {"name": "technology"},
+        {"name": "education"},
+        {"name": "health"},
+        {"name": "fashion"},
+        {"name": "art"},
+        {"name": "science"},
+        {"name": "business"},
+        {"name": "history"},
+        {"name": "nature"},
+        {"name": "photography"},
+        {"name": "cooking"},
+        {"name": "gardening"},
+        {"name": "football"},
+        {"name": "culture"},
+        {"name": "literature"},
     ]
 
 

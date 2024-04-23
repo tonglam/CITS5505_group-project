@@ -23,15 +23,15 @@ class UserStatusEnum(enum.Enum):
 class User(UserMixin, db.Model):
     """User model."""
 
-    id: str = db.Column(db.String(36), primary_key=True, default="")
+    id: str = db.Column(db.String(36), primary_key=True)
     username: str = db.Column(db.String(80), unique=True, nullable=False)
-    email: str = db.Column(db.String(120), nullable=False)
+    email: str = db.Column(db.String(120), nullable=True)
     password_hash: str = db.Column(db.String(300), nullable=True)
-    avatar_url: str = db.Column(db.String(300), default="")
+    avatar_url: str = db.Column(db.String(300))
     use_google: bool = db.Column(db.Boolean, default=False)
     use_github: bool = db.Column(db.Boolean, default=False)
-    security_question: str = db.Column(db.String(300), nullable=True)
-    security_answer: str = db.Column(db.String(300), nullable=True)
+    security_question: str = db.Column(db.String(100), nullable=True)
+    security_answer: str = db.Column(db.String(100), nullable=True)
     status: str = db.Column(db.String(20), default=UserStatusEnum.ACTIVE.value)
     create_at: datetime = db.Column(db.DateTime, default=generate_time())
     update_at: datetime = db.Column(
@@ -43,11 +43,11 @@ class User(UserMixin, db.Model):
         self,
         username: str,
         email: str,
-        avatar_url: str = "",
-        use_google: bool = False,
-        use_github: bool = False,
-        security_question: str = "",
-        security_answer: str = "",
+        avatar_url: str,
+        use_google: bool,
+        use_github: bool,
+        security_question: str,
+        security_answer: str,
     ) -> None:
         self.username = username
         self.email = email
@@ -95,11 +95,6 @@ class User(UserMixin, db.Model):
         """Check the password."""
 
         return bcrypt.check_password_hash(self.password_hash, password)
-
-    def get_id(self) -> str:
-        """Get the user id."""
-
-        return self.id
 
     @staticmethod
     def user_exists(email: str) -> bool:

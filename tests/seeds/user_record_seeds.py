@@ -5,7 +5,7 @@ import random
 from app.extensions import db
 from app.models.request import Request
 from app.models.user import User
-from app.models.user_record import UserRecord, UserRecordEnum
+from app.models.user_record import UserRecord, UserRecordTypeEnum
 
 random.seed(5505)
 
@@ -15,7 +15,7 @@ def create_seed_user_record_data() -> list:
 
     users = [user.id for user in User.query.all()]
     communities = [request.id for request in Request.query.all()]
-    types = [record_type.value for record_type in UserRecordEnum]
+    types = [record_type.value for record_type in UserRecordTypeEnum]
 
     return [
         {

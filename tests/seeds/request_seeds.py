@@ -18,7 +18,7 @@ def create_seed_request_data() -> list:
     """Create seed request data."""
 
     communities = [community.id for community in Community.query.all()]
-    users = [user.username for user in User.query.all()]
+    users = [user.id for user in User.query.all()]
     categories = [category.id for category in Category.query.all()]
 
     return [

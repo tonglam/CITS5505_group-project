@@ -19,10 +19,12 @@ class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     replier = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    content = db.Column(db.String(1000), default="")
-    source = db.Column(db.String(50), default=ReplySourceEnum.HUMAN.value)
-    like_num = db.Column(db.Integer, default=0)
-    save_num = db.Column(db.Integer, default=0)
+    content = db.Column(db.String(1000))
+    source = db.Column(
+        db.String(50), db.Enum(ReplySourceEnum), default=ReplySourceEnum.HUMAN.value
+    )
+    like_num = db.Column(db.Integer)
+    save_num = db.Column(db.Integer)
     create_at = db.Column(db.DateTime, default=generate_time())
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
@@ -33,10 +35,10 @@ class Reply(db.Model):
         self,
         request: int,
         replier: str,
-        content: str = "",
-        source: str = "human",
-        like_num: int = 0,
-        save_num: int = 0,
+        content: str,
+        source: str,
+        like_num: int,
+        save_num: int,
     ) -> None:
         self.request = request
         self.replier = replier
@@ -48,7 +50,7 @@ class Reply(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the reply."""
 
-        return f"<Reply {self.content}>"
+        return f"<Reply {self.id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:

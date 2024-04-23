@@ -17,7 +17,7 @@ def create_seed_reply_data() -> list:
     """Create seed reply data."""
 
     requests = [request.id for request in Request.query.all()]
-    users = [user.username for user in User.query.all()]
+    users = [user.id for user in User.query.all()]
     reply_sources = [source.value for source in ReplySourceEnum]
 
     return [
