@@ -10,7 +10,8 @@
             </span>
         </div>
 
-        <a class="title_btn" href="/communities/createCard?component={{info.title}}">
+        <!-- <a class="title_btn" href="/communities/createCommunity?component={{info.title}}"> -->
+        <a class="title_btn" href="{{ url_for('createCommunity', component=info.title) }}">
             Join
         </a>
     </div>

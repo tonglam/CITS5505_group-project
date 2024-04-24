@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block title %}Community{% endblock %} {% block
 head %} {{ super() }} {% endblock %} {% block content %}
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('community.static', filename='style/createCard.css') }}" />
+<link rel="stylesheet" href="{{ url_for('community.static', filename='style/createCommunity.css') }}" />
 {% endblock %}
 <div class="contain">
     <div class="create">
@@ -64,7 +64,7 @@ head %} {{ super() }} {% endblock %} {% block content %}
 
 </div>
 {% block javascript %}
-<script type="module" src="{{ url_for('community.static', filename='js/createCard.js') }}"></script>
+<script type="module" src="{{ url_for('community.static', filename='js/createCommunity.js') }}"></script>
 {% endblock %}
 
 {% endblock %}
