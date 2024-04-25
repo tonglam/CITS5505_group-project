@@ -43,88 +43,16 @@ def user_loader(user_id: str):
     return db.session.get(User, user_id)
 
 
-# @auth_bp.route("/register", methods=["GET", "POST"])
-# def register():
-#     """Register a new user."""
-
-#     print("register method:", request.method)
-
-#     if current_user.is_authenticated:
-#         current_app.logger.info(
-#             "User is already registered, id: %s.", {current_user.id}
-#         )
-#         flash("You are already registered.", FlashAlertTypeEnum.SUCCESS.value)
-#         return redirect(url_for("auth.login"))
-
-#     form = forms.RegisterForm(request.form)
-
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(email=form.email.data).first()
-
-#         if user:
-#             if user.password_hash:
-#                 # registered with email and password before
-#                 current_app.logger.error(
-#                     "Email already registered, email: %s.", {form.email.data}
-#                 )
-#                 flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
-#                 return redirect(url_for("auth.register"))
-
-#             # only login with third party OAuth before
-#             user.username = form.username.data
-#             user.email = form.email.data
-#             user.avatar_url = (
-#                 form.avatar_url.data if form.avatar_url.data else user.avatar_url
-#             )
-#             user.security_question = form.security_question.data
-#             user.security_answer = form.security_answer.data
-#             user.password = form.password.data
-
-#         else:
-#             # add a new user
-#             user = User(
-#                 username=form.username.data,
-#                 email=form.email.data,
-#                 avatar_url=form.avatar_url.data,
-#                 use_google=False,
-#                 use_github=False,
-#                 security_question=form.security_question.data,
-#                 security_answer=form.security_answer.data,
-#             )
-#             user.password = form.password.data
-#             db.session.add(user)
-
-#         db.session.commit()
-#         login_user(user, remember=True)
-#         current_app.logger.info(
-#             "User registered, register email: %s, id: %s.", {user.email}, {user.id}
-#         )
-#         flash("You registered and are now logged in.", FlashAlertTypeEnum.SUCCESS.value)
-#         return redirect(url_for("auth.login"))
-
-#     if form.errors:
-#         for field, errors in form.errors.items():
-#             for error in errors:
-#                 current_app.logger.error(
-#                     "Register error in field %s: %s",
-#                     {getattr(form, field).label.text},
-#                     {error},
-#                 )
-#         return redirect(url_for("auth.register"))
-
-#     print("out of post")
-#     return render_template("register.html", form=form)
-
-
-@auth_bp.route("/auth",methods=["GET"])
+@auth_bp.route("/auth", methods=["GET"])
 def auth():
     """verification page."""
     form = forms.RegisterForm()
-    return render_template("auth.html",form=form)
+    return render_template("auth.html", form=form)
 
 
-@auth_bp.route("/register",methods=["POST"])
+@auth_bp.route("/register", methods=["POST"])
 def register():
+    """Register a new user."""
     if current_user.is_authenticated:
         current_app.logger.info(
             "User is already registered, id: %s.", {current_user.id}
@@ -135,7 +63,7 @@ def register():
     form = forms.RegisterForm(request.form)
 
     if form.validate_on_submit():
-        print("submit success")
+
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
@@ -158,7 +86,7 @@ def register():
             user.password = form.password.data
 
         else:
-            print("add new user")
+
             # add a new user
             user = User(
                 username=form.username.data,
@@ -179,7 +107,7 @@ def register():
         )
         flash("You registered and are now logged in.", FlashAlertTypeEnum.SUCCESS.value)
         return redirect(url_for("auth.auth"))
-    
+
     if form.errors:
         for field, errors in form.errors.items():
             for error in errors:
@@ -191,12 +119,12 @@ def register():
         return render_template("auth.html", form=form)
 
 
-@auth_bp.route("/login",methods=["POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
+    """user login."""
     form = forms.LoginForm(request.form)
     if form.validate_on_submit():
-        print("form.email.data:", form.email.data)
-        print("login post")
+
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
@@ -221,6 +149,7 @@ def login():
             current_app.logger.error(
                 "Invalid email or password, email: %s.", {form.email.data}
             )
+
             flash(
                 "Invalid email or password. Please try a different login method or attempt again.",
                 FlashAlertTypeEnum.DANGER.value,
@@ -230,7 +159,7 @@ def login():
         login_user(user, remember=True)
         current_app.logger.info("User logged in, id: %s.", {user.id})
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
-        print("is_authenticated: ",current_user.is_authenticated)
+
         return redirect(url_for("index"))
 
     if form.errors:
@@ -242,62 +171,6 @@ def login():
                     {error},
                 )
         return render_template("auth.html", form=form)
-
-# @auth_bp.route("/login", methods=["GET", "POST"])
-# def login():
-#     """Log in the user."""
-
-#     form = forms.LoginForm(request.form)
-
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(email=form.email.data).first()
-
-#         if user is None:
-#             current_app.logger.error(
-#                 "No user with that email exists: %s.", {form.email.data}
-#             )
-#             flash(
-#                 "No user with that email exists, please register first.",
-#                 FlashAlertTypeEnum.DANGER.value,
-#             )
-#             return redirect(url_for("auth.register"))
-
-#         if not user.password_hash:
-#             provide = "Google" if user.use_google else "GitHub"
-#             current_app.logger.error(
-#                 "Please login with %s, email: %s.", {provide}, {form.email.data}
-#             )
-#             flash(f"Please login with {provide}.", FlashAlertTypeEnum.WARNING.value)
-#             return redirect(url_for("auth.login"))
-
-#         if not user.verify_password(form.password.data):
-#             current_app.logger.error(
-#                 "Invalid email or password, email: %s.", {form.email.data}
-#             )
-#             flash(
-#                 "Invalid email or password. Please try a different login method or attempt again.",
-#                 FlashAlertTypeEnum.DANGER.value,
-#             )
-#             return redirect(url_for("auth.login"))
-
-#         remember = request.form.get("rememberMe") == "checked"
-
-#         login_user(user, remember=remember)
-#         current_app.logger.info("User logged in, id: %s.", {user.id})
-#         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
-#         return redirect(url_for("index"))
-
-#     if form.errors:
-#         for field, errors in form.errors.items():
-#             for error in errors:
-#                 current_app.logger.error(
-#                     "Login error in field %s: %s",
-#                     {getattr(form, field).label.text},
-#                     {error},
-#                 )
-#         return redirect(url_for("auth.login"))
-
-#     return render_template("login.html", form=form)
 
 
 @auth_bp.route("/logout")
