@@ -29,6 +29,7 @@ from app.constants import (
     SCOPES,
     TOKEN_URL,
     FlashAlertTypeEnum,
+    HttpRequstEnum,
     OAuthProviderEnum,
 )
 from app.extensions import db, login_manager
@@ -118,6 +119,8 @@ def register():
                 )
         return render_template("auth.html", form=form)
 
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -171,6 +174,8 @@ def login():
                     {error},
                 )
         return render_template("auth.html", form=form)
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 @auth_bp.route("/logout")
