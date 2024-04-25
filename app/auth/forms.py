@@ -9,13 +9,13 @@ class RegisterForm(FlaskForm):
     """Register form."""
 
     username = StringField(
-        "Username", validators=[DataRequired(), Length(min=2, max=50)]
+        name="username", validators=[DataRequired(), Length(min=2, max=50)]
     )
     email = EmailField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
+        name="email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
     )
     password = PasswordField(
-        "Password",
+        name="password",
         validators=[
             DataRequired(),
             Length(min=8, max=25),
@@ -26,15 +26,15 @@ class RegisterForm(FlaskForm):
         ],
     )
     confirm = PasswordField(
-        "Repeat password",
+        name="rpassword",
         validators=[
             DataRequired(),
             EqualTo("password", message="Passwords must match."),
         ],
     )
     avatar_url = StringField("Avatar", validators=[Optional()])
-    security_question = StringField("Security Question", validators=[DataRequired()])
-    security_answer = StringField("Security Answer", validators=[DataRequired()])
+    security_question = StringField(name="squestion", validators=[DataRequired()])
+    security_answer = StringField(name="sanswer", validators=[DataRequired()])
 
 
 class LoginForm(FlaskForm):
