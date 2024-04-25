@@ -30,7 +30,6 @@
 
         <div class="login_header">Create Account</div>
         <div class="d-flex social-container">
-          <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
           <a
             href="{{ url_for('auth.authorize', provider='google') }}"
             class="social"
@@ -59,7 +58,6 @@
         {{ form.csrf_token and form.csrf_token() }}
         <div class="login_header">Sign in</div>
         <div class="d-flex social-container">
-          <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
           <a
             href="{{ url_for('auth.authorize', provider='google') }}"
             class="social"
@@ -154,7 +152,6 @@
           {{ form.csrf_token and form.csrf_token() }}
           <div class="login_header">Sign in</div>
           <div class="d-flex social-container">
-            <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
             <a
               href="{{ url_for('auth.authorize', provider='google') }}"
               class="social"
@@ -191,7 +188,6 @@
           {{ form.csrf_token and form.csrf_token() }}
           <div class="login_header">Create Account</div>
           <div class="d-flex social-container">
-            <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
             <a
               href="{{ url_for('auth.authorize', provider='google') }}"
               class="social"
