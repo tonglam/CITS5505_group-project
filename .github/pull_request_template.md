@@ -4,7 +4,7 @@
 
 # Change Form
 
-Fill this up (NA if not available). If a certain criteria is not met, can you please give a reason.
+Fill this up (NA if not available).
 
 - [ ] The change has quick testing
 - [ ] The change has unit tests
