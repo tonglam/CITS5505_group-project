@@ -298,8 +298,8 @@ button.ghost {
   background: #0e2f34;
   color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 5px #0e2f34;, 0 0 25px #0e2f34;, 0 0 50px #0e2f34;,
-    0 0 100px #0e2f34;;
+  box-shadow: 0 0 5px #0e2f34, 0 0 25px #0e2f34, 0 0 50px #0e2f34,
+    0 0 100px #0e2f34;
 }
 
 .fgtpassword_box button span {
