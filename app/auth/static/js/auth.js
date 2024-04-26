@@ -1,4 +1,31 @@
 $(document).ready(function () {
+  // sign in and sign up
+  const signUpButton = document.getElementById("signUp");
+  const signInButton = document.getElementById("signIn");
+  const container = document.getElementById("login_container");
+
+  if (signUpButton !== null && container !== null) {
+    signUpButton.addEventListener("click", () => {
+      container.classList.add("right-panel-active");
+    });
+  }
+
+  if (signInButton !== null && container !== null) {
+    signInButton.addEventListener("click", () => {
+      container.classList.remove("right-panel-active");
+    });
+  }
+
+  // forgot password page - return to login
+  const forgotReturnDiv = document.getElementById("fotgotReturn");
+
+  if (forgotReturnDiv !== null) {
+    forgotReturnDiv.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.location.href = "/auth/auth";
+    });
+  }
+
   $("#email").on("blur", function () {
     checkEmail(this.value);
   });
@@ -13,15 +40,3 @@ async function checkEmail(email) {
     console.log("Invalid email");
   }
 }
-
-const signUpButton = document.getElementById("signUp");
-const signInButton = document.getElementById("signIn");
-const container = document.getElementById("login_container");
-
-signUpButton.addEventListener("click", () => {
-  container.classList.add("right-panel-active");
-});
-
-signInButton.addEventListener("click", () => {
-  container.classList.remove("right-panel-active");
-});

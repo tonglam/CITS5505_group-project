@@ -224,7 +224,7 @@ def forgot_password():
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.auth"))
 
     if form.errors:
         for field, errors in form.errors.items():
@@ -234,7 +234,7 @@ def forgot_password():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return redirect(url_for("auth.forgot_password"))
+        return render_template("forgotPassword.html", form=form)
 
     return render_template("forgotPassword.html", form=form)
 
