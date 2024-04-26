@@ -1,5 +1,7 @@
 """Main application module."""
 
+import uuid
+
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
 
@@ -91,25 +93,50 @@ def create_app():
 
     # logging middleware for http request and response
     @app.before_request
-    def log_request_info():
-        if "/static" not in request.path:
-            app.logger.info("Request: %s %s", request.method, request.url)
-            app.logger.info("Request Headers: %s", request.headers)
-            app.logger.info("Request Body: %s", request.get_data())
+    def before_request():
+        if request.url.endswith(".css") or request.url.endswith(".js"):
+            return
+
+        g.request_uuid = str(uuid.uuid4())
+        g.request_body = request.get_data(as_text=True) if request.data else None
+        app.logger.info(
+            "[%s] Request [%s]: %s %s",
+            g.request_uuid,
+            request.method,
+            request.url,
+            request.headers,
+        )
+        request_body = g.request_body
+        if request_body:
+            app.logger.info("[%s] Request Body: %s", g.request_uuid, g.request_body)
 
     @app.after_request
-    def log_response_info(response):
-        app.logger.info("Response: %s", response.status)
+    def after_request(response):
+        content_type = response.content_type
 
-        for key, value in response.headers.items():
-            if "filename=" in value and (
-                value.endswith(".css") or value.endswith(".js")
-            ):
-                continue
-            app.logger.info("Response Header - %s: %s", key, value)
-
-        if "response_body" in g:
-            app.logger.info("Response Body: %s", g.response_body)
+        if (
+            "html" in content_type
+            or "css" in content_type
+            or "javascript" in content_type
+        ):
+            app.logger.info(
+                "[%s] Response [%s]: Status %s, Headers %s",
+                g.request_uuid,
+                request.method,
+                response.status,
+                response.headers,
+            )
+        elif "application/json" in content_type:
+            app.logger.info(
+                "[%s] Response [%s]: Status %s, Headers %s",
+                g.request_uuid,
+                request.method,
+                response.status,
+                response.headers,
+            )
+            response_body = response.get_data(as_text=True)
+            if response_body:
+                app.logger.info("[%s] Response Body: %s", g.request_uuid, response_body)
 
         return response
 
