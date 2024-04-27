@@ -143,23 +143,31 @@ False, badgeNum = 0) -%}
     title="{{ title }}"
     role="button"
   >
-    <i class="{{ icon_class }}"></i>
-    <!-- badge -->
-    {% if showBadge %}
-    <span class="badge rounded-pill badge-notification bg-danger"
-      >{{ badgeNum }}</span
-    >
-    {% endif %}
+    <div class="position-relative d-inline-block">
+      <i class="{{ icon_class }}"></i>
+      <!-- badge -->
+      {% if showBadge %}
+      <span
+        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
+        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
+        >{{ badgeNum }}</span
+      >
+      {% endif %}
+    </div>
   </a>
   {% else %}
   <a class="nav-link" href="{{ url }}" title="{{ title }}" role="button">
-    <i class="{{ icon_class }}"></i>
-    <!-- badge -->
-    {% if (showBadge and badgeNum > 0) %}
-    <span class="badge rounded-pill badge-notification bg-danger"
-      >{{ badgeNum }}</span
-    >
-    {% endif %}
+    <div class="position-relative d-inline-block">
+      <i class="{{ icon_class }}"></i>
+      <!-- badge -->
+      {% if (showBadge and badgeNum > 0) %}
+      <span
+        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
+        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
+        >{{ badgeNum }}</span
+      >
+      {% endif %}
+    </div>
   </a>
   {% endif %}
 </li>

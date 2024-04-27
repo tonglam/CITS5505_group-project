@@ -25,25 +25,30 @@ class InvalidLoginEnum(enum.Enum):
 class TestAuth(TestBase):
     """This class contains the test cases for the authentication module."""
 
+    def test_auth(self, _, client: FlaskClient):
+        """Test the authentication page."""
+
+        url = "/auth/auth"
+
+        self.assertStatus(client.get(url), HttpRequstEnum.SUCCESS_OK.value)
+
     def test_register(self, _, client: FlaskClient):
         """Test the registration process."""
-        url = "/auth/register"
 
-        # smoke test
-        self.assertStatus(client.get(url), HttpRequstEnum.SUCCESS_OK.value)
+        url = "/auth/register"
 
         # test that successful registration redirects to the login page
         register_data = {
             "username": "test auth",
             "email": "test_auth@gmail.com",
             "password": "Password@123",
-            "confirm": "Password@123",
-            "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=5505",
-            "security_question": "What is your favorite color?",
-            "security_answer": "blue",
+            "rpassword": "Password@123",
+            "avatar": "https://api.dicebear.com/5.x/adventurer/svg?seed=5505",
+            "squestion": "What is your favorite color?",
+            "sanswer": "blue",
         }
         response = client.post(url, data=register_data)
-        self.assertLocationHeader(response, "/auth/login")
+        self.assertLocationHeader(response, "/auth/auth")
 
         # test that the user was inserted into the database
         user = User.query.filter_by(username=register_data["username"]).first()
@@ -53,20 +58,17 @@ class TestAuth(TestBase):
         self.assertIn(
             user.avatar_url,
             [
-                register_data["avatar_url"],
+                register_data["avatar"],
                 f"{GRAVATAR_URL}{hashlib.sha256(user.email.lower().encode()).hexdigest()}",
             ],
         )
-        self.assertEqual(user.security_question, register_data["security_question"])
-        self.assertEqual(user.security_answer, register_data["security_answer"])
+        self.assertEqual(user.security_question, register_data["squestion"])
+        self.assertEqual(user.security_answer, register_data["sanswer"])
 
     def test_login(self, _, client: FlaskClient):
         """Test the login process."""
 
         url = "/auth/login"
-
-        # somke test
-        self.assertStatus(client.get(url), HttpRequstEnum.SUCCESS_OK.value)
 
         # test that successful login redirects to the home page
         login_data = {
@@ -109,20 +111,26 @@ class TestAuth(TestBase):
         ]
 
         for data in auth_data:
-            response = auth.login(data["email"], data["password"])
-            if data["type"] == InvalidLoginEnum.EMAIL_NOT_EXISTS:
-                self.assertLocationHeader(response, "/auth/register")
+            response = auth.login(
+                data["email"], data["password"], follow_redirects=False
+            )
+
+            if (
+                data["type"] == InvalidLoginEnum.EMAIL_NOT_EXISTS
+                or data["type"] == InvalidLoginEnum.PASSWORD_NOT_CORRECT
+            ):
+                self.assertStatus(response, HttpRequstEnum.FOUND.value)
             else:
-                self.assertLocationHeader(response, "/auth/login")
+                self.assertStatus(response, HttpRequstEnum.SUCCESS_OK.value)
 
     def test_logout(self, _, client: FlaskClient):
         """Test the logout process."""
 
         url = "/auth/logout"
 
-        # test that successful logout redirects to the login page
+        # test that successful logout redirects to the auth page
         response = client.get(url)
-        self.assertLocationHeader(response, "/auth/login?next=%2Fauth%2Flogout")
+        self.assertLocationHeader(response, "/auth/auth?next=%2Fauth%2Flogout")
 
     def test_forgot_password(self, _, client: FlaskClient):
         """Test the forgot password process."""
@@ -141,7 +149,7 @@ class TestAuth(TestBase):
             "confirm": "Password@456",
         }
         response = client.post(url, data=forgot_password_data)
-        self.assertLocationHeader(response, "/auth/login")
+        self.assertLocationHeader(response, "/auth/auth")
 
         # test that the user password was updated in the database
         user = User.query.filter_by(email=forgot_password_data["email"]).first()
@@ -159,7 +167,7 @@ class TestAuth(TestBase):
         response = auth.login(
             forgot_password_data["email"], forgot_password_data["password"]
         )
-        self.assertLocationHeader(response, "/")
+        self.assertStatus(response, HttpRequstEnum.SUCCESS_OK.value)
 
     def test_forgot_password_validate_input(self, _, client: FlaskClient):
         """Test the invalid forgot password process."""

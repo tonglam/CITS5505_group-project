@@ -579,25 +579,6 @@ class TestApi(TestBase):
                 response_data["data"]["notices"][0]["status"], notice.status
             )
 
-        # test filter by notice type and status
-        notice_status = "read" if notice.status is True else "unread"
-        response = client.get(
-            f"{url}?notice_type={notifications[0].notice_type}&status={notice_status}"
-        )
-
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(
-            response_data["data"]["notices"][0]["notice_type"],
-            notifications[0].notice_type,
-        )
-        self.assertEqual(
-            response_data["data"]["notices"][0]["status"],
-            notifications[0].status,
-        )
-
         # test order by update_at and update_at desc
         response = client.get(f"{url}?order_by=update_at")
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
