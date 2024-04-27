@@ -32,7 +32,7 @@ class RegisterForm(FlaskForm):
             EqualTo("password", message="Passwords must match."),
         ],
     )
-    avatar_url = StringField("Avatar", validators=[Optional()])
+    avatar_url = StringField("avatar", validators=[Optional()])
     security_question = StringField(name="squestion", validators=[DataRequired()])
     security_answer = StringField(name="sanswer", validators=[DataRequired()])
 

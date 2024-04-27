@@ -1,5 +1,7 @@
 """Main application module."""
 
+import uuid
+
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
 
@@ -10,7 +12,7 @@ from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
 from .errors import register_error_handlers
-from .extensions import bcrypt, db, login_manager, migrate, scheduler
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler
 from .logs import configure_logging
 from .notice import notice_bp
 from .popular import popular_bp
@@ -29,15 +31,17 @@ def create_app():
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
+    app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 
     # extensions
     bcrypt.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
-
-    # scheduled tasks
     scheduler.init_app(app)
+    jwt.init_app(app)
 
     # blueprints
     app.register_blueprint(api_bp, url_prefix="/api/v1")
@@ -91,25 +95,51 @@ def create_app():
 
     # logging middleware for http request and response
     @app.before_request
-    def log_request_info():
-        if "/static" not in request.path:
-            app.logger.info("Request: %s %s", request.method, request.url)
-            app.logger.info("Request Headers: %s", request.headers)
-            app.logger.info("Request Body: %s", request.get_data())
+    def before_request():
+        if request.url.endswith(".css") or request.url.endswith(".js"):
+            return
+
+        g.request_uuid = str(uuid.uuid4())
+        g.request_body = request.get_data(as_text=True) if request.data else None
+        app.logger.info(
+            "[%s] Request [%s]: %s %s",
+            g.request_uuid,
+            request.method,
+            request.url,
+            request.headers,
+        )
+        request_body = g.request_body
+        if request_body:
+            app.logger.info("[%s] Request Body: %s", g.request_uuid, g.request_body)
 
     @app.after_request
-    def log_response_info(response):
-        app.logger.info("Response: %s", response.status)
+    def after_request(response):
+        content_type = response.content_type
+        request_uuid = g.request_uuid if hasattr(g, "request_uuid") else ""
 
-        for key, value in response.headers.items():
-            if "filename=" in value and (
-                value.endswith(".css") or value.endswith(".js")
-            ):
-                continue
-            app.logger.info("Response Header - %s: %s", key, value)
-
-        if "response_body" in g:
-            app.logger.info("Response Body: %s", g.response_body)
+        if (
+            "html" in content_type
+            or "css" in content_type
+            or "javascript" in content_type
+        ):
+            app.logger.info(
+                "[%s] Response [%s]: Status %s, Headers %s",
+                request_uuid,
+                request.method,
+                response.status,
+                response.headers,
+            )
+        elif "application/json" in content_type:
+            app.logger.info(
+                "[%s] Response [%s]: Status %s, Headers %s",
+                request_uuid,
+                request.method,
+                response.status,
+                response.headers,
+            )
+            response_body = response.get_data(as_text=True)
+            if response_body:
+                app.logger.info("[%s] Response Body: %s", request_uuid, response_body)
 
         return response
 
