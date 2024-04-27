@@ -3,7 +3,7 @@
 from flask import render_template
 from flask_login import login_required
 
-from community import community_bp
+from app.community import community_bp
 
 @community_bp.route("/")
 @login_required
