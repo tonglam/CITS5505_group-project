@@ -23,7 +23,10 @@
   </div>
   {% endfor %} {% endfor %}
 
-  <div class="container d-none d-md-block" id="login_container">
+  <div
+    class="container d-none d-md-flex align-items-center justify-content-center text-center mt-5"
+    id="login_container"
+  >
     <div class="form-container sign-up-container">
       <form
         class="login_form"
@@ -159,17 +162,19 @@
         <form action="{{ url_for('auth.login') }}" method="post">
           {{ form.csrf_token and form.csrf_token() }}
           <div class="login_header">Sign In</div>
-          <div class="d-flex social-container">
-            <a
-              href="{{ url_for('auth.authorize', provider='google') }}"
-              class="social"
-              ><i class="fab fa-google-plus-g"></i
-            ></a>
-            <a
-              href="{{ url_for('auth.authorize', provider='github') }}"
-              class="social"
-              ><i class="fab fa-github"></i
-            ></a>
+          <div class="d-flex justify-content-center">
+            <div class="social-container">
+              <a
+                href="{{ url_for('auth.authorize', provider='google') }}"
+                class="social"
+                ><i class="fab fa-google-plus-g"></i
+              ></a>
+              <a
+                href="{{ url_for('auth.authorize', provider='github') }}"
+                class="social"
+                ><i class="fab fa-github"></i
+              ></a>
+            </div>
           </div>
           <span class="longin_text_style2">Or use your account</span>
           <input
@@ -179,7 +184,9 @@
             autocomplete="on"
           />
           <input type="password" name="password" placeholder="Password" />
-          <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+          <div class="py-2">
+            <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+          </div>
 
           <button class="login_btn_style">Sign In</button>
         </form>
@@ -195,17 +202,19 @@
         <form action="{{ url_for('auth.register') }}" method="post">
           {{ form.csrf_token and form.csrf_token() }}
           <div class="login_header">Create Account</div>
-          <div class="d-flex social-container">
-            <a
-              href="{{ url_for('auth.authorize', provider='google') }}"
-              class="social"
-              ><i class="fab fa-google-plus-g"></i
-            ></a>
-            <a
-              href="{{ url_for('auth.authorize', provider='github') }}"
-              class="social"
-              ><i class="fab fa-github"></i
-            ></a>
+          <div class="d-flex justify-content-center">
+            <div class="social-container">
+              <a
+                href="{{ url_for('auth.authorize', provider='google') }}"
+                class="social"
+                ><i class="fab fa-google-plus-g"></i
+              ></a>
+              <a
+                href="{{ url_for('auth.authorize', provider='github') }}"
+                class="social"
+                ><i class="fab fa-github"></i
+              ></a>
+            </div>
           </div>
           <span class="longin_text_style2"
             >Or use your email for registration</span
@@ -220,9 +229,9 @@
           />
           <input type="text" name="squestion" placeholder="Security Question" />
           <input type="text" name="sanswer" placeholder="Security Answer" />
-          <div class="pt-2">
+          <div class="pt-2 mb-5">
             <button type="submit" class="login_btn_style">Sign Up</button>
-            <p class="text-center" id="policy-font">
+            <p class="text-center mt-3" id="policy-font">
               * By signing up, you agree to our Terms of Use Privacy Policy.
             </p>
           </div>
