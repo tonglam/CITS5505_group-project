@@ -12,7 +12,7 @@ from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
 from .errors import register_error_handlers
-from .extensions import bcrypt, db, login_manager, migrate, scheduler
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler
 from .logs import configure_logging
 from .notice import notice_bp
 from .popular import popular_bp
@@ -31,15 +31,17 @@ def create_app():
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
+    app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 
     # extensions
     bcrypt.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
-
-    # scheduled tasks
     scheduler.init_app(app)
+    jwt.init_app(app)
 
     # blueprints
     app.register_blueprint(api_bp, url_prefix="/api/v1")
@@ -113,6 +115,7 @@ def create_app():
     @app.after_request
     def after_request(response):
         content_type = response.content_type
+        request_uuid = g.request_uuid if hasattr(g, "request_uuid") else ""
 
         if (
             "html" in content_type
@@ -121,7 +124,7 @@ def create_app():
         ):
             app.logger.info(
                 "[%s] Response [%s]: Status %s, Headers %s",
-                g.request_uuid,
+                request_uuid,
                 request.method,
                 response.status,
                 response.headers,
@@ -129,14 +132,14 @@ def create_app():
         elif "application/json" in content_type:
             app.logger.info(
                 "[%s] Response [%s]: Status %s, Headers %s",
-                g.request_uuid,
+                request_uuid,
                 request.method,
                 response.status,
                 response.headers,
             )
             response_body = response.get_data(as_text=True)
             if response_body:
-                app.logger.info("[%s] Response Body: %s", g.request_uuid, response_body)
+                app.logger.info("[%s] Response Body: %s", request_uuid, response_body)
 
         return response
 

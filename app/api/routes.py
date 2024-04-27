@@ -3,7 +3,8 @@
 from dataclasses import dataclass
 
 from flask import abort, jsonify, request
-from flask_login import current_user, login_required
+from flask_jwt_extended import jwt_required
+from flask_login import current_user
 from flask_sqlalchemy import pagination as Pagination
 
 from app.api import api_bp
@@ -56,7 +57,7 @@ class ApiResponse:
 
 
 @api_bp.route("/users/<username>", methods=["GET", "PUT"])
-@login_required
+@jwt_required()
 def users(username: str) -> ApiResponse:
     """Get or PUT a user by username."""
 
@@ -102,7 +103,7 @@ def users(username: str) -> ApiResponse:
 
 
 @api_bp.route("/users/records", methods=["GET"])
-@login_required
+@jwt_required()
 def user_records() -> ApiResponse:
     """Get all records by user id."""
 
@@ -147,7 +148,7 @@ def user_records() -> ApiResponse:
 
 
 @api_bp.route("/users/records/<int:record_id>", methods=["GET", "DELETE"])
-@login_required
+@jwt_required()
 def users_record(record_id: int) -> ApiResponse:
     """GET or Delete record by id."""
 
@@ -176,7 +177,7 @@ def users_record(record_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/preference", methods=["GET", "PUT"])
-@login_required
+@jwt_required()
 def user_preference() -> ApiResponse:
     """Get or PUT a preference by id."""
 
@@ -234,6 +235,7 @@ def user_preference() -> ApiResponse:
 
 
 @api_bp.route("/users/notifications", methods=["GET"])
+@jwt_required()
 def user_notifications() -> ApiResponse:
     """Get all notifications by user id."""
 
@@ -285,6 +287,7 @@ def user_notifications() -> ApiResponse:
 
 
 @api_bp.route("/users/notifications/<int:notice_id>", methods=["GET", "PUT"])
+@jwt_required()
 def user_notice(notice_id: int) -> ApiResponse:
     """GET or PUT a notice by id."""
 
@@ -326,7 +329,7 @@ def user_notice(notice_id: int) -> ApiResponse:
 
 
 @api_bp.route("/categories", methods=["GET"])
-@login_required
+@jwt_required()
 def categories() -> ApiResponse:
     """Get all categories."""
 
@@ -349,7 +352,7 @@ def categories() -> ApiResponse:
 
 
 @api_bp.route("/categories/<category_id>", methods=["GET"])
-@login_required
+@jwt_required()
 def category(category_id: int) -> ApiResponse:
     """Get a category by id."""
 
@@ -364,7 +367,7 @@ def category(category_id: int) -> ApiResponse:
 
 
 @api_bp.route("/tags", methods=["GET"])
-@login_required
+@jwt_required()
 def tags() -> ApiResponse:
     """Get all tags."""
 
@@ -385,7 +388,7 @@ def tags() -> ApiResponse:
 
 
 @api_bp.route("/tags/<tag_id>", methods=["GET"])
-@login_required
+@jwt_required()
 def tag(tag_id: int) -> ApiResponse:
     """Get a tag by id."""
 

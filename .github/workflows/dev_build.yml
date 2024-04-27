@@ -78,6 +78,7 @@ jobs:
       - name: Fetch Test Configurations
         env:
           APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           SQLITE_DATABASE_URL: ${{ secrets.SQLITE_TEST_DATABASE_URL }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -90,6 +91,7 @@ jobs:
           cat <<EOF > config.test.ini
           [APP]
           SECRET_KEY = ${APP_SECRET_KEY}
+          JWT_SECRET_KEY = ${JWT_SECRET_KEY}
 
           [SQLITE]
           DATABASE_URL = ${SQLITE_DATABASE_URL}

@@ -32,7 +32,7 @@ class RegisterForm(FlaskForm):
             EqualTo("password", message="Passwords must match."),
         ],
     )
-    avatar_url = StringField("Avatar", validators=[Optional()])
+    avatar_url = StringField("avatar", validators=[Optional()])
     security_question = StringField(name="squestion", validators=[DataRequired()])
     security_answer = StringField(name="sanswer", validators=[DataRequired()])
 
@@ -52,12 +52,12 @@ class ForgotPasswordForm(FlaskForm):
     """Forgot password form."""
 
     email = EmailField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
+        name="email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
     )
-    security_question = StringField("Security Question", validators=[DataRequired()])
-    security_answer = StringField("Security Answer", validators=[DataRequired()])
+    security_question = StringField(name="squestion", validators=[DataRequired()])
+    security_answer = StringField(name="sanswer", validators=[DataRequired()])
     password = PasswordField(
-        "Password",
+        name="password",
         validators=[
             DataRequired(),
             Length(min=8, max=25),
@@ -67,8 +67,8 @@ class ForgotPasswordForm(FlaskForm):
             ),
         ],
     )
-    confirm = PasswordField(
-        "Repeat password",
+    rpassword = PasswordField(
+        name="rpassword",
         validators=[
             DataRequired(),
             EqualTo("password", message="Passwords must match."),

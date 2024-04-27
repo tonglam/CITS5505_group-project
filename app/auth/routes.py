@@ -14,6 +14,7 @@ from flask import (
     session,
     url_for,
 )
+from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import auth_bp, forms
@@ -47,6 +48,7 @@ def user_loader(user_id: str):
 @auth_bp.route("/auth", methods=["GET"])
 def auth():
     """verification page."""
+
     form = forms.RegisterForm()
     return render_template("auth.html", form=form)
 
@@ -54,6 +56,7 @@ def auth():
 @auth_bp.route("/register", methods=["POST"])
 def register():
     """Register a new user."""
+
     if current_user.is_authenticated:
         current_app.logger.info(
             "User is already registered, id: %s.", {current_user.id}
@@ -125,15 +128,16 @@ def register():
 @auth_bp.route("/login", methods=["POST"])
 def login():
     """user login."""
+
     form = forms.LoginForm(request.form)
     if form.validate_on_submit():
 
-        user = User.query.filter_by(email=form.email.data).first()
+        email = form.email.data
+
+        user = User.query.filter_by(email=email).first()
 
         if user is None:
-            current_app.logger.error(
-                "No user with that email exists: %s.", {form.email.data}
-            )
+            current_app.logger.error("No user with that email exists: %s.", {email})
             flash(
                 "No user with that email exists, please register first.",
                 FlashAlertTypeEnum.DANGER.value,
@@ -143,15 +147,13 @@ def login():
         if not user.password_hash:
             provide = "Google" if user.use_google else "GitHub"
             current_app.logger.error(
-                "Please login with %s, email: %s.", {provide}, {form.email.data}
+                "Please login with %s, email: %s.", {provide}, {email}
             )
             flash(f"Please login with {provide}.", FlashAlertTypeEnum.WARNING.value)
             return redirect(url_for("auth.auth"))
 
         if not user.verify_password(form.password.data):
-            current_app.logger.error(
-                "Invalid email or password, email: %s.", {form.email.data}
-            )
+            current_app.logger.error("Invalid email or password, email: %s.", {email})
 
             flash(
                 "Invalid email or password. Please try a different login method or attempt again.",
@@ -159,11 +161,19 @@ def login():
             )
             return redirect(url_for("auth.auth"))
 
+        # jwt token
+        access_token = create_access_token(identity=email)
+        response = redirect(url_for("index"))
+        set_access_cookies(response, access_token)
+        current_app.logger.info(
+            "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
+        )
+
         login_user(user, remember=True)
         current_app.logger.info("User logged in, id: %s.", {user.id})
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
 
-        return redirect(url_for("index"))
+        return response
 
     if form.errors:
         for field, errors in form.errors.items():
@@ -186,6 +196,7 @@ def logout():
     current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
+
     return redirect(url_for("auth.auth"))
 
 
@@ -224,7 +235,7 @@ def forgot_password():
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.auth"))
 
     if form.errors:
         for field, errors in form.errors.items():
@@ -234,7 +245,7 @@ def forgot_password():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return redirect(url_for("auth.forgot_password"))
+        return render_template("forgotPassword.html", form=form)
 
     return render_template("forgotPassword.html", form=form)
 

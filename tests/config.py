@@ -30,6 +30,7 @@ def _create_app(_) -> Iterator[Flask]:
 
     app = create_app()
     app.config["WTF_CSRF_ENABLED"] = False
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
     with app.app_context():
         db.create_all()
@@ -73,16 +74,24 @@ class AuthActions:
     def __init__(self, client: FlaskClient):
         self._client = client
 
-    def login(self, email: str = "test@gmail.com", password: str = "Password@123"):
+    def login(
+        self,
+        email: str = "test@gmail.com",
+        password: str = "Password@123",
+        follow_redirects: bool = True,
+    ) -> None:
         """Log a user in."""
+
         return self._client.post(
             "/auth/login",
             data={
                 "email": email,
                 "password": password,
             },
+            follow_redirects=follow_redirects,
         )
 
-    def logout(self) -> FlaskClient:
+    def logout(self) -> None:
         """Log a user out."""
+
         return self._client.get("/auth/logout")
