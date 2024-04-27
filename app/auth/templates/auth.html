@@ -23,9 +23,16 @@
   </div>
   {% endfor %} {% endfor %}
 
-  <div class="container d-none d-md-block" id="login_container">
+  <div
+    class="container d-none d-md-flex align-items-center justify-content-center text-center mt-5"
+    id="login_container"
+  >
     <div class="form-container sign-up-container">
-      <form action="{{ url_for('auth.register') }}" method="post">
+      <form
+        class="login_form"
+        action="{{ url_for('auth.register') }}"
+        method="post"
+      >
         {{ form.csrf_token and form.csrf_token(id='csrf_token_signUp_lg') }}
 
         <div class="login_header">Create Account</div>
@@ -55,9 +62,13 @@
     </div>
 
     <div class="form-container sign-in-container">
-      <form action="{{ url_for('auth.login') }}" method="post">
+      <form
+        class="login_form"
+        action="{{ url_for('auth.login') }}"
+        method="post"
+      >
         {{ form.csrf_token and form.csrf_token(id='csrf_token_signIn_lg') }}
-        <div class="login_header">Sign in</div>
+        <div class="login_header">Sign In</div>
         <div class="d-flex social-container">
           <a
             href="{{ url_for('auth.authorize', provider='google') }}"
@@ -114,7 +125,7 @@
   </div>
 
   <!-- Nav for small screen - login and register -->
-  <div class="d-sm-flex d-md-none" id="login_container">
+  <div class="d-sm-flex d-md-none text-center" id="login_container">
     <ul class="nav nav-pills justify-content-center mb-3" role="tablist">
       <li class="nav-item" role="presentation">
         <a
@@ -141,8 +152,7 @@
         >
       </li>
     </ul>
-
-    <!-- small screen sign in -->
+    <!-- signIn for small screen -->
     <div class="tab-content">
       <div
         class="tab-pane fade show active"
@@ -152,18 +162,20 @@
       >
         <form action="{{ url_for('auth.login') }}" method="post">
           {{ form.csrf_token and form.csrf_token(id='csrf_token_signIn_sm') }}
-          <div class="login_header">Sign in</div>
-          <div class="d-flex social-container">
-            <a
-              href="{{ url_for('auth.authorize', provider='google') }}"
-              class="social"
-              ><i class="fab fa-google-plus-g"></i
-            ></a>
-            <a
-              href="{{ url_for('auth.authorize', provider='github') }}"
-              class="social"
-              ><i class="fab fa-github"></i
-            ></a>
+          <div class="login_header">Sign In</div>
+          <div class="d-flex justify-content-center">
+            <div class="social-container">
+              <a
+                href="{{ url_for('auth.authorize', provider='google') }}"
+                class="social"
+                ><i class="fab fa-google-plus-g"></i
+              ></a>
+              <a
+                href="{{ url_for('auth.authorize', provider='github') }}"
+                class="social"
+                ><i class="fab fa-github"></i
+              ></a>
+            </div>
           </div>
           <span class="longin_text_style2">Or use your account</span>
           <input
@@ -173,14 +185,14 @@
             autocomplete="on"
           />
           <input type="password" name="password" placeholder="Password" />
-          <div class="pb-2">
+          <div class="py-2">
             <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
           </div>
-          <button type="submit" class="login_btn_style">Sign In</button>
+          <button class="login_btn_style">Sign In</button>
         </form>
       </div>
 
-      <!-- small screen sign up -->
+      <!-- registration for small screen -->
       <div
         class="tab-pane fade"
         id="pills-register"
@@ -190,17 +202,19 @@
         <form action="{{ url_for('auth.register') }}" method="post">
           {{ form.csrf_token and form.csrf_token(id='csrf_token_signUp_sm') }}
           <div class="login_header">Create Account</div>
-          <div class="d-flex social-container">
-            <a
-              href="{{ url_for('auth.authorize', provider='google') }}"
-              class="social"
-              ><i class="fab fa-google-plus-g"></i
-            ></a>
-            <a
-              href="{{ url_for('auth.authorize', provider='github') }}"
-              class="social"
-              ><i class="fab fa-github"></i
-            ></a>
+          <div class="d-flex justify-content-center">
+            <div class="social-container">
+              <a
+                href="{{ url_for('auth.authorize', provider='google') }}"
+                class="social"
+                ><i class="fab fa-google-plus-g"></i
+              ></a>
+              <a
+                href="{{ url_for('auth.authorize', provider='github') }}"
+                class="social"
+                ><i class="fab fa-github"></i
+              ></a>
+            </div>
           </div>
           <span class="longin_text_style2"
             >Or use your email for registration</span
@@ -215,9 +229,9 @@
           />
           <input type="text" name="squestion" placeholder="Security Question" />
           <input type="text" name="sanswer" placeholder="Security Answer" />
-          <div class="pt-2">
+          <div class="pt-2 mb-5">
             <button type="submit" class="login_btn_style">Sign Up</button>
-            <p class="text-center pt-2" id="policy-font">
+            <p class="text-center mt-3" id="policy-font">
               * By signing up, you agree to our Terms of Use Privacy Policy.
             </p>
           </div>

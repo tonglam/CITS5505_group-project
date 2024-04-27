@@ -245,7 +245,7 @@ def forgot_password():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return redirect(url_for("auth.forgot_password"))
+        return render_template("forgotPassword.html", form=form)
 
     return render_template("forgotPassword.html", form=form)
 
