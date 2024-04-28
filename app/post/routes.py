@@ -15,9 +15,10 @@ def create():
     """Render the create page."""
     return render_template("create.html")
 
-@post_bp.route("/<int:id>")
-def post_detail(id):
+@post_bp.route("/<int:post_id>")
+def post_detail(post_id):
     """show content by ID"""
-    request_item = Request.query.get_or_404(id)
+    
+    request_item = Request.query.get_or_404(post_id)
     replies = Reply.query.all()
     return render_template("post.html", request=request_item, replies=replies)

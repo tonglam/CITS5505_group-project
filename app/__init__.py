@@ -4,6 +4,8 @@ import uuid
 
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
+from sqlalchemy import func
+from app.models.request import Request
 
 from app.constants import G_NOTICE_NUM, G_USER
 from app.models.notice import Notice
@@ -20,8 +22,7 @@ from .post import post_bp
 from .search import search_bp
 from .user import user_bp
 from .utils import get_config
-from sqlalchemy import func
-from app.models.request import Request
+
 
 def create_app():
     """Create the Flask application."""
@@ -93,7 +94,7 @@ def create_app():
     @app.route("/")
     @login_required
     def index():
-        random_requests = Request.query.order_by(func.random()).limit(10).all()  
+        random_requests = Request.query.order_by(func.random()).limit(10).all()  # pylint: disable=not-callable
         return render_template('index.html', requests=random_requests)
 
     # logging middleware for http request and response
