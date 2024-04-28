@@ -37,7 +37,7 @@ class User(UserMixin, db.Model):
     update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
-    
+
     replies = db.relationship('Reply', back_populates='user')
 
     # pylint: disable=too-many-arguments
