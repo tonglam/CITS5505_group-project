@@ -1,9 +1,7 @@
 <div class="button-row">
    <button onclick="window.location.reload();">Refresh Cards</button>
    <button onclick="window.location.href='/posts/create';">Create New Post</button>
- </div>
 </div>
-
 <div class="container">
  {% for request in requests %}
    <a href="{{ config.BASE_URL }}/posts/{{ request.id }}" style="text-decoration: none; color: inherit;">
@@ -16,6 +14,7 @@
          <div class="card-text" data-content="summary">{{ request.content | truncate(150, True) }}</div>
          <footer class="blockquote-footer">Posted on: {{ request.create_at.strftime('%Y-%m-%d') }}</footer>
        </div>
-     </div>
+   </div>
    </a>
+</div>
  {% endfor %}
