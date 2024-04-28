@@ -2,8 +2,9 @@
 {{ super() }} <link rel="stylesheet" href="/static/style/home.css" />
 {% endblock %} {% block content %}
 <div class="d-flex flex-column text-center">
-  <h1>Home</h1>
-  <p class="important">Welcome to my awesome homepage. {{ user.username }}</p>
+  <p class="post">
+   {% include 'card.html' %}
+   {% include 'list.html' %}
+  </p>
 </div>
-{% include 'requests.html' %}
 {% endblock %}

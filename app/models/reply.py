@@ -2,6 +2,7 @@
 
 import enum
 
+
 from app.extensions import db
 from app.utils import generate_time
 
@@ -19,6 +20,7 @@ class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     replier = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    reply_id = db.Column(db.Integer, db.ForeignKey("reply.id"), nullable=True)
     content = db.Column(db.String(1000))
     source = db.Column(
         db.String(50), db.Enum(ReplySourceEnum), default=ReplySourceEnum.HUMAN.value
@@ -30,11 +32,14 @@ class Reply(db.Model):
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
+    user = db.relationship('User', back_populates='replies')
+
     # pylint: disable=too-many-arguments
     def __init__(
         self,
         request: int,
         replier: str,
+        reply_id: str,
         content: str,
         source: str,
         like_num: int,
@@ -42,6 +47,7 @@ class Reply(db.Model):
     ) -> None:
         self.request = request
         self.replier = replier
+        self.reply_id = reply_id
         self.content = content
         self.source = source
         self.like_num = like_num
@@ -60,6 +66,7 @@ class Reply(db.Model):
             "id": self.id,
             "request": self.request,
             "replier": self.replier,
+            "reply_id": self.reply_id,
             "content": self.content,
             "source": self.source,
             "like_num": self.like_num,
@@ -67,3 +74,4 @@ class Reply(db.Model):
             "create_at": self.create_at,
             "update_at": self.update_at,
         }
+    

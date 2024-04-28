@@ -1,0 +1,5 @@
+.reply-container .replies { display: none; }
+.reply-container .replies.hidden { display: none; }
+.reply-container .replies.visible { display: block; }
+.expanded { height: auto; }
+.hidden { display: none; }

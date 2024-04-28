@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Reply List</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style/list.css') }}">
+        <script src="{{ url_for('static', filename='js/expand.js') }}"></script>
+    </head>
+<body>
+    <div class="container mt-5">
+        <h2>Reply List</h2>
+        <div class="list-group">
+            {% macro render_reply(reply, child_replies, show_create_button=True) %}
+            <div class="list-group-item flex-column align-items-start reply-container">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Reply by User ID: {{ reply.user.username }}</h5>
+                    <small>Posted on: {{ reply.create_at }}</small>
+                </div>
+                <div class="content">{{ reply.content }}</div>
+                <small>Source: {{ reply.source }}</small>
+                <div>
+                    <span class="badge badge-primary">Likes: {{ reply.like_num }}</span>
+                    <span class="badge badge-secondary">Saves: {{ reply.save_num }}</span>
+                    <span class="badge badge-info">Updated at: {{ reply.update_at }}</span>
+                    {% if show_create_button %}
+                        <button onclick="window.location.href='/posts/create'">Create New Comment</button> 
+                    {% endif %}
+
+                </div>
+                {% if child_replies %}
+                {% if child_replies|length > 2 %}
+                <button onclick="toggleReplies(this, 'more-replies')">Show Replies</button>
+                {% endif %}
+                <div class="replies123">
+
+                    {% for child_reply in child_replies[:2] %}
+                        <div class="reply">
+                            {{ render_reply(child_reply, [], False) }}
+                        </div>
+                    {% endfor %}
+                    {% if child_replies|length > 2 %}
+                        <div class="more-replies hidden">
+                            {% for child_reply in child_replies[2:] %}
+                                <div class="reply">
+                                    {{ render_reply(child_reply, [], False) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+
+            </div>
+            {% endmacro %}
+
+
+            {% set parent_replies = {} %}
+            {% set child_replies = {} %}
+            {% for reply in replies %}
+            {% if reply.reply_id == reply.request %}
+                {% if reply.request not in parent_replies %}
+                    {% set _dummy = parent_replies.update({reply.request: []}) %}
+                {% endif %}
+                {% set _dummy = parent_replies[reply.request].append(reply) %}
+            {% else %}
+                {% if reply.reply_id not in child_replies %}
+                    {% set _dummy = child_replies.update({reply.reply_id: []}) %}
+                {% endif %}
+                {% set _dummy = child_replies[reply.reply_id].append(reply) %}
+            {% endif %}
+        {% endfor %}
+            {% for request_id, replies in parent_replies.items() %}
+            {% for parent_reply in replies %}
+                {{ render_reply(parent_reply, child_replies.get(parent_reply.id, [])) }}
+            {% endfor %}
+        {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+.card-text {
+   font-size: 25px;
+   line-height: 1.5;
+   max-height: 112.5px;
+   overflow: hidden;
+   transition: max-height 0.2s ease-out;
+}
+
+.card-text.expanded {
+   max-height: 10000px;
+}

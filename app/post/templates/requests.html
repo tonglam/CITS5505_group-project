@@ -1,0 +1,21 @@
+<div class="button-row">
+   <button onclick="window.location.reload();">Refresh Cards</button>
+   <button onclick="window.location.href='/posts/create';">Create New Post</button>
+ </div>
+</div>
+
+<div class="container">
+ {% for request in requests %}
+   <a href="{{ config.BASE_URL }}/posts/{{ request.id }}" style="text-decoration: none; color: inherit;">
+   <div class="card">
+       <div class="card-header">
+         <h5 class="card-title">{{ request.title }}</h5>
+       </div>
+       <div class="card-body">
+         <h6 class="card-subtitle mb-2 text-muted">By: {{ request.author }} | Community: {{ request.community }}</h6>
+         <div class="card-text" data-content="summary">{{ request.content | truncate(150, True) }}</div>
+         <footer class="blockquote-footer">Posted on: {{ request.create_at.strftime('%Y-%m-%d') }}</footer>
+       </div>
+     </div>
+   </a>
+ {% endfor %}
