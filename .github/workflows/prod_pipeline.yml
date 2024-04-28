@@ -98,6 +98,7 @@ jobs:
           [APP]
           SECRET_KEY = ${APP_SECRET_KEY}
           JWT_SECRET_KEY = ${JWT_SECRET_KEY}
+          BASE_URL = ${BASE_URL}
 
           [SQLITE]
           DATABASE_URL = ${SQLITE_DATABASE_URL}
@@ -145,6 +146,7 @@ jobs:
         env:
           APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          BASE_URL: ${{ secrets.BASE_URL }}
           SQLITE_DATABASE_URL: ${{ secrets.SQLITE_DATABASE_URL }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -158,6 +160,7 @@ jobs:
           [APP]
           SECRET_KEY = ${APP_SECRET_KEY}
           JWT_SECRET_KEY = ${JWT_SECRET_KEY}
+          BASE_URL = ${BASE_URL}
 
           [SQLITE]
           DATABASE_URL = ${SQLITE_DATABASE_URL}
