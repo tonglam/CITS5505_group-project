@@ -9,6 +9,31 @@
     padding: 20px;
     background-color: #fff;
     color: #000;
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 1100px) {
+    .card {
+        width: 40%;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .card {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .card {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .card {
+        width: 100%;
+    }
 }
 
 .title {
