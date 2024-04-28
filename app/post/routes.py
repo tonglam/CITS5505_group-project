@@ -18,7 +18,7 @@ def create():
 @post_bp.route("/<int:post_id>")
 def post_detail(post_id):
     """show content by ID"""
-    
+ 
     request_item = Request.query.get_or_404(post_id)
     replies = Reply.query.all()
     return render_template("post.html", request=request_item, replies=replies)
