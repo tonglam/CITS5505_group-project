@@ -1,38 +1,28 @@
 {% macro print_card(info) %}
 <div class="card p-10">
-    <div class="title">
-        <div class="title_left">
-            <span class="bar">
-                <img class="bar_img" src="{{info.imgUrl}}" />
-            </span>
-            <span>
-                {{info.title}}
-            </span>
-        </div>
+  <div class="title">
+    <div class="title_left">
+      <span class="bar">
+        <img class="bar_img" src="{{info.imgUrl}}" />
+      </span>
+      <span> {{info.title}} </span>
+    </div>
 
-        <!-- <a class="title_btn" href="/communities/createCommunity?component={{info.title}}"> -->
-        <a class="title_btn" href="{{ url_for('community.create') }}">
-            Join
-        </a>
+    <a class="title_btn" href="{{ url_for('community.create') }}"> Join </a>
+  </div>
+  <div class="card_text">{{info.text}}</div>
+  <div class="card_list">
+    <div class="card_list_item">
+      <div class="item_text">{{info.sum}}</div>
+      <div>{{info.name}}</div>
     </div>
-    <div class="card_text">
-        {{info.text}}
+    <div class="card_list_item">
+      <div class="item_text">{{info.num}}</div>
+      <div>
+        <span class="green"> </span>
+        <span>{{info.tip}}</span>
+      </div>
     </div>
-    <div class="card_list">
-        <div class="card_list_item">
-            <div class="item_text"> {{info.sum}}
-            </div>
-            <div>{{info.name}}</div>
-        </div>
-        <div class="card_list_item">
-            <div class="item_text">{{info.num}}</div>
-            <div>
-                <span class="green">
-
-                </span>
-                <span>{{info.tip}}</span>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 {% endmacro %}

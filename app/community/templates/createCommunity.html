@@ -1,66 +1,71 @@
 {% extends "layout.html" %} {% block title %}Community{% endblock %} {% block
-head %} {{ super() }} {% endblock %} {% block content %}
-{% block css %}
-<link rel="stylesheet" href="{{ url_for('community.static', filename='style/community.css') }}" />
+head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('community.static', filename='style/community.css') }}"
+/>
 {% endblock %}
 <div class="contain">
-    <div>
-        <form class="create" action="#">
-            <div class="card2">
-                <div class="card2_title">
-                    <div class="card2_title_left_img"></div>
-                    <div class="card2_title_text" id="comunityTitle">Create a community</div>
-                </div>
-                <div class="card2_desc">
-                    Build and grow a community about something you care about. We'll help
-                    you set things up.
-                </div>
-                <div id="form" class="form">
-                    <div class="one_input">
-                        <label for="name">Name</label>
-                        <input id="name" value="name" type="text" />
-                    </div>
-                    <div class="one_text">
-                        Choose wisely. Once you pick a name, it can't be changed
-                    </div>
-                    <div class="two_input">
-                        <label for="type">Type</label>
-                        <div class="form-check">
-                            <div class="radio_img"></div>
-                            <div class="radio_text">
-                                <div>Public</div>
-                                <div>Anyone can view, post, and comment to this community</div>
-                            </div>
-                            <input id="type" value="type" type="radio" />
-                        </div>
-                        <div class="form-check">
-                            <div class="radio_img"></div>
-                            <div class="radio_text">
-                                <div>Restricted</div>
-                                <div>Anyone can view, but only approved users can contribute</div>
-                            </div>
-                            <input type="radio" />
-                        </div>
-                        <div class="form-check">
-                            <div class="radio_img"></div>
-                            <div class="radio_text">
-                                <div>Private</div>
-                                <div>
-                                    Only approved users can view and submit to this community
-                                </div>
-                            </div>
-                            <input type="radio" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bootom_btn">
-                    <div>Cancel</div>
-                    <div>Create your community</div>
-                </div>
+  <div>
+    <form class="create" action="#" id="createForm">
+      <div class="card2">
+        <div class="card2_title">
+          <div class="card2_title_left_img"></div>
+          <div class="card2_title_text" id="comunityTitle">
+            Create a community
+          </div>
+        </div>
+        <div class="card2_desc">
+          Build and grow a community about something you care about. We'll help
+          you set things up.
+        </div>
+        <div id="form" class="form">
+          <div class="one_input">
+            <label for="name">Name</label>
+            <input id="name" value="" type="text" placeholder="name" />
+          </div>
+          <div class="one_text">
+            Choose wisely. Once you pick a name, it can't be changed
+          </div>
+          <div class="two_input">
+            <label for="type">Type</label>
+            <div class="form-check">
+              <div class="radio_img"></div>
+              <div class="radio_text">
+                <div>Public</div>
+                <div>Anyone can view, post, and comment to this community</div>
+              </div>
+              <input id="type" value="type" type="radio" />
             </div>
-        </form>
-    </div>
+            <div class="form-check">
+              <div class="radio_img"></div>
+              <div class="radio_text">
+                <div>Restricted</div>
+                <div>
+                  Anyone can view, but only approved users can contribute
+                </div>
+              </div>
+              <input type="radio" />
+            </div>
+            <div class="form-check">
+              <div class="radio_img"></div>
+              <div class="radio_text">
+                <div>Private</div>
+                <div>
+                  Only approved users can view and submit to this community
+                </div>
+              </div>
+              <input type="radio" />
+            </div>
+          </div>
+        </div>
 
+        <div class="bootom_btn">
+          <div>Cancel</div>
+          <div>Create your community</div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}
