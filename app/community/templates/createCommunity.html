@@ -4,8 +4,8 @@ head %} {{ super() }} {% endblock %} {% block content %}
 <link rel="stylesheet" href="{{ url_for('community.static', filename='style/community.css') }}" />
 {% endblock %}
 <div class="contain">
-    <div class="create">
-        <form action="#">
+    <div>
+        <form class="create" action="#">
             <div class="card2">
                 <div class="card2_title">
                     <div class="card2_title_left_img"></div>
@@ -15,23 +15,23 @@ head %} {{ super() }} {% endblock %} {% block content %}
                     Build and grow a community about something you care about. We'll help
                     you set things up.
                 </div>
-                <div class="form">
+                <div id="form" class="form">
                     <div class="one_input">
-                        <label for="">Name</label>
-                        <input type="text" class="form-control" />
+                        <label for="name">Name</label>
+                        <input id="name" value="name" type="text" />
                     </div>
                     <div class="one_text">
                         Choose wisely. Once you pick a name, it can't be changed
                     </div>
                     <div class="two_input">
-                        <label for="">Type</label>
+                        <label for="type">Type</label>
                         <div class="form-check">
                             <div class="radio_img"></div>
                             <div class="radio_text">
                                 <div>Public</div>
                                 <div>Anyone can view, post, and comment to this community</div>
                             </div>
-                            <input type="radio" />
+                            <input id="type" value="type" type="radio" />
                         </div>
                         <div class="form-check">
                             <div class="radio_img"></div>

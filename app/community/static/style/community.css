@@ -109,10 +109,18 @@
 
 .card2 {
     margin: 30px auto;
-    width: 260px;
+    width: 800px;
     padding: 20px;
     background-color: #fff;
     color: #000;
+}
+
+
+@media screen and (max-width: 820px) {
+    .card2 {
+        width: 100%;
+    }
+
 }
 
 .card2_title {
@@ -139,12 +147,8 @@
     color: #666;
 }
 
-.form {
+#form {
     margin-top: 20px;
-}
-
-.form-control {
-    background-color: rgba(18, 1, 1, 0.3);
 }
 
 .form-check {
