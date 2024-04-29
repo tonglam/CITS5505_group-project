@@ -8,7 +8,7 @@ from flask.testing import FlaskClient
 from app.constants import GRAVATAR_URL, HttpRequstEnum
 from app.models.notice import Notice, NoticeModuleEnum
 from app.models.user import User
-from tests.config import AuthActions, TestBase
+from tests.config import AuthActions, TestBase, Utils
 from tests.seeds.user_seeds import seed_user_data
 
 
@@ -143,10 +143,10 @@ class TestAuth(TestBase):
         # test that successful forgot password redirects to the login page
         forgot_password_data = {
             "email": seed_user_data[0]["email"],
-            "security_question": seed_user_data[0]["security_question"],
-            "security_answer": seed_user_data[0]["security_answer"],
+            "squestion": seed_user_data[0]["security_question"],
+            "sanswer": seed_user_data[0]["security_answer"],
             "password": "Password@456",
-            "confirm": "Password@456",
+            "rpassword": "Password@456",
         }
         response = client.post(url, data=forgot_password_data)
         self.assertLocationHeader(response, "/auth/auth")
@@ -175,35 +175,33 @@ class TestAuth(TestBase):
         url = "/auth/forgot_password"
         forgot_password_data = {
             "email": seed_user_data[0]["email"],
-            "security_question": seed_user_data[0]["security_question"],
-            "security_answer": seed_user_data[0]["security_answer"],
+            "squestion": seed_user_data[0]["security_question"],
+            "sanswer": seed_user_data[0]["security_answer"],
             "password": "Password@456",
-            "confirm": "Password@456",
+            "rpassword": "Password@456",
         }
+
+        expected_page_title = "Forgot Password"
 
         # test that the email is not valid
         forgot_password_data["email"] = seed_user_data[0]["email"] + "1"
         response = client.post(url, data=forgot_password_data)
-        self.assertLocationHeader(response, url)
+        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
 
         # test that the security answer is not valid
-        forgot_password_data["security_question"] = seed_user_data[0][
-            "security_question"
-        ]
-        forgot_password_data["security_answer"] = (
-            seed_user_data[0]["security_answer"] + "1"
-        )
+        forgot_password_data["squestion"] = seed_user_data[0]["security_question"]
+        forgot_password_data["sanswer"] = seed_user_data[0]["security_answer"] + "1"
         response = client.post(url, data=forgot_password_data)
-        self.assertLocationHeader(response, url)
+        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
 
         # test that the password is not valid
-        forgot_password_data["security_answer"] = seed_user_data[0]["security_answer"]
+        forgot_password_data["sanswer"] = seed_user_data[0]["security_answer"]
         forgot_password_data["password"] = "123"
         response = client.post(url, data=forgot_password_data)
-        self.assertLocationHeader(response, url)
+        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
 
         # test that the confirm password is not valid
         forgot_password_data["password"] = "Password@456"
-        forgot_password_data["confirm"] = "Password@4567"
+        forgot_password_data["rpassword"] = "Password@4567"
         response = client.post(url, data=forgot_password_data)
-        self.assertLocationHeader(response, url)
+        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)

@@ -6,8 +6,10 @@ import os
 from typing import Iterator
 
 import flask_unittest
+from bs4 import BeautifulSoup
 from flask import Flask
 from flask.testing import FlaskClient
+from flask.wrappers import Response as TestResponse
 
 from app import create_app
 from app.extensions import db
@@ -95,3 +97,25 @@ class AuthActions:
         """Log a user out."""
 
         return self._client.get("/auth/logout")
+
+
+class Utils:
+    """Helper class for utility functions."""
+
+    @staticmethod
+    def get_csrf_token(client: FlaskClient) -> str:
+        """Get the CSRF token from the client."""
+
+        response = client.get("/auth/login")
+        csrf_token = response.html.find("input", {"name": "csrf_token"})["value"]
+        return csrf_token
+
+    @staticmethod
+    def get_page_title(response: TestResponse, url: str) -> str:
+        """Get the page title from the client response."""
+
+        soup = BeautifulSoup(response.data, "html.parser")
+        page_title = soup.title.text.strip() if soup.title else "No title found"
+        page_title = page_title.split(" - ")[0]
+        print("page_title:", page_title)
+        return page_title

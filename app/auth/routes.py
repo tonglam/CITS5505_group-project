@@ -226,8 +226,11 @@ def logout():
 
     current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
+
+    # jwt token
     response = redirect(url_for("auth.auth"))
     unset_jwt_cookies(response)
+
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
 
     return response
@@ -262,12 +265,16 @@ def forgot_password():
 
         # update user password
         db.session.commit()
+        current_app.logger.info(
+            "User password updated, email: %s, id: %s.", {user.email}, {user.id}
+        )
 
         # send notification
         notice_event(user_id=user.id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
+
         return redirect(url_for("auth.auth"))
 
     if form.errors:

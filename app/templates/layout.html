@@ -11,11 +11,10 @@
     globalLinks.render_links() }}
 
     <!-- page title -->
-    {% if title %}
-    <title>{% block title %}{% endblock %} - Request Forum</title>
-    {% else %}
-    <title>Welcome to Request Forum</title>
-    {% endif %} {% endblock %}
+    <title>{% block title %}Welcome{% endblock %} - Request Forum</title>
+
+    <!-- end head -->
+    {% endblock %}
   </head>
 
   <body>
@@ -31,7 +30,7 @@
       alert.render_sticky_alert() }}
 
       <!-- page content -->
-      <content>{% block content %}{% endblock %}</content>
+      <div>{% block content %}{% endblock %}</div>
     </main>
 
     <!-- footer -->
