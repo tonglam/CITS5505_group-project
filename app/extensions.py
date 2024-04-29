@@ -1,5 +1,6 @@
 """Extensions module, singletons for the application."""
 
+from flasgger import Swagger
 from flask_apscheduler import APScheduler
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -18,3 +19,4 @@ login_manager.login_message_category = FlashAlertTypeEnum.PRIMARY.value
 bcrypt = Bcrypt()
 scheduler = APScheduler()
 jwt = JWTManager()
+swag = Swagger()

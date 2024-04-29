@@ -485,331 +485,329 @@ def get_swagger_path():
     """Returns the swagger paths."""
 
     return {
-        "/users/{user_id}": {
+        "/users/<username>": {
             "get": {
                 "tags": ["User"],
-                "summary": "Get a user by id",
-                "security": [{"cookieAuth": []}],
+                "summary": "Get a user by username",
                 "parameters": [
                     {
-                        "name": "user_id",
+                        "name": "username",
                         "in": "path",
-                        "description": "The user id",
                         "required": True,
                         "schema": {"type": "string"},
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Get a user by id successfully",
+                        "description": "User found",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "integer",
-                                            "example": 200,
-                                        },
-                                        "data": {
-                                            "$ref": "#/components/schemas/User",
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success",
-                                        },
-                                    },
-                                }
+                                "schema": {"$ref": "#/components/schemas/User"}
                             }
                         },
-                    }
+                    },
+                    "404": {"description": "User not found"},
                 },
             },
             "put": {
                 "tags": ["User"],
-                "summary": "Update a user by id",
-                "security": [{"cookieAuth": []}],
+                "summary": "Update a user by username",
                 "parameters": [
                     {
-                        "name": "user_id",
+                        "name": "username",
                         "in": "path",
-                        "description": "The user id",
                         "required": True,
                         "schema": {"type": "string"},
                     }
                 ],
                 "requestBody": {
+                    "required": True,
                     "content": {
                         "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/User",
-                            }
+                            "schema": {"$ref": "#/components/schemas/User"}
                         }
-                    }
+                    },
                 },
                 "responses": {
                     "200": {
-                        "description": "Update a user by id successfully",
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/User"}
+                            }
+                        },
+                    },
+                    "404": {"description": "User not found"},
+                },
+            },
+        },
+        "/users/records": {
+            "get": {
+                "tags": ["User Record"],
+                "summary": "Get all records by user id",
+                "responses": {
+                    "200": {
+                        "description": "Records found",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "integer",
-                                            "example": 200,
-                                        },
-                                        "data": {
-                                            "$ref": "#/components/schemas/User",
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success",
-                                        },
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User_Record"
                                     },
                                 }
                             }
                         },
                     }
                 },
-            },
+            }
         },
-        "/users/{user_id}/records": {
+        "/users/records/<int:record_id>": {
             "get": {
-                "tags": ["User"],
-                "summary": "Get a user record by id",
-                "security": [{"cookieAuth": []}],
+                "tags": ["User Record"],
+                "summary": "Get a record by id",
                 "parameters": [
                     {
-                        "name": "user_id",
+                        "name": "record_id",
                         "in": "path",
-                        "description": "The user id",
                         "required": True,
-                        "schema": {"type": "string"},
+                        "schema": {"type": "integer"},
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Get a user record by id successfully",
+                        "description": "Record found",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/User_Record"}
+                            }
+                        },
+                    },
+                    "404": {"description": "Record not found"},
+                },
+            },
+            "delete": {
+                "tags": ["User Record"],
+                "summary": "Delete a record by id",
+                "parameters": [
+                    {
+                        "name": "record_id",
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "integer"},
+                    }
+                ],
+                "responses": {
+                    "204": {"description": "Record deleted successfully"},
+                    "404": {"description": "Record not found"},
+                },
+            },
+        },
+        "/users/preference": {
+            "get": {
+                "tags": ["User Preference"],
+                "summary": "Get user preferences by id",
+                "responses": {
+                    "200": {
+                        "description": "Preferences found",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "integer",
-                                            "example": 200,
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/User_Record",
-                                            },
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success",
-                                        },
-                                    },
+                                    "$ref": "#/components/schemas/User_Preference"
+                                }
+                            }
+                        },
+                    },
+                    "404": {"description": "Preferences not found"},
+                },
+            },
+            "put": {
+                "tags": ["User Preference"],
+                "summary": "Update user preferences by id",
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {"$ref": "#/components/schemas/User_Preference"}
+                        }
+                    },
+                },
+                "responses": {
+                    "200": {
+                        "description": "Preferences updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_Preference"
+                                }
+                            }
+                        },
+                    },
+                    "404": {"description": "Preferences not found"},
+                },
+            },
+        },
+        "/users/notifications": {
+            "get": {
+                "tags": ["User Notification"],
+                "summary": "Get all notifications by user id",
+                "responses": {
+                    "200": {
+                        "description": "Notifications found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {"$ref": "#/components/schemas/Notice"},
                                 }
                             }
                         },
                     }
                 },
-            },
+            }
         },
-        "/users/{user_id}/preferences": {
+        "/users/notifications/<int:notice_id>": {
             "get": {
-                "tags": ["User"],
-                "summary": "Get a user preference by id",
-                "security": [{"cookieAuth": []}],
+                "tags": ["User Notification"],
+                "summary": "Get a notification by id",
                 "parameters": [
                     {
-                        "name": "user_id",
+                        "name": "notice_id",
                         "in": "path",
-                        "description": "The user id",
                         "required": True,
-                        "schema": {"type": "string"},
+                        "schema": {"type": "integer"},
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Get a user preference by id successfully",
+                        "description": "Notification found",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/Notice"}
+                            }
+                        },
+                    },
+                    "404": {"description": "Notification not found"},
+                },
+            },
+            "put": {
+                "tags": ["User Notification"],
+                "summary": "Update a notification by id",
+                "parameters": [
+                    {
+                        "name": "notice_id",
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "integer"},
+                    }
+                ],
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {"$ref": "#/components/schemas/Notice"}
+                        }
+                    },
+                },
+                "responses": {
+                    "200": {
+                        "description": "Notification updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/Notice"}
+                            }
+                        },
+                    },
+                    "404": {"description": "Notification not found"},
+                },
+            },
+        },
+        "/categories": {
+            "get": {
+                "tags": ["Category"],
+                "summary": "Get all categories",
+                "responses": {
+                    "200": {
+                        "description": "Categories found",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "integer",
-                                            "example": 200,
-                                        },
-                                        "data": {
-                                            "$ref": "#/components/schemas/User_Preference",
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success",
-                                        },
-                                    },
+                                    "type": "array",
+                                    "items": {"$ref": "#/components/schemas/Category"},
                                 }
                             }
                         },
                     }
                 },
-            },
-            "/users/{user_id}/pre
-            "/categories": {
-                "get": {
-                    "tags": ["Category"],
-                    "summary": "Get all categories",
-                    "security": [{"cookieAuth": []}],
-                    "responses": {
-                        "200": {
-                            "description": "Get all categories successfully",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "code": {
-                                                "type": "integer",
-                                                "example": 200,
-                                            },
-                                            "data": {
-                                                "type": "array",
-                                                "items": {
-                                                    "$ref": "#/components/schemas/Category",
-                                                },
-                                            },
-                                            "message": {
-                                                "type": "string",
-                                                "example": "success",
-                                            },
-                                        },
-                                    }
-                                }
-                            },
-                        }
+            }
+        },
+        "/categories/<category_id>": {
+            "get": {
+                "tags": ["Category"],
+                "summary": "Get a category by id",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "integer"},
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category found",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/Category"}
+                            }
+                        },
                     },
+                    "404": {"description": "Category not found"},
                 },
-            },
-            "/categories/{category_id}": {
-                "get": {
-                    "tags": ["Category"],
-                    "summary": "Get a category by id",
-                    "security": [{"cookieAuth": []}],
-                    "parameters": [
-                        {
-                            "name": "category_id",
-                            "in": "path",
-                            "description": "The category id",
-                            "required": True,
-                            "schema": {"type": "integer"},
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "Get a category by id successfully",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "code": {
-                                                "type": "integer",
-                                                "example": 200,
-                                            },
-                                            "data": {
-                                                "$ref": "#/components/schemas/Category",
-                                            },
-                                            "message": {
-                                                "type": "string",
-                                                "example": "success",
-                                            },
-                                        },
-                                    }
+            }
+        },
+        "/tags": {
+            "get": {
+                "tags": ["Tag"],
+                "summary": "Get all tags",
+                "responses": {
+                    "200": {
+                        "description": "Tags found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {"$ref": "#/components/schemas/Tag"},
                                 }
-                            },
-                        }
-                    },
+                            }
+                        },
+                    }
                 },
-            },
-            "/tags": {
-                "get": {
-                    "tags": ["Tag"],
-                    "summary": "Get all tags",
-                    "security": [{"cookieAuth": []}],
-                    "responses": {
-                        "200": {
-                            "description": "Get all tags successfully",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "code": {
-                                                "type": "integer",
-                                                "example": 200,
-                                            },
-                                            "data": {
-                                                "type": "array",
-                                                "items": {
-                                                    "$ref": "#/components/schemas/Tag",
-                                                },
-                                            },
-                                            "message": {
-                                                "type": "string",
-                                                "example": "success",
-                                            },
-                                        },
-                                    }
-                                }
-                            },
-                        }
+            }
+        },
+        "/tags/<tag_id>": {
+            "get": {
+                "tags": ["Tag"],
+                "summary": "Get a tag by id",
+                "parameters": [
+                    {
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "integer"},
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tag found",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/Tag"}
+                            }
+                        },
                     },
+                    "404": {"description": "Tag not found"},
                 },
-            },
-            "/tags/{tag_id}": {
-                "get": {
-                    "tags": ["Tag"],
-                    "summary": "Get a tag by id",
-                    "security": [{"cookieAuth": []}],
-                    "parameters": [
-                        {
-                            "name": "tag_id",
-                            "in": "path",
-                            "description": "The tag id",
-                            "required": True,
-                            "schema": {"type": "integer"},
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "Get a tag by id successfully",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "code": {
-                                                "type": "integer",
-                                                "example": 200,
-                                            },
-                                            "data": {
-                                                "$ref": "#/components/schemas/Tag",
-                                            },
-                                            "message": {
-                                                "type": "string",
-                                                "example": "success",
-                                            },
-                                        },
-                                    }
-                                }
-                            },
-                        }
-                    },
-                },
-            },
+            }
         },
     }
