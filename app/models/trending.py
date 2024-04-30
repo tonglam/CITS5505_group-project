@@ -11,7 +11,7 @@ class Trending(db.Model):
     request_id = db.Column(
         db.Integer, db.ForeignKey("request.id"), unique=True, nullable=False
     )
-    title = db.Column(db.String(40), nullable=False)
+    request_title = db.Column(db.String(40), db.ForeignKey("request.title"))
     author_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     reply_num = db.Column(db.Integer, default=0)
     date = db.Column(db.String(10), default=generate_date())
@@ -26,7 +26,7 @@ class Trending(db.Model):
         self, request_id: int, title: str, author_id: str, reply_num: int = 0
     ) -> None:
         self.request_id = request_id
-        self.title = title
+        self.request_title = title
         self.author_id = author_id
         self.reply_num = reply_num
 
@@ -42,7 +42,7 @@ class Trending(db.Model):
         return {
             "id": self.id,
             "request_id": self.request_id,
-            "title": self.title,
+            "title": self.request_title,
             "author_id": self.author_id,
             "reply_num": self.reply_num,
             "date": self.date,
