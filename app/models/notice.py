@@ -46,7 +46,7 @@ class Notice(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     subject = db.Column(db.String(100), nullable=False)
     content = db.Column(db.String(1000), default="")
-    notice_type = db.Column(
+    module = db.Column(
         db.String(50), db.Enum(NoticeModuleEnum), default=NoticeModuleEnum.SYSTEM.value
     )
     status = db.Column(
@@ -65,7 +65,7 @@ class Notice(db.Model):
         user_id: str,
         subject: str,
         content: str = "",
-        notice_type: str = NoticeModuleEnum.SYSTEM.value,
+        module: str = NoticeModuleEnum.SYSTEM.value,
         status: bool = NoticeStatusEnum.UNREAD.value,
     ) -> None:
         """Initialize the notice."""
@@ -73,7 +73,7 @@ class Notice(db.Model):
         self.user_id = user_id
         self.subject = subject
         self.content = content
-        self.notice_type = notice_type
+        self.module = module
         self.status = status
 
     def __repr__(self) -> str:
@@ -90,7 +90,7 @@ class Notice(db.Model):
             "user_id": self.user_id,
             "subject": self.subject,
             "content": self.content,
-            "notice_type": self.notice_type,
+            "module": self.module,
             "status": self.status,
             "create_at": self.create_at,
             "update_at": self.update_at,

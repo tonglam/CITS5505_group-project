@@ -20,22 +20,22 @@ def create_seed_notice_data() -> list:
     notifications = []
 
     users = [user.id for user in User.query.all()]
-    notice_modules = [module.value for module in NoticeModuleEnum]
-    notice_actions = [action.value for action in NoticeActionEnum]
-    notice_statuses = [status.value for status in NoticeStatusEnum]
+    modules = [module.value for module in NoticeModuleEnum]
+    actions = [action.value for action in NoticeActionEnum]
+    statuses = [status.value for status in NoticeStatusEnum]
 
     for _ in range(20):
         user_id = random.choice(users)
-        notice_action = random.choice(notice_actions)
+        notice_action = random.choice(actions)
 
-        for notice_module in notice_modules:
+        for module in modules:
             notifications.append(
                 {
                     "user_id": user_id,
-                    "subject": f"Notification: {notice_module}",
+                    "subject": f"Notification: {module}",
                     "content": f"{notice_action} successfully!",
-                    "notice_type": notice_module,
-                    "status": random.choice(notice_statuses),
+                    "module": module,
+                    "status": random.choice(statuses),
                 }
             )
 
@@ -54,7 +54,7 @@ def seed_notice():
             user_id=data["user_id"],
             subject=data["subject"],
             content=data["content"],
-            notice_type=data["notice_type"],
+            module=data["module"],
             status=data["status"],
         )
         db.session.add(notice)

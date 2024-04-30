@@ -11,7 +11,7 @@ class Community(db.Model):
     name = db.Column(db.String(20), unique=True, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
     description = db.Column(db.String(500))
-    avatar = db.Column(db.String(300))
+    avatar_url = db.Column(db.String(300))
     create_at = db.Column(db.DateTime, default=generate_time())
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
@@ -20,12 +20,12 @@ class Community(db.Model):
     category = db.relationship("Category", backref=db.backref("communities", lazy=True))
 
     def __init__(
-        self, name: str, category_id: int, description: str = "", avatar: str = ""
+        self, name: str, category_id: int, description: str = "", avatar_url: str = ""
     ) -> None:
         self.name = name
         self.category_id = category_id
         self.description = description
-        self.avatar = avatar
+        self.avatar_url = avatar_url
 
     def __repr__(self) -> str:
         """Return a string representation of the community."""
@@ -41,7 +41,7 @@ class Community(db.Model):
             "name": self.name,
             "category_id": self.category_id,
             "description": self.description,
-            "avatar": self.avatar,
+            "avatar_url": self.avatar_url,
             "create_at": self.create_at,
             "update_at": self.update_at,
         }

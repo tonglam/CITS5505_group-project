@@ -552,9 +552,7 @@ class TestApi(TestBase):
         self.assertEqual(response_data["pagination"]["per_page"], 15)
 
         # test filter by notice type
-        notifications = Notice.query.filter_by(user=user.id).distinct(
-            Notice.notice_type
-        )
+        notifications = Notice.query.filter_by(user=user.id).distinct(Notice.module)
         for notice in notifications:
             response = client.get(f"{url}?notice_type={notice.notice_type}")
             self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)

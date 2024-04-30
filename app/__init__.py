@@ -93,17 +93,16 @@ def init_dev_db(app: Flask, env: str) -> None:
         create_dev_db(app, db_file)
         app.logger.info("Development database created.")
 
-    else:
-        alembic_file = "migrations/alembic.ini"
-        if not os.path.exists(alembic_file):
-            # migrations does not exist
-            app.logger.info("Database Migrations does not exist.")
-            return
+    # check if migrations exists
+    alembic_file = "migrations/alembic.ini"
+    if not os.path.exists(alembic_file):
+        app.logger.info("Database Migrations does not exist.")
+        return
 
-        # execute migrations
-        app.logger.info("Development database already exists. Cheking migrations...")
-        alembic_cfg = Config(alembic_file)
-        migrate_dev_db(app, alembic_cfg)
+    # execute migrations
+    app.logger.info("Development database already exists. Cheking migrations...")
+    alembic_cfg = Config(alembic_file)
+    migrate_dev_db(app, alembic_cfg)
 
     app.logger.info("Development database ready.")
 
