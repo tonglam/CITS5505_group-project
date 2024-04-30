@@ -1,25 +1,27 @@
 """Main application module."""
 
+import logging
+import os
 import uuid
+from logging.handlers import TimedRotatingFileHandler
 
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
 
-from app.constants import G_NOTICE_NUM, G_USER
+from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequstEnum
 from app.models.notice import Notice
+from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .errors import register_error_handlers
-from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler
-from .logs import configure_logging
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
 from .user import user_bp
-from .utils import get_config
+from .utils import get_config, get_env
 
 
 def create_app():
@@ -27,23 +29,68 @@ def create_app():
 
     app = Flask(__name__)
 
-    # app configuration
+    # configuration
+    init_config(app)
+
+    # extensions
+    init_extensions(app)
+
+    # blueprints
+    register_blueprints(app)
+
+    # error handlers
+    register_error_handlers(app)
+
+    # logging
+    register_logging(app)
+
+    # middleware
+    register_middleware(app)
+
+    # global context processors
+    register_context_processors(app)
+
+    # home page
+    @app.route("/")
+    @login_required
+    def index():
+        return render_template("index.html")
+
+    return app
+
+
+def init_config(app):
+    """Initialize application configuration."""
+
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
+    app.config["SWAGGER"] = get_swagger_config()
     app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_SECURE"] = get_env() == EnvironmentEnum.PROD.value
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
+    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
+    app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
 
-    # extensions
+
+def init_extensions(app):
+    """Initialize Flask extensions."""
+
     bcrypt.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
     scheduler.init_app(app)
     jwt.init_app(app)
+    swag.init_app(app)
 
-    # blueprints
+
+def register_blueprints(app):
+    """Register Flask blueprints."""
+
     app.register_blueprint(api_bp, url_prefix="/api/v1")
     app.register_blueprint(
         auth_bp,
@@ -81,17 +128,64 @@ def create_app():
         static_url_path="/users/static",
     )
 
-    # register error handlers
-    register_error_handlers(app)
 
-    # register logging
-    configure_logging(app)
+def register_error_handlers(app):
+    """Registers error handlers for common HTTP error codes."""
 
-    # home page
-    @app.route("/")
-    @login_required
-    def index():
-        return render_template("index.html")
+    @app.errorhandler(HttpRequstEnum.BAD_REQUEST.value)
+    def bad_request_error(_):
+        return render_template("errors/400.html"), HttpRequstEnum.BAD_REQUEST.value
+
+    @app.errorhandler(HttpRequstEnum.UNAUTHORIZED.value)
+    def unauthorized_error(_):
+        return render_template("errors/401.html"), HttpRequstEnum.UNAUTHORIZED.value
+
+    @app.errorhandler(HttpRequstEnum.FORBIDDEN.value)
+    def forbidden_error(_):
+        return render_template("errors/403.html"), HttpRequstEnum.FORBIDDEN.value
+
+    @app.errorhandler(HttpRequstEnum.NOT_FOUND.value)
+    def page_not_found_error(_):
+        return render_template("errors/404.html"), HttpRequstEnum.NOT_FOUND.value
+
+    @app.errorhandler(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    def method_not_allowed_error(_):
+        return (
+            render_template("errors/405.html"),
+            HttpRequstEnum.METHOD_NOT_ALLOWED.value,
+        )
+
+    @app.errorhandler(HttpRequstEnum.INTERNAL_SERVER_ERROR.value)
+    def internal_server_error(_):
+        db.session.rollback()
+        return (
+            render_template("errors/500.html"),
+            HttpRequstEnum.INTERNAL_SERVER_ERROR.value,
+        )
+
+
+def register_logging(app):
+    """log config"""
+
+    if not os.path.exists("logs"):
+        os.mkdir("logs")
+
+    file_handler = TimedRotatingFileHandler(
+        "logs/application.log", when="D", interval=1, backupCount=30
+    )
+    file_handler.setFormatter(
+        logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
+    )
+    file_handler.setLevel(logging.DEBUG)
+
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.DEBUG)
+
+    app.logger.info("Application startup")
+
+
+def register_middleware(app):
+    """Register middleware for the application."""
 
     # logging middleware for http request and response
     @app.before_request
@@ -143,6 +237,10 @@ def create_app():
 
         return response
 
+
+def register_context_processors(app):
+    """Register context processors for the application."""
+
     # global context processors, to set global variables for all templates
     @app.context_processor
     def inject_user():
@@ -160,8 +258,6 @@ def create_app():
         g.notice_num = notice_num
 
         return {G_NOTICE_NUM: g.notice_num}
-
-    return app
 
 
 def get_oauth2_config():

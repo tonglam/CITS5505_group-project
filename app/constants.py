@@ -3,6 +3,14 @@
 import enum
 
 
+class EnvironmentEnum(enum.Enum):
+    """Enum for environment."""
+
+    DEV = "dev"
+    TEST = "test"
+    PROD = "prod"
+
+
 class HttpRequstEnum(enum.Enum):
     """Enum for HTTP request."""
 
