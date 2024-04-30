@@ -7,6 +7,14 @@ from logging.handlers import TimedRotatingFileHandler
 
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
+from sqlalchemy.exc import (
+    DataError,
+    IntegrityError,
+    OperationalError,
+    ProgrammingError,
+    SQLAlchemyError,
+)
+from sqlalchemy.sql import text
 
 from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequstEnum
 from app.models.notice import Notice
@@ -24,7 +32,7 @@ from .user import user_bp
 from .utils import get_config, get_env
 
 
-def create_app():
+def create_app() -> Flask:
     """Create the Flask application."""
 
     app = Flask(__name__)
@@ -34,6 +42,9 @@ def create_app():
 
     # extensions
     init_extensions(app)
+
+    # init dev db
+    init_dev_db(app)
 
     # blueprints
     register_blueprints(app)
@@ -59,7 +70,78 @@ def create_app():
     return app
 
 
-def init_config(app):
+def init_dev_db(app: Flask) -> None:
+    """Init the development database."""
+
+    # only apply on dev environment
+    env = get_env()
+    if env != EnvironmentEnum.DEV.value:
+        return
+
+    # check if db file exists
+    uri = app.config["SQLALCHEMY_DATABASE_URI"]
+    db_file = f"instance/{uri.split('sqlite:///')[1]}"
+    if not os.path.exists(db_file):
+        app.logger.info("Development database does not exist. Creating...")
+        create_dev_db(app, db_file)
+        # migrate_dev_db(app)
+    else:
+        app.logger.info("Development database already exists. Skipping...")
+
+
+def create_dev_db(app: Flask, db_file: str) -> None:
+    """Create the development database."""
+
+    with app.app_context():
+        try:
+            db.drop_all()
+            db.create_all()
+            app.logger.info("Development database created.")
+
+            # execute backup sql
+            with open("sql/dev.backup.sql", "r", encoding="utf-8") as f:
+                sql_commands = f.read().split(";")
+                for command in sql_commands:
+                    if command.strip():
+                        app.logger.info("Executing: %s", command)
+                        execute_raw_sql(app=app, query=command)
+            app.logger.info("Development backup sql executed.")
+        except (
+            IOError,
+            IntegrityError,
+            OperationalError,
+            ProgrammingError,
+            SQLAlchemyError,
+        ) as db_err:
+            app.logger.error(f"Database operation failed: {db_err}")
+            if os.path.exists(db_file):
+                os.remove(db_file)
+            app.logger.info("Development database removed.")
+
+            raise db_err
+
+
+def execute_raw_sql(app: Flask, query: str, **params: dict) -> None:
+    """Function to execute raw SQL queries."""
+
+    with db.engine.connect() as connection:
+        with connection.begin() as transaction:
+            try:
+                connection.execute(text(query), **params)
+                transaction.commit()
+                app.logger.info("Query executed successfully.")
+            except (DataError, IntegrityError, OperationalError, ProgrammingError) as e:
+                transaction.rollback()
+                app.logger.error("Error occurred: %s", e)
+
+
+# def migrate_dev_db(app: Flask) -> None:
+#     """Migrate the development database."""
+
+#     pass
+
+
+def init_config(app: Flask) -> None:
     """Initialize application configuration."""
 
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
@@ -76,7 +158,7 @@ def init_config(app):
     app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
 
 
-def init_extensions(app):
+def init_extensions(app: Flask) -> None:
     """Initialize Flask extensions."""
 
     bcrypt.init_app(app)
@@ -88,7 +170,7 @@ def init_extensions(app):
     swag.init_app(app)
 
 
-def register_blueprints(app):
+def register_blueprints(app: Flask) -> None:
     """Register Flask blueprints."""
 
     app.register_blueprint(api_bp, url_prefix="/api/v1")
@@ -129,7 +211,7 @@ def register_blueprints(app):
     )
 
 
-def register_error_handlers(app):
+def register_error_handlers(app: Flask) -> None:
     """Registers error handlers for common HTTP error codes."""
 
     @app.errorhandler(HttpRequstEnum.BAD_REQUEST.value)
@@ -164,7 +246,7 @@ def register_error_handlers(app):
         )
 
 
-def register_logging(app):
+def register_logging(app: Flask) -> None:
     """log config"""
 
     if not os.path.exists("logs"):
@@ -184,7 +266,7 @@ def register_logging(app):
     app.logger.info("Application startup")
 
 
-def register_middleware(app):
+def register_middleware(app: Flask) -> None:
     """Register middleware for the application."""
 
     # logging middleware for http request and response
@@ -238,7 +320,7 @@ def register_middleware(app):
         return response
 
 
-def register_context_processors(app):
+def register_context_processors(app: Flask) -> None:
     """Register context processors for the application."""
 
     # global context processors, to set global variables for all templates
@@ -260,7 +342,7 @@ def register_context_processors(app):
         return {G_NOTICE_NUM: g.notice_num}
 
 
-def get_oauth2_config():
+def get_oauth2_config() -> dict:
     """Get OAuth2 configuration."""
 
     return {

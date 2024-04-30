@@ -16,63 +16,63 @@ from tests import (
 )
 
 
-def run():
+def run() -> None:
     """Run the test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suites())
 
 
-def api():
+def api() -> None:
     """Run the api test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(api_suite())
 
 
-def auth():
+def auth() -> None:
     """Run the auth test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(auth_suite())
 
 
-def community():
+def community() -> None:
     """Run the community test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(community_suite())
 
 
-def notice():
+def notice() -> None:
     """Run the notice test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(notice_suite())
 
 
-def popular():
+def popular() -> None:
     """Run the popular test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(popular_suite())
 
 
-def post():
+def post() -> None:
     """Run the post test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(post_suite())
 
 
-def search():
+def search() -> None:
     """Run the search test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(search_suite())
 
 
-def user():
+def user() -> None:
     """Run the user test suite."""
 
     runner = unittest.TextTestRunner(verbosity=2)
