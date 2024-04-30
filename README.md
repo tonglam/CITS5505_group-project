@@ -97,3 +97,7 @@ python test.py [api|auth|community|...]
 # Deployment
 
 The main branch is used for deploying to production. [Visit Here](https://letletme.cc)
+
+# Swagger
+
+We use swagger (flasgger) fo Api documendations in this project. [Visit Here](https://letletme.cc/apidocs/)
