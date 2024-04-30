@@ -24,7 +24,7 @@ def create_seed_community_data(length: int = 100) -> list:
         communities.append(
             {
                 "name": names[i],
-                "category": random.choice(category_ids),
+                "category_id": random.choice(category_ids),
                 "description": faker.text(),
                 "avatar": "",
             }
@@ -54,7 +54,7 @@ def seed_community():
     for data in seed_community_data:
         community = Community(
             name=data["name"],
-            category_id=data["category"],
+            category_id=data["category_id"],
             description=data["description"],
             avatar=data["avatar"],
         )

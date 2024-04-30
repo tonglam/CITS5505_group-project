@@ -17,17 +17,17 @@ faker = Faker()
 def create_seed_request_data() -> list:
     """Create seed request data."""
 
-    communities = [community.id for community in Community.query.all()]
     users = [user.id for user in User.query.all()]
+    communities = [community.id for community in Community.query.all()]
     categories = [category.id for category in Category.query.all()]
 
     return [
         {
-            "community": random.choice(communities),
-            "author": random.choice(users),
+            "author_id": random.choice(users),
             "title": faker.sentence(),
             "content": faker.text(),
-            "category": random.choice(categories),
+            "community_id": random.choice(communities),
+            "category_id": random.choice(categories),
             "view_num": random.randint(0, 100),
             "like_num": random.randint(0, 100),
             "reply_num": random.randint(0, 100),
@@ -46,11 +46,11 @@ def seed_request():
 
     for data in seed_request_data:
         request = Request(
-            community_id=data["community"],
-            author_id=data["author"],
+            author_id=data["author_id"],
             title=data["title"],
             content=data["content"],
-            category_id=data["category"],
+            community_id=data["community_id"],
+            category_id=data["category_id"],
             view_num=data["view_num"],
             like_num=data["like_num"],
             reply_num=data["reply_num"],
