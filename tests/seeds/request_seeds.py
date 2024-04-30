@@ -46,11 +46,11 @@ def seed_request():
 
     for data in seed_request_data:
         request = Request(
-            community=data["community"],
+            community_id=data["community"],
             author_id=data["author"],
             title=data["title"],
             content=data["content"],
-            category=data["category"],
+            category_id=data["category"],
             view_num=data["view_num"],
             like_num=data["like_num"],
             reply_num=data["reply_num"],

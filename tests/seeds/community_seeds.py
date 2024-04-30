@@ -54,7 +54,7 @@ def seed_community():
     for data in seed_community_data:
         community = Community(
             name=data["name"],
-            category=data["category"],
+            category_id=data["category"],
             description=data["description"],
             avatar=data["avatar"],
         )

@@ -20,10 +20,10 @@ class Community(db.Model):
     category = db.relationship("Category", backref=db.backref("communities", lazy=True))
 
     def __init__(
-        self, name: str, category: int, description: str = "", avatar: str = ""
+        self, name: str, category_id: int, description: str = "", avatar: str = ""
     ) -> None:
         self.name = name
-        self.category = category
+        self.category_id = category_id
         self.description = description
         self.avatar = avatar
 
@@ -39,7 +39,7 @@ class Community(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "category": self.category,
+            "category_id": self.category_id,
             "description": self.description,
             "avatar": self.avatar,
             "create_at": self.create_at,

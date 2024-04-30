@@ -33,8 +33,8 @@ class Request(db.Model):
         author_id: str,
         title: str,
         content: str,
-        community: int,
-        category: int,
+        community_id: int,
+        category_id: int,
         view_num: int,
         like_num: int,
         reply_num: int,
@@ -43,8 +43,8 @@ class Request(db.Model):
         self.author_id = author_id
         self.title = title
         self.content = content
-        self.community = community
-        self.category = category
+        self.community_id = community_id
+        self.category_id = category_id
         self.view_num = view_num
         self.like_num = like_num
         self.reply_num = reply_num
@@ -64,8 +64,8 @@ class Request(db.Model):
             "author_id": self.author_id,
             "title": self.title,
             "content": self.content,
-            "community": self.community,
-            "category": self.category,
+            "community_id": self.community_id,
+            "category_id": self.category_id,
             "view_num": self.view_num,
             "like_num": self.like_num,
             "reply_num": self.reply_num,
