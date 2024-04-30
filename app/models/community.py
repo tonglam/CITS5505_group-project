@@ -9,13 +9,15 @@ class Community(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20), unique=True, nullable=False)
-    category = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
     description = db.Column(db.String(500))
     avatar = db.Column(db.String(300))
     create_at = db.Column(db.DateTime, default=generate_time())
     update_at = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
+
+    category = db.relationship("Category", backref=db.backref("communities", lazy=True))
 
     def __init__(
         self, name: str, category: int, description: str = "", avatar: str = ""

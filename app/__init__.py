@@ -104,7 +104,8 @@ def init_dev_db(app: Flask, env: str) -> None:
         app.logger.info("Development database already exists. Cheking migrations...")
         alembic_cfg = Config(alembic_file)
         migrate_dev_db(app, alembic_cfg)
-        app.logger.info("Development database ready.")
+
+    app.logger.info("Development database ready.")
 
 
 def create_dev_db(app: Flask, db_file: str) -> None:

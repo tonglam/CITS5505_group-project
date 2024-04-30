@@ -51,7 +51,7 @@ def seed_notice():
 
     for data in seed_notice_data:
         notice = Notice(
-            user=data["user"],
+            user_id=data["user"],
             subject=data["subject"],
             content=data["content"],
             notice_type=data["notice_type"],

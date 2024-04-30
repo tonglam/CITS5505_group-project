@@ -47,7 +47,7 @@ def handle_notification(_, **kwargs: dict) -> None:
 
     # insert to database
     notice = Notice(
-        user=user_id,
+        user_id=user_id,
         subject=f"Notification: {notice_module}",
         content=f"{notice_action} successfully!",
         notice_type=notice_module,

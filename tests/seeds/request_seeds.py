@@ -47,7 +47,7 @@ def seed_request():
     for data in seed_request_data:
         request = Request(
             community=data["community"],
-            author=data["author"],
+            author_id=data["author"],
             title=data["title"],
             content=data["content"],
             category=data["category"],

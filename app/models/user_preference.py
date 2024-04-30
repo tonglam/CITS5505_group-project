@@ -17,6 +17,8 @@ class UserPreference(db.Model):
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
+    user = db.relationship("User", backref=db.backref("user_preference", lazy=True))
+
     def __init__(self, user_id: str, communities: str, interests: str) -> None:
         self.user_id = user_id
         self.communities = communities

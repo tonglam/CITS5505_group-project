@@ -42,8 +42,8 @@ def seed_reply():
 
     for data in seed_reply_data:
         reply = Reply(
-            request=data["request"],
-            replier=data["replier"],
+            request_id=data["request"],
+            replier_id=data["replier"],
             content=data["content"],
             source=data["source"],
             like_num=data["like_num"],

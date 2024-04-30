@@ -17,8 +17,8 @@ class Reply(db.Model):
     """Reply model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
-    replier = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
+    replier_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.String(1000))
     source = db.Column(
         db.String(50), db.Enum(ReplySourceEnum), default=ReplySourceEnum.HUMAN.value
@@ -30,18 +30,21 @@ class Reply(db.Model):
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
+    request = db.relationship("Request", backref=db.backref("replies", lazy=True))
+    replier = db.relationship("User", backref=db.backref("replies", lazy=True))
+
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        request: int,
-        replier: str,
+        request_id: int,
+        replier_id: str,
         content: str,
         source: str,
         like_num: int,
         save_num: int,
     ) -> None:
-        self.request = request
-        self.replier = replier
+        self.request_id = request_id
+        self.replier_id = replier_id
         self.content = content
         self.source = source
         self.like_num = like_num
@@ -58,8 +61,8 @@ class Reply(db.Model):
 
         return {
             "id": self.id,
-            "request": self.request,
-            "replier": self.replier,
+            "request_id": self.request_id,
+            "replier_id": self.replier_id,
             "content": self.content,
             "source": self.source,
             "like_num": self.like_num,

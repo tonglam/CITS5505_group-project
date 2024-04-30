@@ -31,6 +31,9 @@ class UserRecord(db.Model):
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
+    user = db.relationship("User", backref=db.backref("user_records", lazy=True))
+    request = db.relationship("Request", backref=db.backref("user_records", lazy=True))
+
     def __init__(
         self, user_id: str, request_id: str, record_type: UserRecordTypeEnum
     ) -> None:

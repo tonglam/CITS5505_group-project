@@ -43,7 +43,7 @@ class Notice(db.Model):
     """Notice model."""
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     subject = db.Column(db.String(100), nullable=False)
     content = db.Column(db.String(1000), default="")
     notice_type = db.Column(
@@ -57,10 +57,12 @@ class Notice(db.Model):
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
+    user = db.relationship("User", backref=db.backref("notices", lazy=True))
+
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        user: str,
+        user_id: str,
         subject: str,
         content: str = "",
         notice_type: str = NoticeModuleEnum.SYSTEM.value,
@@ -68,7 +70,7 @@ class Notice(db.Model):
     ) -> None:
         """Initialize the notice."""
 
-        self.user = user
+        self.user_id = user_id
         self.subject = subject
         self.content = content
         self.notice_type = notice_type
@@ -85,7 +87,7 @@ class Notice(db.Model):
 
         return {
             "id": self.id,
-            "user": self.user,
+            "user_id": self.user_id,
             "subject": self.subject,
             "content": self.content,
             "notice_type": self.notice_type,
