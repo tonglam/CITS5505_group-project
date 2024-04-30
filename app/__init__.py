@@ -5,6 +5,10 @@ import os
 import uuid
 from logging.handlers import TimedRotatingFileHandler
 
+from alembic import command
+from alembic.config import Config
+from alembic.runtime.migration import MigrationContext
+from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
 from sqlalchemy.exc import (
@@ -37,14 +41,17 @@ def create_app() -> Flask:
 
     app = Flask(__name__)
 
+    # env
+    env = get_env()
+
     # configuration
-    init_config(app)
+    init_config(app, env)
 
     # extensions
     init_extensions(app)
 
     # init dev db
-    init_dev_db(app)
+    init_dev_db(app, env)
 
     # blueprints
     register_blueprints(app)
@@ -70,11 +77,10 @@ def create_app() -> Flask:
     return app
 
 
-def init_dev_db(app: Flask) -> None:
+def init_dev_db(app: Flask, env: str) -> None:
     """Init the development database."""
 
     # only apply on dev environment
-    env = get_env()
     if env != EnvironmentEnum.DEV.value:
         return
 
@@ -82,11 +88,23 @@ def init_dev_db(app: Flask) -> None:
     uri = app.config["SQLALCHEMY_DATABASE_URI"]
     db_file = f"instance/{uri.split('sqlite:///')[1]}"
     if not os.path.exists(db_file):
+        # create if not exists
         app.logger.info("Development database does not exist. Creating...")
         create_dev_db(app, db_file)
-        # migrate_dev_db(app)
+        app.logger.info("Development database created.")
+
     else:
-        app.logger.info("Development database already exists. Skipping...")
+        alembic_file = "migrations/alembic.ini"
+        if not os.path.exists(alembic_file):
+            # migrations does not exist
+            app.logger.info("Database Migrations does not exist.")
+            return
+
+        # execute migrations
+        app.logger.info("Development database already exists. Cheking migrations...")
+        alembic_cfg = Config(alembic_file)
+        migrate_dev_db(app, alembic_cfg)
+        app.logger.info("Development database ready.")
 
 
 def create_dev_db(app: Flask, db_file: str) -> None:
@@ -101,10 +119,9 @@ def create_dev_db(app: Flask, db_file: str) -> None:
             # execute backup sql
             with open("sql/dev.backup.sql", "r", encoding="utf-8") as f:
                 sql_commands = f.read().split(";")
-                for command in sql_commands:
-                    if command.strip():
-                        app.logger.info("Executing: %s", command)
-                        execute_raw_sql(app=app, query=command)
+                for sql_command in sql_commands:
+                    if sql_command.strip():
+                        execute_raw_sql(app=app, query=sql_command)
             app.logger.info("Development backup sql executed.")
         except (
             IOError,
@@ -129,19 +146,46 @@ def execute_raw_sql(app: Flask, query: str, **params: dict) -> None:
             try:
                 connection.execute(text(query), **params)
                 transaction.commit()
-                app.logger.info("Query executed successfully.")
             except (DataError, IntegrityError, OperationalError, ProgrammingError) as e:
                 transaction.rollback()
                 app.logger.error("Error occurred: %s", e)
 
 
-# def migrate_dev_db(app: Flask) -> None:
-#     """Migrate the development database."""
+def migrate_dev_db(app: Flask, alembic_cfg: Config) -> None:
+    """Migrate the development database."""
 
-#     pass
+    with app.app_context():
+        if check_dev_db_migration(app, alembic_cfg):
+            app.logger.info("Development database needs to be migrated.")
+            command.upgrade(alembic_cfg, "head")
+    app.logger.info("Development database migrated.")
 
 
-def init_config(app: Flask) -> None:
+def check_dev_db_migration(app: Flask, alembic_cfg: Config) -> bool:
+    """Check if the development database needs to be migrated."""
+
+    with db.engine.connect() as connection:
+        # current migration version
+        context = MigrationContext.configure(connection)
+        current_version = context.get_current_revision()
+        app.logger.info("Current migration version: %s", current_version)
+
+        # latest migration version
+        last_version = get_latest_migration_version(alembic_cfg)
+        app.logger.info("Latest migration version: %s", last_version)
+
+        return current_version != last_version
+
+
+def get_latest_migration_version(alembic_cfg: Config) -> str:
+    """Get the latest migration version."""
+
+    script = ScriptDirectory.from_config(alembic_cfg)
+    heads = script.get_heads()
+    return heads[0] if heads else None
+
+
+def init_config(app: Flask, env: str) -> None:
     """Initialize application configuration."""
 
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
@@ -150,7 +194,7 @@ def init_config(app: Flask) -> None:
     app.config["SWAGGER"] = get_swagger_config()
     app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-    app.config["JWT_COOKIE_SECURE"] = get_env() == EnvironmentEnum.PROD.value
+    app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
     app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
     app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
