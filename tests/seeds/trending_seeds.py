@@ -16,25 +16,17 @@ faker = Faker()
 def create_seed_trending_data() -> list:
     """Create seed trending data."""
 
-    trendings = []
-
-    requests = [request for request in Request.query.all()]
+    requests = [request.id for request in Request.query.all()]
     users = [user.id for user in User.query.all()]
 
-    for _ in range(100):
-        requests = random.choice(requests)
-        user_id = random.choice(users)
-
-        trendings.append(
-            {
-                "request_id": requests.id,
-                "title": requests.title,
-                "author_id": user_id,
-                "reply_num": random.randint(0, 100),
-            }
-        )
-
-    return trendings
+    return [
+        {
+            "request_id": requests[i],
+            "author_id": random.choice(users),
+            "reply_num": random.randint(0, 100),
+        }
+        for i in range(len(requests))
+    ]
 
 
 def seed_trending():
@@ -47,7 +39,6 @@ def seed_trending():
     for data in seed_trending_data:
         trending = Trending(
             request_id=data["request_id"],
-            title=data["title"],
             author_id=data["author_id"],
             reply_num=data["reply_num"],
         )

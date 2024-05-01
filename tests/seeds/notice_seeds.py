@@ -3,12 +3,7 @@
 import random
 
 from app.extensions import db
-from app.models.notice import (
-    Notice,
-    NoticeActionEnum,
-    NoticeModuleEnum,
-    NoticeStatusEnum,
-)
+from app.models.notice import Notice, NoticeActionEnum, NoticeModuleEnum
 from app.models.user import User
 
 random.seed(5505)
@@ -22,7 +17,6 @@ def create_seed_notice_data() -> list:
     users = [user.id for user in User.query.all()]
     modules = [module.value for module in NoticeModuleEnum]
     actions = [action.value for action in NoticeActionEnum]
-    statuses = [status.value for status in NoticeStatusEnum]
 
     for _ in range(20):
         user_id = random.choice(users)
@@ -35,7 +29,7 @@ def create_seed_notice_data() -> list:
                     "subject": f"Notification: {module}",
                     "content": f"{notice_action} successfully!",
                     "module": module,
-                    "status": random.choice(statuses),
+                    "status": random.choice([True, False]),
                 }
             )
 

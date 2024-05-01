@@ -1,5 +1,6 @@
 """UserRecord model."""
 
+import datetime
 import enum
 
 from app.extensions import db
@@ -19,15 +20,14 @@ class UserRecordTypeEnum(enum.Enum):
 class UserRecord(db.Model):
     """UserRecord model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    request_id = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
-    record_type = db.Column(
-        db.String(80),
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    request_id: int = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
+    record_type: UserRecordTypeEnum = db.Column(
         db.Enum(UserRecordTypeEnum),
         default=UserRecordTypeEnum.VIEW,
     )
-    update_at = db.Column(
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
@@ -54,6 +54,6 @@ class UserRecord(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "request_id": self.request_id,
-            "record_type": self.record_type,
+            "record_type": self.record_type.value,
             "update_at": self.update_at,
         }

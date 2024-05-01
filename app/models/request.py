@@ -1,5 +1,7 @@
 """Request model."""
 
+import datetime
+
 from app.extensions import db
 from app.utils import generate_time
 
@@ -8,18 +10,18 @@ from app.utils import generate_time
 class Request(db.Model):
     """Request model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    author_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    title = db.Column(db.String(40), nullable=False)
-    content = db.Column(db.String(1000), default="")
-    community_id = db.Column(db.Integer, db.ForeignKey("community.id"))
-    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
-    view_num = db.Column(db.Integer)
-    like_num = db.Column(db.Integer)
-    reply_num = db.Column(db.Integer)
-    save_num = db.Column(db.Integer)
-    create_at = db.Column(db.DateTime, default=generate_time())
-    update_at = db.Column(
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    author_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    title: str = db.Column(db.String(40), nullable=False)
+    content: str = db.Column(db.String(1000), default="")
+    community_id: int = db.Column(db.Integer, db.ForeignKey("community.id"))
+    category_id: int = db.Column(db.Integer, db.ForeignKey("category.id"))
+    view_num: int = db.Column(db.Integer)
+    like_num: int = db.Column(db.Integer)
+    reply_num: int = db.Column(db.Integer)
+    save_num: int = db.Column(db.Integer)
+    create_at: datetime = db.Column(db.DateTime, default=generate_time())
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 

@@ -375,9 +375,7 @@ def register_context_processors(app: Flask) -> None:
     @app.context_processor
     def inject_notice_num():
         if current_user.is_authenticated:
-            notice_num = Notice.query.filter_by(
-                user=current_user.id, status=False
-            ).count()
+            notice_num = Notice.query.filter_by(user=current_user, status=False).count()
         else:
             notice_num = 0
 

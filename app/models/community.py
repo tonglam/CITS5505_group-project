@@ -1,5 +1,7 @@
 """Community model."""
 
+import datetime
+
 from app.extensions import db
 from app.utils import generate_time
 
@@ -7,13 +9,13 @@ from app.utils import generate_time
 class Community(db.Model):
     """Community model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(20), unique=True, nullable=False)
-    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
-    description = db.Column(db.String(500))
-    avatar_url = db.Column(db.String(300))
-    create_at = db.Column(db.DateTime, default=generate_time())
-    update_at = db.Column(
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name: str = db.Column(db.String(20), unique=True, nullable=False)
+    category_id: int = db.Column(db.Integer, db.ForeignKey("category.id"))
+    description: str = db.Column(db.String(500))
+    avatar_url: str = db.Column(db.String(300))
+    create_at: datetime = db.Column(db.DateTime, default=generate_time())
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 

@@ -269,7 +269,7 @@ def user_notifications() -> ApiResponse:
     # basic query
     query = (
         db.session.query(Notice)
-        .filter_by(user=user_id)
+        .filter_by(user_id=user_id)
         .order_by(Notice.id)
         .order_by(Notice.status)
     )

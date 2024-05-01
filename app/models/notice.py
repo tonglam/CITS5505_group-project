@@ -1,5 +1,6 @@
 """Notice model."""
 
+import datetime
 import enum
 
 from app.extensions import db
@@ -9,51 +10,42 @@ from app.utils import generate_time
 class NoticeModuleEnum(enum.Enum):
     """Enum for notice module."""
 
-    SYSTEM = "System"
-    USER = "User"
-    POST = "Post"
-    COMMENT = "Comment"
-    REPLY = "Reply"
-    LIKE = "Like"
-    FOLLOW = "Follow"
-    SAVE = "Save"
-    COMMUNITY = "Community"
+    SYSTEM = "SYSTEM"
+    USER = "USER"
+    POST = "POST"
+    COMMENT = "COMMENT"
+    REPLY = "REPLY"
+    LIKE = "LIKE"
+    FOLLOW = "FOLLOW"
+    SAVE = "SAVE"
+    COMMUNITY = "COMMUNITY"
 
 
 class NoticeActionEnum(enum.Enum):
     """Enum for notice action."""
 
-    RESET_PASSWORD = "Reset Password"
-    UPDATED_PROFILE = "Updated Profile"
-    CREATED = "Created"
-    UPDATED = "Updated"
-    DELETED = "Deleted"
-    CANCELLED = "Cancelled"
-    ANNOUNCEMENT = "Announcement"
-
-
-class NoticeStatusEnum(enum.Enum):
-    """Enum for notice read status."""
-
-    READ = True
-    UNREAD = False
+    RESET_PASSWORD = "RESET_PASSWORD"
+    UPDATED_PROFILE = "UPDATED_PROFILE"
+    CREATED = "CREATED"
+    UPDATED = "UPDATED"
+    DELETED = "DELETED"
+    CANCELLED = "CANCELLED"
+    ANNOUNCEMENT = "ANNOUNCEMENT"
 
 
 class Notice(db.Model):
     """Notice model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    subject = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.String(1000), default="")
-    module = db.Column(
-        db.String(50), db.Enum(NoticeModuleEnum), default=NoticeModuleEnum.SYSTEM.value
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    subject: str = db.Column(db.String(100), nullable=False)
+    content: str = db.Column(db.String(1000), default="")
+    module: NoticeModuleEnum = db.Column(
+        db.Enum(NoticeModuleEnum), default=NoticeModuleEnum.SYSTEM
     )
-    status = db.Column(
-        db.Boolean, db.Enum(NoticeStatusEnum), default=NoticeStatusEnum.UNREAD.value
-    )
-    create_at = db.Column(db.DateTime, default=generate_time())
-    update_at = db.Column(
+    status: bool = db.Column(db.Boolean, default=False)
+    create_at: datetime = db.Column(db.DateTime, default=generate_time())
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
@@ -65,8 +57,8 @@ class Notice(db.Model):
         user_id: str,
         subject: str,
         content: str = "",
-        module: str = NoticeModuleEnum.SYSTEM.value,
-        status: bool = NoticeStatusEnum.UNREAD.value,
+        module: str = NoticeModuleEnum.SYSTEM,
+        status: bool = False,
     ) -> None:
         """Initialize the notice."""
 
@@ -90,7 +82,7 @@ class Notice(db.Model):
             "user_id": self.user_id,
             "subject": self.subject,
             "content": self.content,
-            "module": self.module,
+            "module": self.module.value,
             "status": self.status,
             "create_at": self.create_at,
             "update_at": self.update_at,
