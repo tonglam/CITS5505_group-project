@@ -554,18 +554,18 @@ class TestApi(TestBase):
         # test filter by notice type
         notifications = Notice.query.filter_by(user=user).distinct(Notice.module)
         for notice in notifications:
-            response = client.get(f"{url}?notice_type={notice.module}")
+            response = client.get(f"{url}?notice_type={notice.module.value}")
             self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
             response_data = response.json
             self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
             self.assertEqual(
-                response_data["data"]["notices"][0]["notice_type"],
-                notice.module,
+                response_data["data"]["notices"][0]["module"],
+                notice.module.value,
             )
 
         # test filter by status
-        notifications = Notice.query.filter_by(user=user.id).distinct(Notice.status)
+        notifications = Notice.query.filter_by(user=user).distinct(Notice.status)
         for notice in notifications:
             notice_status = "read" if notice.status is True else "unread"
             response = client.get(f"{url}?status={notice_status}")

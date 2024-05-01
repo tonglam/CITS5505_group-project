@@ -82,6 +82,9 @@ def init_dev_db(app: Flask, env: str) -> None:
 
     # only apply on dev environment
     if env != EnvironmentEnum.DEV.value:
+        app.logger.info(
+            "Current environment is not %s. Skip development database init.", env
+        )
         return
 
     # check if db file exists
