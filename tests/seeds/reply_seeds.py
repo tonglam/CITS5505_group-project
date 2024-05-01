@@ -26,10 +26,10 @@ def create_seed_reply_data() -> list:
         request_id = random.choice(requests)
         replies.append(
             {
-                "request": request_id,
-                "replier": random.choice(users),
-                "content": faker.text(),
+                "request_id": request_id,
+                "replier_id": random.choice(users),
                 "reply_id": request_id,
+                "content": faker.text(),
                 "source": random.choice(reply_sources),
                 "like_num": random.randint(0, 100),
                 "save_num": random.randint(0, 100),
@@ -40,10 +40,10 @@ def create_seed_reply_data() -> list:
         parent_reply = random.choice(replies)
         replies.append(
             {
-                "request": parent_reply["request"],
-                "replier": random.choice(users),
-                "content": faker.text(),
+                "request_id": parent_reply["request_id"],
+                "replier_id": random.choice(users),
                 "reply_id": parent_reply["reply_id"],
+                "content": faker.text(),
                 "source": random.choice(reply_sources),
                 "like_num": random.randint(0, 100),
                 "save_num": random.randint(0, 100),
