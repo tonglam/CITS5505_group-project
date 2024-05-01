@@ -33,7 +33,6 @@ def create_app():
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
-    app.config["BASE_URL"] = get_config("APP", "BASE_URL")
     app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
@@ -94,8 +93,7 @@ def create_app():
     @app.route("/")
     @login_required
     def index():
-        random_requests = Request.query.order_by(func.random()).limit(10).all()  # pylint: disable=not-callable
-        return render_template('index.html', requests=random_requests)
+        return render_template('index.html')
 
     # logging middleware for http request and response
     @app.before_request

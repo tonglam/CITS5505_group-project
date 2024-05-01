@@ -78,9 +78,7 @@ jobs:
       - name: Fetch Test Configurations
         env:
           APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
-          BASE_URL: ${{ secrets.BASE_URL }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          SQLITE_DATABASE_URL: ${{ secrets.SQLITE_TEST_DATABASE_URL }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
@@ -93,7 +91,6 @@ jobs:
           [APP]
           SECRET_KEY = ${APP_SECRET_KEY}
           JWT_SECRET_KEY = ${JWT_SECRET_KEY}
-          BASE_URL = ${{ secrets.BASE_URL }}
 
           [SQLITE]
           DATABASE_URL = ${SQLITE_DATABASE_URL}

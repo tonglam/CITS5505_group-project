@@ -19,17 +19,14 @@
                 <div class="content">{{ reply.content }}</div>
                 <small>Source: {{ reply.source }}</small>
                 <div>
-                    <span class="badge badge-primary">Likes: {{ reply.like_num }}</span>
-                    <span class="badge badge-secondary">Saves: {{ reply.save_num }}</span>
-                    <span class="badge badge-info">Updated at: {{ reply.update_at }}</span>
-                    {% if show_create_button %}
-                        <button onclick="window.location.href='/posts/create'">Create New Comment</button> 
-                    {% endif %}
-
+                    <button id="like-button-reply" class="btn-like-reply" onclick="toggleLike({{ request.id }})">Like</button>
+                    <button id="save-button-reply" class="btn-save-reply" onclick="toggleSave()">Save</button>
+                    <button class="btn-create-reply" onclick="window.location.href='/posts/create'">Create New Comment</button>
+                   Likes: {{ replies.like_num }}, Saved: {{ request.save_num }}, Create at: {{ replies.create_at}}
                 </div>
                 {% if child_replies %}
                 {% if child_replies|length > 2 %}
-                <button onclick="toggleReplies(this, 'more-replies')">Show Replies</button>
+                <button class=show-replies onclick="toggleReplies(this, 'more-replies')">Show Replies</button>
                 {% endif %}
                 <div class="replies123">
 

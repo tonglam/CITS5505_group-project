@@ -14,7 +14,7 @@
    <div class="card-footer">
       <button id="like-button" class="btn-like" onclick="toggleLike({{ request.id }})">Like</button>
       <button id="save-button" class="btn-save" onclick="toggleSave()">Save</button>
-      <button onclick="window.location.href='/posts/create'">Create New Comment</button> 
+      <button class="btn-create" onclick="window.location.href='/posts/create'">Create New Comment</button> 
       Views: {{ request.view_num }}, Likes: {{ request.like_num }}, Replies: {{ request.reply_num }}, Saved: {{ request.save_num }}
    </div>
 </div>
