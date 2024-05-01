@@ -1,5 +1,6 @@
 """Notice model."""
 
+import datetime
 import enum
 
 from app.extensions import db
@@ -9,69 +10,62 @@ from app.utils import generate_time
 class NoticeModuleEnum(enum.Enum):
     """Enum for notice module."""
 
-    SYSTEM = "System"
-    USER = "User"
-    POST = "Post"
-    COMMENT = "Comment"
-    REPLY = "Reply"
-    LIKE = "Like"
-    FOLLOW = "Follow"
-    SAVE = "Save"
-    COMMUNITY = "Community"
+    SYSTEM = "SYSTEM"
+    USER = "USER"
+    POST = "POST"
+    COMMENT = "COMMENT"
+    REPLY = "REPLY"
+    LIKE = "LIKE"
+    FOLLOW = "FOLLOW"
+    SAVE = "SAVE"
+    COMMUNITY = "COMMUNITY"
 
 
 class NoticeActionEnum(enum.Enum):
     """Enum for notice action."""
 
-    RESET_PASSWORD = "Reset Password"
-    UPDATED_PROFILE = "Updated Profile"
-    CREATED = "Created"
-    UPDATED = "Updated"
-    DELETED = "Deleted"
-    CANCELLED = "Cancelled"
-    ANNOUNCEMENT = "Announcement"
-
-
-class NoticeStatusEnum(enum.Enum):
-    """Enum for notice read status."""
-
-    READ = True
-    UNREAD = False
+    RESET_PASSWORD = "RESET_PASSWORD"
+    UPDATED_PROFILE = "UPDATED_PROFILE"
+    CREATED = "CREATED"
+    UPDATED = "UPDATED"
+    DELETED = "DELETED"
+    CANCELLED = "CANCELLED"
+    ANNOUNCEMENT = "ANNOUNCEMENT"
 
 
 class Notice(db.Model):
     """Notice model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    subject = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.String(1000), default="")
-    notice_type = db.Column(
-        db.String(50), db.Enum(NoticeModuleEnum), default=NoticeModuleEnum.SYSTEM.value
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    subject: str = db.Column(db.String(100), nullable=False)
+    content: str = db.Column(db.String(1000), default="")
+    module: NoticeModuleEnum = db.Column(
+        db.Enum(NoticeModuleEnum), default=NoticeModuleEnum.SYSTEM
     )
-    status = db.Column(
-        db.Boolean, db.Enum(NoticeStatusEnum), default=NoticeStatusEnum.UNREAD.value
-    )
-    create_at = db.Column(db.DateTime, default=generate_time())
-    update_at = db.Column(
+    status: bool = db.Column(db.Boolean, default=False)
+    create_at: datetime = db.Column(db.DateTime, default=generate_time())
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
+
+    user = db.relationship("User", backref=db.backref("notices", lazy=True))
 
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        user: str,
+        user_id: str,
         subject: str,
         content: str = "",
-        notice_type: str = NoticeModuleEnum.SYSTEM.value,
-        status: bool = NoticeStatusEnum.UNREAD.value,
+        module: str = NoticeModuleEnum.SYSTEM,
+        status: bool = False,
     ) -> None:
         """Initialize the notice."""
 
-        self.user = user
+        self.user_id = user_id
         self.subject = subject
         self.content = content
-        self.notice_type = notice_type
+        self.module = module
         self.status = status
 
     def __repr__(self) -> str:
@@ -85,10 +79,10 @@ class Notice(db.Model):
 
         return {
             "id": self.id,
-            "user": self.user,
+            "user_id": self.user_id,
             "subject": self.subject,
             "content": self.content,
-            "notice_type": self.notice_type,
+            "module": self.module.value,
             "status": self.status,
             "create_at": self.create_at,
             "update_at": self.update_at,

@@ -4,7 +4,7 @@ import random
 
 from app.extensions import db
 from app.models.category import Category
-from app.models.request import Request
+from app.models.community import Community
 from app.models.user import User
 from app.models.user_preference import UserPreference
 
@@ -15,7 +15,7 @@ def create_seed_user_preference_data() -> list:
     """Create seed user preference data."""
 
     users = [user.id for user in User.query.all()]
-    communities = [request.id for request in Request.query.all()]
+    communities = [community.id for community in Community.query.all()]
     categories = [category.id for category in Category.query.all()]
 
     return [
