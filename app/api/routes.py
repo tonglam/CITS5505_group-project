@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from flask import abort, jsonify, request
+from flask import abort, current_app, jsonify, request
 from flask_jwt_extended import jwt_required
 from flask_login import current_user
 from flask_sqlalchemy import pagination as Pagination
@@ -59,7 +59,7 @@ class ApiResponse:
 @api_bp.route("/users/<username>", methods=["GET", "PUT"])
 @jwt_required()
 def users(username: str) -> ApiResponse:
-    """Get or PUT a user by username."""
+    """Retrieve or update a user by username."""
 
     user_entity = db.session.query(User).filter_by(username=username).first()
 
@@ -76,6 +76,8 @@ def users(username: str) -> ApiResponse:
         if current_user.id != user_entity.id:
             abort(HttpRequstEnum.FORBIDDEN.value)
 
+        # TODO: validate request data, using a User WTForm
+
         request_data = request.json
 
         if request_data is None or request_data == {}:
@@ -91,6 +93,9 @@ def users(username: str) -> ApiResponse:
 
         # update user into database
         db.session.commit()
+        current_app.logger.info(
+            f"User {current_user.id} updated successfully: {update_user_entity}"
+        )
 
         # send notification
         notice_event(notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE)
@@ -105,7 +110,7 @@ def users(username: str) -> ApiResponse:
 @api_bp.route("/users/records", methods=["GET"])
 @jwt_required()
 def user_records() -> ApiResponse:
-    """Get all records by user id."""
+    """Retrieve all records associated with the logged-in user."""
 
     user_id = current_user.id
 
@@ -150,7 +155,7 @@ def user_records() -> ApiResponse:
 @api_bp.route("/users/records/<int:record_id>", methods=["GET", "DELETE"])
 @jwt_required()
 def users_record(record_id: int) -> ApiResponse:
-    """GET or Delete record by id."""
+    """Retrieve or delete a specific user record by ID."""
 
     record_entity = (
         db.session.query(UserRecord)
@@ -168,6 +173,9 @@ def users_record(record_id: int) -> ApiResponse:
     if request.method == "DELETE":
         db.session.delete(record_entity)
         db.session.commit()
+        current_app.logger.info(
+            f"User {current_user.id}, Record {record_id} deleted successfully"
+        )
 
         return ApiResponse(
             HttpRequstEnum.NO_CONTENT.value, message="record delete success"
@@ -179,7 +187,7 @@ def users_record(record_id: int) -> ApiResponse:
 @api_bp.route("/users/preference", methods=["GET", "PUT"])
 @jwt_required()
 def user_preference() -> ApiResponse:
-    """Get or PUT a preference by id."""
+    """Retrieve or update user preferences."""
 
     user_preference_entity = (
         db.session.query(UserPreference).filter_by(user_id=current_user.id).first()
@@ -193,6 +201,8 @@ def user_preference() -> ApiResponse:
         return ApiResponse(data={"preference": user_preference_entity.to_dict()}).json()
 
     if request.method == "PUT":
+        # TODO: validate request data, using a UserPreference WTForm
+
         request_data = request.json
 
         if request_data is None or request_data == {}:
@@ -210,6 +220,10 @@ def user_preference() -> ApiResponse:
 
         # update user preference into database
         db.session.commit()
+        current_app.logger.info(
+            f"User {current_user.id} preference \
+                updated successfully: {update_user_preference_entity}"
+        )
 
         return ApiResponse(
             data={"preference": update_user_preference_entity.to_dict()},
@@ -255,14 +269,14 @@ def user_notifications() -> ApiResponse:
     # basic query
     query = (
         db.session.query(Notice)
-        .filter_by(user=user_id)
+        .filter_by(user_id=user_id)
         .order_by(Notice.id)
         .order_by(Notice.status)
     )
 
     # apply filters
     if notice_type_filter:
-        query = query.filter(Notice.notice_type == notice_type_filter)
+        query = query.filter(Notice.module == notice_type_filter)
     if status_filter:
         status = 1 if status_filter == "read" else 0
         query = query.filter(Notice.status == status)

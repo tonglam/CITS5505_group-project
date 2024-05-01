@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint --disable=C0301,C0302,R0801 app
+          pylint --disable=C0301,C0302,R0801,W0511 app
 
       - name: Run isort
         run: |
@@ -121,4 +121,4 @@ jobs:
       - name: Test with Flask-Unittest
         run: |
           cd $GITHUB_WORKSPACE 
-          FLASK_ENV=test python test.py
+          python test.py

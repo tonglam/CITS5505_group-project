@@ -6,8 +6,10 @@ import os
 from typing import Iterator
 
 import flask_unittest
+from bs4 import BeautifulSoup
 from flask import Flask
 from flask.testing import FlaskClient
+from flask.wrappers import Response as TestResponse
 
 from app import create_app
 from app.extensions import db
@@ -17,6 +19,7 @@ from tests.seeds.notice_seeds import seed_notice
 from tests.seeds.reply_seeds import seed_reply
 from tests.seeds.request_seeds import seed_request
 from tests.seeds.tag_seeds import seed_tag
+from tests.seeds.trending_seeds import seed_trending
 from tests.seeds.user_preference_seeds import seed_user_preference
 from tests.seeds.user_record_seeds import seed_user_record
 from tests.seeds.user_seeds import seed_user
@@ -58,6 +61,7 @@ class TestBase(flask_unittest.AppClientTestCase):
             seed_user_record()
             seed_user_preference()
             seed_notice()
+            seed_trending()
 
     def tearDown(self, app: Flask, _):
         """Tear down the test case."""
@@ -95,3 +99,25 @@ class AuthActions:
         """Log a user out."""
 
         return self._client.get("/auth/logout")
+
+
+class Utils:
+    """Helper class for utility functions."""
+
+    @staticmethod
+    def get_csrf_token(client: FlaskClient) -> str:
+        """Get the CSRF token from the client."""
+
+        response = client.get("/auth/login")
+        csrf_token = response.html.find("input", {"name": "csrf_token"})["value"]
+        return csrf_token
+
+    @staticmethod
+    def get_page_title(response: TestResponse, url: str) -> str:
+        """Get the page title from the client response."""
+
+        soup = BeautifulSoup(response.data, "html.parser")
+        page_title = soup.title.text.strip() if soup.title else "No title found"
+        page_title = page_title.split(" - ")[0]
+        print("page_title:", page_title)
+        return page_title

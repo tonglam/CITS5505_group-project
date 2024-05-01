@@ -1,7 +1,7 @@
 """Reply model."""
 
+import datetime
 import enum
-
 
 from app.extensions import db
 from app.utils import generate_time
@@ -17,36 +17,37 @@ class ReplySourceEnum(enum.Enum):
 class Reply(db.Model):
     """Reply model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    request = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
-    replier = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
-    reply_id = db.Column(db.Integer, db.ForeignKey("reply.id"), nullable=True)
-    content = db.Column(db.String(1000))
-    source = db.Column(
-        db.String(50), db.Enum(ReplySourceEnum), default=ReplySourceEnum.HUMAN.value
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    request_id: int = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
+    replier_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    reply_id: int = db.Column(db.Integer, db.ForeignKey("reply.id"))
+    content: str = db.Column(db.String(1000))
+    source: ReplySourceEnum = db.Column(
+        db.Enum(ReplySourceEnum), default=ReplySourceEnum.HUMAN.value
     )
-    like_num = db.Column(db.Integer)
-    save_num = db.Column(db.Integer)
-    create_at = db.Column(db.DateTime, default=generate_time())
-    update_at = db.Column(
+    like_num: int = db.Column(db.Integer, default=0)
+    save_num: int = db.Column(db.Integer, default=0)
+    create_at: datetime = db.Column(db.DateTime, default=generate_time())
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
 
-    user = db.relationship('User', back_populates='replies')
+    request = db.relationship("Request", backref=db.backref("replies", lazy=True))
+    replier = db.relationship("User", backref=db.backref("replies", lazy=True))
 
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        request: int,
-        replier: str,
-        reply_id: str,
+        request_id: int,
+        replier_id: str,
+        reply_id: int,
         content: str,
         source: str,
         like_num: int,
         save_num: int,
     ) -> None:
-        self.request = request
-        self.replier = replier
+        self.request_id = request_id
+        self.replier_id = replier_id
         self.reply_id = reply_id
         self.content = content
         self.source = source
@@ -64,14 +65,13 @@ class Reply(db.Model):
 
         return {
             "id": self.id,
-            "request": self.request,
-            "replier": self.replier,
+            "request_id": self.request_id,
+            "replier_id": self.replier_id,
             "reply_id": self.reply_id,
             "content": self.content,
-            "source": self.source,
+            "source": self.source.value,
             "like_num": self.like_num,
             "save_num": self.save_num,
             "create_at": self.create_at,
             "update_at": self.update_at,
         }
-    

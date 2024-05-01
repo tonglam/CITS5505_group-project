@@ -1,5 +1,7 @@
 """Category model."""
 
+import datetime
+
 from app.extensions import db
 from app.utils import generate_time
 
@@ -7,9 +9,9 @@ from app.utils import generate_time
 class Category(db.Model):
     """Category model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(20), unique=True, nullable=False)
-    create_at = db.Column(db.DateTime, default=generate_time())
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name: str = db.Column(db.String(20), unique=True, nullable=False)
+    create_at: datetime = db.Column(db.DateTime, default=generate_time())
 
     def __init__(self, name: str) -> None:
         self.name = name
