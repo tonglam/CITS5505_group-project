@@ -1,3 +1,8 @@
+.card_shadow_style {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
 /*===== profile container settings =====*/
 .avatar_style {
   border: 1px solid #03bfcb;
@@ -108,6 +113,61 @@ input:focus-visible + label {
   max-width: 65em;
 }
 /*===== function tabs container settings =====*/
+
+/*===== function Sub-Tab settings =====*/
+.custom-colors {
+  --sec: #fffffe;
+  --dark-pri: #0b5aa2;
+}
+
+.gap_items {
+  background: var(--sec);
+
+  border-bottom: 1px solid var(--dark-pri);
+}
+
+.items-body {
+  padding: 10px;
+  margin: 10px;
+  display: grid;
+  grid-gap: 10px;
+}
+
+.items-body-content {
+  padding: 10px;
+  padding-right: 0px;
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+  font-size: 13px;
+  grid-gap: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.items-body-content:hover {
+  border-radius: 15px;
+  border: 1px solid var(--dark-pri);
+}
+
+.items-body-content i {
+  align-self: center;
+  font-size: 15px;
+  color: var(--dark-pri);
+  font-weight: bold;
+  animation: icon 1.5s infinite forwards;
+}
+
+@keyframes icon {
+  0%,
+  100% {
+    transform: translate(0px);
+  }
+  50% {
+    transform: translate(3px);
+  }
+}
+
+/*===== function Sub-Tab settings =====*/
 
 /*===== community card settings =====*/
 
