@@ -21,6 +21,8 @@ class Community(db.Model):
 
     category = db.relationship("Category", backref=db.backref("communities", lazy=True))
 
+    __searchable__ = ["name", "description"]
+
     def __init__(
         self, name: str, category_id: int, description: str = "", avatar_url: str = ""
     ) -> None:

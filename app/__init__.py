@@ -27,7 +27,16 @@ from app.swagger import get_swagger_config
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
+from .extensions import (
+    bcrypt,
+    db,
+    jwt,
+    login_manager,
+    migrate,
+    msearch,
+    scheduler,
+    swag,
+)
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
@@ -75,6 +84,41 @@ def create_app() -> Flask:
         return render_template("index.html")
 
     return app
+
+
+def init_config(app: Flask, env: str) -> None:
+    """Initialize application configuration."""
+
+    app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
+    app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
+    app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
+    app.config["SWAGGER"] = get_swagger_config()
+    app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
+    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
+    app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
+    app.config["MSEARCH_INDEX_NAME"] = "msearch"
+    app.config["MSEARCH_BACKEND"] = "whoosh"
+    app.config["MSEARCH_PRIMARY_KEY"] = "id"
+    app.config["MSEARCH_ENABLE"] = True
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+
+
+def init_extensions(app: Flask) -> None:
+    """Initialize Flask extensions."""
+
+    bcrypt.init_app(app)
+    db.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
+    scheduler.init_app(app)
+    jwt.init_app(app)
+    swag.init_app(app)
+    msearch.init_app(app)
 
 
 def init_dev_db(app: Flask, env: str) -> None:
@@ -125,6 +169,7 @@ def create_dev_db(app: Flask, db_file: str) -> None:
     try:
         db.drop_all()
         db.create_all()
+        msearch.create_index(update=True)
         app.logger.info("Development database created.")
 
         # execute backup sql
@@ -194,35 +239,6 @@ def get_latest_migration_version(alembic_cfg: Config) -> str:
     script = ScriptDirectory.from_config(alembic_cfg)
     heads = script.get_heads()
     return heads[0] if heads else None
-
-
-def init_config(app: Flask, env: str) -> None:
-    """Initialize application configuration."""
-
-    app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
-    app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
-    app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
-    app.config["SWAGGER"] = get_swagger_config()
-    app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
-    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-    app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
-    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
-    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
-    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
-    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
-    app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
-
-
-def init_extensions(app: Flask) -> None:
-    """Initialize Flask extensions."""
-
-    bcrypt.init_app(app)
-    db.init_app(app)
-    login_manager.init_app(app)
-    migrate.init_app(app, db)
-    scheduler.init_app(app)
-    jwt.init_app(app)
-    swag.init_app(app)
 
 
 def register_blueprints(app: Flask) -> None:

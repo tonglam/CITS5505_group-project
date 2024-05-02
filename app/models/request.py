@@ -29,6 +29,8 @@ class Request(db.Model):
     community = db.relationship("Community", backref=db.backref("requests", lazy=True))
     category = db.relationship("Category", backref=db.backref("requests", lazy=True))
 
+    __searchable__ = ["author_id", "title", "content"]
+
     # pylint: disable=too-many-arguments
     def __init__(
         self,
