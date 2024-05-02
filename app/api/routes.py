@@ -12,10 +12,14 @@ from app.constants import HttpRequstEnum
 from app.extensions import db
 from app.models.category import Category
 from app.models.notice import Notice
+from app.models.reply import Reply
+from app.models.request import Request
 from app.models.tag import Tag
 from app.models.user import User
+from app.models.user_like import UserLike
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
+from app.models.user_save import UserSave
 from app.notice.events import NoticeTypeEnum, notice_event
 
 from .service import update_user_data, update_user_preference_data
@@ -233,6 +237,146 @@ def user_preference() -> ApiResponse:
     abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
+@api_bp.route("/users/likes", methods=["GET"])
+@jwt_required()
+def user_likes() -> ApiResponse:
+    """Get all likes by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id)
+        .order_by(UserLike.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    like_collection = [like.to_dict() for like in pagination.items]
+
+    return ApiResponse(
+        data={"user_likes": like_collection}, pagination=pagination
+    ).json()
+
+
+@api_bp.route("/users/likes/<int:request_id>", methods=["POST"])
+@jwt_required()
+def user_like(request_id: int) -> ApiResponse:
+    """Like or unlike a request by user id and request id."""
+
+    user_id = current_user.id
+
+    like_entity = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    if like_entity is None:
+        # add user like
+        like_entity = UserLike(user_id=user_id, request_id=request_id)
+        db.session.add(like_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} liked Request {request_id} successfully"
+        )
+
+        return ApiResponse(
+            data={"like": like_entity.to_dict()}, message="like success"
+        ).json()
+
+    # unlike request
+    db.session.delete(like_entity)
+    db.session.commit()
+    current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
+
+    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="unlike success").json()
+
+
+@api_bp.route("/users/saves/<int:request_id>", methods=["POST"])
+@jwt_required()
+def user_save(request_id: int) -> ApiResponse:
+    """Save or unsave a request by user id and request id."""
+
+    user_id = current_user.id
+
+    save_entity = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    if save_entity is None:
+        # add user save
+        save_entity = UserSave(user_id=user_id, request_id=request_id)
+        db.session.add(save_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} saved Request {request_id} successfully"
+        )
+
+        return ApiResponse(
+            data={"save": save_entity.to_dict()}, message="save success"
+        ).json()
+
+    # unsave request
+    db.session.delete(save_entity)
+    db.session.commit()
+    current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
+
+    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="unsave success").json()
+
+
+@api_bp.route("/users/saves", methods=["GET"])
+@jwt_required()
+def user_saves() -> ApiResponse:
+    """Get all saves by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id)
+        .order_by(UserSave.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    save_collection = [save.to_dict() for save in pagination.items]
+
+    return ApiResponse(
+        data={"user_saves": save_collection}, pagination=pagination
+    ).json()
+
+
 # Api for community module.
 
 
@@ -240,6 +384,58 @@ def user_preference() -> ApiResponse:
 
 
 # Api for post module.
+@api_bp.route("/users/posts", methods=["GET"])
+@jwt_required()
+def user_posts() -> ApiResponse:
+    """Get all posts by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(Request)
+        .filter_by(user_id=user_id)
+        .order_by(Request.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    post_collection = [post.to_dict() for post in pagination.items]
+
+    return ApiResponse(data={"posts": post_collection}, pagination=pagination).json()
+
+
+@api_bp.route("/users/replies", methods=["GET"])
+@jwt_required()
+def user_replies() -> ApiResponse:
+    """Get all replies by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(Reply)
+        .filter_by(user_id=user_id)
+        .order_by(Reply.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    reply_collection = [reply.to_dict() for reply in pagination.items]
+
+    return ApiResponse(data={"replies": reply_collection}, pagination=pagination).json()
 
 
 # Api for search module.

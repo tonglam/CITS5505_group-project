@@ -1,4 +1,4 @@
-"""UserRecord model."""
+"""User Record model."""
 
 import datetime
 import enum
@@ -18,7 +18,7 @@ class UserRecordTypeEnum(enum.Enum):
 
 
 class UserRecord(db.Model):
-    """UserRecord model."""
+    """User Record model."""
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
@@ -35,7 +35,7 @@ class UserRecord(db.Model):
     request = db.relationship("Request", backref=db.backref("user_records", lazy=True))
 
     def __init__(
-        self, user_id: str, request_id: str, record_type: UserRecordTypeEnum
+        self, user_id: str, request_id: int, record_type: UserRecordTypeEnum
     ) -> None:
         self.user_id = user_id
         self.request_id = request_id
