@@ -119,7 +119,7 @@ class TestApi(TestBase):
 
         # check notice
         notice = Notice.query.filter_by(
-            user=user.id, notice_type=NoticeModuleEnum.USER.value, status=False
+            user=user, module=NoticeModuleEnum.USER, status=False
         ).first()
         self.assertIsNotNone(notice)
 
@@ -530,7 +530,7 @@ class TestApi(TestBase):
         user = None
         with app.app_context():
             notice = Notice.query.first()
-            user = User.query.filter_by(id=notice.user).first()
+            user = User.query.filter_by(id=notice.user_id).first()
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -552,22 +552,20 @@ class TestApi(TestBase):
         self.assertEqual(response_data["pagination"]["per_page"], 15)
 
         # test filter by notice type
-        notifications = Notice.query.filter_by(user=user.id).distinct(
-            Notice.notice_type
-        )
+        notifications = Notice.query.filter_by(user=user).distinct(Notice.module)
         for notice in notifications:
-            response = client.get(f"{url}?notice_type={notice.notice_type}")
+            response = client.get(f"{url}?notice_type={notice.module.value}")
             self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
             response_data = response.json
             self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
             self.assertEqual(
-                response_data["data"]["notices"][0]["notice_type"],
-                notice.notice_type,
+                response_data["data"]["notices"][0]["module"],
+                notice.module.value,
             )
 
         # test filter by status
-        notifications = Notice.query.filter_by(user=user.id).distinct(Notice.status)
+        notifications = Notice.query.filter_by(user=user).distinct(Notice.status)
         for notice in notifications:
             notice_status = "read" if notice.status is True else "unread"
             response = client.get(f"{url}?status={notice_status}")
@@ -624,7 +622,7 @@ class TestApi(TestBase):
         user = None
         with app.app_context():
             notice = Notice.query.first()
-            user = User.query.filter_by(id=notice.user).first()
+            user = User.query.filter_by(id=notice.user_id).first()
 
         notice_id = notice.id
 
@@ -659,7 +657,7 @@ class TestApi(TestBase):
         user = None
         with app.app_context():
             notice = Notice.query.filter_by(status=False).first()
-            user = User.query.filter_by(id=notice.user).first()
+            user = User.query.filter_by(id=notice.user_id).first()
 
         notice_id = notice.id
 

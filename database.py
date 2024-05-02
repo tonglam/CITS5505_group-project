@@ -6,7 +6,7 @@ from app.extensions import db
 app = create_app()
 
 
-def create_db():
+def create_db() -> None:
     """Create the database."""
 
     with app.app_context():

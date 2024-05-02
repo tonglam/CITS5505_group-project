@@ -22,8 +22,8 @@ def create_seed_reply_data() -> list:
 
     return [
         {
-            "request": random.choice(requests),
-            "replier": random.choice(users),
+            "request_id": random.choice(requests),
+            "replier_id": random.choice(users),
             "content": faker.text(),
             "source": random.choice(reply_sources),
             "like_num": random.randint(0, 100),
@@ -42,8 +42,8 @@ def seed_reply():
 
     for data in seed_reply_data:
         reply = Reply(
-            request=data["request"],
-            replier=data["replier"],
+            request_id=data["request_id"],
+            replier_id=data["replier_id"],
             content=data["content"],
             source=data["source"],
             like_num=data["like_num"],

@@ -72,7 +72,7 @@ class User(UserMixin, db.Model):
     def __repr__(self) -> str:
         """Return the user object."""
 
-        return f"<User {self.username}>"
+        return f"<User {self.id}>"
 
     def to_dict(self) -> dict:
         """Return a JSON format of the user."""

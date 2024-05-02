@@ -158,7 +158,7 @@ class TestAuth(TestBase):
 
         # test the notice
         notice = Notice.query.filter_by(
-            user=user.id, notice_type=NoticeModuleEnum.USER.value, status=False
+            user=user, module=NoticeModuleEnum.USER, status=False
         ).first()
         self.assertIsNotNone(notice)
 

@@ -6,12 +6,7 @@ from flask import Blueprint, current_app, g
 
 from app.constants import G_NOTICE_NUM, MAX_NOTICE_NUM
 from app.extensions import db
-from app.models.notice import (
-    Notice,
-    NoticeActionEnum,
-    NoticeModuleEnum,
-    NoticeStatusEnum,
-)
+from app.models.notice import Notice, NoticeActionEnum, NoticeModuleEnum
 
 signals = Namespace()
 notification_signal = signals.signal("notification")
@@ -47,11 +42,11 @@ def handle_notification(_, **kwargs: dict) -> None:
 
     # insert to database
     notice = Notice(
-        user=user_id,
+        user_id=user_id,
         subject=f"Notification: {notice_module}",
         content=f"{notice_action} successfully!",
-        notice_type=notice_module,
-        status=NoticeStatusEnum.UNREAD.value,
+        module=notice_module,
+        status=False,
     )
 
     db.session.add(notice)

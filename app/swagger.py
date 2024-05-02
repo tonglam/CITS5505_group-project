@@ -1,7 +1,7 @@
 """This file contains the swagger configuration."""
 
 
-def get_swagger_config():
+def get_swagger_config() -> dict:
     """Returns the swagger configuration."""
 
     path = get_swagger_path()
@@ -37,7 +37,7 @@ def get_swagger_config():
     }
 
 
-def get_swagger_schema():
+def get_swagger_schema() -> dict:
     """Returns the swagger definitions."""
 
     return {
@@ -481,7 +481,7 @@ def get_swagger_schema():
     }
 
 
-def get_swagger_path():
+def get_swagger_path() -> dict:
     """Returns the swagger paths."""
 
     return {

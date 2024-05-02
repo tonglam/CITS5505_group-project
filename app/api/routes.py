@@ -269,14 +269,14 @@ def user_notifications() -> ApiResponse:
     # basic query
     query = (
         db.session.query(Notice)
-        .filter_by(user=user_id)
+        .filter_by(user_id=user_id)
         .order_by(Notice.id)
         .order_by(Notice.status)
     )
 
     # apply filters
     if notice_type_filter:
-        query = query.filter(Notice.notice_type == notice_type_filter)
+        query = query.filter(Notice.module == notice_type_filter)
     if status_filter:
         status = 1 if status_filter == "read" else 0
         query = query.filter(Notice.status == status)
