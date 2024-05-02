@@ -266,7 +266,7 @@ def user_likes() -> ApiResponse:
     ).json()
 
 
-@api_bp.route("/users/likes/<int:request_id>", methods=["POST"])
+@api_bp.route("/users/likes/<int:request_id>", methods=["POST", "DELETE"])
 @jwt_required()
 def user_like(request_id: int) -> ApiResponse:
     """Like or unlike a request by user id and request id."""
@@ -279,14 +279,19 @@ def user_like(request_id: int) -> ApiResponse:
         .first()
     )
 
-    # validate request_id
-    request_entity = db.session.query(Request).get(request_id)
-    if request_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="request not found"
-        ).json()
+    if request.method == "POST":
+        # validate request_id
+        request_entity = db.session.query(Request).get(request_id)
+        if request_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="request not found"
+            ).json()
 
-    if like_entity is None:
+        if like_entity is not None:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value, message="like already exists"
+            ).json()
+
         # add user like
         like_entity = UserLike(user_id=user_id, request_id=request_id)
         db.session.add(like_entity)
@@ -299,53 +304,24 @@ def user_like(request_id: int) -> ApiResponse:
             data={"like": like_entity.to_dict()}, message="like success"
         ).json()
 
-    # unlike request
-    db.session.delete(like_entity)
-    db.session.commit()
-    current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
+    if request.method == "DELETE":
+        if like_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="like not found"
+            ).json()
 
-    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="unlike success").json()
-
-
-@api_bp.route("/users/saves/<int:request_id>", methods=["POST"])
-@jwt_required()
-def user_save(request_id: int) -> ApiResponse:
-    """Save or unsave a request by user id and request id."""
-
-    user_id = current_user.id
-
-    save_entity = (
-        db.session.query(UserSave)
-        .filter_by(user_id=user_id, request_id=request_id)
-        .first()
-    )
-
-    # validate request_id
-    request_entity = db.session.query(Request).get(request_id)
-    if request_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="request not found"
-        ).json()
-
-    if save_entity is None:
-        # add user save
-        save_entity = UserSave(user_id=user_id, request_id=request_id)
-        db.session.add(save_entity)
+        # unlike request
+        db.session.delete(like_entity)
         db.session.commit()
         current_app.logger.info(
-            f"User {user_id} saved Request {request_id} successfully"
+            f"User {user_id} unliked Request {request_id} successfully"
         )
 
         return ApiResponse(
-            data={"save": save_entity.to_dict()}, message="save success"
+            HttpRequstEnum.NO_CONTENT.value, message="unlike success"
         ).json()
 
-    # unsave request
-    db.session.delete(save_entity)
-    db.session.commit()
-    current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
-
-    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="unsave success").json()
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/saves", methods=["GET"])
@@ -375,6 +351,64 @@ def user_saves() -> ApiResponse:
     return ApiResponse(
         data={"user_saves": save_collection}, pagination=pagination
     ).json()
+
+
+@api_bp.route("/users/saves/<int:request_id>", methods=["POST", "DELETE"])
+@jwt_required()
+def user_save(request_id: int) -> ApiResponse:
+    """Save or unsave a request by user id and request id."""
+
+    user_id = current_user.id
+
+    save_entity = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if request.method == "POST":
+        # validate request_id
+        request_entity = db.session.query(Request).get(request_id)
+        if request_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="request not found"
+            ).json()
+
+        if save_entity is not None:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value, message="save already exists"
+            ).json()
+
+        # add user save
+        save_entity = UserSave(user_id=user_id, request_id=request_id)
+        db.session.add(save_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} saved Request {request_id} successfully"
+        )
+
+        return ApiResponse(
+            data={"save": save_entity.to_dict()}, message="save success"
+        ).json()
+
+    if request.method == "DELETE":
+        if save_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="save not found"
+            ).json()
+
+        # unsave request
+        db.session.delete(save_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} unsaved Request {request_id} successfully"
+        )
+
+        return ApiResponse(
+            HttpRequstEnum.NO_CONTENT.value, message="unsave success"
+        ).json()
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 # Api for community module.

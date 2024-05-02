@@ -123,5 +123,4 @@ class Utils:
         soup = BeautifulSoup(response.data, "html.parser")
         page_title = soup.title.text.strip() if soup.title else "No title found"
         page_title = page_title.split(" - ")[0]
-        print("page_title:", page_title)
         return page_title

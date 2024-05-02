@@ -8,10 +8,13 @@ from flask.testing import FlaskClient
 from app.constants import HttpRequstEnum
 from app.models.category import Category
 from app.models.notice import Notice, NoticeModuleEnum
+from app.models.request import Request
 from app.models.tag import Tag
 from app.models.user import User, UserStatusEnum
+from app.models.user_like import UserLike
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
+from app.models.user_save import UserSave
 from tests.config import AuthActions, TestBase
 
 _PREFIX = "/api/v1"
@@ -543,13 +546,13 @@ class TestApi(TestBase):
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
 
         # test pagination
-        response = client.get(f"{url}?page=2&per_page=15")
+        response = client.get(f"{url}?page=1&per_page=1")
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["pagination"]["page"], 2)
-        self.assertEqual(response_data["pagination"]["per_page"], 15)
+        self.assertEqual(response_data["pagination"]["page"], 1)
+        self.assertEqual(response_data["pagination"]["per_page"], 1)
 
         # test filter by notice type
         notifications = Notice.query.filter_by(user=user).distinct(Notice.module)
@@ -689,6 +692,218 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_user_likes(self, app: Flask, client: FlaskClient):
+        """Test the user likes API."""
+
+        url = _PREFIX + "/users/likes"
+
+        user = None
+        with app.app_context():
+            user = User.query.first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # check valid data
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        user_likes_count = UserLike.query.filter_by(user_id=user.id).count()
+        self.assertEqual(
+            len(response_data["data"]["user_likes"]), min(user_likes_count, 10)
+        )
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_post_user_like(self, app: Flask, client: FlaskClient):
+        """Test POST the user like API."""
+
+        url = _PREFIX + "/users/likes/%s"
+
+        user = None
+        request = None
+        with app.app_context():
+            user = User.query.first()
+            request = Request.query.filter_by(author_id=user.id).first()
+
+        request_id = request.id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # test valid like
+        response = client.post(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response_data["data"]["like"]["request_id"], request_id)
+
+        user_like = UserLike.query.filter_by(
+            user_id=user.id, request_id=request_id
+        ).first()
+        self.assertIsNotNone(user_like)
+
+        # test invalid request_id
+        response = client.post(url % 9999999)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
+
+        # test existing like
+        response = client.post(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_delete_user_like(self, app: Flask, client: FlaskClient):
+        """Test DELETE the user like API."""
+
+        url = _PREFIX + "/users/likes/%s"
+
+        user_like = None
+        user = None
+        with app.app_context():
+            user_like = UserLike.query.first()
+            user = User.query.filter_by(id=user_like.user_id).first()
+
+        request_id = user_like.request_id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # test valid unlike
+        response = client.delete(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.NO_CONTENT.value)
+
+        user_like = UserLike.query.filter_by(
+            user_id=user.id, request_id=request_id
+        ).first()
+        self.assertIsNone(user_like)
+
+        # test invalid request_id
+        response = client.delete(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_user_saves(self, app: Flask, client: FlaskClient):
+        """Test the user saves API."""
+
+        url = _PREFIX + "/users/saves"
+
+        user = None
+        with app.app_context():
+            user = User.query.first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # check valid data
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        user_saves_count = UserSave.query.filter_by(user_id=user.id).count()
+        self.assertEqual(
+            len(response_data["data"]["user_saves"]), min(user_saves_count, 10)
+        )
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_post_user_save(self, app: Flask, client: FlaskClient):
+        """Test POST the user save API."""
+
+        url = _PREFIX + "/users/saves/%s"
+
+        user = None
+        request = None
+        with app.app_context():
+            user = User.query.first()
+            request = Request.query.filter_by(author_id=user.id).first()
+
+        request_id = request.id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # test valid save
+        response = client.post(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response_data["data"]["save"]["request_id"], request_id)
+        self.assertEqual(response_data["message"], "save success")
+
+        user_save = UserSave.query.filter_by(
+            user_id=user.id, request_id=request_id
+        ).first()
+        self.assertIsNotNone(user_save)
+
+        # test invalid request_id
+        response = client.post(url % 9999999)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
+
+        # test existing save
+        response = client.post(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_delete_user_save(self, app: Flask, client: FlaskClient):
+        """Test DELETE the user save API."""
+
+        url = _PREFIX + "/users/saves/%s"
+
+        user_save = None
+        user = None
+        with app.app_context():
+            user_save = UserSave.query.first()
+            user = User.query.filter_by(id=user_save.user_id).first()
+
+        request_id = user_save.request_id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # test valid unsave
+        response = client.delete(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.NO_CONTENT.value)
+        self.assertEqual(response_data["message"], "unsave success")
+
+        user_save = UserSave.query.filter_by(
+            user_id=user.id, request_id=request_id
+        ).first()
+        self.assertIsNone(user_save)
+
+        # test invalid request_id
+        response = client.delete(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
 
         # logout
         AuthActions(client).logout()

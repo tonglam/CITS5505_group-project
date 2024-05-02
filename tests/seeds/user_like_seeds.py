@@ -21,7 +21,7 @@ def create_seed_user_like_data() -> list:
             "user_id": random.choice(users),
             "request_id": random.choice(requests),
         }
-        for _ in range(50)
+        for _ in range(100)
     ]
 
 
