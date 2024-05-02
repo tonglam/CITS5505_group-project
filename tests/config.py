@@ -15,12 +15,12 @@ from app import create_app
 from app.extensions import db
 from tests.seeds.category_seeds import seed_category
 from tests.seeds.community_seeds import seed_community
-from tests.seeds.notice_seeds import seed_notice
 from tests.seeds.reply_seeds import seed_reply
 from tests.seeds.request_seeds import seed_request
 from tests.seeds.tag_seeds import seed_tag
 from tests.seeds.trending_seeds import seed_trending
 from tests.seeds.user_like_seeds import seed_user_like
+from tests.seeds.user_notice_seeds import seed_user_notice
 from tests.seeds.user_preference_seeds import seed_user_preference
 from tests.seeds.user_record_seeds import seed_user_record
 from tests.seeds.user_save_seeds import seed_user_save
@@ -62,7 +62,7 @@ class TestBase(flask_unittest.AppClientTestCase):
             seed_reply()
             seed_user_record()
             seed_user_preference()
-            seed_notice()
+            seed_user_notice()
             seed_trending()
             seed_user_like()
             seed_user_save()

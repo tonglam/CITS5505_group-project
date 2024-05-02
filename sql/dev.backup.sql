@@ -3,74 +3,78 @@
 INSERT INTO user (id, username, email, password_hash, avatar_url, use_google, use_github, security_question, security_answer, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'tonglam', 'bluedragon00000@gmail.com', '$2b$12$R49DZkkWelMYoCv2.mCQeemIVKkCNrzuA3Vekq6PxMpIk4jqjJbmW', 'https://avatars.githubusercontent.com/u/19681829?v=4', 1, 1, 'What is your favorite color?', 'blue', 'ACTIVE', '2024-04-21 14:36:18.896100', '2024-04-21 15:31:20.425434');
 INSERT INTO user (id, username, email, password_hash, avatar_url, use_google, use_github, security_question, security_answer, status, create_at, update_at) VALUES ('b4ef71f8-409f-485f-b797-b44b5853a1f5', 'tonglan', 'qitonglan@gmail.com', '$2b$12$D7uO.K4xHTA62nmLd/WM4ODTeAU2tP/aGVFQf9o7HpdfKNdryF2Oi', 'https://www.gravatar.com/avatar/4ad8c50f623b6eccf0299d12005d39e7b670ac7e49654ee662016ba1c1915b54', 0, 0, 'Which color?', 'blue', 'ACTIVE', '2024-05-02 11:50:58.257018', '2024-05-02 11:50:58.257040');
 
--- Notice
+-- User Preference
 
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_preference (user_id, communities, interests, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', '[1, 3, 5, 7, 9]', '[1, 3, 5, 7]', '2024-04-22 05:36:18.811157');
 
+-- User Record
 
--- Category
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, 'REQUEST', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, 'REQUEST', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, 'REQUEST', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, 'REQUEST', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, 'REPLY', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, 'REPLY', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, 'VIEW', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, 'VIEW', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, 'LIKE', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, 'LIKE', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, 'SAVE', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, 'SAVE', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, 'REQUEST', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, 'REQUEST', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, 'REPLY', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, 'REPLY', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, 'VIEW', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, 'VIEW', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, 'LIKE', '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, 'LIKE', '2024-04-22 05:23:36.740414');
 
-INSERT INTO category (name, create_at) VALUES ('movie', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('sports', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('music', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('food', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('travel', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('technology', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('education', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('health', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('fashion', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('art', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('science', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('business', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('history', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('nature', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('photography', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('cooking', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('gardening', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('culture', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('literature', '2024-04-22 05:36:18.786973');
-INSERT INTO category (name, create_at) VALUES ('football', '2024-04-22 05:36:18.786973');
+-- User Like
 
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 12, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 14, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 16, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 18, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, '2024-04-22 05:23:36.740414');
 
--- Tag
+-- User Save
 
-INSERT INTO tag (name, create_at) VALUES ('LossRecovery', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('QuestionCreation', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('QuizMaking', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('ProblemSolving', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('CreativeChallenges', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('AnalyticalThinking', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('KnowledgeSeeking', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('LearningJourney', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('TestPreparation', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('BrainTeasers', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('LogicalReasoning', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('DataAnalysis', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('CriticalThinking', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('MemoryEnhancement', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('DecisionMaking', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('ProblemIdentification', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('SkillDevelopment', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('CognitiveTraining', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('ResearchSkills', '2024-04-22 05:23:36.749344');
-INSERT INTO tag (name, create_at) VALUES ('MindMapping', '2024-04-22 05:23:36.749344');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 11, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 15, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 17, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 19, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, '2024-04-22 05:23:36.740414');
 
+-- User Notice
+
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
 
 -- Community
 
@@ -131,33 +135,6 @@ INSERT INTO reply (request_id, replier_id, content, source, like_num, save_num, 
 INSERT INTO reply (request_id, replier_id, content, source, like_num, save_num, create_at, update_at) VALUES (15, 'b4ef71f8-409f-485f-b797-b44b5853a1f5', 'Traveling opens up a world of possibilities! It''s such a fulfilling experience.', 'HUMAN', 48, 40, '2024-05-02 12:56:00', '2024-05-02 12:56:00');
 INSERT INTO reply (request_id, replier_id, content, source, like_num, save_num, create_at, update_at) VALUES (15, 'b4ef71f8-409f-485f-b797-b44b5853a1f5', 'Absolutely! Each destination offers something unique and memorable.', 'AI', 52, 45, '2024-05-02 12:58:00', '2024-05-02 12:58:00');
 
--- User Record
-
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, 'REQUEST', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, 'REQUEST', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, 'REQUEST', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, 'REQUEST', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, 'REPLY', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, 'REPLY', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, 'VIEW', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, 'VIEW', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, 'LIKE', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, 'LIKE', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, 'SAVE', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, 'SAVE', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, 'REQUEST', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, 'REQUEST', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, 'REPLY', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, 'REPLY', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, 'VIEW', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, 'VIEW', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, 'LIKE', '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, record_type, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, 'LIKE', '2024-04-22 05:23:36.740414');
-
--- User Preference
-
-INSERT INTO user_preference (user_id, communities, interests, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', '[1, 3, 5, 7, 9]', '[1, 3, 5, 7]', '2024-04-22 05:36:18.811157');
-
 -- Treading
 
 INSERT INTO trending (request_id, author_id, reply_num, date, update_at) VALUES (1, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 65, '2024-04-22', '2024-04-22 05:36:18.811157');
@@ -171,28 +148,48 @@ INSERT INTO trending (request_id, author_id, reply_num, date, update_at) VALUES 
 INSERT INTO trending (request_id, author_id, reply_num, date, update_at) VALUES (9, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 68, '2024-04-22', '2024-04-22 05:36:18.811157');
 INSERT INTO trending (request_id, author_id, reply_num, date, update_at) VALUES (10, 'ab9ef73b-14bf-4031-a199-2ae67ce7f341', 43, '2024-04-22', '2024-04-22 05:36:18.811157');
 
--- User Like
+-- Category
 
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 12, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 14, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 16, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 18, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, '2024-04-22 05:23:36.740414');
+INSERT INTO category (name, create_at) VALUES ('movie', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('sports', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('music', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('food', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('travel', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('technology', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('education', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('health', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('fashion', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('art', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('science', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('business', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('history', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('nature', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('photography', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('cooking', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('gardening', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('culture', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('literature', '2024-04-22 05:36:18.786973');
+INSERT INTO category (name, create_at) VALUES ('football', '2024-04-22 05:36:18.786973');
 
--- User Save
+-- Tag
 
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 11, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 15, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 17, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 19, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, '2024-04-22 05:23:36.740414');
+INSERT INTO tag (name, create_at) VALUES ('LossRecovery', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('QuestionCreation', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('QuizMaking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('ProblemSolving', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('CreativeChallenges', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('AnalyticalThinking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('KnowledgeSeeking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('LearningJourney', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('TestPreparation', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('BrainTeasers', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('LogicalReasoning', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('DataAnalysis', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('CriticalThinking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('MemoryEnhancement', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('DecisionMaking', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('ProblemIdentification', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('SkillDevelopment', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('CognitiveTraining', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('ResearchSkills', '2024-04-22 05:23:36.749344');
+INSERT INTO tag (name, create_at) VALUES ('MindMapping', '2024-04-22 05:23:36.749344');

@@ -21,7 +21,7 @@ from sqlalchemy.exc import (
 from sqlalchemy.sql import text
 
 from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequstEnum
-from app.models.notice import Notice
+from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
@@ -386,7 +386,9 @@ def register_context_processors(app: Flask) -> None:
     @app.context_processor
     def inject_notice_num():
         if current_user.is_authenticated:
-            notice_num = Notice.query.filter_by(user=current_user, status=False).count()
+            notice_num = UserNotice.query.filter_by(
+                user=current_user, status=False
+            ).count()
         else:
             notice_num = 0
 
