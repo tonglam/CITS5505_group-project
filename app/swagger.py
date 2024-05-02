@@ -316,7 +316,7 @@ def get_swagger_schema() -> dict:
                 },
             },
         },
-        "Notice": {
+        "User_Notice": {
             "type": "object",
             "properties": {
                 "id": {
