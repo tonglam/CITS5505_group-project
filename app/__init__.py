@@ -90,55 +90,63 @@ def init_dev_db(app: Flask, env: str) -> None:
     # check if db file exists
     uri = app.config["SQLALCHEMY_DATABASE_URI"]
     db_file = f"instance/{uri.split('sqlite:///')[1]}"
-    if not os.path.exists(db_file):
-        # create if not exists
-        app.logger.info("Development database does not exist. Creating...")
-        create_dev_db(app, db_file)
-        app.logger.info("Development database created.")
 
-    # check if migrations exists
     alembic_file = "migrations/alembic.ini"
-    if not os.path.exists(alembic_file):
-        app.logger.info("Database Migrations does not exist.")
-        return
-
-    # execute migrations
-    app.logger.info("Development database already exists. Cheking migrations...")
     alembic_cfg = Config(alembic_file)
-    migrate_dev_db(app, alembic_cfg)
 
-    app.logger.info("Development database ready.")
+    with app.app_context():
+        if not os.path.exists(db_file):
+            # create if not exists
+            app.logger.info("Development database does not exist. Creating...")
+            create_dev_db(app, db_file)
+            app.logger.info("Development database created.")
+
+            # set migration version to head
+            command.stamp(alembic_cfg, "head")
+
+        else:
+            # check if migrations exists
+            if not os.path.exists(alembic_file):
+                app.logger.info("Database Migrations does not exist.")
+                return
+
+            # execute migrations
+            app.logger.info(
+                "Development database already exists. Cheking migrations..."
+            )
+            migrate_dev_db(app, alembic_cfg)
+
+        app.logger.info("Development database ready.")
 
 
 def create_dev_db(app: Flask, db_file: str) -> None:
     """Create the development database."""
 
-    with app.app_context():
-        try:
-            db.drop_all()
-            db.create_all()
-            app.logger.info("Development database created.")
+    try:
+        db.drop_all()
+        db.create_all()
+        app.logger.info("Development database created.")
 
-            # execute backup sql
-            with open("sql/dev.backup.sql", "r", encoding="utf-8") as f:
-                sql_commands = f.read().split(";")
-                for sql_command in sql_commands:
-                    if sql_command.strip():
-                        execute_raw_sql(app=app, query=sql_command)
-            app.logger.info("Development backup sql executed.")
-        except (
-            IOError,
-            IntegrityError,
-            OperationalError,
-            ProgrammingError,
-            SQLAlchemyError,
-        ) as db_err:
-            app.logger.error(f"Database operation failed: {db_err}")
-            if os.path.exists(db_file):
-                os.remove(db_file)
-            app.logger.info("Development database removed.")
+        # execute backup sql
+        with open("sql/dev.backup.sql", "r", encoding="utf-8") as f:
+            sql_commands = f.read().split(";")
+            for sql_command in sql_commands:
+                if sql_command.strip():
+                    execute_raw_sql(app=app, query=sql_command)
+        app.logger.info("Development backup sql executed.")
+    except (
+        IOError,
+        IntegrityError,
+        OperationalError,
+        ProgrammingError,
+        SQLAlchemyError,
+    ) as db_err:
+        app.logger.error(f"Database operation failed: {db_err}")
+        if os.path.exists(db_file):
+            os.remove(db_file)
+        app.logger.info("Development database removed.")
 
-            raise db_err
+        raise db_err
 
 
 def execute_raw_sql(app: Flask, query: str, **params: dict) -> None:
@@ -157,10 +165,10 @@ def execute_raw_sql(app: Flask, query: str, **params: dict) -> None:
 def migrate_dev_db(app: Flask, alembic_cfg: Config) -> None:
     """Migrate the development database."""
 
-    with app.app_context():
-        if check_dev_db_migration(app, alembic_cfg):
-            app.logger.info("Development database needs to be migrated.")
-            command.upgrade(alembic_cfg, "head")
+    if check_dev_db_migration(app, alembic_cfg):
+        app.logger.info("Development database needs to be migrated.")
+        command.upgrade(alembic_cfg, "head")
+
     app.logger.info("Development database migrated.")
 
 
