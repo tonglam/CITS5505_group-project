@@ -4,8 +4,6 @@ from flask import render_template
 from flask_login import login_required
 
 from app.api.routes import user_likes, user_posts, user_records, user_saves
-from app.extensions import db
-from app.models.request import Request
 from app.user import user_bp
 
 
