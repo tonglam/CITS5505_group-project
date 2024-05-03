@@ -2,10 +2,16 @@
 <div class="container custom-colors">
   <div class="gap_items">
     <div class="items-body">
-      {% for item in items %}
+      {% for item in items.data %}
 
       <div class="items-body-content">
-        <span>{{item.title}}</span>
+        <span
+          ><a
+            href="{{url_for('auth.forgot_password')}}"
+            class="text-reset text-decoration-none"
+            >{{item.title}}</a
+          ></span
+        >
         <i class="fa fa-angle-right"></i>
       </div>
 
@@ -19,9 +25,11 @@
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
-      <li class="page-item"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
+
+      {% for item in range(items.page.total_pages) %}
+      <li class="page-item"><a class="page-link" href="#">{{item+1}}</a></li>
+      {% endfor %}
+
       <li class="page-item">
         <a class="page-link" href="#" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>

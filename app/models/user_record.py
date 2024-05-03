@@ -56,4 +56,5 @@ class UserRecord(db.Model):
             "request_id": self.request_id,
             "record_type": self.record_type.value,
             "update_at": self.update_at,
+            "request_title": self.request.title,
         }

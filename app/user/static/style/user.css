@@ -138,7 +138,8 @@ input:focus-visible + label {
   padding-right: 0px;
   display: grid;
   grid-template-columns: 10fr 1fr;
-  font-size: 13px;
+  font-size: 15px;
+  color: rgb(15, 90, 93);
   grid-gap: 10px;
   border: 1px solid transparent;
   cursor: pointer;

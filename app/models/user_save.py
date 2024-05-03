@@ -35,4 +35,5 @@ class UserSave(db.Model):
             "user_id": self.user_id,
             "request_id": self.request_id,
             "create_at": self.create_at,
+            "request_title": self.request.title,
         }

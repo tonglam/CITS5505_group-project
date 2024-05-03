@@ -60,20 +60,19 @@
       <div class="tab-panels">
         <section id="posts" class="tab-panel">
           {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(items) }}
+          contextTemplate.render_contextTemplate(posts) }}
         </section>
         <section id="likes" class="tab-panel">
           {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(items) }}
+          contextTemplate.render_contextTemplate(likes) }}
         </section>
-
         <section id="history" class="tab-panel">
           {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(items) }}
+          contextTemplate.render_contextTemplate(history) }}
         </section>
         <section id="WishList" class="tab-panel">
           {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(items) }}
+          contextTemplate.render_contextTemplate(WishList) }}
         </section>
       </div>
     </div>

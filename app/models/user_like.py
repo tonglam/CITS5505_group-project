@@ -34,5 +34,6 @@ class UserLike(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "request_id": self.request_id,
+            "request_title": self.request.title,
             "create_at": self.create_at,
         }

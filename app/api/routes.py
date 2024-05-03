@@ -161,7 +161,7 @@ def user_preference() -> ApiResponse:
 
 
 @api_bp.route("/users/records", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_records() -> ApiResponse:
     """Retrieve all records associated with the logged-in user."""
 
@@ -238,7 +238,7 @@ def users_record(record_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/posts", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_posts() -> ApiResponse:
     """Get all posts by user id."""
 
@@ -296,7 +296,7 @@ def user_replies() -> ApiResponse:
 
 
 @api_bp.route("/users/likes", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_likes() -> ApiResponse:
     """Get all likes by user id."""
 
@@ -317,6 +317,7 @@ def user_likes() -> ApiResponse:
     pagination = db.paginate(query, page=page, per_page=per_page)
 
     # convert to JSON data
+
     like_collection = [like.to_dict() for like in pagination.items]
 
     return ApiResponse(
@@ -384,7 +385,7 @@ def user_like(request_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/saves", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_saves() -> ApiResponse:
     """Get all saves by user id."""
 
