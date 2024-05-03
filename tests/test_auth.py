@@ -6,8 +6,8 @@ import hashlib
 from flask.testing import FlaskClient
 
 from app.constants import GRAVATAR_URL, HttpRequstEnum
-from app.models.notice import Notice, NoticeModuleEnum
 from app.models.user import User
+from app.models.user_notice import UserNotice, UserNoticeModuleEnum
 from tests.config import AuthActions, TestBase, Utils
 from tests.seeds.user_seeds import seed_user_data
 
@@ -157,8 +157,8 @@ class TestAuth(TestBase):
         self.assertTrue(user.verify_password(forgot_password_data["password"]))
 
         # test the notice
-        notice = Notice.query.filter_by(
-            user=user, module=NoticeModuleEnum.USER, status=False
+        notice = UserNotice.query.filter_by(
+            user=user, module=UserNoticeModuleEnum.USER, status=False
         ).first()
         self.assertIsNotNone(notice)
 
