@@ -388,7 +388,7 @@ class TestApi(TestBase):
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["data"]["record"]["id"], record_id)
+        self.assertEqual(response_data["data"]["user_record"]["id"], record_id)
 
         response = client.delete(url % record_id)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
@@ -818,26 +818,19 @@ class TestApi(TestBase):
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
 
-        update_data = {"status": True}
-
-        response = client.put(url % notice_id, json=update_data)
+        response = client.put(url % notice_id)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-
-        # check the updated data
-        update_status = response_data["data"]["user_notice"]["status"]
-
-        self.assertEqual(update_status, True)
+        self.assertEqual(response_data["code"], HttpRequstEnum.NO_CONTENT.value)
 
         # check db data
         with app.app_context():
             update_notice = UserNotice.query.get(notice_id)
-            self.assertEqual(update_notice.status, update_status)
+            self.assertEqual(update_notice.status, True)
 
         # check invalid data
-        response = client.put(url % 9999999999999, json=update_data)
+        response = client.put(url % 9999999999999)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json

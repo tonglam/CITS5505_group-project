@@ -538,106 +538,6 @@ def get_swagger_path() -> dict:
     """Returns the swagger paths."""
 
     return {
-        "/users/<username>": {
-            "get": {
-                "tags": ["User"],
-                "summary": "Get a user by username",
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "path",
-                        "required": True,
-                        "schema": {"type": "string"},
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User found",
-                        "content": {
-                            "application/json": {
-                                "schema": {"$ref": "#/components/schemas/User"}
-                            }
-                        },
-                    },
-                    "404": {"description": "User not found"},
-                },
-            },
-            "put": {
-                "tags": ["User"],
-                "summary": "Update a user by username",
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "path",
-                        "required": True,
-                        "schema": {"type": "string"},
-                    }
-                ],
-                "requestBody": {
-                    "required": True,
-                    "content": {
-                        "application/json": {
-                            "schema": {"$ref": "#/components/schemas/User"}
-                        }
-                    },
-                },
-                "responses": {
-                    "200": {
-                        "description": "User updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {"$ref": "#/components/schemas/User"}
-                            }
-                        },
-                    },
-                    "404": {"description": "User not found"},
-                },
-            },
-        },
-        "/users/preference": {
-            "get": {
-                "tags": ["User"],
-                "summary": "Get user preferences by id",
-                "responses": {
-                    "200": {
-                        "description": "Preferences found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User_Preference"
-                                }
-                            }
-                        },
-                    },
-                    "404": {"description": "Preferences not found"},
-                },
-            },
-            "put": {
-                "tags": ["User"],
-                "summary": "Update user preferences by id",
-                "requestBody": {
-                    "required": True,
-                    "content": {
-                        "application/json": {
-                            "schema": {"$ref": "#/components/schemas/User_Preference"}
-                        }
-                    },
-                },
-                "responses": {
-                    "200": {
-                        "description": "Preferences updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User_Preference"
-                                }
-                            }
-                        },
-                    },
-                    "404": {"description": "Preferences not found"},
-                },
-            },
-        },
         "/users/records": {
             "get": {
                 "tags": ["User"],
@@ -648,9 +548,19 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User_Record"
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User_Record"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
                                     },
                                 }
                             }
@@ -676,11 +586,17 @@ def get_swagger_path() -> dict:
                         "description": "Record found",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": "#/components/schemas/User_Record"}
+                                "type": "object",
+                                "properties": {
+                                    "code": {"type": "integer", "example": 200},
+                                    "data": {
+                                        "$ref": "#/components/schemas/User_Record"
+                                    },
+                                    "message": {"type": "string", "example": "success"},
+                                },
                             }
                         },
                     },
-                    "404": {"description": "Record not found"},
                 },
             },
             "delete": {
@@ -695,8 +611,24 @@ def get_swagger_path() -> dict:
                     }
                 ],
                 "responses": {
-                    "204": {"description": "Record deleted successfully"},
-                    "404": {"description": "Record not found"},
+                    "200": {
+                        "description": "Record deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 204},
+                                        "data": None,
+                                        "message": {
+                                            "type": "string",
+                                            "example": "delete success",
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                    },
                 },
             },
         },
@@ -710,8 +642,20 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/Request"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Request"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -729,8 +673,20 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/Reply"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Reply"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -748,8 +704,20 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/User_Like"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User_Like"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -770,9 +738,24 @@ def get_swagger_path() -> dict:
                     }
                 ],
                 "responses": {
-                    "201": {"description": "Request liked successfully"},
-                    "400": {"description": "Request already liked"},
-                    "404": {"description": "Request not found"},
+                    "200": {
+                        "description": "Request liked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 201},
+                                        "data": None,
+                                        "message": {
+                                            "type": "string",
+                                            "example": "like success",
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                    },
                 },
             },
             "delete": {
@@ -787,9 +770,24 @@ def get_swagger_path() -> dict:
                     }
                 ],
                 "responses": {
-                    "204": {"description": "Request unliked successfully"},
-                    "400": {"description": "Request not liked"},
-                    "404": {"description": "Request not found"},
+                    "200": {
+                        "description": "Request unliked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 204},
+                                        "data": None,
+                                        "message": {
+                                            "type": "string",
+                                            "example": "unlike success",
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                    }
                 },
             },
         },
@@ -803,8 +801,20 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/User_Save"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User_Save"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -825,9 +835,24 @@ def get_swagger_path() -> dict:
                     }
                 ],
                 "responses": {
-                    "201": {"description": "Request saved successfully"},
-                    "400": {"description": "Request already saved"},
-                    "404": {"description": "Request not found"},
+                    "200": {
+                        "description": "Request saved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 201},
+                                        "data": None,
+                                        "message": {
+                                            "type": "string",
+                                            "example": "save success",
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                    },
                 },
             },
             "delete": {
@@ -842,9 +867,24 @@ def get_swagger_path() -> dict:
                     }
                 ],
                 "responses": {
-                    "204": {"description": "Request unsaved successfully"},
-                    "400": {"description": "Request not saved"},
-                    "404": {"description": "Request not found"},
+                    "200": {
+                        "description": "Request unsaved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 204},
+                                        "data": None,
+                                        "message": {
+                                            "type": "string",
+                                            "example": "unsave success",
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                    },
                 },
             },
         },
@@ -858,8 +898,20 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/Notice"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User_Notice"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -884,11 +936,22 @@ def get_swagger_path() -> dict:
                         "description": "Notification found",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Notice"}
-                            }
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "$ref": "#/components/schemas/User_Notice"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
+                                }
+                            },
                         },
                     },
-                    "404": {"description": "Notification not found"},
                 },
             },
             "put": {
@@ -902,24 +965,25 @@ def get_swagger_path() -> dict:
                         "schema": {"type": "integer"},
                     }
                 ],
-                "requestBody": {
-                    "required": True,
-                    "content": {
-                        "application/json": {
-                            "schema": {"$ref": "#/components/schemas/Notice"}
-                        }
-                    },
-                },
                 "responses": {
                     "200": {
                         "description": "Notification updated successfully",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Notice"}
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 204},
+                                        "data": None,
+                                        "message": {
+                                            "type": "string",
+                                            "example": "update success",
+                                        },
+                                    },
+                                }
                             }
                         },
                     },
-                    "404": {"description": "Notification not found"},
                 },
             },
         },
@@ -933,8 +997,25 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/Category"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Category"
+                                                    },
+                                                }
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -959,11 +1040,27 @@ def get_swagger_path() -> dict:
                         "description": "Category found",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Category"}
-                            }
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "category": {
+                                                    "$ref": "#/components/schemas/Category"
+                                                }
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
+                                }
+                            },
                         },
                     },
-                    "404": {"description": "Category not found"},
                 },
             }
         },
@@ -977,8 +1074,20 @@ def get_swagger_path() -> dict:
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {"$ref": "#/components/schemas/Tag"},
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Tag"
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
                                 }
                             }
                         },
@@ -1003,11 +1112,27 @@ def get_swagger_path() -> dict:
                         "description": "Tag found",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Tag"}
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "tag": {
+                                                    "$ref": "#/components/schemas/Tag"
+                                                }
+                                            },
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success",
+                                        },
+                                    },
+                                }
                             }
                         },
                     },
-                    "404": {"description": "Tag not found"},
                 },
             }
         },
