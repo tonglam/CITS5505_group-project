@@ -11,11 +11,15 @@ from app.api import api_bp
 from app.constants import HttpRequstEnum
 from app.extensions import db
 from app.models.category import Category
-from app.models.notice import Notice
+from app.models.reply import Reply
+from app.models.request import Request
 from app.models.tag import Tag
 from app.models.user import User
+from app.models.user_like import UserLike
+from app.models.user_notice import UserNotice
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
+from app.models.user_save import UserSave
 from app.notice.events import NoticeTypeEnum, notice_event
 
 from .service import update_user_data, update_user_preference_data
@@ -107,6 +111,55 @@ def users(username: str) -> ApiResponse:
     abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
+@api_bp.route("/users/preference", methods=["GET", "PUT"])
+@jwt_required()
+def user_preference() -> ApiResponse:
+    """Retrieve or update user preferences."""
+
+    user_preference_entity = (
+        db.session.query(UserPreference).filter_by(user_id=current_user.id).first()
+    )
+    if user_preference_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="user preference not found"
+        ).json()
+
+    if request.method == "GET":
+        return ApiResponse(data={"preference": user_preference_entity.to_dict()}).json()
+
+    if request.method == "PUT":
+        # TODO: validate request data, using a UserPreference WTForm
+
+        request_data = request.json
+
+        if request_data is None or request_data == {}:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value, message="request data is empty"
+            ).json()
+
+        # update user preference data
+        try:
+            update_user_preference_entity = update_user_preference_data(
+                user_preference_entity, request_data
+            )
+        except (TypeError, ValueError) as e:
+            return ApiResponse(HttpRequstEnum.BAD_REQUEST.value, message=str(e)).json()
+
+        # update user preference into database
+        db.session.commit()
+        current_app.logger.info(
+            f"User {current_user.id} preference \
+                updated successfully: {update_user_preference_entity}"
+        )
+
+        return ApiResponse(
+            data={"preference": update_user_preference_entity.to_dict()},
+            message="preference update success",
+        ).json()
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+
+
 @api_bp.route("/users/records", methods=["GET"])
 @jwt_required()
 def user_records() -> ApiResponse:
@@ -184,68 +237,237 @@ def users_record(record_id: int) -> ApiResponse:
     abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
-@api_bp.route("/users/preference", methods=["GET", "PUT"])
+@api_bp.route("/users/posts", methods=["GET"])
 @jwt_required()
-def user_preference() -> ApiResponse:
-    """Retrieve or update user preferences."""
+def user_posts() -> ApiResponse:
+    """Get all posts by user id."""
 
-    user_preference_entity = (
-        db.session.query(UserPreference).filter_by(user_id=current_user.id).first()
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(Request)
+        .filter_by(author_id=user_id)
+        .order_by(Request.create_at.desc())
     )
-    if user_preference_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user preference not found"
-        ).json()
 
-    if request.method == "GET":
-        return ApiResponse(data={"preference": user_preference_entity.to_dict()}).json()
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
 
-    if request.method == "PUT":
-        # TODO: validate request data, using a UserPreference WTForm
+    # convert to JSON data
+    post_collection = [post.to_dict() for post in pagination.items]
 
-        request_data = request.json
+    return ApiResponse(
+        data={"user_posts": post_collection}, pagination=pagination
+    ).json()
 
-        if request_data is None or request_data == {}:
+
+@api_bp.route("/users/replies", methods=["GET"])
+@jwt_required()
+def user_replies() -> ApiResponse:
+    """Get all replies by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(Reply)
+        .filter_by(replier_id=user_id)
+        .order_by(Reply.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    reply_collection = [reply.to_dict() for reply in pagination.items]
+
+    return ApiResponse(
+        data={"user_replies": reply_collection}, pagination=pagination
+    ).json()
+
+
+@api_bp.route("/users/likes", methods=["GET"])
+@jwt_required()
+def user_likes() -> ApiResponse:
+    """Get all likes by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id)
+        .order_by(UserLike.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    like_collection = [like.to_dict() for like in pagination.items]
+
+    return ApiResponse(
+        data={"user_likes": like_collection}, pagination=pagination
+    ).json()
+
+
+@api_bp.route("/users/likes/<int:request_id>", methods=["POST", "DELETE"])
+@jwt_required()
+def user_like(request_id: int) -> ApiResponse:
+    """Like or unlike a request by user id and request id."""
+
+    user_id = current_user.id
+
+    like_entity = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if request.method == "POST":
+        # validate request_id
+        request_entity = db.session.query(Request).get(request_id)
+        if request_entity is None:
             return ApiResponse(
-                HttpRequstEnum.BAD_REQUEST.value, message="request data is empty"
+                HttpRequstEnum.NOT_FOUND.value, message="request not found"
             ).json()
 
-        # update user preference data
-        try:
-            update_user_preference_entity = update_user_preference_data(
-                user_preference_entity, request_data
-            )
-        except (TypeError, ValueError) as e:
-            return ApiResponse(HttpRequstEnum.BAD_REQUEST.value, message=str(e)).json()
+        if like_entity is not None:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value, message="like already exists"
+            ).json()
 
-        # update user preference into database
+        # add user like
+        like_entity = UserLike(user_id=user_id, request_id=request_id)
+        db.session.add(like_entity)
         db.session.commit()
         current_app.logger.info(
-            f"User {current_user.id} preference \
-                updated successfully: {update_user_preference_entity}"
+            f"User {user_id} liked Request {request_id} successfully"
         )
 
         return ApiResponse(
-            data={"preference": update_user_preference_entity.to_dict()},
-            message="preference update success",
+            HttpRequstEnum.CREATED.value,
+            message="like success",
+        ).json()
+
+    if request.method == "DELETE":
+        if like_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="like not found"
+            ).json()
+
+        # unlike request
+        db.session.delete(like_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} unliked Request {request_id} successfully"
+        )
+
+        return ApiResponse(
+            HttpRequstEnum.NO_CONTENT.value, message="unlike success"
         ).json()
 
     abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
-# Api for community module.
+@api_bp.route("/users/saves", methods=["GET"])
+@jwt_required()
+def user_saves() -> ApiResponse:
+    """Get all saves by user id."""
+
+    user_id = current_user.id
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    # basic query
+    query = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id)
+        .order_by(UserSave.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    save_collection = [save.to_dict() for save in pagination.items]
+
+    return ApiResponse(
+        HttpRequstEnum.CREATED.value,
+        data={"user_saves": save_collection},
+        pagination=pagination,
+    ).json()
 
 
-# Api for popular module.
+@api_bp.route("/users/saves/<int:request_id>", methods=["POST", "DELETE"])
+@jwt_required()
+def user_save(request_id: int) -> ApiResponse:
+    """Save or unsave a request by user id and request id."""
 
+    user_id = current_user.id
 
-# Api for post module.
+    save_entity = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
 
+    if request.method == "POST":
+        # validate request_id
+        request_entity = db.session.query(Request).get(request_id)
+        if request_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="request not found"
+            ).json()
 
-# Api for search module.
+        if save_entity is not None:
+            return ApiResponse(
+                HttpRequstEnum.BAD_REQUEST.value, message="save already exists"
+            ).json()
 
+        # add user save
+        save_entity = UserSave(user_id=user_id, request_id=request_id)
+        db.session.add(save_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} saved Request {request_id} successfully"
+        )
 
-# Api for notice module.
+        return ApiResponse(HttpRequstEnum.CREATED.value, message="save success").json()
+
+    if request.method == "DELETE":
+        if save_entity is None:
+            return ApiResponse(
+                HttpRequstEnum.NOT_FOUND.value, message="save not found"
+            ).json()
+
+        # unsave request
+        db.session.delete(save_entity)
+        db.session.commit()
+        current_app.logger.info(
+            f"User {user_id} unsaved Request {request_id} successfully"
+        )
+
+        return ApiResponse(
+            HttpRequstEnum.NO_CONTENT.value, message="unsave success"
+        ).json()
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/notifications", methods=["GET"])
@@ -268,26 +490,26 @@ def user_notifications() -> ApiResponse:
 
     # basic query
     query = (
-        db.session.query(Notice)
+        db.session.query(UserNotice)
         .filter_by(user_id=user_id)
-        .order_by(Notice.id)
-        .order_by(Notice.status)
+        .order_by(UserNotice.id)
+        .order_by(UserNotice.status)
     )
 
     # apply filters
     if notice_type_filter:
-        query = query.filter(Notice.module == notice_type_filter)
+        query = query.filter(UserNotice.module == notice_type_filter)
     if status_filter:
         status = 1 if status_filter == "read" else 0
-        query = query.filter(Notice.status == status)
+        query = query.filter(UserNotice.status == status)
 
     # apply sort
     if order_by == "update_at":
-        query = query.order_by(Notice.update_at)
+        query = query.order_by(UserNotice.update_at)
     elif order_by == "update_at_desc":
-        query = query.order_by(Notice.update_at.desc())
+        query = query.order_by(UserNotice.update_at.desc())
     elif order_by == "status":
-        query = query.order_by(Notice.status)
+        query = query.order_by(UserNotice.status)
 
     # pagination
     pagination = db.paginate(query, page=page, per_page=per_page)
@@ -296,7 +518,7 @@ def user_notifications() -> ApiResponse:
     notice_collection = [notice.to_dict() for notice in pagination.items]
 
     return ApiResponse(
-        data={"notices": notice_collection}, pagination=pagination
+        data={"user_notices": notice_collection}, pagination=pagination
     ).json()
 
 
@@ -305,15 +527,15 @@ def user_notifications() -> ApiResponse:
 def user_notice(notice_id: int) -> ApiResponse:
     """GET or PUT a notice by id."""
 
-    notice_entity = db.session.query(Notice).get(notice_id)
+    notice_entity = db.session.query(UserNotice).get(notice_id)
 
     if notice_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="notice not found"
+            HttpRequstEnum.NOT_FOUND.value, message="user notice not found"
         ).json()
 
     if request.method == "GET":
-        return ApiResponse(data={"notice": notice_entity.to_dict()}).json()
+        return ApiResponse(data={"user_notice": notice_entity.to_dict()}).json()
 
     if request.method == "PUT":
 
@@ -332,12 +554,23 @@ def user_notice(notice_id: int) -> ApiResponse:
         db.session.commit()
 
         return ApiResponse(
-            data={"notice": notice_entity.to_dict()},
-            message="notice status update success",
+            data={"user_notice": notice_entity.to_dict()},
+            message="user_notice status update success",
         ).json()
 
     abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
+
+# Api for community module.
+
+
+# Api for popular module.
+
+
+# Api for post module.
+
+
+# Api for search module.
 
 # Api for others.
 

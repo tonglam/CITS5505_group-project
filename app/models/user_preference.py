@@ -1,4 +1,4 @@
-"""UserPreference model."""
+"""User Preference model."""
 
 import datetime
 
@@ -7,7 +7,7 @@ from app.utils import generate_time
 
 
 class UserPreference(db.Model):
-    """UserPreference model."""
+    """User Preference model."""
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id: str = db.Column(
