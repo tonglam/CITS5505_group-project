@@ -881,3 +881,21 @@ class TestApi(TestBase):
 
         # logout
         AuthActions(client).logout()
+
+    def test_search(self, _, client: FlaskClient):
+        """Test the search API."""
+
+        url = _PREFIX + "/search"
+
+        # login
+        AuthActions(client).login()
+
+        # check valid data
+        response = client.get(url + "?keyword=is")
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()

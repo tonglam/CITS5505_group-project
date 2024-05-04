@@ -34,8 +34,6 @@ class Reply(db.Model):
     request = db.relationship("Request", backref=db.backref("replies", lazy=True))
     replier = db.relationship("User", backref=db.backref("replies", lazy=True))
 
-    __searchable__ = ["replier_id", "content"]
-
     # pylint: disable=too-many-arguments
     def __init__(
         self,

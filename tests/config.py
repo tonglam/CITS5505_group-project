@@ -12,7 +12,7 @@ from flask.testing import FlaskClient
 from flask.wrappers import Response as TestResponse
 
 from app import create_app
-from app.extensions import db, msearch
+from app.extensions import db
 from tests.seeds.category_seeds import seed_category
 from tests.seeds.community_seeds import seed_community
 from tests.seeds.reply_seeds import seed_reply
@@ -39,7 +39,6 @@ def _create_app(_) -> Iterator[Flask]:
 
     with app.app_context():
         db.create_all()
-        msearch.create_index(update=True)
 
     yield app
 

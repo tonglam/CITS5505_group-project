@@ -2,13 +2,16 @@
 
 from flask import current_app
 from flask_login import current_user
+from sqlalchemy.orm import joinedload
 
 from app.constants import HttpRequstEnum
 from app.extensions import db
 from app.models.category import Category
+from app.models.community import Community
 from app.models.reply import Reply
 from app.models.request import Request
 from app.models.tag import Tag
+from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
 from app.models.user_record import UserRecord
@@ -23,8 +26,8 @@ from . import ApiResponse
 
 
 def users_records_service(
-    request_id_filter: int = None,
-    record_type_filter: str = None,
+    request_id: int = None,
+    record_type: str = None,
     order_by: str = "update_at_desc",
     page: int = 1,
     per_page: int = 10,
@@ -37,11 +40,11 @@ def users_records_service(
     query = db.session.query(UserRecord).filter_by(user_id=user_id)
 
     # apply filters
-    if request_id_filter:
-        query = query.filter(UserRecord.request_id == request_id_filter)
+    if request_id:
+        query = query.filter(UserRecord.request_id == request_id)
 
-    if record_type_filter:
-        query = query.filter(UserRecord.record_type == record_type_filter)
+    if record_type:
+        query = query.filter(UserRecord.record_type == record_type)
 
     # apply sort
     if order_by == "update_at":
@@ -310,8 +313,8 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
 
 
 def users_notices_service(
-    notice_type_filter: str = None,
-    status_filter: str = None,
+    notice_type: str = None,
+    status: str = None,
     order_by: str = "update_at_desc",
     page: int = 1,
     per_page: int = 10,
@@ -329,10 +332,10 @@ def users_notices_service(
     )
 
     # apply filters
-    if notice_type_filter:
-        query = query.filter(UserNotice.module == notice_type_filter)
-    if status_filter:
-        status = 1 if status_filter == "read" else 0
+    if notice_type:
+        query = query.filter(UserNotice.module == notice_type)
+    if status:
+        status = 1 if status == "read" else 0
         query = query.filter(UserNotice.status == status)
 
     # apply sort
@@ -397,6 +400,69 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
 
 
 # Api service for search module.
+
+
+def search_service(keyword: str = None) -> ApiResponse:
+    """Service for searching requests by keyword."""
+
+    if not keyword:
+        return ApiResponse(
+            HttpRequstEnum.BAD_REQUEST.value, message="keyword is required"
+        ).json()
+
+    keyword = "%" + keyword + "%"
+
+    search_result = {}
+
+    # community
+    community_result = []
+
+    communities = Community.query.filter(
+        Community.name.like(keyword) | Community.description.like(keyword)
+    ).all()
+
+    for community in communities:
+        community_result.append({"title": community.name, "creator": "tonglam"})
+
+    search_result["community"] = community_result
+
+    # request
+    request_result = []
+
+    requests = (
+        Request.query.join(User, Request.author_id == User.id)
+        .filter(
+            Request.title.like(keyword)
+            | Request.content.like(keyword)
+            | User.username.like(keyword)
+        )
+        .options(joinedload(Request.author))
+        .all()
+    )
+
+    for request in requests:
+        request_result.append(
+            {"title": request.title, "creator": request.author.username}
+        )
+
+    search_result["request"] = request_result
+
+    # reply
+    reply_result = []
+
+    replies = (
+        Reply.query.join(User, Reply.replier_id == User.id)
+        .filter(Reply.content.like(keyword) | User.username.like(keyword))
+        .options(joinedload(Reply.replier))
+        .all()
+    )
+
+    for reply in replies:
+        reply_result.append({"title": reply.content, "creator": reply.replier.username})
+
+    search_result["reply"] = reply_result
+
+    return ApiResponse(data=search_result).json()
 
 
 # Api service for notice module.

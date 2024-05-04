@@ -1,6 +1,6 @@
 """Routes for api."""
 
-from flask import abort, request
+from flask import abort, current_app, request
 from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
@@ -18,6 +18,7 @@ from .service import (
     post_user_like_service,
     post_user_save_service,
     put_user_notice_service,
+    search_service,
     tag_service,
     tags_service,
     user_likes_service,
@@ -40,8 +41,8 @@ def user_records() -> ApiResponse:
     """Retrieve all records associated with the logged-in user."""
 
     # get filter parameters
-    request_id_filter = request.args.get("request_id")
-    record_type_filter = request.args.get("record_type")
+    request_id = request.args.get("request_id")
+    record_type = request.args.get("record_type")
 
     # get sort parameters
     order_by = request.args.get("order_by")
@@ -50,9 +51,7 @@ def user_records() -> ApiResponse:
     page = request.args.get("page", default=1, type=int)
     per_page = request.args.get("per_page", default=10, type=int)
 
-    return users_records_service(
-        request_id_filter, record_type_filter, order_by, page, per_page
-    )
+    return users_records_service(request_id, record_type, order_by, page, per_page)
 
 
 @api_bp.route("/users/records/<int:record_id>", methods=["GET", "DELETE"])
@@ -151,8 +150,8 @@ def user_notifications() -> ApiResponse:
     """Get all notifications by user id."""
 
     # get filter parameters
-    notice_type_filter = request.args.get("notice_type")
-    status_filter = request.args.get("status")
+    notice_type = request.args.get("notice_type")
+    status = request.args.get("status")
 
     # get sort parameters
     order_by = request.args.get("order_by")
@@ -161,9 +160,7 @@ def user_notifications() -> ApiResponse:
     page = request.args.get("page", default=1, type=int)
     per_page = request.args.get("per_page", default=10, type=int)
 
-    return users_notices_service(
-        notice_type_filter, status_filter, order_by, page, per_page
-    )
+    return users_notices_service(notice_type, status, order_by, page, per_page)
 
 
 @api_bp.route("/users/notifications/<int:notice_id>", methods=["GET", "PUT"])
@@ -190,6 +187,18 @@ def user_notice(notice_id: int) -> ApiResponse:
 
 
 # Api for search module.
+
+
+@api_bp.route("/search", methods=["GET"])
+@jwt_required()
+def search() -> ApiResponse:
+    """Search for requests by keyword."""
+
+    keyword = request.args.get("keyword")
+    current_app.logger.info(f"Search keyword: {keyword}")
+
+    return search_service(keyword)
+
 
 # Api for others.
 

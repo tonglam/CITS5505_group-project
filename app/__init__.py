@@ -27,20 +27,10 @@ from app.swagger import get_swagger_config
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import (
-    bcrypt,
-    db,
-    jwt,
-    login_manager,
-    migrate,
-    msearch,
-    scheduler,
-    swag,
-)
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
-from .search import search_bp
 from .user import user_bp
 from .utils import get_config, get_env
 
@@ -118,7 +108,6 @@ def init_extensions(app: Flask) -> None:
     scheduler.init_app(app)
     jwt.init_app(app)
     swag.init_app(app)
-    msearch.init_app(app)
 
 
 def init_dev_db(app: Flask, env: str) -> None:
@@ -127,7 +116,7 @@ def init_dev_db(app: Flask, env: str) -> None:
     # only apply on dev environment
     if env != EnvironmentEnum.DEV.value:
         app.logger.info(
-            "Current environment is not %s. Skip development database init.", env
+            "Current environment is %s. Skip development database init.", env
         )
         return
 
@@ -169,7 +158,6 @@ def create_dev_db(app: Flask, db_file: str) -> None:
     try:
         db.drop_all()
         db.create_all()
-        msearch.create_index(update=True)
         app.logger.info("Development database created.")
 
         # execute backup sql
@@ -249,11 +237,6 @@ def register_blueprints(app: Flask) -> None:
         auth_bp,
         url_prefix="/auth",
         static_url_path="/auth/static",
-    )
-    app.register_blueprint(
-        search_bp,
-        url_prefix="/search",
-        static_url_path="/search/static",
     )
     app.register_blueprint(
         notice_bp,

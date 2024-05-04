@@ -1,0 +1,76 @@
+{% macro render_search_result() -%}
+<div class="d-none" id="searchComponent">
+  <div class="overlay no-cursor" id="overlay"></div>
+
+  <div class="overlay-content" id="searchResult">
+    <div class="container d-flex justify-content-center">
+      <div class="card mt-5 p-4" id="overlayContent">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" id="searchInput" />
+          <div class="input-group-append">
+            <button class="btn btn-primary">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <span class="text mb-4">88 branding projects</span>
+
+        <!-- community result -->
+
+        {{ community_result_item("Cinema Club", "tonglam") }}
+
+        <!-- request result -->
+
+        {{ request_result_item("Virtual reality gaming experiences", "tonglam")
+        }}
+
+        <!-- reply result -->
+
+        {{ reply_result_item("Virtual reality gaming experiences", "tonglam") }}
+      </div>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+<!-- community result item -->
+{% macro community_result_item(name, creator) -%}
+<div class="row flex-row text-center align-items-center mb-2">
+  <div class="col-4 col-md-2">
+    <span class="badge rounded-pill text-bg-success module-name"
+      >Community</span
+    >
+  </div>
+  <div class="col-8 col-md-10 flex-column align-items-center px-4 mt-2">
+    <p class="title-name mb-1 pt-2">{{ name }}</p>
+    <p class="sub-title-name text-muted pt-1">Created by: {{ creator }}</p>
+  </div>
+</div>
+{%- endmacro %}
+
+<!-- request result item -->
+{% macro request_result_item(title, author) -%}
+<div class="row flex-row text-center align-items-center mb-2">
+  <div class="col-3 col-md-2">
+    <span class="badge rounded-pill text-bg-info module-name">Request</span>
+  </div>
+  <div class="col-9 col-md-10 flex-column align-items-center px-4 mt-2">
+    <p class="title-name mb-1 pt-2">{{ title }}</p>
+    <p class="sub-title-name text-muted pt-1">Created by: {{ author }}</p>
+  </div>
+</div>
+{%- endmacro %}
+
+<!-- reply result item -->
+{% macro reply_result_item(title, author) -%}
+<div class="row flex-row text-center align-items-center mb-2">
+  <div class="col-3 col-md-2">
+    <span class="badge rounded-pill text-bg-warning module-name">Reply</span>
+  </div>
+  <div class="col-9 col-md-10 flex-column align-items-center px-4 mt-2">
+    <p class="title-name mb-1 pt-2">{{ title }}</p>
+    <p class="sub-title-name text-muted pt-1">Created by: {{ author }}</p>
+  </div>
+</div>
+{%- endmacro %}

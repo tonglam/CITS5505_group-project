@@ -24,13 +24,17 @@
       navBar.render_navBar(user, current_user, notice_num) }}
     </header>
 
-    <main class="container-fluid vw-50 p-4">
+    <main class="container-fluid vw-50 p-4" id="main">
       <!-- alert message -->
       {% import './components/alert.html' as alert %} {{
       alert.render_sticky_alert() }}
 
+      <!-- search result -->
+      {% import './components/search.html' as search %} {{
+      search.render_search_result() }}
+
       <!-- page content -->
-      <div>{% block content %}{% endblock %}</div>
+      <div class="mt-0" id="pageContent">{% block content %}{% endblock %}</div>
     </main>
 
     <!-- footer -->

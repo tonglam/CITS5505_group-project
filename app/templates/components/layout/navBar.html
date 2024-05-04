@@ -104,16 +104,15 @@ False) -%}
 
 <!-- search bar -->
 {% macro search_bar() -%}
-<div
-  class="container-fluid input-group w-100 my-auto d-none d-sm-flex"
-  id="search"
->
+<div class="container-fluid input-group w-100 my-auto d-none d-sm-flex">
   <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
   <input
     autocomplete="on"
     type="search"
     class="form-control rounded-pill"
     placeholder="Search for Anything..."
+    id="search"
+    onfocus="handleSearchFocus()"
   />
 </div>
 {%- endmacro %}

@@ -6,7 +6,6 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from flask_msearch import Search
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
@@ -51,6 +50,3 @@ jwt = JWTManager()
 
 # flasgger
 swag = Swagger()
-
-# flask-msearch
-msearch = Search(db=db)
