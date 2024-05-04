@@ -1,12 +1,12 @@
 <div class="card">
    <link rel="stylesheet" href="{{ url_for('static', filename='style/card.css') }}">
-   <script src="{{ url_for('static', filename='js/expand.js') }}"></script>
+   <script src="{{ url_for('post.static', filename='/js/post.js') }}"></script>
 
    <div class="card-header">
       <h5 class="card-title">{{ request.title }}</h5>
    </div>
    <div class="card-body">
-      <h6 class="card-subtitle mb-2 text-muted">By: {{ request.author }} | Community: {{ request.community }}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">By: {{ request.author.username }} | Community: {{ request.community.name }}</h6>
       <div class="card-text" data-content="summary">{{ request.content }}</div>
       <button class="expand-button" onclick="toggleTextExpansion()">Show More</button>
       <footer class="blockquote-footer">Posted on: {{ request.create_at.strftime('%Y-%m-%d') }}</footer>

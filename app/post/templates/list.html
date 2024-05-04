@@ -1,20 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Reply List</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style/list.css') }}">
-        <script src="{{ url_for('static', filename='js/expand.js') }}"></script>
-    </head>
 <body>
+    <meta charset="UTF-8">
+    <title>Reply List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/list.css') }}">
+    <script src="{{ url_for('post.static', filename='js/post.js') }}"></script>
     <div class="container mt-5">
         <h2>Reply List</h2>
         <div class="list-group">
             {% macro render_reply(reply, child_replies, show_create_button=True) %}
             <div class="list-group-item flex-column align-items-start reply-container">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Reply by User ID: {{ reply.user.username }}</h5>
-                    <small>Posted on: {{ reply.create_at }}</small>
+                    <h5 class="mb-1">Reply by User ID: {{ reply.replier.username }}</h5>
+                    <small>Posted on: {{ reply.create_at.strftime('%Y-%m-%d') }}</small>
                 </div>
                 <div class="content">{{ reply.content }}</div>
                 <small>Source: {{ reply.source }}</small>
@@ -22,7 +18,7 @@
                     <button id="like-button-reply" class="btn-like-reply" onclick="toggleLike({{ request.id }})">Like</button>
                     <button id="save-button-reply" class="btn-save-reply" onclick="toggleSave()">Save</button>
                     <button class="btn-create-reply" onclick="window.location.href='/posts/create'">Create New Comment</button>
-                   Likes: {{ replies.like_num }}, Saved: {{ request.save_num }}, Create at: {{ replies.create_at}}
+                   Likes: {{ replies.like_num }}, Saved: {{ request.save_num }}
                 </div>
                 {% if child_replies %}
                 {% if child_replies|length > 2 %}
@@ -55,11 +51,11 @@
             {% set parent_replies = {} %}
             {% set child_replies = {} %}
             {% for reply in replies %}
-            {% if reply.reply_id == reply.request %}
-                {% if reply.request not in parent_replies %}
-                    {% set _dummy = parent_replies.update({reply.request: []}) %}
+            {% if reply.reply_id == reply.request_id %}
+                {% if reply.request_id not in parent_replies %}
+                    {% set _dummy = parent_replies.update({reply.request_id: []}) %}
                 {% endif %}
-                {% set _dummy = parent_replies[reply.request].append(reply) %}
+                {% set _dummy = parent_replies[reply.request_id].append(reply) %}
             {% else %}
                 {% if reply.reply_id not in child_replies %}
                     {% set _dummy = child_replies.update({reply.reply_id: []}) %}
@@ -75,4 +71,3 @@
         </div>
     </div>
 </body>
-</html>

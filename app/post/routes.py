@@ -20,5 +20,6 @@ def post_detail(post_id):
     """show content by ID"""
 
     request_item = Request.query.get_or_404(post_id)
-    replies = Reply.query.filter_by(request = post_id).all()
+    replies = Reply.query.filter_by(request_id = post_id).all()
+
     return render_template("post.html", request=request_item, replies=replies)
