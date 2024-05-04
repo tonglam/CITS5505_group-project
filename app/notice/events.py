@@ -5,7 +5,7 @@ import enum
 from flask import current_app
 from flask_login import current_user
 
-from app.models.notice import NoticeActionEnum, NoticeModuleEnum
+from app.models.user_notice import UserNoticeActionEnum, UserNoticeModuleEnum
 
 from . import notification_signal
 
@@ -13,59 +13,75 @@ from . import notification_signal
 class NoticeTypeEnum(enum.Enum):
     """Enum for notice type."""
 
-    USER_RESET_PASSWORD = (
-        f"{NoticeModuleEnum.USER.value}, {NoticeActionEnum.RESET_PASSWORD.value}"
-    )
+    USER_RESET_PASSWORD = f"{UserNoticeModuleEnum.USER.value}, {UserNoticeActionEnum.RESET_PASSWORD.value}"
 
-    USER_UPDATED_PROFILE = (
-        f"{NoticeModuleEnum.USER.value}, {NoticeActionEnum.UPDATED_PROFILE.value}"
-    )
+    USER_UPDATED_PROFILE = f"{UserNoticeModuleEnum.USER.value}, {UserNoticeActionEnum.UPDATED_PROFILE.value}"
 
-    POST_CREATED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.CREATED.value}"
-    POST_UPDATED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.UPDATED.value}"
-    POST_DELETED = f"{NoticeModuleEnum.POST.value}, {NoticeActionEnum.DELETED.value}"
+    POST_CREATED = (
+        f"{UserNoticeModuleEnum.POST.value}, {UserNoticeActionEnum.CREATED.value}"
+    )
+    POST_UPDATED = (
+        f"{UserNoticeModuleEnum.POST.value}, {UserNoticeActionEnum.UPDATED.value}"
+    )
+    POST_DELETED = (
+        f"{UserNoticeModuleEnum.POST.value}, {UserNoticeActionEnum.DELETED.value}"
+    )
 
     COMMENT_CREATED = (
-        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.CREATED.value}"
+        f"{UserNoticeModuleEnum.COMMENT.value}, {UserNoticeActionEnum.CREATED.value}"
     )
     COMMENT_UPDATED = (
-        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.UPDATED.value}"
+        f"{UserNoticeModuleEnum.COMMENT.value}, {UserNoticeActionEnum.UPDATED.value}"
     )
     COMMENT_DELETED = (
-        f"{NoticeModuleEnum.COMMENT.value}, {NoticeActionEnum.DELETED.value}"
+        f"{UserNoticeModuleEnum.COMMENT.value}, {UserNoticeActionEnum.DELETED.value}"
     )
 
-    REPLY_CREATED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.CREATED.value}"
-    REPLY_UPDATED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.UPDATED.value}"
-    REPLY_DELETED = f"{NoticeModuleEnum.REPLY.value}, {NoticeActionEnum.DELETED.value}"
+    REPLY_CREATED = (
+        f"{UserNoticeModuleEnum.REPLY.value}, {UserNoticeActionEnum.CREATED.value}"
+    )
+    REPLY_UPDATED = (
+        f"{UserNoticeModuleEnum.REPLY.value}, {UserNoticeActionEnum.UPDATED.value}"
+    )
+    REPLY_DELETED = (
+        f"{UserNoticeModuleEnum.REPLY.value}, {UserNoticeActionEnum.DELETED.value}"
+    )
 
-    LIKE_CREATED = f"{NoticeModuleEnum.LIKE.value}, {NoticeActionEnum.CREATED.value}"
-    LIKE_CANCEL = f"{NoticeModuleEnum.LIKE.value}, {NoticeActionEnum.CANCELLED.value}"
+    LIKE_CREATED = (
+        f"{UserNoticeModuleEnum.LIKE.value}, {UserNoticeActionEnum.CREATED.value}"
+    )
+    LIKE_CANCEL = (
+        f"{UserNoticeModuleEnum.LIKE.value}, {UserNoticeActionEnum.CANCELLED.value}"
+    )
 
     FOLLOW_CREATED = (
-        f"{NoticeModuleEnum.FOLLOW.value}, {NoticeActionEnum.CREATED.value}"
+        f"{UserNoticeModuleEnum.FOLLOW.value}, {UserNoticeActionEnum.CREATED.value}"
     )
 
     FOLLOW_CANCEL = (
-        f"{NoticeModuleEnum.FOLLOW.value}, {NoticeActionEnum.CANCELLED.value}"
+        f"{UserNoticeModuleEnum.FOLLOW.value}, {UserNoticeActionEnum.CANCELLED.value}"
     )
 
-    SAVE_CREATED = f"{NoticeModuleEnum.SAVE.value}, {NoticeActionEnum.CREATED.value}"
-    SAVE_CANCEL = f"{NoticeModuleEnum.SAVE.value}, {NoticeActionEnum.CANCELLED.value}"
+    SAVE_CREATED = (
+        f"{UserNoticeModuleEnum.SAVE.value}, {UserNoticeActionEnum.CREATED.value}"
+    )
+    SAVE_CANCEL = (
+        f"{UserNoticeModuleEnum.SAVE.value}, {UserNoticeActionEnum.CANCELLED.value}"
+    )
 
     COMMUNITY_CREATED = (
-        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.CREATED.value}"
+        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.CREATED.value}"
     )
 
     COMMUNITY_UPDATED = (
-        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.UPDATED.value}"
+        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.UPDATED.value}"
     )
 
     COMMUNITY_DELETED = (
-        f"{NoticeModuleEnum.COMMUNITY.value}, {NoticeActionEnum.DELETED.value}"
+        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.DELETED.value}"
     )
 
-    SYSTEM = f"{NoticeModuleEnum.SYSTEM.value}, {NoticeActionEnum.ANNOUNCEMENT.value}"
+    SYSTEM = f"{UserNoticeModuleEnum.SYSTEM.value}, {UserNoticeActionEnum.ANNOUNCEMENT.value}"
 
 
 def notice_event(
