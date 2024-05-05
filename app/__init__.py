@@ -20,7 +20,7 @@ from sqlalchemy.exc import (
 )
 from sqlalchemy.sql import text
 
-from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequstEnum
+from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequestEnum
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
@@ -141,7 +141,7 @@ def init_dev_db(app: Flask, env: str) -> None:
 
             # execute migrations
             app.logger.info(
-                "Development database already exists. Cheking migrations..."
+                "Development database already exists. Checking migrations..."
             )
             migrate_dev_db(app, alembic_cfg)
 
@@ -269,35 +269,35 @@ def register_blueprints(app: Flask) -> None:
 def register_error_handlers(app: Flask) -> None:
     """Registers error handlers for common HTTP error codes."""
 
-    @app.errorhandler(HttpRequstEnum.BAD_REQUEST.value)
+    @app.errorhandler(HttpRequestEnum.BAD_REQUEST.value)
     def bad_request_error(_):
-        return render_template("errors/400.html"), HttpRequstEnum.BAD_REQUEST.value
+        return render_template("errors/400.html"), HttpRequestEnum.BAD_REQUEST.value
 
-    @app.errorhandler(HttpRequstEnum.UNAUTHORIZED.value)
+    @app.errorhandler(HttpRequestEnum.UNAUTHORIZED.value)
     def unauthorized_error(_):
-        return render_template("errors/401.html"), HttpRequstEnum.UNAUTHORIZED.value
+        return render_template("errors/401.html"), HttpRequestEnum.UNAUTHORIZED.value
 
-    @app.errorhandler(HttpRequstEnum.FORBIDDEN.value)
+    @app.errorhandler(HttpRequestEnum.FORBIDDEN.value)
     def forbidden_error(_):
-        return render_template("errors/403.html"), HttpRequstEnum.FORBIDDEN.value
+        return render_template("errors/403.html"), HttpRequestEnum.FORBIDDEN.value
 
-    @app.errorhandler(HttpRequstEnum.NOT_FOUND.value)
+    @app.errorhandler(HttpRequestEnum.NOT_FOUND.value)
     def page_not_found_error(_):
-        return render_template("errors/404.html"), HttpRequstEnum.NOT_FOUND.value
+        return render_template("errors/404.html"), HttpRequestEnum.NOT_FOUND.value
 
-    @app.errorhandler(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    @app.errorhandler(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
     def method_not_allowed_error(_):
         return (
             render_template("errors/405.html"),
-            HttpRequstEnum.METHOD_NOT_ALLOWED.value,
+            HttpRequestEnum.METHOD_NOT_ALLOWED.value,
         )
 
-    @app.errorhandler(HttpRequstEnum.INTERNAL_SERVER_ERROR.value)
+    @app.errorhandler(HttpRequestEnum.INTERNAL_SERVER_ERROR.value)
     def internal_server_error(_):
         db.session.rollback()
         return (
             render_template("errors/500.html"),
-            HttpRequstEnum.INTERNAL_SERVER_ERROR.value,
+            HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
         )
 
 

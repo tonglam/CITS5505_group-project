@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from flask import Blueprint, jsonify
 from flask_sqlalchemy import pagination as Pagination
 
-from app.constants import HttpRequstEnum
+from app.constants import HttpRequestEnum
 
 api_bp = Blueprint("api", __name__)
 
@@ -14,7 +14,7 @@ api_bp = Blueprint("api", __name__)
 class ApiResponse:
     """Api response template data class."""
 
-    code: HttpRequstEnum = HttpRequstEnum.SUCCESS_OK.value
+    code: HttpRequestEnum = HttpRequestEnum.SUCCESS_OK.value
     data: object = None
     message: str = "success"
     pagination: Pagination = None

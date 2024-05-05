@@ -1,9 +1,8 @@
 """This module contains the routes for the search blueprint."""
 
-from flask import abort, render_template, request
+from flask import render_template, request
 from flask_login import login_required
 
-from app.constants import HttpRequstEnum
 from app.search import search_bp
 from app.search.service import search_service
 

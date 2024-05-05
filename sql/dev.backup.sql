@@ -9,26 +9,26 @@ INSERT INTO user_preference (user_id, communities, interests, update_at) VALUES 
 
 -- User Record
 
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, '2024-04-22 05:23:36.740414');
-INSERT INTO user_record (user_id, request_id, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, '2024-04-22 05:23:36.740414');
+INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
 
 -- User Like
 

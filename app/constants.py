@@ -11,7 +11,7 @@ class EnvironmentEnum(enum.Enum):
     PROD = "prod"
 
 
-class HttpRequstEnum(enum.Enum):
+class HttpRequestEnum(enum.Enum):
     """Enum for HTTP request."""
 
     SUCCESS_OK = 200
@@ -67,7 +67,7 @@ class OAuthProviderEnum(enum.Enum):
 # Gravatar
 GRAVATAR_URL = "https://www.gravatar.com/avatar/"
 
-# Flask Globlal Variable
+# Flask Global Variable
 G_USER = "user"
 G_NOTICE_NUM = "notice_num"
 

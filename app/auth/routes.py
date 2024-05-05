@@ -38,7 +38,7 @@ from app.constants import (
     SCOPES,
     TOKEN_URL,
     FlashAlertTypeEnum,
-    HttpRequstEnum,
+    HttpRequestEnum,
     OAuthProviderEnum,
 )
 from app.extensions import db, login_manager
@@ -130,7 +130,7 @@ def register():
                 )
         return render_template("auth.html", form=form)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -198,7 +198,7 @@ def login():
                 )
         return render_template("auth.html", form=form)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @auth_bp.route("/refresh", methods=["POST"])
@@ -238,7 +238,7 @@ def logout():
 
 @auth_bp.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
-    """Render the forgoet password page."""
+    """Render the forgot password page."""
 
     form = forms.ForgotPasswordForm(request.form)
 

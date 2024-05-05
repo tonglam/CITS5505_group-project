@@ -4,7 +4,7 @@ from flask import abort, request
 from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
-from app.constants import HttpRequstEnum
+from app.constants import HttpRequestEnum
 
 from . import ApiResponse
 from .service import (
@@ -81,7 +81,7 @@ def users_record(request_id: int) -> ApiResponse:
     if request.method == "DELETE":
         return delete_user_record_service(request_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/likes", methods=["GET"])
@@ -107,7 +107,7 @@ def user_like(request_id: int) -> ApiResponse:
     if request.method == "DELETE":
         return delete_user_like_service(request_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/saves", methods=["GET"])
@@ -133,7 +133,7 @@ def user_save(request_id: int) -> ApiResponse:
     if request.method == "DELETE":
         return delete_user_save_service(request_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/notifications", methods=["GET"])
@@ -166,7 +166,7 @@ def user_notice(notice_id: int) -> ApiResponse:
     if request.method == "PUT":
         return put_user_notice_service(notice_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 # Api for community module.

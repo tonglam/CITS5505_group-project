@@ -5,6 +5,7 @@ from flask_login import login_required
 
 from app.community import community_bp
 
+
 @community_bp.route("/")
 @login_required
 def community():

@@ -17,7 +17,7 @@ $(document).ready(function () {
   }
 
   // forgot password page - return to login
-  const forgotReturnDiv = document.getElementById("fotgotReturn");
+  const forgotReturnDiv = document.getElementById("forgotReturn");
 
   if (forgotReturnDiv !== null) {
     forgotReturnDiv.addEventListener("click", (e) => {
