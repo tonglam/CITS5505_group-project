@@ -152,7 +152,7 @@ def delete_user_record_service(request_id: int) -> ApiResponse:
 
     if user_record_entity is None:
         return ApiResponse(
-            HttpRequestEnum.BAD_REQUEST.value, message="user record not found"
+            HttpRequestEnum.NOT_FOUND.value, message="user record not found"
         ).json()
 
     # delete request record

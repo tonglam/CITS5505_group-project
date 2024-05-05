@@ -15,6 +15,7 @@ def search():
 
 
 @search_bp.route("/results")
+@login_required
 def search_result():
     """Render the search result page."""
 
