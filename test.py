@@ -1,5 +1,6 @@
 """This is the test suite for the application."""
 
+import os
 import sys
 import unittest
 
@@ -15,105 +16,55 @@ from tests import (
     user_suite,
 )
 
-
-def run():
-    """Run the test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suites())
-
-
-def api():
-    """Run the api test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(api_suite())
+suite_functions = {
+    "api": api_suite,
+    "auth": auth_suite,
+    "community": community_suite,
+    "notice": notice_suite,
+    "popular": popular_suite,
+    "post": post_suite,
+    "search": search_suite,
+    "user": user_suite,
+}
 
 
-def auth():
-    """Run the auth test suite."""
+def run_suite(name=None) -> None:
+    """Run a specific test suite or all suites."""
 
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(auth_suite())
-
-
-def community():
-    """Run the community test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(community_suite())
-
-
-def notice():
-    """Run the notice test suite."""
+    if name:
+        suite_function = suite_functions.get(name)
+        if not suite_function:
+            print(f"Invalid argument: {name}")
+            print("Usage: python test.py [api|auth|...]")
+            sys.exit(1)
+        suite = suite_function()
+    else:
+        suite = suites()
 
     runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(notice_suite())
+    result = runner.run(suite)
+    if not result.wasSuccessful():
+        print("Test failed.")
+        # remove the test database
+        db_file = "instance/requestForum.test.sqlite"
+        if os.path.exists(db_file):
+            os.remove(db_file)
+            print("Removed the test database.")
 
-
-def popular():
-    """Run the popular test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(popular_suite())
-
-
-def post():
-    """Run the post test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(post_suite())
-
-
-def search():
-    """Run the search test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(search_suite())
-
-
-def user():
-    """Run the user test suite."""
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(user_suite())
+        sys.exit(1)
+    print("Test passed.")
 
 
 if __name__ == "__main__":
     argNum = len(sys.argv)
 
-    if argNum < 1 or argNum > 2:
-        print("No argument provided. Usage: python test.py [api|auth|...]")
-    elif argNum == 1:
-        print("Testing all modules.")
-        run()
+    if argNum > 2:
+        print("Usage: python test.py [api|auth|...]")
+        sys.exit(1)
+    elif argNum == 2:
+        suite_name = sys.argv[1]
+        print(f"Testing the {suite_name} module.")
+        run_suite(suite_name)
     else:
-        module = sys.argv[1]
-
-        if module == "api":
-            print("Testing the api module.")
-            api()
-        elif module == "auth":
-            print("Testing the auth module.")
-            auth()
-        elif module == "community":
-            print("Testing the community module.")
-            community()
-        elif module == "notice":
-            print("Testing the notice module.")
-            notice()
-        elif module == "popular":
-            print("Testing the popular module.")
-            popular()
-        elif module == "post":
-            print("Testing the post module.")
-            post()
-        elif module == "search":
-            print("Testing the search module.")
-            search()
-        elif module == "user":
-            print("Testing the user module.")
-            user()
-        else:
-            print(f"Invalid argument: {module}")
-            print("Usage: python test.py [api|auth|...]")
+        print("Testing all modules.")
+        run_suite()

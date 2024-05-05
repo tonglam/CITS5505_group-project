@@ -1,21 +1,25 @@
-"""UserPreference model."""
+"""User Preference model."""
+
+import datetime
 
 from app.extensions import db
 from app.utils import generate_time
 
 
 class UserPreference(db.Model):
-    """UserPreference model."""
+    """User Preference model."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id: str = db.Column(
         db.String(36), db.ForeignKey("user.id"), unique=True, nullable=False
     )
-    communities = db.Column(db.String(200))
-    interests = db.Column(db.String(200))
-    update_at = db.Column(
+    communities: str = db.Column(db.String(200))
+    interests: str = db.Column(db.String(200))
+    update_at: datetime = db.Column(
         db.DateTime, default=generate_time(), onupdate=generate_time()
     )
+
+    user = db.relationship("User", backref=db.backref("user_preference", lazy=True))
 
     def __init__(self, user_id: str, communities: str, interests: str) -> None:
         self.user_id = user_id

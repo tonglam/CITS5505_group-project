@@ -6,12 +6,14 @@ import os
 import uuid
 from datetime import datetime, timezone
 
+from app.constants import EnvironmentEnum
+
 
 def load_config() -> configparser.ConfigParser:
     """Function to load config.ini file."""
     config = configparser.ConfigParser()
 
-    environment = os.environ.get("FLASK_ENV", "dev")
+    environment = get_env()
     config_file = f"config.{environment}.ini"
 
     if not os.path.exists(config_file):
@@ -21,6 +23,11 @@ def load_config() -> configparser.ConfigParser:
 
     config.read(config_file)
     return config
+
+
+def get_env() -> str:
+    """Function to get environment."""
+    return os.environ.get("FLASK_ENV", EnvironmentEnum.DEV.value)
 
 
 def get_config(section, key) -> str:

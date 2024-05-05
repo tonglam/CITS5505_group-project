@@ -1,25 +1,68 @@
 /**
  * This JavaScript encapsulates the original fetch function,
  * employing functional programming techniques to enhance ease of use.
- * With the help of Chatgpt-3.5.
+ * With the help of Chatgpt-3.5 and perplexity.
  */
 
-const getJwtToken = () => {
+const getCookieValue = (name) => {
   const cookieString = document.cookie;
   const cookies = cookieString.split(";");
   for (const cookie of cookies) {
-    const [name, value] = cookie.trim().split("=");
-    if (name === "access_token") {
-      return value;
+    const [cookieName, cookieValue] = cookie.trim().split("=");
+    if (cookieName === name) {
+      return cookieValue;
     }
   }
   return "";
 };
+
+const getJwtToken = () => getCookieValue("access_token");
+const getCsrfAccessToken = () => getCookieValue("csrf_access_token");
+const getCsrfRefreshToken = () => getCookieValue("csrf_refresh_token");
+
 const jwtHeader = (access_token) => ({
-  Cookie: `access_token=${access_token}`,
+  Authorization: `Bearer ${access_token}`,
 });
 
+const csrfHeaders = () => ({
+  "X-CSRF-TOKEN-ACCESS": getCsrfAccessToken(),
+  "X-CSRF-TOKEN-REFRESH": getCsrfRefreshToken(),
+});
+
+const isTokenExpired = (token) => {
+  const payloadBase64 = token.split(".")[1];
+  const decodedJson = atob(payloadBase64);
+  const decoded = JSON.parse(decodedJson);
+  const exp = decoded.exp;
+  const now = Date.now() / 1000;
+  return now > exp;
+};
+
+const refreshJwtToken = async () => {
+  try {
+    const response = await fetch("/auth/refresh", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Token refresh failed");
+    }
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+  }
+};
+
 const fetchData = async (url, options = {}) => {
+  const access_token = getJwtToken();
+  if (access_token && isTokenExpired(access_token)) {
+    await refreshJwtToken();
+  }
+  options.headers = {
+    ...options.headers,
+    ...jwtHeader(access_token),
+    ...(options.method !== "GET" ? csrfHeaders() : {}),
+  };
+
   try {
     const response = await fetch(url, options);
     if (!response.ok) {
@@ -75,4 +118,4 @@ const postFetch =
     return await fetchData(url, options);
   };
 
-export { getFetch, getFetchWithToken, postFetch, postFetchWithToken };
+export { getFetch, postFetch };

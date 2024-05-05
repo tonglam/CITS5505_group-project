@@ -14,7 +14,15 @@ from flask import (
     session,
     url_for,
 )
-from flask_jwt_extended import create_access_token, set_access_cookies
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import auth_bp, forms
@@ -161,16 +169,21 @@ def login():
             )
             return redirect(url_for("auth.auth"))
 
+        login_user(user, remember=True)
+        current_app.logger.info("User logged in, id: %s.", {user.id})
+
         # jwt token
-        access_token = create_access_token(identity=email)
         response = redirect(url_for("index"))
+
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+
         set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
         current_app.logger.info(
             "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
         )
 
-        login_user(user, remember=True)
-        current_app.logger.info("User logged in, id: %s.", {user.id})
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
 
         return response
@@ -188,6 +201,24 @@ def login():
     abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    """Refresh JWT token."""
+
+    current_jwt_user = get_jwt_identity()
+    refresh_access_token = create_access_token(identity=current_jwt_user)
+    response = {"refresh": True}
+    set_access_cookies(response, refresh_access_token)
+    current_app.logger.info(
+        "JWT refreshed for user, id: %s, JWT: %s.",
+        {current_jwt_user.id},
+        {refresh_access_token},
+    )
+
+    return response
+
+
 @auth_bp.route("/logout")
 @login_required
 def logout():
@@ -195,9 +226,14 @@ def logout():
 
     current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
+
+    # jwt token
+    response = redirect(url_for("auth.auth"))
+    unset_jwt_cookies(response)
+
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
 
-    return redirect(url_for("auth.auth"))
+    return response
 
 
 @auth_bp.route("/forgot_password", methods=["GET", "POST"])
@@ -229,12 +265,16 @@ def forgot_password():
 
         # update user password
         db.session.commit()
+        current_app.logger.info(
+            "User password updated, email: %s, id: %s.", {user.email}, {user.id}
+        )
 
         # send notification
         notice_event(user_id=user.id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
+
         return redirect(url_for("auth.auth"))
 
     if form.errors:
@@ -357,5 +397,19 @@ def callback(provider: str):
     current_app.logger.info(
         "User logged in with %s, id: %s.", {provider}, {current_user.id}
     )
+
+    # jwt token
+    response = redirect(url_for("index"))
+
+    access_token = create_access_token(identity=user.id)
+    refresh_token = create_refresh_token(identity=user.id)
+
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+    current_app.logger.info(
+        "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
+    )
+
     flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
-    return redirect(url_for("index"))
+
+    return response

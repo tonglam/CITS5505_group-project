@@ -6,11 +6,10 @@ from flask import Blueprint, current_app, g
 
 from app.constants import G_NOTICE_NUM, MAX_NOTICE_NUM
 from app.extensions import db
-from app.models.notice import (
-    Notice,
-    NoticeActionEnum,
-    NoticeModuleEnum,
-    NoticeStatusEnum,
+from app.models.user_notice import (
+    UserNotice,
+    UserNoticeActionEnum,
+    UserNoticeModuleEnum,
 )
 
 signals = Namespace()
@@ -37,21 +36,21 @@ def handle_notification(_, **kwargs: dict) -> None:
     notice_action = notice_type.split(", ")[1].strip()
     current_app.logger.info(f"Received notification: {notice_module}, {notice_action}")
 
-    if notice_module not in [module.value for module in NoticeModuleEnum]:
+    if notice_module not in [module.value for module in UserNoticeModuleEnum]:
         current_app.logger.error(f"Invalid notice module: {notice_module}")
         raise ValueError(f"Invalid notice module: {notice_module}")
 
-    if notice_action not in [action.value for action in NoticeActionEnum]:
+    if notice_action not in [action.value for action in UserNoticeActionEnum]:
         current_app.logger.error(f"Invalid notice action: {notice_action}")
         raise ValueError(f"Invalid notice action: {notice_action}")
 
     # insert to database
-    notice = Notice(
-        user=user_id,
+    notice = UserNotice(
+        user_id=user_id,
         subject=f"Notification: {notice_module}",
         content=f"{notice_action} successfully!",
-        notice_type=notice_module,
-        status=NoticeStatusEnum.UNREAD.value,
+        module=notice_module,
+        status=False,
     )
 
     db.session.add(notice)

@@ -14,13 +14,13 @@ def create_seed_user_record_data() -> list:
     """Create seed user record data."""
 
     users = [user.id for user in User.query.all()]
-    communities = [request.id for request in Request.query.all()]
+    requests = [request.id for request in Request.query.all()]
     types = [record_type.value for record_type in UserRecordTypeEnum]
 
     return [
         {
             "user_id": random.choice(users),
-            "request_id": random.choice(communities),
+            "request_id": random.choice(requests),
             "record_type": random.choice(types),
         }
         for _ in range(100)
