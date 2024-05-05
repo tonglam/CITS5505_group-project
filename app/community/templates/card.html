@@ -3,24 +3,24 @@
   <div class="title">
     <div class="title_left">
       <span class="bar">
-        <img class="bar_img" src="{{info.imgUrl}}" />
+        <img class="bar_img" src="{{info.avatar_url}}" />
       </span>
-      <span> {{info.title}} </span>
+      <span> {{info.name}} </span>
     </div>
 
     <a class="title_btn" href="{{ url_for('community.create') }}"> Join </a>
   </div>
-  <div class="card_text">{{info.text}}</div>
+  <div class="card_text">{{info.description}}</div>
   <div class="card_list">
     <div class="card_list_item">
-      <div class="item_text">{{info.sum}}</div>
-      <div>{{info.name}}</div>
+      <div class="item_text">{{info.create_at}}</div>
+      <!-- <div>{{info.name1}}33</div> -->
     </div>
     <div class="card_list_item">
-      <div class="item_text">{{info.num}}</div>
+      <!-- <div class="item_text">{{info.num}}33</div> -->
       <div>
-        <span class="green"> </span>
-        <span>{{info.tip}}</span>
+        <span class="card_btn">{{info.tip}}删除</span>
+        <span class="card_btn">{{info.tip}}编辑</span>
       </div>
     </div>
   </div>
