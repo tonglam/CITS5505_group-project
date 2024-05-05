@@ -1,20 +1,44 @@
 <div class="card">
-   <link rel="stylesheet" href="{{ url_for('static', filename='style/card.css') }}">
-   <script src="{{ url_for('post.static', filename='/js/post.js') }}"></script>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style/card.css') }}"
+  />
 
-   <div class="card-header">
-      <h5 class="card-title">{{ request.title }}</h5>
-   </div>
-   <div class="card-body">
-      <h6 class="card-subtitle mb-2 text-muted">By: {{ request.author.username }} | Community: {{ request.community.name }}</h6>
-      <div class="card-text" data-content="summary">{{ request.content }}</div>
-      <button class="expand-button" onclick="toggleTextExpansion()">Show More</button>
-      <footer class="blockquote-footer">Posted on: {{ request.create_at.strftime('%Y-%m-%d') }}</footer>
-   </div>
-   <div class="card-footer">
-      <button id="like-button" class="btn-like" onclick="toggleLike({{ request.id }})">Like</button>
-      <button id="save-button" class="btn-save" onclick="toggleSave()">Save</button>
-      <button class="btn-create" onclick="window.location.href='/posts/create'">Create New Comment</button> 
-      Views: {{ request.view_num }}, Likes: {{ request.like_num }}, Replies: {{ request.reply_num }}, Saved: {{ request.save_num }}
-   </div>
+  <div class="card-header">
+    <h5 class="card-title">{{ request.title }}</h5>
+  </div>
+  <div class="card-body">
+    <h6 class="card-subtitle mb-2 text-muted">
+      By: {{ request.author.username }} | Community: {{ request.community.name
+      }}
+    </h6>
+    <div class="card-text" data-content="summary">{{ request.content }}</div>
+    <button class="expand-button" onclick="toggleTextExpansion()">
+      Show More
+    </button>
+    <footer class="blockquote-footer">
+      Posted on: {{ request.create_at.strftime('%Y-%m-%d') }}
+    </footer>
+  </div>
+  <div class="card-footer">
+    <button
+      id="like-button"
+      class="btn-like"
+      onclick="toggleLike({{ request.id }})"
+    >
+      Like
+    </button>
+    <button id="save-button" class="btn-save" onclick="toggleSave()">
+      Save
+    </button>
+    <a
+      href="{{ url_for('post.create') }}"
+      target="_blank"
+      class="text-decoration-none"
+    >
+      <button class="btn-create">Create New Comment</button>
+    </a>
+    Views: {{ request.view_num }}, Likes: {{ request.like_num }}, Replies: {{
+    request.reply_num }}, Saved: {{ request.save_num }}
+  </div>
 </div>

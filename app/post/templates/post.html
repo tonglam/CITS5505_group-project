@@ -1,10 +1,8 @@
-{% extends "layout.html" %} {% block title %}Post List{% endblock %} {% block head %}
-{{ super() }}
-{% endblock %} {% block content %}
+{% extends "layout.html" %} {% block title %}Post List{% endblock %} {% block
+head %} {{ super() }} {% endblock %} {% block content %}
 <div class="d-flex flex-column text-center">
-  <div class="post">
-   {% include 'card.html' %}
-   {% include 'list.html' %}
-  </div>
+  <div class="post">{% include 'card.html' %} {% include 'list.html' %}</div>
 </div>
-{% endblock %}
+{% block javascript %}
+<script src="{{ url_for('post.static', filename='js/post.js') }}"></script>
+{% endblock %} {% endblock %}
