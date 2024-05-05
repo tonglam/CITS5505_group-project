@@ -14,8 +14,8 @@ from .service import (
     delete_user_record_service,
     delete_user_save_service,
     get_user_notice_service,
-    get_user_record_service,
     post_user_like_service,
+    post_user_record_service,
     post_user_save_service,
     put_user_notice_service,
     search_service,
@@ -33,39 +33,6 @@ from .service import (
 
 
 # Api for user module.
-
-
-@api_bp.route("/users/records", methods=["GET"])
-@jwt_required()
-def user_records() -> ApiResponse:
-    """Retrieve all records associated with the logged-in user."""
-
-    # get filter parameters
-    request_id = request.args.get("request_id")
-    record_type = request.args.get("record_type")
-
-    # get sort parameters
-    order_by = request.args.get("order_by")
-
-    # get pagination parameters
-    page = request.args.get("page", default=1, type=int)
-    per_page = request.args.get("per_page", default=10, type=int)
-
-    return users_records_service(request_id, record_type, order_by, page, per_page)
-
-
-@api_bp.route("/users/records/<int:record_id>", methods=["GET", "DELETE"])
-@jwt_required()
-def users_record(record_id: int) -> ApiResponse:
-    """Retrieve or delete a specific user record by id."""
-
-    if request.method == "GET":
-        return get_user_record_service(record_id)
-
-    if request.method == "DELETE":
-        return delete_user_record_service(record_id)
-
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/posts", methods=["GET"])
@@ -90,6 +57,32 @@ def user_replies() -> ApiResponse:
     per_page = request.args.get("per_page", default=10, type=int)
 
     return user_replies_service(page, per_page)
+
+
+@api_bp.route("/users/records", methods=["GET"])
+@jwt_required()
+def user_records() -> ApiResponse:
+    """Retrieve all records associated with the logged-in user."""
+
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    return users_records_service(page, per_page)
+
+
+@api_bp.route("/users/records/<int:request_id>", methods=["POST", "DELETE"])
+@jwt_required()
+def users_record(request_id: int) -> ApiResponse:
+    """Save or delete a request view record by user id and request id."""
+
+    if request.method == "POST":
+        return post_user_record_service(request_id)
+
+    if request.method == "DELETE":
+        return delete_user_record_service(request_id)
+
+    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/likes", methods=["GET"])

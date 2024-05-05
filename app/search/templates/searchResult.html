@@ -1,0 +1,18 @@
+<div class="text pb-2">{{ total_results }} results found</div>
+
+{% import './macro/resultItem.html' as item %}
+
+<!-- community result -->
+
+{% for result in community_results %} {{ item.community_result_item(result.name,
+result.creator) }} {% endfor %}
+
+<!-- request result -->
+
+{% for result in request_results %} {{ item.request_result_item(result.title,
+result.creator) }} {% endfor %}
+
+<!-- reply result -->
+
+{% for result in reply_results %} {{
+item.reply_result_item(result.title,result.creator) }} {% endfor %}

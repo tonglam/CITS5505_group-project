@@ -31,6 +31,7 @@ from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
+from .search import search_bp
 from .user import user_bp
 from .utils import get_config, get_env
 
@@ -91,11 +92,6 @@ def init_config(app: Flask, env: str) -> None:
     app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
     app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
     app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
-    app.config["MSEARCH_INDEX_NAME"] = "msearch"
-    app.config["MSEARCH_BACKEND"] = "whoosh"
-    app.config["MSEARCH_PRIMARY_KEY"] = "id"
-    app.config["MSEARCH_ENABLE"] = True
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 
 def init_extensions(app: Flask) -> None:
@@ -237,6 +233,11 @@ def register_blueprints(app: Flask) -> None:
         auth_bp,
         url_prefix="/auth",
         static_url_path="/auth/static",
+    )
+    app.register_blueprint(
+        search_bp,
+        url_prefix="/search",
+        static_url_path="/search/static",
     )
     app.register_blueprint(
         notice_bp,

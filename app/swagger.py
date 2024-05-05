@@ -166,12 +166,6 @@ def get_swagger_schema() -> dict:
                     "description": "The user record request",
                     "example": 1,
                 },
-                "record_type": {
-                    "type": "string",
-                    "description": "The user record type",
-                    "enum": ["REQUEST", "REPLY", "VIEW", "LIKE", "SAVE"],
-                    "example": "LIKE",
-                },
                 "update_at": {
                     "type": "string",
                     "format": "date-time",

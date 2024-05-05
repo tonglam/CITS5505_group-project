@@ -29,10 +29,6 @@
       {% import './components/alert.html' as alert %} {{
       alert.render_sticky_alert() }}
 
-      <!-- search result -->
-      {% import './components/search.html' as search %} {{
-      search.render_search_result() }}
-
       <!-- page content -->
       <div class="mt-0" id="pageContent">{% block content %}{% endblock %}</div>
     </main>

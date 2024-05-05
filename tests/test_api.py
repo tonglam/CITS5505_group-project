@@ -256,82 +256,7 @@ class TestApi(TestBase):
     #     # logout
     #     AuthActions(client).logout()
 
-    def test_get_user_records(self, app: Flask, client: FlaskClient):
-        """Test the user records GET API."""
-
-        url = _PREFIX + "/users/records"
-
-        user_record = None
-        with app.app_context():
-            user_record = UserRecord.query.first()
-            user = User.query.get(user_record.user_id)
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # Test case 1: No filter or sorting parameters provided
-        response = client.get(url)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        # Test case 2: Only filter parameters provided
-        response = client.get(f"{url}?request_id=1&record_type=REQUEST")
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        # Test case 3: Only sorting parameter provided
-        response = client.get(f"{url}?order_by=update_at")
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        # Test case 4: Both filter and sorting parameters provided
-        response = client.get(
-            f"{url}?request_id=1&record_type=REQUEST&order_by=update_at"
-        )
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        # logout
-        AuthActions(client).logout()
-
-    def test_user_record(self, app: Flask, client: FlaskClient):
-        """Test the user records API."""
-
-        url = _PREFIX + "/users/records/%s"
-
-        user = None
-        user_record = None
-        with app.app_context():
-            user_record = UserRecord.query.first()
-            user = User.query.get(user_record.user_id)
-
-        record_id = user_record.id
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # check valid data
-        response = client.get(url % record_id)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["data"]["user_record"]["id"], record_id)
-
-        response = client.delete(url % record_id)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.NO_CONTENT.value)
-
-        # check db
-        with app.app_context():
-            record = UserRecord.query.get(record_id)
-            self.assertEqual(record, None)
-
-        # check invalid data
-        response = client.delete(url % 9999999999999)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
-
-        # logout
-        AuthActions(client).logout()
-
-    def test_user_posts(self, app: Flask, client: FlaskClient):
+    def test_get_user_posts(self, app: Flask, client: FlaskClient):
         """Test the user posts API."""
 
         url = _PREFIX + "/users/posts"
@@ -358,7 +283,7 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_user_replies(self, app: Flask, client: FlaskClient):
+    def test_get_user_replies(self, app: Flask, client: FlaskClient):
         """Test the user replies API."""
 
         url = _PREFIX + "/users/replies"
@@ -385,7 +310,111 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_user_likes(self, app: Flask, client: FlaskClient):
+    def test_get_user_records(self, app: Flask, client: FlaskClient):
+        """Test the user records GET API."""
+
+        url = _PREFIX + "/users/records"
+
+        user = None
+        with app.app_context():
+            user = User.query.first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # check valid data
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+
+        user_records_count = UserRecord.query.filter_by(user_id=user.id).count()
+        self.assertEqual(
+            len(response_data["data"]["user_records"]), min(user_records_count, 10)
+        )
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_post_user_record(self, app: Flask, client: FlaskClient):
+        """Test POST the user record API."""
+
+        url = _PREFIX + "/users/records/%s"
+
+        user = None
+        request = None
+        with app.app_context():
+            user = User.query.first()
+            request = Request.query.first()
+
+        request_id = request.id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # test valid like
+        response = client.post(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.CREATED.value)
+
+        user_record = UserRecord.query.filter_by(
+            user_id=user.id, request_id=request_id
+        ).first()
+        self.assertIsNotNone(user_record)
+
+        # test invalid request_id
+        response = client.post(url % 9999999)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
+
+        # test existing like
+        response = client.post(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_delete_user_record(self, app: Flask, client: FlaskClient):
+        """Test DELETE the user record API."""
+
+        url = _PREFIX + "/users/records/%s"
+
+        user_record = None
+        user = None
+        with app.app_context():
+            user_record = UserRecord.query.first()
+            user = User.query.filter_by(id=user_record.user_id).first()
+
+        request_id = user_record.request_id
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # test valid unlike
+        response = client.delete(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequstEnum.NO_CONTENT.value)
+
+        user_record = UserRecord.query.filter_by(
+            user_id=user.id, request_id=request_id
+        ).first()
+        self.assertIsNone(user_record)
+
+        # test invalid request_id
+        response = client.delete(url % request_id)
+        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertEqual(response.json["code"], HttpRequstEnum.NOT_FOUND.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_likes(self, app: Flask, client: FlaskClient):
         """Test the user likes API."""
 
         url = _PREFIX + "/users/likes"
@@ -489,7 +518,7 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_user_saves(self, app: Flask, client: FlaskClient):
+    def test_get_user_saves(self, app: Flask, client: FlaskClient):
         """Test the user saves API."""
 
         url = _PREFIX + "/users/saves"
@@ -570,6 +599,7 @@ class TestApi(TestBase):
             user = User.query.filter_by(id=user_save.user_id).first()
 
         request_id = user_save.request_id
+        print("request_id: ", request_id)
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -580,12 +610,13 @@ class TestApi(TestBase):
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.NO_CONTENT.value)
-        self.assertEqual(response_data["message"], "unsave success")
 
-        user_save = UserSave.query.filter_by(
-            user_id=user.id, request_id=request_id
-        ).first()
-        self.assertIsNone(user_save)
+        with app.app_context():
+            user_save = UserSave.query.filter_by(
+                user_id=user.id, request_id=request_id
+            ).first()
+            print("user_save: ", user_save.to_dict())
+            self.assertIsNone(user_save)
 
         # test invalid request_id
         response = client.delete(url % request_id)

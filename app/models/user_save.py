@@ -24,7 +24,7 @@ class UserSave(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the user record."""
 
-        return f"<UserLike {self.request_id}>"
+        return f"<UserSave {self.request_id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:

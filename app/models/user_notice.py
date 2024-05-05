@@ -71,7 +71,7 @@ class UserNotice(db.Model):
     def __repr__(self) -> str:
         """Return a string representation of the user notice."""
 
-        return f"<Notice {self.id}>"
+        return f"<UserNotice {self.id}>"
 
     # genrated by copilot
     def to_dict(self) -> dict:

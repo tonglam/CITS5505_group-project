@@ -25,74 +25,6 @@ from . import ApiResponse
 # Api service for user module.
 
 
-def users_records_service(
-    request_id: int = None,
-    record_type: str = None,
-    order_by: str = "update_at_desc",
-    page: int = 1,
-    per_page: int = 10,
-) -> ApiResponse:
-    """Service for getting all users records."""
-
-    user_id: str = current_user.id
-
-    # basic query
-    query = db.session.query(UserRecord).filter_by(user_id=user_id)
-
-    # apply filters
-    if request_id:
-        query = query.filter(UserRecord.request_id == request_id)
-
-    if record_type:
-        query = query.filter(UserRecord.record_type == record_type)
-
-    # apply sort
-    if order_by == "update_at":
-        query = query.order_by(UserRecord.update_at)
-    elif order_by == "update_at_desc":
-        query = query.order_by(UserRecord.update_at.desc())
-
-    # pagination
-    pagination = db.paginate(query, page=page, per_page=per_page)
-
-    # convert to JSON data
-    user_record_collection = [record.to_dict() for record in pagination.items]
-
-    return ApiResponse(
-        data={"user_records": user_record_collection}, pagination=pagination
-    ).json()
-
-
-def get_user_record_service(record_id: int) -> ApiResponse:
-    """Service for getting a user record by record id."""
-
-    record_entity = db.session.query(UserRecord).get(record_id)
-
-    if record_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user record not found"
-        ).json()
-
-    return ApiResponse(data={"user_record": record_entity.to_dict()}).json()
-
-
-def delete_user_record_service(record_id: int) -> ApiResponse:
-    """Service for deleting a user record by record id."""
-
-    record_entity = db.session.query(UserRecord).get(record_id)
-
-    if record_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user record not found"
-        ).json()
-
-    # delete record
-    db.session.delete(record_entity)
-    db.session.commit()
-
-    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="delete success").json()
-
-
 def user_posts_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     """Service for getting all user posts."""
 
@@ -136,6 +68,106 @@ def user_replies_service(page: int = 1, per_page: int = 10) -> ApiResponse:
 
     return ApiResponse(
         data={"user_replies": reply_collection}, pagination=pagination
+    ).json()
+
+
+def users_records_service(
+    page: int = 1,
+    per_page: int = 10,
+) -> ApiResponse:
+    """Service for getting all users records."""
+
+    user_id: str = current_user.id
+
+    # basic query
+    query = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id)
+        .order_by(UserRecord.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    user_record_collection = [record.to_dict() for record in pagination.items]
+
+    return ApiResponse(
+        data={"user_records": user_record_collection}, pagination=pagination
+    ).json()
+
+
+def post_user_record_service(request_id: int) -> ApiResponse:
+    """Service for posttong a user view record by record id."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user record already exists
+    user_record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_record_entity is not None:
+        return ApiResponse(
+            HttpRequstEnum.BAD_REQUEST.value, message="user record already exists"
+        ).json()
+
+    # add user record
+    user_record_entity = UserRecord(user_id=user_id, request_id=request_id)
+    db.session.add(user_record_entity)
+    db.session.commit()
+    current_app.logger.info(
+        f"User {user_id} added Record for Request {request_id} successfully"
+    )
+
+    return ApiResponse(
+        HttpRequstEnum.CREATED.value, message="add user record success"
+    ).json()
+
+
+def delete_user_record_service(request_id: int) -> ApiResponse:
+    """Service for deleting a user view record by record id."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user record already exists
+    user_record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_record_entity is not None:
+        return ApiResponse(
+            HttpRequstEnum.BAD_REQUEST.value, message="user record already exists"
+        ).json()
+
+    # delete request record
+    db.session.delete(user_record_entity)
+    db.session.commit()
+
+    current_app.logger.info(
+        f"User {user_id} removed Record for Request {request_id} successfully"
+    )
+
+    return ApiResponse(
+        HttpRequstEnum.NO_CONTENT.value, message="delete user record success"
     ).json()
 
 
@@ -289,6 +321,13 @@ def post_user_save_service(request_id: int) -> ApiResponse:
 def delete_user_save_service(request_id: int) -> ApiResponse:
     """Service for deleting a user save."""
 
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
     user_id: str = current_user.id
 
     # check if user save exists
@@ -297,6 +336,8 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
         .filter_by(user_id=user_id, request_id=request_id)
         .first()
     )
+
+    current_app.logger.info(f"User save {user_save_entity.to_dict()}")
 
     if user_save_entity is None:
         return ApiResponse(
@@ -422,7 +463,7 @@ def search_service(keyword: str = None) -> ApiResponse:
     ).all()
 
     for community in communities:
-        community_result.append({"title": community.name, "creator": "tonglam"})
+        community_result.append({"name": community.name, "creator": "tonglam"})
 
     search_result["community"] = community_result
 

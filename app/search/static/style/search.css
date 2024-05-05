@@ -1,0 +1,67 @@
+.card {
+  width: 80%;
+  border-radius: 20px;
+}
+
+@media screen and (min-width: 601px) {
+  .card {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .card {
+    width: 95%;
+  }
+}
+
+.form-control {
+  border-radius: 7px;
+  border: 1.5px solid #e3e6ed;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border: 1.5px solid #e3e6ed;
+  background-color: #f7f8fd;
+  letter-spacing: 1px;
+}
+
+.btn-primary {
+  background-color: #5878ff !important;
+  border-radius: 7px;
+}
+
+.btn-primary:focus {
+  box-shadow: none;
+}
+
+.text {
+  font-size: 13px;
+  color: #9ca1a4;
+}
+
+.title-name {
+  font-size: 14px;
+}
+
+.sub-title-name {
+  font-size: 12px;
+}
+
+.module {
+  background: #f5f8fd;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.module-name {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.flex-row {
+  border: 1px solid #f2f2f4;
+  border-radius: 10px;
+  margin: 0 1px 0;
+}
