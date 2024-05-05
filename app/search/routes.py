@@ -3,9 +3,9 @@
 from flask import abort, render_template, request
 from flask_login import login_required
 
-from app.api.service import search_service
 from app.constants import HttpRequstEnum
 from app.search import search_bp
+from app.search.service import search_service
 
 
 @search_bp.route("/")
@@ -23,27 +23,17 @@ def search_result():
     if not keyword:
         return render_template("searchResult.html", total_results="no")
 
-    result = search_service(keyword).json
+    result = search_service(keyword)
 
-    result_status = result.get("code")
-    if result_status != HttpRequstEnum.SUCCESS_OK.value:
-        abort(result_status)
-
-    result_data = result.get("data")
-
-    community_list = result_data.get("community")
-    print("community: ", community_list[0])
-    request_list = result_data.get("request")
-    print("request: ", request_list[0])
-    reply_list = result_data.get("reply")
-    print("reply: ", reply_list[0])
-
-    total_results = len(community_list) + len(request_list) + len(reply_list)
+    community_results = result.get("community")
+    request_results = result.get("request")
+    reply_results = result.get("reply")
+    total_results = len(community_results) + len(request_results) + len(reply_results)
 
     return render_template(
         "searchResult.html",
         total_results=total_results,
-        community_list=community_list,
-        request_list=request_list,
-        reply_list=reply_list,
+        community_results=community_results,
+        request_results=request_results,
+        reply_results=reply_results,
     )

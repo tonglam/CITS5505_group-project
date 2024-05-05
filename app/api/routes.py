@@ -1,6 +1,6 @@
 """Routes for api."""
 
-from flask import abort, current_app, request
+from flask import abort, request
 from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
@@ -18,7 +18,6 @@ from .service import (
     post_user_record_service,
     post_user_save_service,
     put_user_notice_service,
-    search_service,
     tag_service,
     tags_service,
     user_likes_service,
@@ -177,20 +176,6 @@ def user_notice(notice_id: int) -> ApiResponse:
 
 
 # Api for post module.
-
-
-# Api for search module.
-
-
-@api_bp.route("/search", methods=["GET"])
-@jwt_required()
-def search() -> ApiResponse:
-    """Search for requests by keyword."""
-
-    keyword = request.args.get("keyword")
-    current_app.logger.info(f"Search keyword: {keyword}")
-
-    return search_service(keyword)
 
 
 # Api for others.
