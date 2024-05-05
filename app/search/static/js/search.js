@@ -16,6 +16,25 @@ $(document).ready(function () {
     .addEventListener("click", function () {
       handle_search_click();
     });
+
+  // handle enter key press
+  document
+    .getElementById("searchInput")
+    .addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        handle_search_click();
+      }
+    });
+
+  // handle return click
+  document.getElementById("return").addEventListener("click", function () {
+    window.history.back();
+  });
+
+  // handle clear search click
+  document.getElementById("clear").addEventListener("click", function () {
+    clear_search();
+  });
 });
 
 const init_search = async () => {
@@ -31,7 +50,6 @@ const init_search = async () => {
 };
 
 const handle_search_click = async () => {
-  console.log("search button clicked");
   const keyword = document
     .getElementById("searchInput")
     .value.toLowerCase()
@@ -40,7 +58,7 @@ const handle_search_click = async () => {
 };
 
 const search_fetch = async (keyword) => {
-  // becase Flask does not support partial rendering
+  // because Flask does not support partial rendering
   // we need to call the partial template from the server side
   const url = "/search/results";
   const data = { keyword: keyword };
@@ -48,4 +66,9 @@ const search_fetch = async (keyword) => {
 
   // re-render search results, client side rendering here
   document.getElementById("searchResults").innerHTML = response;
+};
+
+const clear_search = () => {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("searchResults").innerHTML = "";
 };

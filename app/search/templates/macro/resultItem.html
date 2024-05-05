@@ -1,7 +1,7 @@
 <!-- community result item -->
 {% macro community_result_item(result) -%}
 <div
-  class="row flex-row text-center align-items-center mb-2"
+  class="row flex-row text-center align-items-center mb-2 result-item"
   onclick="location.href='{{ url_for('community.community') }}'"
 >
   <div class="col-4 col-md-2">
@@ -32,7 +32,7 @@
 <!-- request result item -->
 {% macro request_result_item(result) -%}
 <div
-  class="row flex-row text-center align-items-center mb-2"
+  class="row flex-row text-center align-items-center mb-2 result-item"
   onclick="location.href='{{ url_for('post.post_detail', post_id=result.id) }}'"
 >
   <div class="col-3 col-md-2">
@@ -63,7 +63,7 @@
 <!-- reply result item -->
 {% macro reply_result_item(result) -%}
 <div
-  class="row flex-row text-center align-items-center mb-2"
+  class="row flex-row text-center align-items-center mb-2 result-item"
   onclick="location.href='{{ url_for('post.post_detail', post_id=result.id) }}'"
 >
   <div class="col-3 col-md-2">

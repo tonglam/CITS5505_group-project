@@ -1,7 +1,6 @@
 .card {
   width: 80%;
   border-radius: 20px;
-  cursor: pointer;
 }
 
 @media screen and (min-width: 601px) {
@@ -65,4 +64,8 @@
 
 .highlight {
   color: orange !important;
+}
+
+.result-item {
+  cursor: pointer;
 }
