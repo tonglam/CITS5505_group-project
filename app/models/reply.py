@@ -20,6 +20,7 @@ class Reply(db.Model):
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request_id: int = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
     replier_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    reply_id: int = db.Column(db.Integer, db.ForeignKey("reply.id"))
     content: str = db.Column(db.String(1000))
     source: ReplySourceEnum = db.Column(
         db.Enum(ReplySourceEnum), default=ReplySourceEnum.HUMAN.value
@@ -39,6 +40,7 @@ class Reply(db.Model):
         self,
         request_id: int,
         replier_id: str,
+        reply_id: int,
         content: str,
         source: str,
         like_num: int,
@@ -46,6 +48,7 @@ class Reply(db.Model):
     ) -> None:
         self.request_id = request_id
         self.replier_id = replier_id
+        self.reply_id = reply_id
         self.content = content
         self.source = source
         self.like_num = like_num
@@ -64,6 +67,7 @@ class Reply(db.Model):
             "id": self.id,
             "request_id": self.request_id,
             "replier_id": self.replier_id,
+            "reply_id": self.reply_id,
             "content": self.content,
             "source": self.source.value,
             "like_num": self.like_num,
