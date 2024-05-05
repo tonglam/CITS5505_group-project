@@ -11,23 +11,20 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (
-    DataError,
-    IntegrityError,
-    OperationalError,
-    ProgrammingError,
-    SQLAlchemyError,
-)
+from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
+                            ProgrammingError, SQLAlchemyError)
 from sqlalchemy.sql import text
 
-from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequestEnum
+from app.constants import (G_NOTICE_NUM, G_USER, EnvironmentEnum,
+                           HttpRequestEnum)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
+from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
+                         swag)
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
