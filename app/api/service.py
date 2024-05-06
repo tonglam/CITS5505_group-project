@@ -4,7 +4,6 @@ from flask import current_app
 from flask_login import current_user
 
 from app.constants import HttpRequestEnum
-
 from app.extensions import db
 from app.models.category import Category
 from app.models.reply import Reply
@@ -191,7 +190,6 @@ def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
         data={"user_likes": like_collection}, pagination=pagination
     ).json()
 
-    user_id: str = current_user.id
 
 def post_user_like_service(request_id: int) -> ApiResponse:
     """Service for liking a request of a reply."""
@@ -353,9 +351,6 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
         HttpRequestEnum.NO_CONTENT.value, message="unsave success"
     ).json()
 
-    # unsave request
-    db.session.delete(user_save_entity)
-    db.session.commit()
 
 def users_notices_service(
     notice_type: str = None,
