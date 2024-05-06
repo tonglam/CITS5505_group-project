@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -24,13 +24,13 @@
       navBar.render_navBar(user, current_user, notice_num) }}
     </header>
 
-    <main class="container-fluid vw-50 p-4">
+    <main class="container-fluid vw-50 p-4" id="main">
       <!-- alert message -->
       {% import './components/alert.html' as alert %} {{
       alert.render_sticky_alert() }}
 
       <!-- page content -->
-      <div>{% block content %}{% endblock %}</div>
+      <div class="mt-0" id="pageContent">{% block content %}{% endblock %}</div>
     </main>
 
     <!-- footer -->

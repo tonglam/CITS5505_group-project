@@ -33,13 +33,12 @@
           >
             Save
           </button>
-          <a
-            href="{{ url_for('post.create') }}"
-            target="_blank"
-            class="text-decoration-none"
+          <button
+            class="btn-create-reply"
+            onclick="window.open('{{ url_for('post.create') }}', '_blank')"
           >
-            <button class="btn-create-reply">Create New Comment</button>
-          </a>
+            Create New Comment
+          </button>
           Likes: {{ replies.like_num }}, Saved: {{ request.save_num }}
         </div>
         {% if child_replies %} {% if child_replies|length > 2 %}

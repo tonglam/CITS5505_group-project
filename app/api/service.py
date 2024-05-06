@@ -3,7 +3,7 @@
 from flask import current_app
 from flask_login import current_user
 
-from app.constants import HttpRequstEnum
+from app.constants import HttpRequestEnum
 from app.extensions import db
 from app.models.category import Category
 from app.models.reply import Reply
@@ -20,74 +20,6 @@ from . import ApiResponse
 
 
 # Api service for user module.
-
-
-def users_records_service(
-    request_id_filter: int = None,
-    record_type_filter: str = None,
-    order_by: str = "update_at_desc",
-    page: int = 1,
-    per_page: int = 10,
-) -> ApiResponse:
-    """Service for getting all users records."""
-
-    user_id: str = current_user.id
-
-    # basic query
-    query = db.session.query(UserRecord).filter_by(user_id=user_id)
-
-    # apply filters
-    if request_id_filter:
-        query = query.filter(UserRecord.request_id == request_id_filter)
-
-    if record_type_filter:
-        query = query.filter(UserRecord.record_type == record_type_filter)
-
-    # apply sort
-    if order_by == "update_at":
-        query = query.order_by(UserRecord.update_at)
-    elif order_by == "update_at_desc":
-        query = query.order_by(UserRecord.update_at.desc())
-
-    # pagination
-    pagination = db.paginate(query, page=page, per_page=per_page)
-
-    # convert to JSON data
-    user_record_collection = [record.to_dict() for record in pagination.items]
-
-    return ApiResponse(
-        data={"user_records": user_record_collection}, pagination=pagination
-    ).json()
-
-
-def get_user_record_service(record_id: int) -> ApiResponse:
-    """Service for getting a user record by record id."""
-
-    record_entity = db.session.query(UserRecord).get(record_id)
-
-    if record_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user record not found"
-        ).json()
-
-    return ApiResponse(data={"user_record": record_entity.to_dict()}).json()
-
-
-def delete_user_record_service(record_id: int) -> ApiResponse:
-    """Service for deleting a user record by record id."""
-
-    record_entity = db.session.query(UserRecord).get(record_id)
-
-    if record_entity is None:
-        return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user record not found"
-        ).json()
-
-    # delete record
-    db.session.delete(record_entity)
-    db.session.commit()
-
-    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="delete success").json()
 
 
 def user_posts_service(page: int = 1, per_page: int = 10) -> ApiResponse:
@@ -136,6 +68,106 @@ def user_replies_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     ).json()
 
 
+def users_records_service(
+    page: int = 1,
+    per_page: int = 10,
+) -> ApiResponse:
+    """Service for getting all users records."""
+
+    user_id: str = current_user.id
+
+    # basic query
+    query = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id)
+        .order_by(UserRecord.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    user_record_collection = [record.to_dict() for record in pagination.items]
+
+    return ApiResponse(
+        data={"user_records": user_record_collection}, pagination=pagination
+    ).json()
+
+
+def post_user_record_service(request_id: int) -> ApiResponse:
+    """Service for posting a user view record by record id."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user record already exists
+    user_record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_record_entity is not None:
+        return ApiResponse(
+            HttpRequestEnum.BAD_REQUEST.value, message="user record already exists"
+        ).json()
+
+    # add user record
+    user_record_entity = UserRecord(user_id=user_id, request_id=request_id)
+    db.session.add(user_record_entity)
+    db.session.commit()
+    current_app.logger.info(
+        f"User {user_id} added Record for Request {request_id} successfully"
+    )
+
+    return ApiResponse(
+        HttpRequestEnum.CREATED.value, message="add user record success"
+    ).json()
+
+
+def delete_user_record_service(request_id: int) -> ApiResponse:
+    """Service for deleting a user view record by record id."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user record already exists
+    user_record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_record_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="user record not found"
+        ).json()
+
+    # delete request record
+    db.session.delete(user_record_entity)
+    db.session.commit()
+
+    current_app.logger.info(
+        f"User {user_id} removed Record for Request {request_id} successfully"
+    )
+
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="delete user record success"
+    ).json()
+
+
 def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     """Service for getting all user likes."""
 
@@ -160,13 +192,13 @@ def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
 
 
 def post_user_like_service(request_id: int) -> ApiResponse:
-    """Service for liking a request or a reply."""
+    """Service for liking a request of a reply."""
 
     # validate request_id
     request_entity = db.session.query(Request).get(request_id)
     if request_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
         ).json()
 
     user_id: str = current_user.id
@@ -180,7 +212,7 @@ def post_user_like_service(request_id: int) -> ApiResponse:
 
     if user_like_entity is not None:
         return ApiResponse(
-            HttpRequstEnum.BAD_REQUEST.value, message="like already exists"
+            HttpRequestEnum.BAD_REQUEST.value, message="like already exists"
         ).json()
 
     # add user like
@@ -189,17 +221,17 @@ def post_user_like_service(request_id: int) -> ApiResponse:
     db.session.commit()
     current_app.logger.info(f"User {user_id} liked Request {request_id} successfully")
 
-    return ApiResponse(HttpRequstEnum.CREATED.value, message="like success").json()
+    return ApiResponse(HttpRequestEnum.CREATED.value, message="like success").json()
 
 
 def delete_user_like_service(request_id: int) -> ApiResponse:
-    """Service for unliking a request or a reply."""
+    """Service for unliking a request of a reply."""
 
     # validate request_id
     request_entity = db.session.query(Request).get(request_id)
     if request_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
         ).json()
 
     user_id: str = current_user.id
@@ -213,7 +245,7 @@ def delete_user_like_service(request_id: int) -> ApiResponse:
 
     if user_like_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="like not found"
+            HttpRequestEnum.NOT_FOUND.value, message="like not found"
         ).json()
 
     # unlike request
@@ -222,7 +254,9 @@ def delete_user_like_service(request_id: int) -> ApiResponse:
 
     current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
 
-    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="unlike success").json()
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="unlike success"
+    ).json()
 
 
 def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
@@ -244,20 +278,20 @@ def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     save_collection = [save.to_dict() for save in pagination.items]
 
     return ApiResponse(
-        HttpRequstEnum.CREATED.value,
+        HttpRequestEnum.CREATED.value,
         data={"user_saves": save_collection},
         pagination=pagination,
     ).json()
 
 
 def post_user_save_service(request_id: int) -> ApiResponse:
-    """Service for saving a post or a reply."""
+    """Service for saving a post of a reply."""
 
     # validate request_id
     request_entity = db.session.query(Request).get(request_id)
     if request_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="request not found"
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
         ).json()
 
     user_id: str = current_user.id
@@ -271,7 +305,7 @@ def post_user_save_service(request_id: int) -> ApiResponse:
 
     if user_save_entity is not None:
         return ApiResponse(
-            HttpRequstEnum.BAD_REQUEST.value, message="save already exists"
+            HttpRequestEnum.BAD_REQUEST.value, message="save already exists"
         ).json()
 
     # add user save
@@ -280,11 +314,18 @@ def post_user_save_service(request_id: int) -> ApiResponse:
     db.session.commit()
     current_app.logger.info(f"User {user_id} saved Request {request_id} successfully")
 
-    return ApiResponse(HttpRequstEnum.CREATED.value, message="save success").json()
+    return ApiResponse(HttpRequestEnum.CREATED.value, message="save success").json()
 
 
 def delete_user_save_service(request_id: int) -> ApiResponse:
-    """Service for deleting a user save."""
+    """Service for deleting a user save of a reply."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
 
     user_id: str = current_user.id
 
@@ -297,7 +338,7 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
 
     if user_save_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="save not found"
+            HttpRequestEnum.NOT_FOUND.value, message="save not found"
         ).json()
 
     # unsave request
@@ -306,12 +347,14 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
 
     current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
 
-    return ApiResponse(HttpRequstEnum.NO_CONTENT.value, message="unsave success").json()
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="unsave success"
+    ).json()
 
 
 def users_notices_service(
-    notice_type_filter: str = None,
-    status_filter: str = None,
+    notice_type: str = None,
+    status: str = None,
     order_by: str = "update_at_desc",
     page: int = 1,
     per_page: int = 10,
@@ -329,10 +372,10 @@ def users_notices_service(
     )
 
     # apply filters
-    if notice_type_filter:
-        query = query.filter(UserNotice.module == notice_type_filter)
-    if status_filter:
-        status = 1 if status_filter == "read" else 0
+    if notice_type:
+        query = query.filter(UserNotice.module == notice_type)
+    if status:
+        status = 1 if status == "read" else 0
         query = query.filter(UserNotice.status == status)
 
     # apply sort
@@ -361,7 +404,7 @@ def get_user_notice_service(notice_id: int) -> ApiResponse:
 
     if notice_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user notice not found"
+            HttpRequestEnum.NOT_FOUND.value, message="user notice not found"
         ).json()
 
     return ApiResponse(data={"user_notice": notice_entity.to_dict()}).json()
@@ -374,7 +417,7 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
 
     if notice_entity is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="user notice not found"
+            HttpRequestEnum.NOT_FOUND.value, message="user notice not found"
         ).json()
 
     # update notice status
@@ -382,7 +425,7 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     db.session.commit()
 
     return ApiResponse(
-        HttpRequstEnum.NO_CONTENT.value,
+        HttpRequestEnum.NO_CONTENT.value,
         message="update success",
     ).json()
 
@@ -394,9 +437,6 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
 
 
 # Api service for post module.
-
-
-# Api service for search module.
 
 
 # Api service for notice module.
@@ -429,7 +469,7 @@ def category_service(category_id: int) -> ApiResponse:
 
     if category is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="category not found"
+            HttpRequestEnum.NOT_FOUND.value, message="category not found"
         ).json()
 
     return ApiResponse(data={"category": category.to_dict()}).json()
@@ -457,7 +497,7 @@ def tag_service(tag_id: int) -> ApiResponse:
 
     if tag is None:
         return ApiResponse(
-            HttpRequstEnum.NOT_FOUND.value, message="tag not found"
+            HttpRequestEnum.NOT_FOUND.value, message="tag not found"
         ).json()
 
     return ApiResponse(data={"tag": tag.to_dict()}).json()

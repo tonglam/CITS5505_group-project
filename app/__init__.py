@@ -11,23 +11,20 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (
-    DataError,
-    IntegrityError,
-    OperationalError,
-    ProgrammingError,
-    SQLAlchemyError,
-)
+from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
+                            ProgrammingError, SQLAlchemyError)
 from sqlalchemy.sql import text
 
-from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequstEnum
+from app.constants import (G_NOTICE_NUM, G_USER, EnvironmentEnum,
+                           HttpRequestEnum)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
+from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
+                         swag)
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
@@ -77,6 +74,35 @@ def create_app() -> Flask:
     return app
 
 
+def init_config(app: Flask, env: str) -> None:
+    """Initialize application configuration."""
+
+    app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
+    app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
+    app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
+    app.config["SWAGGER"] = get_swagger_config()
+    app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
+    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
+    app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
+
+
+def init_extensions(app: Flask) -> None:
+    """Initialize Flask extensions."""
+
+    bcrypt.init_app(app)
+    db.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
+    scheduler.init_app(app)
+    jwt.init_app(app)
+    swag.init_app(app)
+
+
 def init_dev_db(app: Flask, env: str) -> None:
     """Init the development database."""
 
@@ -112,7 +138,7 @@ def init_dev_db(app: Flask, env: str) -> None:
 
             # execute migrations
             app.logger.info(
-                "Development database already exists. Cheking migrations..."
+                "Development database already exists. Checking migrations..."
             )
             migrate_dev_db(app, alembic_cfg)
 
@@ -196,35 +222,6 @@ def get_latest_migration_version(alembic_cfg: Config) -> str:
     return heads[0] if heads else None
 
 
-def init_config(app: Flask, env: str) -> None:
-    """Initialize application configuration."""
-
-    app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
-    app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
-    app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
-    app.config["SWAGGER"] = get_swagger_config()
-    app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
-    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-    app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
-    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
-    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
-    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
-    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
-    app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
-
-
-def init_extensions(app: Flask) -> None:
-    """Initialize Flask extensions."""
-
-    bcrypt.init_app(app)
-    db.init_app(app)
-    login_manager.init_app(app)
-    migrate.init_app(app, db)
-    scheduler.init_app(app)
-    jwt.init_app(app)
-    swag.init_app(app)
-
-
 def register_blueprints(app: Flask) -> None:
     """Register Flask blueprints."""
 
@@ -269,35 +266,35 @@ def register_blueprints(app: Flask) -> None:
 def register_error_handlers(app: Flask) -> None:
     """Registers error handlers for common HTTP error codes."""
 
-    @app.errorhandler(HttpRequstEnum.BAD_REQUEST.value)
+    @app.errorhandler(HttpRequestEnum.BAD_REQUEST.value)
     def bad_request_error(_):
-        return render_template("errors/400.html"), HttpRequstEnum.BAD_REQUEST.value
+        return render_template("errors/400.html"), HttpRequestEnum.BAD_REQUEST.value
 
-    @app.errorhandler(HttpRequstEnum.UNAUTHORIZED.value)
+    @app.errorhandler(HttpRequestEnum.UNAUTHORIZED.value)
     def unauthorized_error(_):
-        return render_template("errors/401.html"), HttpRequstEnum.UNAUTHORIZED.value
+        return render_template("errors/401.html"), HttpRequestEnum.UNAUTHORIZED.value
 
-    @app.errorhandler(HttpRequstEnum.FORBIDDEN.value)
+    @app.errorhandler(HttpRequestEnum.FORBIDDEN.value)
     def forbidden_error(_):
-        return render_template("errors/403.html"), HttpRequstEnum.FORBIDDEN.value
+        return render_template("errors/403.html"), HttpRequestEnum.FORBIDDEN.value
 
-    @app.errorhandler(HttpRequstEnum.NOT_FOUND.value)
+    @app.errorhandler(HttpRequestEnum.NOT_FOUND.value)
     def page_not_found_error(_):
-        return render_template("errors/404.html"), HttpRequstEnum.NOT_FOUND.value
+        return render_template("errors/404.html"), HttpRequestEnum.NOT_FOUND.value
 
-    @app.errorhandler(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    @app.errorhandler(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
     def method_not_allowed_error(_):
         return (
             render_template("errors/405.html"),
-            HttpRequstEnum.METHOD_NOT_ALLOWED.value,
+            HttpRequestEnum.METHOD_NOT_ALLOWED.value,
         )
 
-    @app.errorhandler(HttpRequstEnum.INTERNAL_SERVER_ERROR.value)
+    @app.errorhandler(HttpRequestEnum.INTERNAL_SERVER_ERROR.value)
     def internal_server_error(_):
         db.session.rollback()
         return (
             render_template("errors/500.html"),
-            HttpRequstEnum.INTERNAL_SERVER_ERROR.value,
+            HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
         )
 
 

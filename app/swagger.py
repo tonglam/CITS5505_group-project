@@ -67,7 +67,7 @@ def get_swagger_schema() -> dict:
                 },
                 "password_hash": {
                     "type": "string",
-                    "description": "The user password storing in shash",
+                    "description": "The user password storing in hash",
                     "example": "$2b$12$R49DZkkWelMYoCv2.mCQeemIVKkCNrzuA3Vekq6PxMpIk4jqjJbmW",
                 },
                 "avatar_url": {
@@ -165,12 +165,6 @@ def get_swagger_schema() -> dict:
                     "type": "integer",
                     "description": "The user record request",
                     "example": 1,
-                },
-                "record_type": {
-                    "type": "string",
-                    "description": "The user record type",
-                    "enum": ["REQUEST", "REPLY", "VIEW", "LIKE", "SAVE"],
-                    "example": "LIKE",
                 },
                 "update_at": {
                     "type": "string",

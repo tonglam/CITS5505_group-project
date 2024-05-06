@@ -5,7 +5,7 @@ import random
 from app.extensions import db
 from app.models.request import Request
 from app.models.user import User
-from app.models.user_record import UserRecord, UserRecordTypeEnum
+from app.models.user_record import UserRecord
 
 random.seed(5505)
 
@@ -15,13 +15,11 @@ def create_seed_user_record_data() -> list:
 
     users = [user.id for user in User.query.all()]
     requests = [request.id for request in Request.query.all()]
-    types = [record_type.value for record_type in UserRecordTypeEnum]
 
     return [
         {
             "user_id": random.choice(users),
             "request_id": random.choice(requests),
-            "record_type": random.choice(types),
         }
         for _ in range(100)
     ]
@@ -38,7 +36,6 @@ def seed_user_record():
         user_record = UserRecord(
             user_id=data["user_id"],
             request_id=data["request_id"],
-            record_type=data["record_type"],
         )
         db.session.add(user_record)
 

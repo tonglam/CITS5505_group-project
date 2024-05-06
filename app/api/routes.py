@@ -4,69 +4,23 @@ from flask import abort, request
 from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
-from app.constants import HttpRequstEnum
+from app.constants import HttpRequestEnum
 
 from . import ApiResponse
-from .service import (
-    categories_service,
-    category_service,
-    delete_user_like_service,
-    delete_user_record_service,
-    delete_user_save_service,
-    get_user_notice_service,
-    get_user_record_service,
-    post_user_like_service,
-    post_user_save_service,
-    put_user_notice_service,
-    tag_service,
-    tags_service,
-    user_likes_service,
-    user_posts_service,
-    user_replies_service,
-    user_saves_service,
-    users_notices_service,
-    users_records_service,
-)
+from .service import (categories_service, category_service,
+                      delete_user_like_service, delete_user_record_service,
+                      delete_user_save_service, get_user_notice_service,
+                      post_user_like_service, post_user_record_service,
+                      post_user_save_service, put_user_notice_service,
+                      tag_service, tags_service, user_likes_service,
+                      user_posts_service, user_replies_service,
+                      user_saves_service, users_notices_service,
+                      users_records_service)
 
 # Api for auth module.
 
 
 # Api for user module.
-
-
-@api_bp.route("/users/records", methods=["GET"])
-@jwt_required()
-def user_records() -> ApiResponse:
-    """Retrieve all records associated with the logged-in user."""
-
-    # get filter parameters
-    request_id_filter = request.args.get("request_id")
-    record_type_filter = request.args.get("record_type")
-
-    # get sort parameters
-    order_by = request.args.get("order_by")
-
-    # get pagination parameters
-    page = request.args.get("page", default=1, type=int)
-    per_page = request.args.get("per_page", default=10, type=int)
-
-    return users_records_service(
-        request_id_filter, record_type_filter, order_by, page, per_page
-    )
-
-
-@api_bp.route("/users/records/<int:record_id>", methods=["GET", "DELETE"])
-@jwt_required()
-def users_record(record_id: int) -> ApiResponse:
-    """Retrieve or delete a specific user record by id."""
-
-    if request.method == "GET":
-        return get_user_record_service(record_id)
-
-    if request.method == "DELETE":
-        return delete_user_record_service(record_id)
-
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/posts", methods=["GET"])
@@ -93,6 +47,32 @@ def user_replies() -> ApiResponse:
     return user_replies_service(page, per_page)
 
 
+@api_bp.route("/users/records", methods=["GET"])
+@jwt_required()
+def user_records() -> ApiResponse:
+    """Retrieve all records associated with the logged-in user."""
+
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    return users_records_service(page, per_page)
+
+
+@api_bp.route("/users/records/<int:request_id>", methods=["POST", "DELETE"])
+@jwt_required()
+def users_record(request_id: int) -> ApiResponse:
+    """Save or delete a request view record by user id and request id."""
+
+    if request.method == "POST":
+        return post_user_record_service(request_id)
+
+    if request.method == "DELETE":
+        return delete_user_record_service(request_id)
+
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
+
+
 @api_bp.route("/users/likes", methods=["GET"])
 @jwt_required()
 def user_likes() -> ApiResponse:
@@ -116,7 +96,7 @@ def user_like(request_id: int) -> ApiResponse:
     if request.method == "DELETE":
         return delete_user_like_service(request_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/saves", methods=["GET"])
@@ -142,7 +122,7 @@ def user_save(request_id: int) -> ApiResponse:
     if request.method == "DELETE":
         return delete_user_save_service(request_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 @api_bp.route("/users/notifications", methods=["GET"])
@@ -151,8 +131,8 @@ def user_notifications() -> ApiResponse:
     """Get all notifications by user id."""
 
     # get filter parameters
-    notice_type_filter = request.args.get("notice_type")
-    status_filter = request.args.get("status")
+    notice_type = request.args.get("notice_type")
+    status = request.args.get("status")
 
     # get sort parameters
     order_by = request.args.get("order_by")
@@ -161,9 +141,7 @@ def user_notifications() -> ApiResponse:
     page = request.args.get("page", default=1, type=int)
     per_page = request.args.get("per_page", default=10, type=int)
 
-    return users_notices_service(
-        notice_type_filter, status_filter, order_by, page, per_page
-    )
+    return users_notices_service(notice_type, status, order_by, page, per_page)
 
 
 @api_bp.route("/users/notifications/<int:notice_id>", methods=["GET", "PUT"])
@@ -177,7 +155,7 @@ def user_notice(notice_id: int) -> ApiResponse:
     if request.method == "PUT":
         return put_user_notice_service(notice_id)
 
-    abort(HttpRequstEnum.METHOD_NOT_ALLOWED.value)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
 # Api for community module.
@@ -188,8 +166,6 @@ def user_notice(notice_id: int) -> ApiResponse:
 
 # Api for post module.
 
-
-# Api for search module.
 
 # Api for others.
 

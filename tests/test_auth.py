@@ -5,7 +5,7 @@ import hashlib
 
 from flask.testing import FlaskClient
 
-from app.constants import GRAVATAR_URL, HttpRequstEnum
+from app.constants import GRAVATAR_URL, HttpRequestEnum
 from app.models.user import User
 from app.models.user_notice import UserNotice, UserNoticeModuleEnum
 from tests.config import AuthActions, TestBase, Utils
@@ -30,7 +30,7 @@ class TestAuth(TestBase):
 
         url = "/auth/auth"
 
-        self.assertStatus(client.get(url), HttpRequstEnum.SUCCESS_OK.value)
+        self.assertStatus(client.get(url), HttpRequestEnum.SUCCESS_OK.value)
 
     def test_register(self, _, client: FlaskClient):
         """Test the registration process."""
@@ -119,9 +119,9 @@ class TestAuth(TestBase):
                 data["type"] == InvalidLoginEnum.EMAIL_NOT_EXISTS
                 or data["type"] == InvalidLoginEnum.PASSWORD_NOT_CORRECT
             ):
-                self.assertStatus(response, HttpRequstEnum.FOUND.value)
+                self.assertStatus(response, HttpRequestEnum.FOUND.value)
             else:
-                self.assertStatus(response, HttpRequstEnum.SUCCESS_OK.value)
+                self.assertStatus(response, HttpRequestEnum.SUCCESS_OK.value)
 
     def test_logout(self, _, client: FlaskClient):
         """Test the logout process."""
@@ -138,7 +138,7 @@ class TestAuth(TestBase):
         url = "/auth/forgot_password"
 
         # smoke test
-        self.assertStatus(client.get(url), HttpRequstEnum.SUCCESS_OK.value)
+        self.assertStatus(client.get(url), HttpRequestEnum.SUCCESS_OK.value)
 
         # test that successful forgot password redirects to the login page
         forgot_password_data = {
@@ -167,7 +167,7 @@ class TestAuth(TestBase):
         response = auth.login(
             forgot_password_data["email"], forgot_password_data["password"]
         )
-        self.assertStatus(response, HttpRequstEnum.SUCCESS_OK.value)
+        self.assertStatus(response, HttpRequestEnum.SUCCESS_OK.value)
 
     def test_forgot_password_validate_input(self, _, client: FlaskClient):
         """Test the invalid forgot password process."""

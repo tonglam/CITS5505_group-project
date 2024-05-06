@@ -13,9 +13,11 @@ from . import notification_signal
 class NoticeTypeEnum(enum.Enum):
     """Enum for notice type."""
 
-    USER_RESET_PASSWORD = f"{UserNoticeModuleEnum.USER.value}, {UserNoticeActionEnum.RESET_PASSWORD.value}"
+    USER_RESET_PASSWORD = f"{UserNoticeModuleEnum.USER.value}, \
+        {UserNoticeActionEnum.RESET_PASSWORD.value}"
 
-    USER_UPDATED_PROFILE = f"{UserNoticeModuleEnum.USER.value}, {UserNoticeActionEnum.UPDATED_PROFILE.value}"
+    USER_UPDATED_PROFILE = f"{UserNoticeModuleEnum.USER.value}, \
+        {UserNoticeActionEnum.UPDATED_PROFILE.value}"
 
     POST_CREATED = (
         f"{UserNoticeModuleEnum.POST.value}, {UserNoticeActionEnum.CREATED.value}"
