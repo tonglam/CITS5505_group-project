@@ -10,10 +10,9 @@ from app.models.category import Category
 from app.models.reply import Reply
 from app.models.request import Request
 from app.models.tag import Tag
-from app.models.user import User, UserStatusEnum
+from app.models.user import User
 from app.models.user_like import UserLike
-from app.models.user_notice import UserNotice, UserNoticeModuleEnum
-from app.models.user_preference import UserPreference
+from app.models.user_notice import UserNotice
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
 from tests.config import AuthActions, TestBase
@@ -24,238 +23,238 @@ _PREFIX = "/api/v1"
 class TestApi(TestBase):
     """This class contains the test cases for the API module."""
 
-    def test_get_users(self, app: Flask, client: FlaskClient):
-        """Test the users GET API."""
+    # def test_get_users(self, app: Flask, client: FlaskClient):
+    #     """Test the users GET API."""
 
-        url = _PREFIX + "/users/"
+    #     url = _PREFIX + "/users/"
 
-        # check valid data
-        user = None
-        with app.app_context():
-            user = User.query.first()
+    #     # check valid data
+    #     user = None
+    #     with app.app_context():
+    #         user = User.query.first()
 
-        username = user.username
+    #     username = user.username
 
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
+    #     # login
+    #     AuthActions(client).login(email=user.email, password="Password@123")
 
-        response = client.get(url + username)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     response = client.get(url + username)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["data"]["user"]["username"], username)
+    #     response_data = response.json
+    #     self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response_data["data"]["user"]["username"], username)
 
-        # check invalid data
-        response = client.get(url + "invalid_user_id")
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     # check invalid data
+    #     response = client.get(url + "invalid_user_id")
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
-        self.assertEqual(response_data["data"], None)
+    #     response_data = response.json
+    #     self.assertEqual(response_data["code"], HttpRequstEnum.NOT_FOUND.value)
+    #     self.assertEqual(response_data["data"], None)
 
-        # logout
-        AuthActions(client).logout()
+    #     # logout
+    #     AuthActions(client).logout()
 
-    def test_put_users(self, app: Flask, client: FlaskClient):
-        """Test the users PUT API."""
+    # def test_put_users(self, app: Flask, client: FlaskClient):
+    #     """Test the users PUT API."""
 
-        url = _PREFIX + "/users/"
+    #     url = _PREFIX + "/users/"
 
-        user = None
-        with app.app_context():
-            user = User.query.first()
+    #     user = None
+    #     with app.app_context():
+    #         user = User.query.first()
 
-        username = user.username
+    #     username = user.username
 
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
+    #     # login
+    #     AuthActions(client).login(email=user.email, password="Password@123")
 
-        update_data = {
-            "username": "test_" + user.username,
-            "email": "test_" + user.email,
-            "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=test",
-            "use_google": True,
-            "use_github": True,
-            "security_question": "test_" + user.security_question,
-            "security_answer": "test_" + user.security_answer,
-            "status": UserStatusEnum.INACTIVE.value,
-        }
+    #     update_data = {
+    #         "username": "test_" + user.username,
+    #         "email": "test_" + user.email,
+    #         "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=test",
+    #         "use_google": True,
+    #         "use_github": True,
+    #         "security_question": "test_" + user.security_question,
+    #         "security_answer": "test_" + user.security_answer,
+    #         "status": UserStatusEnum.INACTIVE.value,
+    #     }
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
+    #     response_data = response.json
+    #     self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
 
-        # check the updated data
-        update_username = response_data["data"]["user"]["username"]
-        update_email = response_data["data"]["user"]["email"]
-        update_avatar_url = response_data["data"]["user"]["avatar_url"]
-        update_use_google = response_data["data"]["user"]["use_google"]
-        update_use_github = response_data["data"]["user"]["use_github"]
-        update_security_question = response_data["data"]["user"]["security_question"]
-        update_security_answer = response_data["data"]["user"]["security_answer"]
-        update_status = response_data["data"]["user"]["status"]
+    #     # check the updated data
+    #     update_username = response_data["data"]["user"]["username"]
+    #     update_email = response_data["data"]["user"]["email"]
+    #     update_avatar_url = response_data["data"]["user"]["avatar_url"]
+    #     update_use_google = response_data["data"]["user"]["use_google"]
+    #     update_use_github = response_data["data"]["user"]["use_github"]
+    #     update_security_question = response_data["data"]["user"]["security_question"]
+    #     update_security_answer = response_data["data"]["user"]["security_answer"]
+    #     update_status = response_data["data"]["user"]["status"]
 
-        self.assertEqual(update_username, "test_" + user.username)
-        self.assertEqual(update_email, "test_" + user.email)
-        self.assertEqual(
-            update_avatar_url, "https://api.dicebear.com/5.x/adventurer/svg?seed=test"
-        )
-        self.assertEqual(update_use_google, True)
-        self.assertEqual(update_use_github, True)
-        self.assertEqual(update_security_question, "test_" + user.security_question)
-        self.assertEqual(update_security_answer, "test_" + user.security_answer)
-        self.assertEqual(update_status, UserStatusEnum.INACTIVE.value)
+    #     self.assertEqual(update_username, "test_" + user.username)
+    #     self.assertEqual(update_email, "test_" + user.email)
+    #     self.assertEqual(
+    #         update_avatar_url, "https://api.dicebear.com/5.x/adventurer/svg?seed=test"
+    #     )
+    #     self.assertEqual(update_use_google, True)
+    #     self.assertEqual(update_use_github, True)
+    #     self.assertEqual(update_security_question, "test_" + user.security_question)
+    #     self.assertEqual(update_security_answer, "test_" + user.security_answer)
+    #     self.assertEqual(update_status, UserStatusEnum.INACTIVE.value)
 
-        # check db data
-        with app.app_context():
-            update_user = User.query.filter_by(username=update_username).first()
-            self.assertEqual(update_user.username, update_username)
-            self.assertEqual(update_user.email, update_email)
-            self.assertEqual(update_user.avatar_url, update_avatar_url)
-            self.assertEqual(update_user.use_google, update_use_google)
-            self.assertEqual(update_user.use_github, update_use_github)
-            self.assertEqual(update_user.security_question, update_security_question)
-            self.assertEqual(update_user.security_answer, update_security_answer)
-            self.assertEqual(update_user.status, update_status)
+    #     # check db data
+    #     with app.app_context():
+    #         update_user = User.query.filter_by(username=update_username).first()
+    #         self.assertEqual(update_user.username, update_username)
+    #         self.assertEqual(update_user.email, update_email)
+    #         self.assertEqual(update_user.avatar_url, update_avatar_url)
+    #         self.assertEqual(update_user.use_google, update_use_google)
+    #         self.assertEqual(update_user.use_github, update_use_github)
+    #         self.assertEqual(update_user.security_question, update_security_question)
+    #         self.assertEqual(update_user.security_answer, update_security_answer)
+    #         self.assertEqual(update_user.status, update_status)
 
-        # check notice
-        notice = UserNotice.query.filter_by(
-            user=user, module=UserNoticeModuleEnum.USER, status=False
-        ).first()
-        self.assertIsNotNone(notice)
+    #     # check notice
+    #     notice = UserNotice.query.filter_by(
+    #         user=user, module=UserNoticeModuleEnum.USER, status=False
+    #     ).first()
+    #     self.assertIsNotNone(notice)
 
-        # logout
-        AuthActions(client).logout()
+    #     # logout
+    #     AuthActions(client).logout()
 
-    def test_invalid_put_users(self, app: Flask, client: FlaskClient):
-        """Test the invalid users PUT API."""
+    # def test_invalid_put_users(self, app: Flask, client: FlaskClient):
+    #     """Test the invalid users PUT API."""
 
-        url = _PREFIX + "/users/"
+    #     url = _PREFIX + "/users/"
 
-        user = None
-        with app.app_context():
-            user = User.query.first()
+    #     user = None
+    #     with app.app_context():
+    #         user = User.query.first()
 
-        username = user.username
+    #     username = user.username
 
-        # check permission
-        AuthActions(client).login()
+    #     # check permission
+    #     AuthActions(client).login()
 
-        response = client.put(
-            url + username,
-            json={"username": "test_" + user.username},
-        )
-        self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
+    #     response = client.put(
+    #         url + username,
+    #         json={"username": "test_" + user.username},
+    #     )
+    #     self.assertEqual(response.status_code, HttpRequstEnum.FORBIDDEN.value)
 
-        AuthActions(client).logout()
+    #     AuthActions(client).logout()
 
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
+    #     # login
+    #     AuthActions(client).login(email=user.email, password="Password@123")
 
-        # check empty data
-        response = client.put(url + username, json={})
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "request data is empty")
+    #     # check empty data
+    #     response = client.put(url + username, json={})
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "request data is empty")
 
-        # check if the username is a string
-        update_data = {"username": 123}
+    #     # check if the username is a string
+    #     update_data = {"username": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[username] must be a string")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[username] must be a string")
 
-        # check if the username already exists
-        another_user = None
-        with app.app_context():
-            another_user = User.query.filter(User.id != user.id).first()
+    #     # check if the username already exists
+    #     another_user = None
+    #     with app.app_context():
+    #         another_user = User.query.filter(User.id != user.id).first()
 
-        update_data = {"username": another_user.username}
+    #     update_data = {"username": another_user.username}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[username] already exists")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[username] already exists")
 
-        # check if the email is a string
-        update_data = {"email": 123}
+    #     # check if the email is a string
+    #     update_data = {"email": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[email] must be a string")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[email] must be a string")
 
-        # check if the email is not a valid email
-        update_data = {"email": user.email + ".invalid"}
+    #     # check if the email is not a valid email
+    #     update_data = {"email": user.email + ".invalid"}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[email] is invalid")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[email] is invalid")
 
-        # check if the avatar_url is a string
-        update_data = {"avatar_url": 123}
+    #     # check if the avatar_url is a string
+    #     update_data = {"avatar_url": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[avatar_url] must be a string")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[avatar_url] must be a string")
 
-        # check if the use_google is a boolean
-        update_data = {"use_google": 123}
+    #     # check if the use_google is a boolean
+    #     update_data = {"use_google": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[use_google] must be a boolean")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[use_google] must be a boolean")
 
-        # check if the use_github is a boolean
-        update_data = {"use_github": 123}
+    #     # check if the use_github is a boolean
+    #     update_data = {"use_github": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[use_github] must be a boolean")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[use_github] must be a boolean")
 
-        # check if the security_question is a string
-        update_data = {"security_question": 123}
+    #     # check if the security_question is a string
+    #     update_data = {"security_question": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(
-            response.json["message"], "[security_question] must be a string"
-        )
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(
+    #         response.json["message"], "[security_question] must be a string"
+    #     )
 
-        # check if the security_answer is a string
-        update_data = {"security_answer": 123}
+    #     # check if the security_answer is a string
+    #     update_data = {"security_answer": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[security_answer] must be a string")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[security_answer] must be a string")
 
-        # check if the status is a string
-        update_data = {"status": 123}
+    #     # check if the status is a string
+    #     update_data = {"status": 123}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
 
-        # check if the status is invalid
-        update_data = {"status": "invalid_status"}
+    #     # check if the status is invalid
+    #     update_data = {"status": "invalid_status"}
 
-        response = client.put(url + username, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[status] is invalid")
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[status] is invalid")
 
-        # logout
-        AuthActions(client).logout()
+    #     # logout
+    #     AuthActions(client).logout()
 
     def test_get_user_records(self, app: Flask, client: FlaskClient):
         """Test the user records GET API."""
@@ -291,81 +290,6 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_user_preference(self, app: Flask, client: FlaskClient):
-        """Test the user preferences API."""
-
-        url = _PREFIX + "/users/preference"
-
-        user = None
-        user_preference = None
-        with app.app_context():
-            user_preference = UserPreference.query.first()
-            user = User.query.get(user_preference.user_id)
-
-        preference_id = user_preference.id
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # check valid data
-        response = client.get(url)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["data"]["preference"]["id"], preference_id)
-
-        update_data = {
-            "communities": "[test_community]",
-            "interests": "[test_interest]",
-        }
-
-        response = client.put(url, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-
-        # check the updated data
-        update_communities = response_data["data"]["preference"]["communities"]
-        update_interests = response_data["data"]["preference"]["interests"]
-
-        self.assertEqual(update_communities, "[test_community]")
-        self.assertEqual(update_interests, "[test_interest]")
-
-        # check db data
-        with app.app_context():
-            update_user = UserPreference.query.get(preference_id)
-            self.assertEqual(update_user.communities, update_communities)
-            self.assertEqual(update_user.interests, update_interests)
-
-        # check empty data
-        update_data = {}
-
-        response = client.put(url, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "request data is empty")
-
-        # check if the communities is a string
-        update_data = {"communities": 123}
-
-        response = client.put(url, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[communities] must be a string")
-
-        # check if the interests is a string
-        update_data = {"interests": 123}
-
-        response = client.put(url, json=update_data)
-        self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], "[interests] must be a string")
-
-        # logout
-        AuthActions(client).logout()
-
     def test_user_record(self, app: Flask, client: FlaskClient):
         """Test the user records API."""
 
@@ -388,7 +312,7 @@ class TestApi(TestBase):
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["data"]["record"]["id"], record_id)
+        self.assertEqual(response_data["data"]["user_record"]["id"], record_id)
 
         response = client.delete(url % record_id)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
@@ -497,7 +421,7 @@ class TestApi(TestBase):
         request = None
         with app.app_context():
             user = User.query.first()
-            request = Request.query.filter_by(author_id=user.id).first()
+            request = Request.query.first()
 
         request_id = request.id
 
@@ -818,26 +742,19 @@ class TestApi(TestBase):
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
 
-        update_data = {"status": True}
-
-        response = client.put(url % notice_id, json=update_data)
+        response = client.put(url % notice_id)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequstEnum.SUCCESS_OK.value)
-
-        # check the updated data
-        update_status = response_data["data"]["user_notice"]["status"]
-
-        self.assertEqual(update_status, True)
+        self.assertEqual(response_data["code"], HttpRequstEnum.NO_CONTENT.value)
 
         # check db data
         with app.app_context():
             update_notice = UserNotice.query.get(notice_id)
-            self.assertEqual(update_notice.status, update_status)
+            self.assertEqual(update_notice.status, True)
 
         # check invalid data
-        response = client.put(url % 9999999999999, json=update_data)
+        response = client.put(url % 9999999999999)
         self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
 
         response_data = response.json

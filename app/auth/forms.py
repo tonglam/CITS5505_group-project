@@ -1,4 +1,4 @@
-"""This module contains the forms."""
+"""WTF forms for the auth module."""
 
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField
