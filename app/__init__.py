@@ -21,6 +21,7 @@ from sqlalchemy.exc import (
 from sqlalchemy.sql import text
 
 from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequstEnum
+from app.models.trending import Trending
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
@@ -72,7 +73,19 @@ def create_app() -> Flask:
     @app.route("/")
     @login_required
     def index():
-        return render_template("index.html")
+
+        # post
+        posts = get_home_posts()
+
+        # trending
+        trendings = get_home_trendings()
+
+        # stat
+        stats = get_home_stats()
+
+        return render_template(
+            "index.html", posts=posts, trendings=trendings, stats=stats
+        )
 
     return app
 
@@ -429,3 +442,45 @@ def get_oauth2_config() -> dict:
             "scopes": ["user"],
         },
     }
+
+
+def get_home_posts() -> list:
+    """Get index post data."""
+
+    posts = db.session.query(Trending).order_by(Trending.view_num.desc()).limit(5)
+    post_items = [
+        {
+            "id": post.request_id,
+            "title": post.request.title,
+            "author": post.author.username,
+            "view_num": post.view_num,
+            "reply_num": post.reply_num,
+        }
+        for post in posts
+    ]
+
+    return post_items
+
+
+def get_home_trendings() -> list:
+    """Get index trending data."""
+
+    trendings = db.session.query(Trending).order_by(Trending.view_num.desc()).limit(5)
+    trending_items = [
+        {
+            "id": trending.request_id,
+            "title": trending.request.title,
+            "author": trending.author.username,
+            "view_num": trending.view_num,
+            "reply_num": trending.reply_num,
+        }
+        for trending in trendings
+    ]
+
+    return trending_items
+
+
+def get_home_stats() -> list:
+    """Get index stats data."""
+
+    return []

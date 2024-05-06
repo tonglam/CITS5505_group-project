@@ -647,3 +647,26 @@ def tag(tag_id: int) -> ApiResponse:
         ).json()
 
     return ApiResponse(data={"tag": tag_entity.to_dict()}).json()
+
+
+@api_bp.route("/statistics", methods=["GET"])
+@jwt_required()
+def summarize_stat() -> dict:
+    """Summarize the statistics of the database."""
+
+    stats = summarize_stat_service()
+    return ApiResponse(data=stats).json()
+
+    user_count = db.session.query(User).count()
+    request_count = db.session.query(Request).count()
+    reply_count = db.session.query(Reply).count()
+    category_count = db.session.query(Category).count()
+    tag_count = db.session.query(Tag).count()
+
+    return {
+        "user_count": user_count,
+        "request_count": request_count,
+        "reply_count": reply_count,
+        "category_count": category_count,
+        "tag_count": tag_count,
+    }
