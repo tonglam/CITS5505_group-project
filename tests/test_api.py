@@ -280,8 +280,10 @@ class TestApi(TestBase):
             len(response_data["data"]["user_posts"]), min(user_posts_count, 10)
         )
 
-        # logout
-        AuthActions(client).logout()
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[status] is invalid")
 
     def test_get_user_replies(self, app: Flask, client: FlaskClient):
         """Test the user replies API."""
