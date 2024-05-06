@@ -1,8 +1,9 @@
-"""This module contains the forms."""
+"""WTF forms for the auth module."""
 
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, Regexp
+from wtforms.validators import (DataRequired, Email, EqualTo, Length, Optional,
+                                Regexp)
 
 
 class RegisterForm(FlaskForm):
@@ -21,7 +22,8 @@ class RegisterForm(FlaskForm):
             Length(min=8, max=25),
             Regexp(
                 r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]).{8,}$",
-                message="Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+                message="Password must contain at least one uppercase letter, \
+                    one lowercase letter, one digit, and one special character.",
             ),
         ],
     )
@@ -63,7 +65,8 @@ class ForgotPasswordForm(FlaskForm):
             Length(min=8, max=25),
             Regexp(
                 r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]).{8,}$",
-                message="Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+                message="Password must contain at least one uppercase letter, \
+                    one lowercase letter, one digit, and one special character.",
             ),
         ],
     )

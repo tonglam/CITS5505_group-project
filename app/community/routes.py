@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.DEBUG)
 handler = logging.StreamHandler(sys.stdout)
 
 
+
 @community_bp.route("/")
 # @login_required
 def community():

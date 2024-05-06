@@ -84,10 +84,10 @@ const getFetch =
   (data = {}) =>
   async (headers = {}) => {
     const queryParams = new URLSearchParams(data).toString();
-    const apiUrl = queryParams ? `${url}?${queryParams}` : url;
+    const getUrl = queryParams ? `${url}?${queryParams}` : url;
     const access_token = getJwtToken();
     const getHeaders = { ...jwtHeader(access_token), ...headers };
-    return await fetchData(apiUrl, { getHeaders });
+    return await fetchData(getUrl, { getHeaders });
   };
 
 const postFetch =
@@ -118,4 +118,42 @@ const postFetch =
     return await fetchData(url, options);
   };
 
-export { getFetch, postFetch };
+const putFetch =
+  (url) =>
+  (data = {}) =>
+  async (headers = {}) => {
+    const access_token = getJwtToken();
+    const putHeaders = { ...jwtHeader(access_token), ...headers };
+
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...putHeaders,
+      },
+      body: JSON.stringify(data),
+    };
+
+    return await fetchData(url, options);
+  };
+
+const deleteFetch =
+  (url) =>
+  (data = {}) =>
+  async (headers = {}) => {
+    const access_token = getJwtToken();
+    const deleteHeaders = { ...jwtHeader(access_token), ...headers };
+
+    const options = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...deleteHeaders,
+      },
+      body: JSON.stringify(data),
+    };
+
+    return await fetchData(url, options);
+  };
+
+export { deleteFetch, getFetch, postFetch, putFetch };

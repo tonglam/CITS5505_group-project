@@ -1,9 +1,20 @@
 """Services for api."""
 
-from email_validator import EmailNotValidError, validate_email
+from flask import current_app
+from flask_login import current_user
 
-from app.models.user import User, UserStatusEnum
-from app.models.user_preference import UserPreference
+from app.constants import HttpRequestEnum
+from app.extensions import db
+from app.models.category import Category
+from app.models.reply import Reply
+from app.models.request import Request
+from app.models.tag import Tag
+from app.models.user_like import UserLike
+from app.models.user_notice import UserNotice
+from app.models.user_record import UserRecord
+from app.models.user_save import UserSave
+
+from . import ApiResponse
 
 # Api service for auth module.
 
@@ -11,133 +22,412 @@ from app.models.user_preference import UserPreference
 # Api service for user module.
 
 
-def validate_username(username: str) -> None:
-    """Update username."""
+def user_posts_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all user posts."""
 
-    if not isinstance(username, str):
-        raise TypeError("[username] must be a string")
+    user_id: str = current_user.id
 
-    if User.query.filter_by(username=username).first() is not None:
-        raise ValueError("[username] already exists")
+    # basic query
+    query = (
+        db.session.query(Request)
+        .filter_by(author_id=user_id)
+        .order_by(Request.create_at.desc())
+    )
 
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
 
-def validate_email_addr(email: str) -> None:
-    """Update email."""
+    # convert to JSON data
+    post_collection = [post.to_dict() for post in pagination.items]
 
-    if not isinstance(email, str):
-        raise TypeError("[email] must be a string")
-
-    try:
-        validate_email(email)
-    except EmailNotValidError as e:
-        raise ValueError("[email] is invalid") from e
-
-
-def validate_avatar_url(avatar_url: str) -> None:
-    """Update avatar url."""
-
-    if not isinstance(avatar_url, str):
-        raise TypeError("[avatar_url] must be a string")
+    return ApiResponse(
+        data={"user_posts": post_collection}, pagination=pagination
+    ).json()
 
 
-def validate_use_google(use_google: bool) -> None:
-    """Update use google."""
+def user_replies_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all user replies."""
 
-    if not isinstance(use_google, bool):
-        raise TypeError("[use_google] must be a boolean")
+    user_id: str = current_user.id
 
+    # basic query
+    query = (
+        db.session.query(Reply)
+        .filter_by(replier_id=user_id)
+        .order_by(Reply.create_at.desc())
+    )
 
-def validate_use_github(use_github: bool) -> None:
-    """Update use github."""
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
 
-    if not isinstance(use_github, bool):
-        raise TypeError("[use_github] must be a boolean")
+    # convert to JSON data
+    reply_collection = [reply.to_dict() for reply in pagination.items]
 
-
-def validate_security_question(security_question: str) -> None:
-    """Update security question."""
-
-    if not isinstance(security_question, str):
-        raise TypeError("[security_question] must be a string")
-
-
-def validate_security_answer(security_answer: str) -> None:
-    """Update security answer."""
-
-    if not isinstance(security_answer, str):
-        raise TypeError("[security_answer] must be a string")
+    return ApiResponse(
+        data={"user_replies": reply_collection}, pagination=pagination
+    ).json()
 
 
-def validate_status(status: str) -> None:
-    """Update status."""
+def users_records_service(
+    page: int = 1,
+    per_page: int = 10,
+) -> ApiResponse:
+    """Service for getting all users records."""
 
-    if not isinstance(status, str):
-        raise TypeError("[status] must be a string")
+    user_id: str = current_user.id
 
-    if status not in [status.value for status in UserStatusEnum]:
-        raise ValueError("[status] is invalid")
+    # basic query
+    query = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id)
+        .order_by(UserRecord.create_at.desc())
+    )
 
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
 
-def update_user_data(user_entity: User, update_data: dict) -> User:
-    """Create user update data."""
+    # convert to JSON data
+    user_record_collection = [record.to_dict() for record in pagination.items]
 
-    for key, value in update_data.items():
-        if key == "username":
-            validate_username(value)
-            user_entity.username = value
-        elif key == "email":
-            validate_email_addr(value)
-            user_entity.email = value
-        elif key == "avatar_url":
-            validate_avatar_url(value)
-            user_entity.avatar_url = value
-        elif key == "use_google":
-            validate_use_google(value)
-            user_entity.use_google = value
-        elif key == "use_github":
-            validate_use_github(value)
-            user_entity.use_github = value
-        elif key == "security_question":
-            validate_security_question(value)
-            user_entity.security_question = value
-        elif key == "security_answer":
-            validate_security_answer(value)
-            user_entity.security_answer = value
-        elif key == "status":
-            validate_status(value)
-            user_entity.status = value
-
-    return user_entity
+    return ApiResponse(
+        data={"user_records": user_record_collection}, pagination=pagination
+    ).json()
 
 
-def update_user_preference_data(
-    user_preference_entity: UserPreference, update_data: dict
-) -> UserPreference:
-    """Create user preference update data."""
+def post_user_record_service(request_id: int) -> ApiResponse:
+    """Service for posting a user view record by record id."""
 
-    for key, value in update_data.items():
-        if key == "communities":
-            validate_communities(value)
-            user_preference_entity.communities = value
-        elif key == "interests":
-            validate_interests(value)
-            user_preference_entity.interests = value
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
 
-    return user_preference_entity
+    user_id: str = current_user.id
+
+    # check if user record already exists
+    user_record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_record_entity is not None:
+        return ApiResponse(
+            HttpRequestEnum.BAD_REQUEST.value, message="user record already exists"
+        ).json()
+
+    # add user record
+    user_record_entity = UserRecord(user_id=user_id, request_id=request_id)
+    db.session.add(user_record_entity)
+    db.session.commit()
+    current_app.logger.info(
+        f"User {user_id} added Record for Request {request_id} successfully"
+    )
+
+    return ApiResponse(
+        HttpRequestEnum.CREATED.value, message="add user record success"
+    ).json()
 
 
-def validate_communities(communities: str) -> None:
-    """Update communities."""
+def delete_user_record_service(request_id: int) -> ApiResponse:
+    """Service for deleting a user view record by record id."""
 
-    if not isinstance(communities, str):
-        raise TypeError("[communities] must be a string")
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user record already exists
+    user_record_entity = (
+        db.session.query(UserRecord)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_record_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="user record not found"
+        ).json()
+
+    # delete request record
+    db.session.delete(user_record_entity)
+    db.session.commit()
+
+    current_app.logger.info(
+        f"User {user_id} removed Record for Request {request_id} successfully"
+    )
+
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="delete user record success"
+    ).json()
 
 
-def validate_interests(interests: str) -> None:
-    """Update interests."""
+def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all user likes."""
 
-    if not isinstance(interests, str):
-        raise TypeError("[interests] must be a string")
+    user_id: str = current_user.id
+
+    # basic query
+    query = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id)
+        .order_by(UserLike.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    like_collection = [like.to_dict() for like in pagination.items]
+
+    return ApiResponse(
+        data={"user_likes": like_collection}, pagination=pagination
+    ).json()
+
+
+def post_user_like_service(request_id: int) -> ApiResponse:
+    """Service for liking a request of a reply."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user like already exists
+    user_like_entity = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_like_entity is not None:
+        return ApiResponse(
+            HttpRequestEnum.BAD_REQUEST.value, message="like already exists"
+        ).json()
+
+    # add user like
+    user_like_entity = UserLike(user_id=user_id, request_id=request_id)
+    db.session.add(user_like_entity)
+    db.session.commit()
+    current_app.logger.info(f"User {user_id} liked Request {request_id} successfully")
+
+    return ApiResponse(HttpRequestEnum.CREATED.value, message="like success").json()
+
+
+def delete_user_like_service(request_id: int) -> ApiResponse:
+    """Service for unliking a request of a reply."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user like exists
+    user_like_entity = (
+        db.session.query(UserLike)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_like_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="like not found"
+        ).json()
+
+    # unlike request
+    db.session.delete(user_like_entity)
+    db.session.commit()
+
+    current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
+
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="unlike success"
+    ).json()
+
+
+def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all user saves."""
+
+    user_id: str = current_user.id
+
+    # basic query
+    query = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id)
+        .order_by(UserSave.create_at.desc())
+    )
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    save_collection = [save.to_dict() for save in pagination.items]
+
+    return ApiResponse(
+        HttpRequestEnum.CREATED.value,
+        data={"user_saves": save_collection},
+        pagination=pagination,
+    ).json()
+
+
+def post_user_save_service(request_id: int) -> ApiResponse:
+    """Service for saving a post of a reply."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user save already exists
+    user_save_entity = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_save_entity is not None:
+        return ApiResponse(
+            HttpRequestEnum.BAD_REQUEST.value, message="save already exists"
+        ).json()
+
+    # add user save
+    user_save_entity = UserSave(user_id=user_id, request_id=request_id)
+    db.session.add(user_save_entity)
+    db.session.commit()
+    current_app.logger.info(f"User {user_id} saved Request {request_id} successfully")
+
+    return ApiResponse(HttpRequestEnum.CREATED.value, message="save success").json()
+
+
+def delete_user_save_service(request_id: int) -> ApiResponse:
+    """Service for deleting a user save of a reply."""
+
+    # validate request_id
+    request_entity = db.session.query(Request).get(request_id)
+    if request_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="request not found"
+        ).json()
+
+    user_id: str = current_user.id
+
+    # check if user save exists
+    user_save_entity = (
+        db.session.query(UserSave)
+        .filter_by(user_id=user_id, request_id=request_id)
+        .first()
+    )
+
+    if user_save_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="save not found"
+        ).json()
+
+    # unsave request
+    db.session.delete(user_save_entity)
+    db.session.commit()
+
+    current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
+
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="unsave success"
+    ).json()
+
+
+def users_notices_service(
+    notice_type: str = None,
+    status: str = None,
+    order_by: str = "update_at_desc",
+    page: int = 1,
+    per_page: int = 10,
+) -> ApiResponse:
+    """Service for getting all users notices."""
+
+    user_id: str = current_user.id
+
+    # basic query
+    query = (
+        db.session.query(UserNotice)
+        .filter_by(user_id=user_id)
+        .order_by(UserNotice.id)
+        .order_by(UserNotice.status)
+    )
+
+    # apply filters
+    if notice_type:
+        query = query.filter(UserNotice.module == notice_type)
+    if status:
+        status = 1 if status == "read" else 0
+        query = query.filter(UserNotice.status == status)
+
+    # apply sort
+    if order_by == "update_at":
+        query = query.order_by(UserNotice.update_at)
+    elif order_by == "update_at_desc":
+        query = query.order_by(UserNotice.update_at.desc())
+    elif order_by == "status":
+        query = query.order_by(UserNotice.status)
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    notice_collection = [notice.to_dict() for notice in pagination.items]
+
+    return ApiResponse(
+        data={"user_notices": notice_collection}, pagination=pagination
+    ).json()
+
+
+def get_user_notice_service(notice_id: int) -> ApiResponse:
+    """Service for getting a user notice by notice id."""
+
+    notice_entity = db.session.query(UserNotice).get(notice_id)
+
+    if notice_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="user notice not found"
+        ).json()
+
+    return ApiResponse(data={"user_notice": notice_entity.to_dict()}).json()
+
+
+def put_user_notice_service(notice_id: int) -> ApiResponse:
+    """Service for updating a user notice by notice id."""
+
+    notice_entity = db.session.query(UserNotice).get(notice_id)
+
+    if notice_entity is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="user notice not found"
+        ).json()
+
+    # update notice status
+    notice_entity.status = not notice_entity.status
+    db.session.commit()
+
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value,
+        message="update success",
+    ).json()
 
 
 # Api service for community module.
@@ -149,10 +439,65 @@ def validate_interests(interests: str) -> None:
 # Api service for post module.
 
 
-# Api service for search module.
-
-
 # Api service for notice module.
 
 
 # Api service for others.
+
+
+def categories_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all categories."""
+
+    # query
+    query = db.session.query(Category).order_by(Category.id)
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    category_collection = [category.to_dict() for category in pagination]
+
+    return ApiResponse(
+        data={"categories": category_collection}, pagination=pagination
+    ).json()
+
+
+def category_service(category_id: int) -> ApiResponse:
+    """Service for getting a category."""
+
+    category = Category.query.get(category_id)
+
+    if category is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="category not found"
+        ).json()
+
+    return ApiResponse(data={"category": category.to_dict()}).json()
+
+
+def tags_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all tags."""
+
+    # query
+    query = db.session.query(Tag).order_by(Tag.id)
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    tags_collection = [tag.to_dict() for tag in pagination.items]
+
+    return ApiResponse(data={"tags": tags_collection}, pagination=pagination).json()
+
+
+def tag_service(tag_id: int) -> ApiResponse:
+    """Service for getting a tag."""
+
+    tag = Tag.query.get(tag_id)
+
+    if tag is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="tag not found"
+        ).json()
+
+    return ApiResponse(data={"tag": tag.to_dict()}).json()
