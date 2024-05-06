@@ -65,8 +65,8 @@ class Reply(db.Model):
 
         return {
             "id": self.id,
-            "request_id": self.request_id,
-            "replier_id": self.replier_id,
+            "request": self.request.to_dict() if self.request else None,
+            "replier": self.replier.to_dict() if self.replier else None,
             "reply_id": self.reply_id,
             "content": self.content,
             "source": self.source.value,

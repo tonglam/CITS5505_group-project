@@ -79,7 +79,7 @@ class UserNotice(db.Model):
 
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "user": self.user.to_dict() if self.user else None,
             "subject": self.subject,
             "content": self.content,
             "module": self.module.value,

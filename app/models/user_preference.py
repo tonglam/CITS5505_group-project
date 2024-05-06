@@ -37,7 +37,7 @@ class UserPreference(db.Model):
 
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "user": self.user.to_dict() if self.user else None,
             "communities": self.communities,
             "interests": self.interests,
             "update_at": self.update_at,

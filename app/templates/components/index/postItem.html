@@ -1,15 +1,7 @@
-{% macro render_post_item(items) -%}
-<div class="row text-center d-flex flex-row op-7 mx-0">
-  {% for i in range(2) %} {{ postItem.render_post_Singleitem(items[i]) }} {%
-  endfor %} {% endfor %}
-</div>
-{%- endmacro %}
-
-<!-- Left or Right Item -->
-{% macro render_post_Singleitem(item) -%}
+{% macro render_post_item(item) -%} {% set _id = item.id %}
 <div
   class="card row-hover pos-relative py-3 px-3 mb-3 border-warning border-top-0 border-right-0 border-bottom-0 rounded-0"
-  onclick="window.open('{{ url_for('post.post_detail', post_id=item.id) }}', '_blank')"
+  onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
 >
   <div class="row align-items-center">
     <div class="col-md-8 mb-3 mb-sm-0">
@@ -24,20 +16,16 @@
     <div class="col-md-4 op-7">
       <div class="row text-center op-7">
         <div class="col px-1">
+          <i class="ion-ios-chatboxes-outline icon-1x"></i>
+          <span class="d-block text-sm">{{ item.reply_num }} Replys</span>
+        </div>
+        <div class="col px-1">
           <i class="ion-ios-eye-outline icon-1x"></i>
           <span class="d-block text-sm">{{ item.view_num }} Views</span>
         </div>
         <div class="col px-1">
           <i class="ion-connection-bars icon-1x"></i>
           <span class="d-block text-sm">{{ item.like_num }} Likes</span>
-        </div>
-        <div class="col px-1">
-          <i class="ion-ios-chatboxes-outline icon-1x"></i>
-          <span class="d-block text-sm">{{ item.reply_num }} Replys</span>
-        </div>
-        <div class="col px-1">
-          <i class="ion-connection-bars icon-1x"></i>
-          <span class="d-block text-sm">{{ item.save_num }} Saves</span>
         </div>
       </div>
     </div>

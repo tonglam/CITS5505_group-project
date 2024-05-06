@@ -32,7 +32,7 @@ class UserLike(db.Model):
 
         return {
             "id": self.id,
-            "user_id": self.user_id,
-            "request_id": self.request_id,
+            "user": self.user.to_dict() if self.user else None,
+            "request": self.request.to_dict() if self.request else None,
             "create_at": self.create_at,
         }

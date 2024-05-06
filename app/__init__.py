@@ -20,7 +20,19 @@ from sqlalchemy.exc import (
 )
 from sqlalchemy.sql import text
 
-from app.constants import G_NOTICE_NUM, G_USER, EnvironmentEnum, HttpRequestEnum
+from app.api.service import (
+    communities_service,
+    populars_service,
+    posts_service,
+    stats_service,
+)
+from app.constants import (
+    G_NOTICE_NUM,
+    G_USER,
+    POPULAR_POST_NUM,
+    EnvironmentEnum,
+    HttpRequestEnum,
+)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
@@ -33,7 +45,7 @@ from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
 from .user import user_bp
-from .utils import get_config, get_env
+from .utils import get_config, get_env, get_pagination_details
 
 
 def create_app() -> Flask:
@@ -72,18 +84,67 @@ def create_app() -> Flask:
     @app.route("/")
     @login_required
     def index():
+        # community
+        communities = get_home_communities()
 
         # post
-        posts = get_home_posts()
+        post_result = get_home_posts()
+        posts = post_result["posts"]
 
-        # trending
-        trendings = get_home_trendings()
+        # pagination
+        post_pagination = post_result["pagination"]
+        pagination = get_pagination_details(
+            current_page=post_pagination["page"],
+            total_pages=post_pagination["total_pages"],
+        )
+
+        # popular
+        populars = get_home_populars()
 
         # stat
         stats = get_home_stats()
 
         return render_template(
-            "index.html", posts=posts, trendings=trendings, stats=stats
+            "index.html",
+            render_id="index-posts",
+            render_url="/index_posts",
+            communities=communities,
+            posts=posts,
+            pagination=pagination,
+            populars=populars,
+            stats=stats,
+        )
+
+    @app.route("/index_posts")
+    @login_required
+    def index_posts():
+
+        # post
+        community_id = request.args.get("community_id")
+        order_by = request.args.get("order_by")
+        page = request.args.get("page", default=1, type=int)
+        per_page = request.args.get("per_page", default=10, type=int)
+
+        print("community_id: ", community_id)
+        print("order_by: ", order_by)
+        print("page: ", page)
+        print("per_page: ", per_page)
+
+        post_result = get_home_posts(community_id, order_by, page, per_page)
+        posts = post_result["posts"]
+
+        # pagination
+        post_pagination = post_result["pagination"]
+        pagination = get_pagination_details(
+            current_page=post_pagination["page"],
+            total_pages=post_pagination["total_pages"],
+        )
+        print("pagination: ", pagination)
+
+        return render_template(
+            "indexPost.html",
+            posts=posts,
+            pagination=pagination,
         )
 
     return app
@@ -443,43 +504,86 @@ def get_oauth2_config() -> dict:
     }
 
 
-def get_home_posts() -> list:
+def get_home_posts(
+    community_id: int = None,
+    order_by: str = "create_at_desc",
+    page: int = 1,
+    per_page: int = 10,
+) -> list:
     """Get index post data."""
 
-    posts = db.session.query(Trending).order_by(Trending.view_num.desc()).limit(5)
+    posts_response = posts_service(community_id, order_by, page, per_page).json
+    posts = posts_response.get("data").get("posts")
+    pagination = posts_response.get("pagination")
+
     post_items = [
         {
-            "id": post.request_id,
-            "title": post.request.title,
-            "author": post.author.username,
-            "view_num": post.view_num,
-            "reply_num": post.reply_num,
+            "id": post["id"],
+            "title": post["title"],
+            "author": post["author"]["username"],
+            "reply_num": post["reply_num"],
+            "view_num": post["view_num"],
+            "like_num": post["like_num"],
+            "save_num": post["save_num"],
         }
         for post in posts
     ]
 
-    return post_items
+    return {"posts": post_items, "pagination": pagination}
 
 
-def get_home_trendings() -> list:
-    """Get index trending data."""
+def get_home_populars() -> list:
+    """Get index popular data."""
 
-    trendings = db.session.query(Trending).order_by(Trending.view_num.desc()).limit(5)
-    trending_items = [
+    populars_response = populars_service(POPULAR_POST_NUM).json
+    populars = populars_response.get("data").get("populars")
+
+    return [
         {
-            "id": trending.request_id,
-            "title": trending.request.title,
-            "author": trending.author.username,
-            "view_num": trending.view_num,
-            "reply_num": trending.reply_num,
+            "id": popular["request"]["id"],
+            "title": popular["request"]["title"],
+            "author": popular["author"]["username"],
+            "view_num": popular["view_num"],
+            "reply_num": popular["reply_num"],
         }
-        for trending in trendings
+        for popular in populars
     ]
-
-    return trending_items
 
 
 def get_home_stats() -> list:
     """Get index stats data."""
 
-    return []
+    stats_response = stats_service().json
+    stats = stats_response.get("data").get("stats")
+
+    return [
+        [
+            create_stat_label("Community", stats["community_num"]),
+            create_stat_label("Request", stats["request_num"]),
+        ],
+        [
+            create_stat_label("Reply", stats["reply_num"]),
+            create_stat_label("View", stats["view_num"]),
+        ],
+        [
+            create_stat_label("Like", stats["like_num"]),
+            create_stat_label("Save", stats["save_num"]),
+        ],
+    ]
+
+
+def create_stat_label(name: str, value: int) -> list:
+    """Create stat labels."""
+
+    return {"label": name, "value": value}
+
+
+def get_home_communities() -> list:
+    """Get index communities data."""
+
+    communities_response = communities_service().json
+    communities = communities_response.get("data").get("communities")
+
+    return [
+        {"id": community["id"], "name": community["name"]} for community in communities
+    ]

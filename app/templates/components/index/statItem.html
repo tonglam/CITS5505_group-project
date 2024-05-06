@@ -1,6 +1,24 @@
-{% macro render_stat_item(item) -%}
+{% macro render_stat_item(itemPairs) -%}
+<div class="row text-center d-flex flex-row op-7 mx-0">
+  <!-- Left Item -->
+  {{ render_stat_left_item(itemPairs[0]) }}
+  <!-- Right Item -->
+  {{ render_stat_right_item(itemPairs[1]) }}
+</div>
+{%- endmacro %}
+
+<!-- Left Item -->
+{% macro render_stat_left_item(item) -%}
 <div class="col-sm-6 flex-ew text-center py-3 border-bottom border-right">
-  <div class="d-block lead font-weight-bold">{{ item.value }}</div>
+  <span class="d-block lead font-weight-bold">{{ item.value }}</span>
+  {{ item.label}}
+</div>
+{%- endmacro %}
+
+<!-- Right Item -->
+{% macro render_stat_right_item(item) -%}
+<div class="col-sm-6 col flex-ew text-center py-3 border-bottom mx-0">
+  <span class="d-block lead font-weight-bold">{{ item.value }}</span>
   {{ item.label}}
 </div>
 {%- endmacro %}
