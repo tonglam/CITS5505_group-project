@@ -171,40 +171,22 @@ False, badgeNum = 0) -%}
 </li>
 {%- endmacro %}
 
-<!-- user dropdown -->
+<!-- user profile -->
 {% macro user_dropdown(user) -%}
 <div id="navUserProfile">
-  <li class="nav-item">
-    <button
-      class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
-      id="useDropdown"
-      type="button"
-      aria-expanded="false"
-      data-bs-toggle="dropdown"
-      style="margin-top: -5px"
-      title="Hello, {{ user.username }}"
-    >
-      <img
-        src="{{ user.avatar_url }}"
-        class="rounded-circle"
-        style="height: 30px; border: none; box-shadow: none"
-        alt="User Avatar"
-      />
-    </button>
-  </li>
-</div>
-{%- endmacro %}
-
-<!-- user dropdown item -->
-{% macro user_dropdown_item(title, url, icon_class) -%}
-<li>
-  <a
-    class="btn btn-lg btn-outline-dark border-0 w-100"
-    href="{{ url }}"
-    role="button"
+  <button
+    class="btn btn-link nav-link py-2 px-0 px-lg-2 d-flex align-items-center"
+    id="useDropdown"
+    type="button"
+    style="margin-top: -5px"
+    title="Hello, {{ user.username }}"
   >
-    <i class="{{ icon_class }}"></i>
-    {{ title }}
-  </a>
-</li>
+    <img
+      src="{{ user.avatar_url }}"
+      class="rounded-circle"
+      style="height: 30px; border: none; box-shadow: none"
+      alt="User Avatar"
+    />
+  </button>
+</div>
 {%- endmacro %}

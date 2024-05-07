@@ -109,8 +109,12 @@ const create_remove_param_render_url = (render_url, keyArray) => {
 const init_ueser_profile = () => {
   const user_profile = document.getElementById("navUserProfile");
   user_profile.addEventListener("click", function () {
-    // prevent default
-    event.preventDefault();
-    console.log("user profile clicked");
+    const user_profile_card = document.getElementById("userProfileCard");
+    // display user profile card
+    if (user_profile_card.classList.contains("d-none")) {
+      user_profile_card.classList.remove("d-none");
+    } else {
+      user_profile_card.classList.add("d-none");
+    }
   });
 };
