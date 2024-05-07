@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required
 
 from app.community import community_bp, forms
@@ -14,7 +14,6 @@ from app.models.community import Community
 logging.basicConfig(level=logging.DEBUG)
 # 创建日志处理程序，输出到标准输出流
 handler = logging.StreamHandler(sys.stdout)
-
 
 
 @community_bp.route("/")
@@ -47,6 +46,7 @@ def add_community():
             name=form.name.data,
             description=form.description.data,
             category_id=form.category_id.data,
+            creator_id=current_user.id,
         )
         db.session.add(community)
         db.session.commit()
@@ -57,22 +57,4 @@ def add_community():
         print("error------------------------------error")
         print("Form validation failed:", form.errors)
         return render_template("createCommunity.html", optionList=optionList, form=form)
-        # return redirect(url_for('community.create',form=form))
-
-
-@community_bp.route("/delete_community/<int:record_id>", methods=["GET", "DELETE"])
-def delete_community(record_id: int):
-    record_entity = (
-        db.session.query(Community)
-        .filter_by(id=record_id, user_id=current_user.id)
-        .first()
-    )
-    if record_entity is None:
-        return ""
-
-    # if request.method == "GET":
-    #     return ApiResponse(data={"record": record_entity.to_dict()}).json()
-
-    if request.method == "DELETE":
-        db.session.delete(record_entity)
-        db.session.commit()
+        # retur
