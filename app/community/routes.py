@@ -57,4 +57,26 @@ def add_community():
         print("error------------------------------error")
         print("Form validation failed:", form.errors)
         return render_template("createCommunity.html", optionList=optionList, form=form)
-        # retur
+        # return redirect(url_for('community.create',form=form))
+
+
+@community_bp.route("/delete_community/<int:record_id>", methods=["GET", "DELETE"])
+def delete_community(record_id: int):
+    print(current_user.id)
+    print("||")
+    print(record_id)
+    record_entity = (
+        db.session.query(Community)
+        .filter_by(id=record_id, creator_id=current_user.id)
+        .first()
+    )
+    if record_entity is None:
+        return jsonify({"error": "Record not found"}), 404
+
+    # if request.method == "GET":
+    #     return ApiResponse(data={"record": record_entity.to_dict()}).json()
+
+    if request.method == "DELETE":
+        db.session.delete(record_entity)
+        db.session.commit()
+    return jsonify({"message": "Community deleted successfully"}), 200

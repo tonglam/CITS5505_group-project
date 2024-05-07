@@ -9,7 +9,7 @@ function handDeleteCardClick(element) {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            // 如果后端接口需要身份验证或其他头部信息，这里添加
+            // 如果后端接口需要身份验证或其他头部信息，请在这里添
             // 'Authorization': 'Bearer ' + yourTokenVariable
         }
     })
@@ -24,6 +24,6 @@ function handDeleteCardClick(element) {
         })
         .catch(error => {
             console.error('删除社区时发生错误:', error);
-                        // 这里处理错误情况
+            // 这里处理错误情况
         });
 }
