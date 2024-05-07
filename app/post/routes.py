@@ -8,11 +8,17 @@ from app.models.request import Request
 from app.post import post_bp
 
 
-@post_bp.route("/create")
-@login_required
-def create():
-    """Render the create page."""
-    return render_template("create.html")
+@post_bp.route('/create_post')
+def create_post():
+    """create post"""
+
+    return render_template('create.html', mode='post')
+
+@post_bp.route('/create_comment')
+def create_comment():
+    """create comment"""
+
+    return render_template('create.html', mode='comment')
 
 @post_bp.route("/<int:post_id>")
 def post_detail(post_id):
