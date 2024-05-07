@@ -1,6 +1,4 @@
-{% macro render_user_post_list(items) -%}
-<section id="posts" class="tab-panel">
+<div id="users-posts">
   {% import 'context-display.html' as contextTemplate %} {{
-  contextTemplate.render_contextTemplate(items) }}
-</section>
-{%- endmacro %}
+  contextTemplate.render_contextTemplate(post) }}
+</div>

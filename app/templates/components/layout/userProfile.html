@@ -1,39 +1,44 @@
-{% macro render_user_userProfile(user) -%}
+{% macro render_user_userProfile(user, post_stat) -%}
 <div class="userProfile_card d-none" id="userProfileCard">
-  <div class="card text-center mt-2 pr-2">
-    <div class="mt-3 pt-1">
+  <div class="card text-center pr-2">
+    <div class="d-flex justify-content-end mt-3 mx-2" id="closeUserProfile">
+      <i class="fa-regular fa-circle-xmark fa-lg" style="cursor: pointer"></i>
+    </div>
+    <div class="mt-2">
       {% if user.email %}
       <p class="text-muted mb-0 mt-2">
         <i class="fa-solid fa-envelope pe-2" style="color: #47a7f0"></i>
-        {{user.email}}
+        {{ user.email }}
       </p>
       {% endif %}
     </div>
+
     <div class="card-body">
       <div>
         <img
           src="{{ user.avatar_url }}"
-          alt=""
+          alt="avatar"
           class="avatar-md rounded-circle img-thumbnail"
+          onclick="location.href='{{ url_for('user.user') }}'"
         />
       </div>
     </div>
     <div class="flex-1">
       <h5 class="font-size-16 mb-1 pt-1">
-        <a href="#" class="text-dark">{{user.username}}</a>
+        <a href="#" class="text-dark">{{ user.username }}</a>
       </h5>
-      <span class="badge badge-soft-danger mb-0">Posts:20 </span>
+      <span class="badge badge-soft-danger mb-0">Posts:{{ post_stat }} </span>
       <div class="pt-3">
         <button class="button_style">Manage your account</button>
       </div>
     </div>
 
-    <div
-      class="btn-group mt-3"
-      role="group"
-      aria-label="Basic outlined example"
-    >
-      <button type="button" class="btn btn-outline-secondary">
+    <div class="btn-group mt-3" role="group">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        onclick="location.href='{{ url_for('user.user') }}'"
+      >
         <i class="fa-regular fa-user pe-3" style="color: #74c0fc"></i>
         Profile
       </button>

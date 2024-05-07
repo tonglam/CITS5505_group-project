@@ -51,8 +51,8 @@
       <!-- authenticated -->
       {% else %}
 
-      <!-- user dropdown -->
-      {{ user_dropdown(current_user) }}
+      <!-- user profile -->
+      {{ user_profile(current_user) }}
 
       <!-- end login bar -->
       {% endif %}
@@ -172,7 +172,7 @@ False, badgeNum = 0) -%}
 {%- endmacro %}
 
 <!-- user profile -->
-{% macro user_dropdown(user) -%}
+{% macro user_profile(user) -%}
 <div id="navUserProfile">
   <button
     class="btn btn-link nav-link py-2 px-0 px-lg-2 d-flex align-items-center"

@@ -81,6 +81,7 @@ GRAVATAR_URL = "https://www.gravatar.com/avatar/"
 
 # Flask Global Variable
 G_USER = "user"
+G_POST_STAT = "post_stat"
 G_NOTICE_NUM = "notice_num"
 
 # Max notice number

@@ -28,6 +28,7 @@ from app.api.service import (
 )
 from app.constants import (
     G_NOTICE_NUM,
+    G_POST_STAT,
     G_USER,
     POPULAR_POST_NUM,
     EnvironmentEnum,
@@ -455,6 +456,13 @@ def register_context_processors(app: Flask) -> None:
     @app.context_processor
     def inject_user():
         return {G_USER: current_user}
+
+    @app.context_processor
+    def inject_post_stat():
+        stats_data = stats_service().json
+        post_num = stats_data["data"]["stats"]["request_num"]
+
+        return {G_POST_STAT: post_num}
 
     @app.context_processor
     def inject_notice_num():

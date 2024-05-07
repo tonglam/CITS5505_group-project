@@ -5,6 +5,10 @@
 />
 {% endblock %} {% block content %}
 <div class="container">
+  <!--  Re-Render -->
+  <p class="d-none" id="render-id">{{ render_id }}</p>
+  <p class="d-none" id="render-url">{{ render_url }}</p>
+
   <div id="userHeader">
     <div class="row">
       <div class="col-4 text-center">
@@ -42,39 +46,52 @@
       <input
         type="radio"
         name="tabset"
-        id="tab1"
+        id="tab-posts"
         aria-controls="posts"
         checked
       />
-      <label for="tab1">Posts</label>
+      <label for="tab-posts" id="tab-label-posts">Posts</label>
+
       <!-- Tab 2 -->
-      <input type="radio" name="tabset" id="tab2" aria-controls="likes" />
-      <label for="tab2">Likes</label>
+      <input type="radio" name="tabset" id="tab-likes" aria-controls="likes" />
+      <label for="tab-likes" id="tab-label-likes">Likes</label>
+
       <!-- Tab 3 -->
-      <input type="radio" name="tabset" id="tab3" aria-controls="history" />
-      <label for="tab3">History</label>
+      <input
+        type="radio"
+        name="tabset"
+        id="tab-histories"
+        aria-controls="history"
+      />
+      <label for="tab-histories" id="tab-label-histories">History</label>
+
       <!-- Tab 4 -->
-      <input type="radio" name="tabset" id="tab4" aria-controls="WishList" />
-      <label for="tab4">Wish List</label>
+      <input
+        type="radio"
+        name="tabset"
+        id="tab-wishes"
+        aria-controls="WishList"
+      />
+      <label for="tab-wishes" id="tab-label-wishes">Wish List</label>
 
       <div class="tab-panels">
-        {% import 'userPostList.html' as postList %} {{
-        postList.render_user_post_list(posts) }}
-        <section id="likes" class="tab-panel">
-          {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(likes) }}
+        <!-- Post List -->
+        <section class="tab-panel">{% include 'userPostList.html' %}</section>
+
+        <!-- Like List -->
+        <section class="tab-panel">{% include 'userLikeList.html' %}</section>
+
+        <!-- History List -->
+        <section class="tab-panel">
+          {% include 'userHistoryList.html' %}
         </section>
-        <section id="history" class="tab-panel">
-          {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(history) }}
-        </section>
-        <section id="WishList" class="tab-panel">
-          {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(WishList) }}
-        </section>
+
+        <!-- Wish List -->
+        <section class="tab-panel">{% include 'userWishList.html' %}</section>
       </div>
     </div>
   </div>
+
   <!-- community card -->
   <div class="col-4 card_shadow_style">
     <div class="card basic_style">

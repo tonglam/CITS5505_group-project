@@ -23,36 +23,39 @@
   box-shadow: none;
 }
 
-/*===== userProfile html card settings =====*/
-
+/*===== userProfile card settings =====*/
 .userProfile_card {
+  width: 300px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #eff0f2;
+  border-radius: 1rem;
   margin-bottom: 24px;
   box-shadow: 0 2px 3px #e4e8f0;
 }
-.userProfile_card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #fff;
-  background-clip: border-box;
-  border: 1px solid #eff0f2;
-  border-radius: 1rem;
-}
+
 .avatar-md {
   height: 150px;
   width: 150px;
 }
+
 .rounded-circle {
   border-radius: 50% !important;
 }
+
 .img-thumbnail {
   padding: 0.25rem;
   background-color: #f1f3f7;
   border: 1px solid #eff0f2;
   border-radius: 0.75rem;
+  cursor: pointer;
 }
+
 .avatar-title {
   align-items: center;
   background-color: #3b76e1;
@@ -63,23 +66,29 @@
   justify-content: center;
   width: 100%;
 }
+
 .bg-soft-primary {
   background-color: rgba(59, 118, 225, 0.25) !important;
 }
+
 a {
   text-decoration: none !important;
 }
+
 .badge-soft-danger {
   color: #479fd1 !important;
   background-color: rgba(245, 110, 110, 0.1);
 }
+
 .badge-soft-success {
   color: #63ad6f !important;
   background-color: rgba(99, 173, 111, 0.1);
 }
+
 .mb-0 {
   margin-bottom: 0 !important;
 }
+
 .badge {
   display: inline-block;
   padding: 0.25em 0.6em;
@@ -93,11 +102,16 @@ a {
   border-radius: 0.75rem;
 }
 
-/*===== userProfile html card settings =====*/
-.userProfile_card {
-  width: 300px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1000;
+.button_style {
+  background-color: #03bfcb;
+  border: 1px solid #03bfcb;
+  border-radius: 3px;
+  color: #231e39;
+  font-family: Montserrat, sans-serif;
+  font-weight: 500;
+  padding: 10px 25px;
+  background-color: transparent;
+  color: #02899c;
 }
+
+/*===== userProfile html card settings =====*/
