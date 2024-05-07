@@ -1,7 +1,6 @@
 """Routes for post blueprint."""
 
 from flask import render_template
-from flask_login import login_required
 
 from app.models.reply import Reply
 from app.models.request import Request
