@@ -2,8 +2,15 @@
 
 from email_validator import EmailNotValidError, validate_email
 
+from app.api.service import (
+    user_likes_service,
+    user_posts_service,
+    user_saves_service,
+    users_records_service,
+)
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
+from app.utils import get_pagination_details
 
 
 def validate_username(username: str) -> None:
@@ -133,3 +140,63 @@ def validate_interests(interests: str) -> None:
 
     if not isinstance(interests, str):
         raise TypeError("[interests] must be a string")
+
+
+def post_data():
+    """Get the user's posts."""
+
+    posts = user_posts_service()
+    posts_data = posts.get_json()
+    user_post_data = posts_data["data"]["user_posts"]
+    posts_item_data = [
+        {"id": post["id"], "title": post["title"]} for post in user_post_data
+    ]
+    print("posts_item_data:", posts_item_data)
+    post_page = get_pagination_details(
+        posts_data["pagination"]["page"], posts_data["pagination"]["total_pages"]
+    )
+    print("post_page:", post_page)
+    post_result = {"data": posts_item_data, "page": post_page}
+
+    # Get the user's likes
+    return post_result
+
+
+def like_data():
+    """Get the user's likes."""
+    likes = user_likes_service()
+    likes_data = likes.get_json()
+    user_likes_data = likes_data["data"]["user_likes"]
+    likes_title = [{"title": like["request"]["title"]} for like in user_likes_data]
+    like_page = likes_data["pagination"]
+    like_result = {"data": likes_title, "page": like_page}
+
+    # Get the user's history
+    return like_result
+
+
+def history_data():
+    """Get the user's history."""
+    histories = users_records_service()
+    histories_data = histories.get_json()
+    user_histories_data = histories_data["data"]["user_records"]
+    histories_title = [
+        {"title": save["request"]["title"]} for save in user_histories_data
+    ]
+    history_page = histories_data["pagination"]
+    history_result = {"data": histories_title, "page": history_page}
+
+    # Get the user's wishlist
+    return history_result
+
+
+def save_data():
+    """Get the user's wishlist."""
+    saves = user_saves_service()
+    saves_data = saves.get_json()
+    user_saves_data = saves_data["data"]["user_saves"]
+    saves_title = [{"title": save["request"]["title"]} for save in user_saves_data]
+    save_page = saves_data["pagination"]
+    save_result = {"data": saves_title, "page": save_page}
+
+    return save_result

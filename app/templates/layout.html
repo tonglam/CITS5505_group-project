@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -23,6 +23,12 @@
       {% import './components/layout/navBar.html' as navBar %} {{
       navBar.render_navBar(user, current_user, notice_num) }}
     </header>
+
+    <div style="position: relative; z-index: 999">
+      <!-- profile -->
+      {% import './components/layout/userProfile.html' as userProfile %} {{
+      userProfile.render_user_userProfile(user) }}
+    </div>
 
     <main class="container-fluid vw-50 p-4" id="main">
       <!-- alert message -->

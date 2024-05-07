@@ -42,9 +42,6 @@
   display: block;
 }
 
-/*
- Styling
-*/
 .global_card_style {
   font: 16px/1.5em "Overpass", "Open Sans", Helvetica, sans-serif;
   color: #333;
@@ -100,9 +97,6 @@ input:focus-visible + label {
   border-top: 1px solid #ccc;
 }
 
-/*
- Demo purposes only
-*/
 *,
 *:before,
 *:after {

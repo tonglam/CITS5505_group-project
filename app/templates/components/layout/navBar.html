@@ -173,40 +173,33 @@ False, badgeNum = 0) -%}
 
 <!-- user dropdown -->
 {% macro user_dropdown(user) -%}
-<li class="nav-item dropdown">
-  <button
-    class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
-    id="useDropdown"
-    type="button"
-    aria-expanded="false"
-    data-bs-toggle="dropdown"
-    style="margin-top: -5px"
-    title="Hello, {{ user.username }}"
-  >
-    <img
-      src="{{ user.avatar_url }}"
-      class="rounded-circle"
-      style="height: 30px; border: none; box-shadow: none"
-      alt="User Avatar"
-    />
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end useDropdown">
-    <!-- user -->
-    {{ user_dropdown_item("User", url_for('user.user'), "fa-solid fa-user
-    fa-lg") }}
-
-    <!-- logout -->
-    {{ user_dropdown_item("Logout", url_for('auth.logout'), "fa-solid
-    fa-right-to-bracket fa-lg") }}
-  </ul>
-</li>
+<div id="navUserProfile">
+  <li class="nav-item">
+    <button
+      class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
+      id="useDropdown"
+      type="button"
+      aria-expanded="false"
+      data-bs-toggle="dropdown"
+      style="margin-top: -5px"
+      title="Hello, {{ user.username }}"
+    >
+      <img
+        src="{{ user.avatar_url }}"
+        class="rounded-circle"
+        style="height: 30px; border: none; box-shadow: none"
+        alt="User Avatar"
+      />
+    </button>
+  </li>
+</div>
 {%- endmacro %}
 
 <!-- user dropdown item -->
 {% macro user_dropdown_item(title, url, icon_class) -%}
 <li>
   <a
-    class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
+    class="btn btn-lg btn-outline-dark border-0 w-100"
     href="{{ url }}"
     role="button"
   >

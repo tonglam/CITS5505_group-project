@@ -3,7 +3,9 @@
 from flask import current_app, render_template, request
 from flask_login import login_required
 
+from app.api.service import stats_service
 from app.user import forms, user_bp
+from app.user.service import history_data, like_data, post_data, save_data
 
 
 @user_bp.route("/")
@@ -11,7 +13,18 @@ from app.user import forms, user_bp
 def user():
     """Render the user page."""
 
-    return render_template("user.html")
+    post_result = post_data()
+    like_result = like_data()
+    history_result = history_data()
+    save_result = save_data()
+
+    return render_template(
+        "user.html",
+        posts=post_result,
+        likes=like_result,
+        history=history_result,
+        WishList=save_result,
+    )
 
 
 @user_bp.route("/profile", methods=["GET", "PUT"])
@@ -36,3 +49,13 @@ def profile():
         return render_template("userProfile.html", form=form)
 
     return render_template("userProfile.html", form=form)
+
+
+@user_bp.route("/card")
+def user_card():
+    """Render the user card page."""
+
+    stats_data = stats_service().json
+    post_num = stats_data["data"]["stats"]["request_num"]
+
+    return render_template("userProfile.html", post_num=post_num)

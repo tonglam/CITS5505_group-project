@@ -4,6 +4,7 @@
   posts %} {{postItem.render_post_item(post) }} {% endfor %}
 
   <!-- Posts Pagination -->
-  {% import './components/index/pagination.html' as pageItem %} {{
+  <div>{{pagination}}</div>
+  {% import './components/pagination.html' as pageItem %} {{
   pageItem.render_pagination(pagination) }}
 </div>

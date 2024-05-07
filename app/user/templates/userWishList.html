@@ -1,0 +1,6 @@
+{% macro render_user_wish_list(items) -%}
+<section id="WishList" class="tab-panel">
+  {% import 'context-display.html' as contextTemplate %} {{
+  contextTemplate.render_contextTemplate(items) }}
+</section>
+{%- endmacro %}

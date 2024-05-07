@@ -2,14 +2,14 @@
 <div class="container custom-colors">
   <div class="gap_items">
     <div class="items-body">
-      {% for item in items.data %}
+      {% for data in items.data %}
 
       <div class="items-body-content">
         <span
           ><a
-            href="{{url_for('auth.forgot_password')}}"
+            href="{{url_for('post.post_detail', post_id=1)}}"
             class="text-reset text-decoration-none"
-            >{{item.title}}</a
+            >{{data.title}}</a
           ></span
         >
         <i class="fa fa-angle-right"></i>
@@ -18,24 +18,6 @@
       {% endfor %}
     </div>
   </div>
-  <nav aria-label="Page navigation ">
-    <ul class="pagination d-flex justify-content-center pt-3">
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
-
-      {% for item in range(items.page.total_pages) %}
-      <li class="page-item"><a class="page-link" href="#">{{item+1}}</a></li>
-      {% endfor %}
-
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
+  <div>{{items.page}}</div>
 </div>
 {%- endmacro %}

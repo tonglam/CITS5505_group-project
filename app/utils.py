@@ -75,7 +75,7 @@ def get_pagination_details(current_page: int, total_pages: int) -> dict:
         "first_page": first_page,
         "last_page": last_page,
         "current_page": current_page,
-        "previous_page": current_page - 1 if current_page > 1 else None,
-        "next_page": current_page + 1 if current_page < total_pages else None,
+        "previous_page": current_page - 1 if current_page > 1 else 1,
+        "next_page": current_page + 1 if current_page < total_pages else total_pages,
         "total_pages": total_pages,
     }

@@ -58,10 +58,8 @@
       <label for="tab4">Wish List</label>
 
       <div class="tab-panels">
-        <section id="posts" class="tab-panel">
-          {% import 'context-display.html' as contextTemplate %} {{
-          contextTemplate.render_contextTemplate(posts) }}
-        </section>
+        {% import 'userPostList.html' as postList %} {{
+        postList.render_user_post_list(posts) }}
         <section id="likes" class="tab-panel">
           {% import 'context-display.html' as contextTemplate %} {{
           contextTemplate.render_contextTemplate(likes) }}

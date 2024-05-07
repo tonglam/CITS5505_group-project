@@ -1,0 +1,6 @@
+{% macro render_user_like_list(items) -%}
+<section id="likes" class="tab-panel">
+  {% import 'context-display.html' as contextTemplate %} {{
+  contextTemplate.render_contextTemplate(items) }}
+</section>
+{%- endmacro %}

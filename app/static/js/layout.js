@@ -3,6 +3,8 @@ $(document).ready(function () {
   init_alert();
   // search
   init_search();
+  // user
+  init_ueser_profile();
 });
 
 const init_alert = () => {
@@ -102,4 +104,13 @@ const create_remove_param_render_url = (render_url, keyArray) => {
   url.search = params.toString();
 
   return `${url.pathname}${url.search}${url.hash}`;
+};
+
+const init_ueser_profile = () => {
+  const user_profile = document.getElementById("navUserProfile");
+  user_profile.addEventListener("click", function () {
+    // prevent default
+    event.preventDefault();
+    console.log("user profile clicked");
+  });
 };

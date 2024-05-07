@@ -1,0 +1,6 @@
+{% macro render_user_history_list(items) -%}
+<section id="history" class="tab-panel">
+  {% import 'context-display.html' as contextTemplate %} {{
+  contextTemplate.render_contextTemplate(items) }}
+</section>
+{%- endmacro %}
