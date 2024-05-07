@@ -41,7 +41,7 @@ class Community(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "category_id": self.category_id,
+            "category": self.category.to_dict() if self.category else None,
             "description": self.description,
             "avatar_url": self.avatar_url,
             "create_at": self.create_at,

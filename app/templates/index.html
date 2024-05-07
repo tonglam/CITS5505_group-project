@@ -1,8 +1,98 @@
 {% extends "layout.html" %} {% block title %}Home{% endblock %} {% block head %}
-{{ super() }} <link rel="stylesheet" href="/static/style/home.css" />
-{% endblock %} {% block content %}
-<div class="d-flex flex-column text-center">
-  <h1>Home</h1>
-  <p class="important">Welcome to my awesome homepage. {{ user.username }}</p>
+{{ super() }} {% block css %}
+<link rel="stylesheet" href="/static/style/home.css" />
+{% endblock %} {% endblock %} {% block content %}
+<div class="container pt-2 pt-md-5">
+  <!--  Re-Render -->
+  <p class="d-none" id="render-id">{{ render_id }}</p>
+  <p class="d-none" id="render-url">{{ render_url }}</p>
+
+  <div class="row">
+    <!-- Main content -->
+    <div class="col-lg-9 mb-3">
+      <div class="row text-left mb-5">
+        <div class="col-lg-6 mb-3 mb-sm-0">
+          <div
+            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50"
+            style="width: 100%"
+          >
+            <select
+              id="community-select"
+              class="form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50"
+              data-toggle="select"
+              tabindex="-98"
+            >
+              <option id="all">Community</option>
+              {% for community in communities %}
+              <option id="{{ community.id }}">{{ community.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-6 text-lg-right">
+          <div
+            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50"
+            style="width: 100%"
+          >
+            <select
+              id="sort-select"
+              class="form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50"
+              data-toggle="select"
+              tabindex="-98"
+            >
+              <option id="all">Sort by</option>
+              <option id="create_at_desc">Create Time</option>
+              <option id="reply_num_desc">Replies</option>
+              <option id="view_num_desc">Views</option>
+              <option id="like_num_desc">Likes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {% include './indexPost.html' %}
+    </div>
+
+    <!-- Sidebar content -->
+    <div class="col-lg-3 mb-4 mb-lg-0 px-lg-0 mt-lg-0">
+      <div
+        style="
+          visibility: hidden;
+          display: none;
+          width: 285px;
+          height: 801px;
+          margin: 0px;
+          float: none;
+          position: static;
+          inset: 85px auto auto;
+        "
+      ></div>
+      <div
+        data-settings='{"parent":"#content","mind":"#header","top":10,"breakpoint":992}'
+        data-toggle="sticky"
+        class="sticky"
+        style="top: 85px"
+      >
+        <div class="sticky-inner">
+          <div class="bg-white mb-3">
+            <h4 class="px-3 py-4 op-5 m-0">Popular</h4>
+            <hr class="m-0" />
+            {% import './components/index/popularItem.html' as popularItem %} {%
+            for popular in populars %}
+            {{popularItem.render_popular_item(popular) }} {% endfor %}
+          </div>
+          <div class="bg-white text-sm">
+            <h4 class="px-3 py-4 op-5 m-0 roboto-bold">Stats</h4>
+            <hr class="my-0" />
+            {% import './components/index/statItem.html' as statItem %} {% for
+            stat in stats %} {{statItem.render_stat_item(stat) }} {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-{% endblock %}
+
+{% block javascript %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %} {% endblock %}

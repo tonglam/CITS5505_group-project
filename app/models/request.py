@@ -63,11 +63,11 @@ class Request(db.Model):
 
         return {
             "id": self.id,
-            "author_id": self.author_id,
+            "author": self.author.to_dict(),
             "title": self.title,
             "content": self.content,
-            "community_id": self.community_id,
-            "category_id": self.category_id,
+            "community": self.community.to_dict() if self.community else None,
+            "category": self.category.to_dict() if self.category else None,
             "view_num": self.view_num,
             "like_num": self.like_num,
             "reply_num": self.reply_num,

@@ -1,0 +1,9 @@
+<div id="index-posts">
+  <!-- Posts -->
+  {% import './components/index/postItem.html' as postItem %} {% for post in
+  posts %} {{postItem.render_post_item(post) }} {% endfor %}
+
+  <!-- Posts Pagination -->
+  {% import './components/index/pagination.html' as pageItem %} {{
+  pageItem.render_pagination(pagination) }}
+</div>

@@ -83,8 +83,15 @@ const getFetch =
   (url) =>
   (data = {}) =>
   async (headers = {}) => {
-    const queryParams = new URLSearchParams(data).toString();
-    const getUrl = queryParams ? `${url}?${queryParams}` : url;
+    const urlObject = new URL(url, window.location.origin);
+
+    const params = urlObject.searchParams;
+    Object.entries(data).forEach(([key, value]) => {
+      params.set(key, value);
+    });
+
+    const getUrl = `${urlObject.pathname}${urlObject.search}`;
+
     const access_token = getJwtToken();
     const getHeaders = { ...jwtHeader(access_token), ...headers };
     return await fetchData(getUrl, { getHeaders });
@@ -155,5 +162,3 @@ const deleteFetch =
 
     return await fetchData(url, options);
   };
-
-export { deleteFetch, getFetch, postFetch, putFetch };

@@ -14,6 +14,7 @@ class Trending(db.Model):
         db.Integer, db.ForeignKey("request.id"), unique=True, nullable=False
     )
     author_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    view_num: int = db.Column(db.Integer, default=0)
     reply_num: int = db.Column(db.Integer, default=0)
     date: str = db.Column(db.String(10), default=generate_date())
     update_at: datetime = db.Column(
@@ -23,9 +24,12 @@ class Trending(db.Model):
     request = db.relationship("Request", backref=db.backref("trendings", lazy=True))
     author = db.relationship("User", backref=db.backref("trendings", lazy=True))
 
-    def __init__(self, request_id: int, author_id: str, reply_num: int = 0) -> None:
+    def __init__(
+        self, request_id: int, author_id: str, view_num: int = 0, reply_num: int = 0
+    ) -> None:
         self.request_id = request_id
         self.author_id = author_id
+        self.view_num = view_num
         self.reply_num = reply_num
 
     def __repr__(self) -> str:
@@ -39,8 +43,9 @@ class Trending(db.Model):
 
         return {
             "id": self.id,
-            "request_id": self.request_id,
-            "author_id": self.author_id,
+            "request": self.request.to_dict() if self.request else None,
+            "author": self.author.to_dict() if self.author else None,
+            "view_num": self.view_num,
             "reply_num": self.reply_num,
             "date": self.date,
             "update_at": self.update_at,
