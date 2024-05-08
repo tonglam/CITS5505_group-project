@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <!-- Posts Pagination -->
-  {% import './components/pagination.html' as pageItem %} {{
-  pageItem.render_pagination(pagination) }}
+  <!-- List Pagination -->
+  {% if pagination.total_items>0 %} {% import './components/pagination.html' as
+  pageItem %} {{ pageItem.render_pagination(pagination) }} {% endif %}
 </div>

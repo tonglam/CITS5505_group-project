@@ -29,12 +29,23 @@ const handle_page_click = async (page) => {
     return false;
   }
 
+  // get render id
+  const render_id = document.getElementById("render-id").textContent;
+  if (render_id === "undefined" || render_id === null || render_id === "") {
+    console.error("render id is missing");
+    return false;
+  }
+
   // current page do not fetch again
   current_page = document
+    .getElementById(render_id)
     .querySelector(".page-item.active")
     .querySelector("a").textContent;
   if (page === parseInt(current_page)) {
-    console.error("current page", page);
+    console.error(
+      "current page is the same with navigate page: ",
+      current_page,
+    );
     return false;
   }
 
@@ -69,7 +80,7 @@ const re_render = async (paramsToAdd = {}, keysToRemove = []) => {
   if (keysToRemove.length > 0) {
     new_render_url = create_remove_param_render_url(
       new_render_url,
-      keysToRemove
+      keysToRemove,
     );
   }
 

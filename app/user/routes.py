@@ -4,14 +4,8 @@ from flask import current_app, render_template, request
 from flask_login import login_required
 
 from app.user import forms, user_bp
-from app.user.service import (
-    community_data,
-    history_data,
-    like_data,
-    post_data,
-    save_data,
-    stat_data,
-)
+from app.user.service import (community_data, history_data, like_data,
+                              post_data, save_data, stat_data)
 
 
 @user_bp.route("/")
@@ -45,8 +39,7 @@ def user():
     user_stat = stat_data()
 
     # user community
-    user_community = community_data()
-    print("user_community", user_community)
+    user_communities = community_data()
 
     return render_template(
         "user.html",
@@ -54,7 +47,7 @@ def user():
         render_url="/users/lists?name=Posts",
         user_stat=user_stat,
         user_data=user_data,
-        user_community=user_community,
+        user_communities=user_communities,
         pagination=pagination,
     )
 
@@ -81,7 +74,7 @@ def user_lists():
         data_result = like_data(page, per_page)
     elif name == "History":
         data_result = history_data(page, per_page)
-    elif name == "Wish":
+    elif name == "Collects":
         data_result = save_data(page, per_page)
 
     pagination = data_result.get("pagination")

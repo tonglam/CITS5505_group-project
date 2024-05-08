@@ -2,14 +2,9 @@
 
 from email_validator import EmailNotValidError, validate_email
 
-from app.api.service import (
-    user_communities_service,
-    user_likes_service,
-    user_posts_service,
-    user_saves_service,
-    user_stats_service,
-    users_records_service,
-)
+from app.api.service import (user_communities_service, user_likes_service,
+                             user_posts_service, user_saves_service,
+                             user_stats_service, users_records_service)
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
 from app.utils import get_pagination_details
@@ -156,7 +151,9 @@ def post_data(page: int = 1, per_page: int = 10):
     ]
 
     posts_page = get_pagination_details(
-        posts_data["pagination"]["page"], posts_data["pagination"]["total_pages"]
+        posts_data["pagination"]["page"],
+        posts_data["pagination"]["total_pages"],
+        posts_data["pagination"]["total_items"],
     )
 
     return {"name": "Posts", "data": posts_item_data, "pagination": posts_page}
@@ -175,7 +172,9 @@ def like_data(page: int = 1, per_page: int = 10):
     ]
 
     likes_page = get_pagination_details(
-        likes_data["pagination"]["page"], likes_data["pagination"]["total_pages"]
+        likes_data["pagination"]["page"],
+        likes_data["pagination"]["total_pages"],
+        likes_data["pagination"]["total_items"],
     )
 
     return {
@@ -200,6 +199,7 @@ def history_data(page: int = 1, per_page: int = 10):
     histories_page = get_pagination_details(
         histories_data["pagination"]["page"],
         histories_data["pagination"]["total_pages"],
+        histories_data["pagination"]["total_items"],
     )
 
     return {
@@ -225,9 +225,10 @@ def save_data(page: int = 1, per_page: int = 10):
     saves_page = get_pagination_details(
         saves_data["pagination"]["page"],
         saves_data["pagination"]["total_pages"],
+        saves_data["pagination"]["total_items"],
     )
 
-    return {"name": "Wish", "data": saves_item_data, "pagination": saves_page}
+    return {"name": "Collects", "data": saves_item_data, "pagination": saves_page}
 
 
 def stat_data():

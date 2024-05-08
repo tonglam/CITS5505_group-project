@@ -97,91 +97,6 @@
 
 /*===== user data container settings =====*/
 
-/*===== function tabs container settings =====*/
-.tabset > input[type="radio"] {
-  position: absolute;
-  left: -200vw;
-}
-
-.tabset .tab-panel {
-  display: none;
-}
-
-.tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
-.tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
-.tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
-.tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
-.tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5),
-.tabset > input:nth-child(11):checked ~ .tab-panels > .tab-panel:nth-child(6) {
-  display: block;
-}
-
-.global_card_style {
-  font: 16px/1.5em "Overpass", "Open Sans", Helvetica, sans-serif;
-  color: #333;
-  font-weight: 300;
-  padding: 30px;
-}
-
-.tabset > label {
-  position: relative;
-  display: inline-block;
-  padding: 15px 15px 25px;
-  border: 1px solid transparent;
-  border-bottom: 0;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.tabset > label::after {
-  content: "";
-  position: absolute;
-  left: 15px;
-  bottom: 10px;
-  width: 22px;
-  height: 4px;
-  background: #8d8d8d;
-}
-
-input:focus-visible + label {
-  outline: 2px solid rgba(0, 102, 204, 1);
-  border-radius: 3px;
-}
-
-.tabset > label:hover,
-.tabset > input:focus + label,
-.tabset > input:checked + label {
-  color: #06c;
-}
-
-.tabset > label:hover::after,
-.tabset > input:focus + label::after,
-.tabset > input:checked + label::after {
-  background: #06c;
-}
-
-.tabset > input:checked + label {
-  border-color: #ccc;
-  border-bottom: 1px solid #fff;
-  margin-bottom: -1px;
-}
-
-.tab-panel {
-  padding: 30px 0;
-  border-top: 1px solid #ccc;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-}
-
-.tabset {
-  max-width: 65em;
-}
-/*===== function tabs container settings =====*/
-
 /*===== function Sub-Tab settings =====*/
 .custom-colors {
   --sec: #fffffe;
@@ -290,12 +205,11 @@ input:focus-visible + label {
 
 .community-title {
   color: #22215b;
-  padding: 1rem 0;
-  font-size: 1.5rem;
+  padding: 1rem 0 0 0;
+  font-size: 1.2rem;
 }
 
 .description {
-  padding: 1rem 0;
   color: #22215b80;
   font-size: 1rem;
 }
@@ -303,7 +217,7 @@ input:focus-visible + label {
 .options {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  text-align: center;
   font-size: 1rem;
 }
 

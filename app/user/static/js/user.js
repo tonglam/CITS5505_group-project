@@ -3,7 +3,7 @@ $(document).ready(function () {
   init_stat_display();
 
   const tabList = [].slice.call(
-    document.querySelectorAll('a[data-bs-toggle="tab"]')
+    document.querySelectorAll('a[data-bs-toggle="tab"]'),
   );
   tabList.forEach((tab) => {
     tab.addEventListener("shown.bs.tab", function (e) {
@@ -27,7 +27,7 @@ const init_stat_display = () => {
         step: function (now) {
           $this.text(Math.ceil(now));
         },
-      }
+      },
     );
   });
 };
@@ -35,9 +35,8 @@ const init_stat_display = () => {
 const init_tab_switch = (tab_data_name) => {
   // reset render id and url
   document.getElementById("render-id").innerHTML = `users-${tab_data_name}`;
-  document.getElementById(
-    "render-url"
-  ).innerHTML = `/users/lists?name=${tab_data_name}&page=1`;
+  document.getElementById("render-url").innerHTML =
+    `/users/lists?name=${tab_data_name}&page=1`;
 
   // re-render
   re_render({ page: 1 });

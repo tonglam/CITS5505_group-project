@@ -11,36 +11,22 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (
-    DataError,
-    IntegrityError,
-    OperationalError,
-    ProgrammingError,
-    SQLAlchemyError,
-)
+from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
+                            ProgrammingError, SQLAlchemyError)
 from sqlalchemy.sql import text
 
-from app.api.service import (
-    communities_service,
-    populars_service,
-    posts_service,
-    stats_service,
-)
-from app.constants import (
-    G_NOTICE_NUM,
-    G_POST_STAT,
-    G_USER,
-    POPULAR_POST_NUM,
-    EnvironmentEnum,
-    HttpRequestEnum,
-)
+from app.api.service import (communities_service, populars_service,
+                             posts_service, stats_service)
+from app.constants import (G_NOTICE_NUM, G_POST_STAT, G_USER, POPULAR_POST_NUM,
+                           EnvironmentEnum, HttpRequestEnum)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
+from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
+                         swag)
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
@@ -97,6 +83,7 @@ def create_app() -> Flask:
         pagination = get_pagination_details(
             current_page=post_pagination["page"],
             total_pages=post_pagination["total_pages"],
+            total_items=post_pagination["total_items"],
         )
 
         # popular
@@ -126,11 +113,6 @@ def create_app() -> Flask:
         page = request.args.get("page", default=1, type=int)
         per_page = request.args.get("per_page", default=10, type=int)
 
-        print("community_id: ", community_id)
-        print("order_by: ", order_by)
-        print("page: ", page)
-        print("per_page: ", per_page)
-
         post_result = get_home_posts(community_id, order_by, page, per_page)
         posts = post_result["posts"]
 
@@ -139,8 +121,8 @@ def create_app() -> Flask:
         pagination = get_pagination_details(
             current_page=post_pagination["page"],
             total_pages=post_pagination["total_pages"],
+            total_items=post_pagination["total_items"],
         )
-        print("pagination: ", pagination)
 
         return render_template(
             "indexPost.html",

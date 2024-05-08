@@ -66,7 +66,9 @@ def calculate_render_page(current_page: int, total_pages: int) -> tuple:
     return current_page - 2, current_page + 2
 
 
-def get_pagination_details(current_page: int, total_pages: int) -> dict:
+def get_pagination_details(
+    current_page: int, total_pages: int, total_items: int
+) -> dict:
     """Function to get pagination details."""
 
     first_page, last_page = calculate_render_page(current_page, total_pages)
@@ -78,4 +80,5 @@ def get_pagination_details(current_page: int, total_pages: int) -> dict:
         "previous_page": current_page - 1 if current_page > 1 else 1,
         "next_page": current_page + 1 if current_page < total_pages else total_pages,
         "total_pages": total_pages,
+        "total_items": total_items,
     }
