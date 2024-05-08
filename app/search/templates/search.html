@@ -1,4 +1,46 @@
 {% extends "layout.html" %} {% block title %}Search{% endblock %} {% block head
-%} {{ super() }} {% endblock %} {% block content %}
-<div class="contain"><p>Search</p></div>
-{% endblock %}
+%} {{ super() }}
+<link
+  rel="stylesheet"
+  href="{{ url_for('search.static', filename='style/search.css') }}"
+/>
+{% endblock %} {% block content %}
+<section id="searchComponent">
+  <div class="text-center mb-3">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-outline-primary" id="return">
+        Return
+      </button>
+      <button type="button" class="btn btn-outline-primary" id="clear">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <div class="container d-flex justify-content-center">
+    <div class="card p-4">
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Seacrch for Anything..."
+          id="searchInput"
+        />
+        <div class="input-group-append">
+          <button class="btn btn-primary" id="searchButton">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchResults">{% include "searchResult.html" %}</div>
+    </div>
+  </div>
+  <div class="mt-5"></div>
+</section>
+{% block javascript %}
+<script
+  type="module"
+  src="{{ url_for('search.static', filename='js/search.js') }}"
+></script>
+{% endblock %} {% endblock %}

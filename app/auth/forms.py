@@ -1,40 +1,42 @@
-"""This module contains the forms."""
+"""WTF forms for the auth module."""
 
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, Regexp
+from wtforms.validators import (DataRequired, Email, EqualTo, Length, Optional,
+                                Regexp)
 
 
 class RegisterForm(FlaskForm):
     """Register form."""
 
     username = StringField(
-        "Username", validators=[DataRequired(), Length(min=2, max=50)]
+        name="username", validators=[DataRequired(), Length(min=2, max=50)]
     )
     email = EmailField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
+        name="email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
     )
     password = PasswordField(
-        "Password",
+        name="password",
         validators=[
             DataRequired(),
             Length(min=8, max=25),
             Regexp(
                 r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]).{8,}$",
-                message="Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+                message="Password must contain at least one uppercase letter, \
+                    one lowercase letter, one digit, and one special character.",
             ),
         ],
     )
     confirm = PasswordField(
-        "Repeat password",
+        name="rpassword",
         validators=[
             DataRequired(),
             EqualTo("password", message="Passwords must match."),
         ],
     )
-    avatar_url = StringField("Avatar", validators=[Optional()])
-    security_question = StringField("Security Question", validators=[DataRequired()])
-    security_answer = StringField("Security Answer", validators=[DataRequired()])
+    avatar_url = StringField("avatar", validators=[Optional()])
+    security_question = StringField(name="squestion", validators=[DataRequired()])
+    security_answer = StringField(name="sanswer", validators=[DataRequired()])
 
 
 class LoginForm(FlaskForm):
@@ -52,23 +54,24 @@ class ForgotPasswordForm(FlaskForm):
     """Forgot password form."""
 
     email = EmailField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
+        name="email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
     )
-    security_question = StringField("Security Question", validators=[DataRequired()])
-    security_answer = StringField("Security Answer", validators=[DataRequired()])
+    security_question = StringField(name="squestion", validators=[DataRequired()])
+    security_answer = StringField(name="sanswer", validators=[DataRequired()])
     password = PasswordField(
-        "Password",
+        name="password",
         validators=[
             DataRequired(),
             Length(min=8, max=25),
             Regexp(
                 r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]).{8,}$",
-                message="Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+                message="Password must contain at least one uppercase letter, \
+                    one lowercase letter, one digit, and one special character.",
             ),
         ],
     )
-    confirm = PasswordField(
-        "Repeat password",
+    rpassword = PasswordField(
+        name="rpassword",
         validators=[
             DataRequired(),
             EqualTo("password", message="Passwords must match."),

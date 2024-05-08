@@ -1,4 +1,4 @@
-{% macro render_navBar(user, current_user) -%}
+{% macro render_navBar(user, current_user, notice_num) -%}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary" id="navMenu">
   <div class="container-fluid justify-content-between mx-0 mx-md-2">
@@ -35,7 +35,7 @@
 
       <!-- notice icon -->
       {{ icon_button("notice", url_for('notice.notice'), "fa-solid fa-bell
-      fa-lg", showBadge = True, badgeNum = 14) }}
+      fa-lg", showBadge=True, badgeNum=notice_num ) }}
 
       <!-- login bar -->
 
@@ -43,7 +43,7 @@
       {% if not current_user.is_authenticated %}
 
       <!-- login icon -->
-      {{ icon_button("login", url_for('auth.login'), "fa-solid
+      {{ icon_button("login", url_for('auth.auth'), "fa-solid
       fa-arrow-right-to-bracket fa-lg") }}
 
       <!-- authenticated -->
@@ -102,16 +102,14 @@ False) -%}
 
 <!-- search bar -->
 {% macro search_bar() -%}
-<div
-  class="container-fluid input-group w-100 my-auto d-none d-sm-flex"
-  id="search"
->
+<div class="container-fluid input-group w-100 my-auto d-none d-sm-flex">
   <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
   <input
     autocomplete="on"
     type="search"
     class="form-control rounded-pill"
     placeholder="Search for Anything..."
+    id="search"
   />
 </div>
 {%- endmacro %}
@@ -141,23 +139,31 @@ False, badgeNum = 0) -%}
     title="{{ title }}"
     role="button"
   >
-    <i class="{{ icon_class }}"></i>
-    <!-- badge -->
-    {% if showBadge %}
-    <span class="badge rounded-pill badge-notification bg-danger"
-      >{{ badgeNum }}</span
-    >
-    {% endif %}
+    <div class="position-relative d-inline-block">
+      <i class="{{ icon_class }}"></i>
+      <!-- badge -->
+      {% if showBadge %}
+      <span
+        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
+        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
+        >{{ badgeNum }}</span
+      >
+      {% endif %}
+    </div>
   </a>
   {% else %}
   <a class="nav-link" href="{{ url }}" title="{{ title }}" role="button">
-    <i class="{{ icon_class }}"></i>
-    <!-- badge -->
-    {% if showBadge %}
-    <span class="badge rounded-pill badge-notification bg-danger"
-      >{{ badgeNum }}</span
-    >
-    {% endif %}
+    <div class="position-relative d-inline-block">
+      <i class="{{ icon_class }}"></i>
+      <!-- badge -->
+      {% if (showBadge and badgeNum > 0) %}
+      <span
+        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
+        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
+        >{{ badgeNum }}</span
+      >
+      {% endif %}
+    </div>
   </a>
   {% endif %}
 </li>

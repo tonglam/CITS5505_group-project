@@ -1,30 +1,61 @@
 """This module seeds the database with initial user data for testing. """
 
+import random
+import string
+
+from faker import Faker
+
 from app.extensions import db
-from app.models import User
+from app.models.user import User
 
-seed_user_data: list = [
-    {
-        "username": "test_user1",
-        "email": "test_user1@example.com",
-        "avatar_url": "https://gravatar.com/avatar/987b26ec2720f3e91a8a61ea2149b247?s=400&d=robohash&r=x",
-        "password": "Password@123",
-        "security_question": "What is your favorite color?",
-        "security_answer": "blue",
-    },
-    {
-        "username": "test_user2",
-        "email": "test_user2@example.com",
-        "avatar_url": "https://gravatar.com/avatar/9547e218666ce51c3cc3352c09a5ae22?s=400&d=robohash&r=x",
-        "password": "Password@123",
-        "security_question": "What is your favorite food?",
-        "security_answer": "pizza",
-    },
-]
+random.seed(5505)
+faker = Faker()
 
 
-def seed_users():
+def create_seed_user_data() -> list:
+    """Create seed user data."""
+
+    users = [
+        {
+            "username": faker.name(),
+            "email": generate_test_email(),
+            "avatar_url": f"https://api.dicebear.com/5.x/adventurer/svg?seed={random.randint(1, 1000)}",
+            "password": "Password@123",
+            "security_question": "What is your favorite color?",
+            "security_answer": "blue",
+        }
+        for _ in range(10)
+    ]
+
+    users.append(
+        {
+            "username": "test",
+            "email": "test@gmail.com",
+            "avatar_url": "https://api.dicebear.com/5.x/adventurer/svg?seed=5505",
+            "password": "Password@123",
+            "security_question": "What is your favorite color?",
+            "security_answer": "blue",
+        }
+    )
+
+    return users
+
+
+def generate_test_email(domain="gmail.com", length=10):
+    """Generate a test email."""
+
+    username = "".join(random.choices(string.ascii_letters + string.digits, k=length))
+    return f"{username}@{domain}"
+
+
+seed_user_data = create_seed_user_data()
+
+
+def seed_user():
     """Seed the database with initial user data."""
+
+    if not seed_user_data:
+        return
 
     for data in seed_user_data:
         user = User(
@@ -40,7 +71,3 @@ def seed_users():
         db.session.add(user)
 
     db.session.commit()
-
-
-if __name__ == "__main__":
-    seed_users()

@@ -1,4 +1,3 @@
-<!-- prettier-ignore -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,16 +22,16 @@
     <header>
       <!-- navbar -->
       {% import './components/layout/navBar.html' as navBar %} {{
-      navBar.render_navBar(user, current_user) }}
+      navBar.render_navBar(user, current_user, notice_num) }}
     </header>
 
-    <main class="container-fluid vw-50 p-4">
+    <main class="container-fluid vw-50 p-4" id="main">
       <!-- alert message -->
       {% import './components/alert.html' as alert %} {{
       alert.render_sticky_alert() }}
 
       <!-- page content -->
-      <content>{% block content %}{% endblock %}</content>
+      <div class="mt-0" id="pageContent">{% block content %}{% endblock %}</div>
     </main>
 
     <!-- footer -->

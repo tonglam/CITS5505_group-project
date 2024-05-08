@@ -3,30 +3,44 @@
 import enum
 
 
-class HttpRequstErrorEnum(enum.Enum):
-    """Enum for HTTP request error."""
+class EnvironmentEnum(enum.Enum):
+    """Enum for environment."""
 
+    DEV = "dev"
+    TEST = "test"
+    PROD = "prod"
+
+
+class HttpRequestEnum(enum.Enum):
+    """Enum for HTTP request."""
+
+    SUCCESS_OK = 200
+    CREATED = 201
+    ACCEPTED = 202
+    NO_CONTENT = 204
+    MOVED_PERMANENTLY = 301
+    FOUND = 302
+    SEE_OTHER = 303
+    NOT_MODIFIED = 304
+    TEMPORARY_REDIRECT = 307
+    PERMANENT_REDIRECT = 308
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
+    FORBIDDEN = 403
     NOT_FOUND = 404
+    METHOD_NOT_ALLOWED = 405
+    CONFLICT = 409
+    GONE = 410
+    PRECONDITION_FAILED = 412
+    PAYLOAD_TOO_LARGE = 413
+    URI_TOO_LONG = 414
+    UNSUPPORTED_MEDIA_TYPE = 415
+    TOO_MANY_REQUESTS = 429
     INTERNAL_SERVER_ERROR = 500
-
-
-class UserRecordEnum(enum.Enum):
-    """Enum for user record."""
-
-    REQUEST = "REQUEST"
-    REPLY = "REPLY"
-    VIEW = "VIEW"
-    LIKE = "LIKE"
-    SAVE = "SAVE"
-
-
-class UserStatusEnum(enum.Enum):
-    """Enum for user status."""
-
-    ACTIVE = "ACTIVE"
-    INACTIVE = "INACTIVE"
+    NOT_IMPLEMENTED = 501
+    BAD_GATEWAY = 502
+    SERVICE_UNAVAILABLE = 503
+    GATEWAY_TIMEOUT = 504
 
 
 class FlashAlertTypeEnum(enum.Enum):
@@ -64,3 +78,10 @@ class OAuthProviderEnum(enum.Enum):
 
 # Gravatar
 GRAVATAR_URL = "https://www.gravatar.com/avatar/"
+
+# Flask Global Variable
+G_USER = "user"
+G_NOTICE_NUM = "notice_num"
+
+# Max notice number
+MAX_NOTICE_NUM = 99

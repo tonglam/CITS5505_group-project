@@ -65,6 +65,8 @@ logs/
 
 # Flask stuff:
 instance/
+*.sqlite
+*.db
 .webassets-cache
 
 # Scrapy stuff:

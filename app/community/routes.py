@@ -11,3 +11,9 @@ from app.community import community_bp
 def community():
     """Render the community page."""
     return render_template("community.html")
+
+@community_bp.route("/createCommunity")
+@login_required
+def create():
+    """Render the create page."""
+    return render_template("createCommunity.html")

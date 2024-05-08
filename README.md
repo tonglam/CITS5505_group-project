@@ -14,7 +14,7 @@ This repository is dedicated to the CITS5505 group project, focused on building 
 
 2. Use `requirements.txt` to install the necessary libaries.
 
-```python
+```shell
 pip install -r requirements.txt
 ```
 
@@ -27,7 +27,7 @@ export FLASK_ENV=dev # load config.dev.ini
 export FLASK_ENV=prod # load config.prod.ini
 ```
 
-4. Start the Flask App. The app runs on http://127.0.0.1:5000.
+4. Start the Flask App. The app runs on http://127.0.0.1:5000. The default env is `dev`.
 
 ```python
 FLASK_ENV=dev flask run
@@ -76,8 +76,16 @@ All the tests in this project are located in the `/tests/` directory, and file n
 
 To run the tests, navigate to the root directory of the project and execute the `test.py` file:
 
-```python
-python test.py
+1. Install flask-unittest from the requirements.txt.
+
+```shell
+pip install -r requirements.txt
+```
+
+2. run the test.py in a terminal with an environment variable.
+
+```shell
+FLASK_ENV=dev python test.py
 ```
 
 If you want to test a specific module, use the module name as the third argument:
@@ -89,3 +97,7 @@ python test.py [api|auth|community|...]
 # Deployment
 
 The main branch is used for deploying to production. [Visit Here](https://letletme.cc)
+
+# Swagger
+
+We use swagger (flasgger) fo Api documendations in this project. [Visit Here](https://letletme.cc/apidocs/)

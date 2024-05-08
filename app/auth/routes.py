@@ -4,44 +4,41 @@ import secrets
 from urllib.parse import urlencode
 
 import requests
-from flask import (
-    abort,
-    current_app,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import (abort, current_app, flash, redirect, render_template,
+                   request, session, url_for)
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                get_jwt_identity, jwt_required,
+                                set_access_cookies, set_refresh_cookies,
+                                unset_jwt_cookies)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import auth_bp, forms
-from app.constant import (
-    AUTHORIZATION_CODE,
-    AUTHORIZE_URL,
-    CALLBACK_URL,
-    CLIENT_ID,
-    CLIENT_SECRET,
-    OAUTH2_PROVIDERS,
-    OAUTH2_STATE,
-    RESPONSE_TYPE,
-    SCOPES,
-    TOKEN_URL,
-    FlashAlertTypeEnum,
-    OAuthProviderEnum,
-)
+from app.constants import (AUTHORIZATION_CODE, AUTHORIZE_URL, CALLBACK_URL,
+                           CLIENT_ID, CLIENT_SECRET, OAUTH2_PROVIDERS,
+                           OAUTH2_STATE, RESPONSE_TYPE, SCOPES, TOKEN_URL,
+                           FlashAlertTypeEnum, HttpRequestEnum,
+                           OAuthProviderEnum)
 from app.extensions import db, login_manager
 from app.models.user import User
+from app.notice.events import NoticeTypeEnum, notice_event
 
 
 @login_manager.user_loader
 def user_loader(user_id: str):
     """Given *user_id*, return the associated User object."""
+
     return db.session.get(User, user_id)
 
 
-@auth_bp.route("/register", methods=["GET", "POST"])
+@auth_bp.route("/auth", methods=["GET"])
+def auth():
+    """verification page."""
+
+    form = forms.RegisterForm()
+    return render_template("auth.html", form=form)
+
+
+@auth_bp.route("/register", methods=["POST"])
 def register():
     """Register a new user."""
 
@@ -50,45 +47,55 @@ def register():
             "User is already registered, id: %s.", {current_user.id}
         )
         flash("You are already registered.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.auth"))
 
     form = forms.RegisterForm(request.form)
 
     if form.validate_on_submit():
+
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
-            current_app.logger.error(
-                "Email already registered, email: %s.", {form.email.data}
+            if user.password_hash:
+                # registered with email and password before
+                current_app.logger.error(
+                    "Email already registered, email: %s.", {form.email.data}
+                )
+                flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
+                return redirect(url_for("auth.auth"))
+
+            # only login with third party OAuth before
+            user.username = form.username.data
+            user.email = form.email.data
+            user.avatar_url = (
+                form.avatar_url.data if form.avatar_url.data else user.avatar_url
             )
-            flash("Email already registered.", FlashAlertTypeEnum.DANGER.value)
-            return redirect(url_for("auth.register"))
+            user.security_question = form.security_question.data
+            user.security_answer = form.security_answer.data
+            user.password = form.password.data
 
-        if form.password.data != form.confirm.data:
-            current_app.logger.error("Passwords must match.")
-            flash("Passwords must match.", FlashAlertTypeEnum.DANGER.value)
-            return redirect(url_for("auth.resgister"))
+        else:
 
-        # Create a new user
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            avatar_url=form.avatar_url.data,
-            use_google=False,
-            use_github=False,
-            security_question=form.security_question.data,
-            security_answer=form.security_answer.data,
-        )
-        user.password = form.password.data
-        db.session.add(user)
+            # add a new user
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                avatar_url=form.avatar_url.data,
+                use_google=False,
+                use_github=False,
+                security_question=form.security_question.data,
+                security_answer=form.security_answer.data,
+            )
+            user.password = form.password.data
+            db.session.add(user)
+
         db.session.commit()
-
         login_user(user, remember=True)
         current_app.logger.info(
             "User registered, register email: %s, id: %s.", {user.email}, {user.id}
         )
         flash("You registered and are now logged in.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.auth"))
 
     if form.errors:
         for field, errors in form.errors.items():
@@ -98,80 +105,118 @@ def register():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return redirect(url_for("auth.register"))
+        return render_template("auth.html", form=form)
 
-    return render_template("register.html", form=form)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
-@auth_bp.route("/login", methods=["GET", "POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
-    """Log in the user."""
-    form = forms.LoginForm(request.form)
+    """user login."""
 
+    form = forms.LoginForm(request.form)
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+
+        email = form.email.data
+
+        user = User.query.filter_by(email=email).first()
 
         if user is None:
-            current_app.logger.error(
-                "No user with that email exists: %s.", {form.email.data}
-            )
+            current_app.logger.error("No user with that email exists: %s.", {email})
             flash(
                 "No user with that email exists, please register first.",
                 FlashAlertTypeEnum.DANGER.value,
             )
-            return redirect(url_for("auth.register"))
+            return redirect(url_for("auth.auth"))
 
         if not user.password_hash:
             provide = "Google" if user.use_google else "GitHub"
             current_app.logger.error(
-                "Please login with %s, email: %s.", {provide}, {form.email.data}
+                "Please login with %s, email: %s.", {provide}, {email}
             )
             flash(f"Please login with {provide}.", FlashAlertTypeEnum.WARNING.value)
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.auth"))
 
         if not user.verify_password(form.password.data):
-            current_app.logger.error(
-                "Invalid email or password, email: %s.", {form.email.data}
-            )
+            current_app.logger.error("Invalid email or password, email: %s.", {email})
+
             flash(
                 "Invalid email or password. Please try a different login method or attempt again.",
                 FlashAlertTypeEnum.DANGER.value,
             )
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.auth"))
 
-        remember = request.form.get("rememberMe") == "checked"
-
-        login_user(user, remember=remember)
+        login_user(user, remember=True)
         current_app.logger.info("User logged in, id: %s.", {user.id})
+
+        # jwt token
+        response = redirect(url_for("index"))
+
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+        current_app.logger.info(
+            "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
+        )
+
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("index"))
+
+        return response
 
     if form.errors:
         for field, errors in form.errors.items():
             for error in errors:
                 current_app.logger.error(
-                    "Login error in field %s: %s",
+                    "Register error in field %s: %s",
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return redirect(url_for("auth.login"))
+        return render_template("auth.html", form=form)
 
-    return render_template("login.html", form=form)
+    abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
+
+
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    """Refresh JWT token."""
+
+    current_jwt_user = get_jwt_identity()
+    refresh_access_token = create_access_token(identity=current_jwt_user)
+    response = {"refresh": True}
+    set_access_cookies(response, refresh_access_token)
+    current_app.logger.info(
+        "JWT refreshed for user, id: %s, JWT: %s.",
+        {current_jwt_user.id},
+        {refresh_access_token},
+    )
+
+    return response
 
 
 @auth_bp.route("/logout")
 @login_required
 def logout():
     """Log out the user."""
+
     current_app.logger.info("User logged out, id: %s.", {current_user.id})
     logout_user()
+
+    # jwt token
+    response = redirect(url_for("auth.auth"))
+    unset_jwt_cookies(response)
+
     flash("You have been logged out.", FlashAlertTypeEnum.SUCCESS.value)
-    return redirect(url_for("auth.login"))
+
+    return response
 
 
 @auth_bp.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
-    """Render the forgoet password page."""
+    """Render the forgot password page."""
+
     form = forms.ForgotPasswordForm(request.form)
 
     if form.validate_on_submit():
@@ -194,11 +239,20 @@ def forgot_password():
             return redirect(url_for("auth.forgot_password"))
 
         user.password = form.password.data
+
+        # update user password
         db.session.commit()
+        current_app.logger.info(
+            "User password updated, email: %s, id: %s.", {user.email}, {user.id}
+        )
+
+        # send notification
+        notice_event(user_id=user.id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
-        return redirect(url_for("auth.login"))
+
+        return redirect(url_for("auth.auth"))
 
     if form.errors:
         for field, errors in form.errors.items():
@@ -208,7 +262,7 @@ def forgot_password():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return redirect(url_for("auth.forgot_password"))
+        return render_template("forgotPassword.html", form=form)
 
     return render_template("forgotPassword.html", form=form)
 
@@ -216,6 +270,7 @@ def forgot_password():
 @auth_bp.route("/authorize/<provider>")
 def authorize(provider: str):
     """Redirect to provider's OAuth2 login page."""
+
     if not current_user.is_anonymous:
         current_app.logger.info("User is already logged in, id: %s.", {current_user.id})
         return redirect(url_for("index"))
@@ -301,6 +356,8 @@ def callback(provider: str):
             avatar_url=avatar,
             use_google=provider == OAuthProviderEnum.GOOGLE.value,
             use_github=provider == OAuthProviderEnum.GITHUB.value,
+            security_question="",
+            security_answer="",
         )
         db.session.add(user)
         db.session.commit()
@@ -317,5 +374,19 @@ def callback(provider: str):
     current_app.logger.info(
         "User logged in with %s, id: %s.", {provider}, {current_user.id}
     )
+
+    # jwt token
+    response = redirect(url_for("index"))
+
+    access_token = create_access_token(identity=user.id)
+    refresh_token = create_refresh_token(identity=user.id)
+
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+    current_app.logger.info(
+        "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
+    )
+
     flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
-    return redirect(url_for("index"))
+
+    return response
