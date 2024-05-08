@@ -3,9 +3,11 @@
 from email_validator import EmailNotValidError, validate_email
 
 from app.api.service import (
+    user_communities_service,
     user_likes_service,
     user_posts_service,
     user_saves_service,
+    user_stats_service,
     users_records_service,
 )
 from app.models.user import User, UserStatusEnum
@@ -150,7 +152,7 @@ def post_data(page: int = 1, per_page: int = 10):
 
     user_posts_data = posts_data["data"]["user_posts"]
     posts_item_data = [
-        {"id": post["id"], "title": "post+" + post["title"]} for post in user_posts_data
+        {"id": post["id"], "title": post["title"]} for post in user_posts_data
     ]
 
     posts_page = get_pagination_details(
@@ -168,7 +170,7 @@ def like_data(page: int = 1, per_page: int = 10):
 
     user_likes_data = likes_data["data"]["user_likes"]
     likes_item_data = [
-        {"id": like["id"], "title": "like+" + like["request"]["title"]}
+        {"id": like["id"], "title": like["request"]["title"]}
         for like in user_likes_data
     ]
 
@@ -191,7 +193,7 @@ def history_data(page: int = 1, per_page: int = 10):
 
     user_histories_data = histories_data["data"]["user_records"]
     histories_item_data = [
-        {"id": history["id"], "title": "history+" + history["request"]["title"]}
+        {"id": history["id"], "title": history["request"]["title"]}
         for history in user_histories_data
     ]
 
@@ -216,7 +218,7 @@ def save_data(page: int = 1, per_page: int = 10):
     user_saves_data = saves_data["data"]["user_saves"]
 
     saves_item_data = [
-        {"id": save["id"], "title": "save+" + save["request"]["title"]}
+        {"id": save["id"], "title": save["request"]["title"]}
         for save in user_saves_data
     ]
 
@@ -226,3 +228,19 @@ def save_data(page: int = 1, per_page: int = 10):
     )
 
     return {"name": "Wish", "data": saves_item_data, "pagination": saves_page}
+
+
+def stat_data():
+    """Get the user's statistics."""
+
+    user_stat = user_stats_service().get_json()
+    return user_stat.get("data").get("user_stats")
+
+
+def community_data():
+    """Get the user's communities."""
+
+    user_communities = user_communities_service().get_json()
+    user_communities_data = user_communities.get("data").get("user_communities")
+
+    return user_communities_data[0:2]

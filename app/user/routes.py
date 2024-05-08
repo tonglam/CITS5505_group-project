@@ -4,7 +4,14 @@ from flask import current_app, render_template, request
 from flask_login import login_required
 
 from app.user import forms, user_bp
-from app.user.service import history_data, like_data, post_data, save_data
+from app.user.service import (
+    community_data,
+    history_data,
+    like_data,
+    post_data,
+    save_data,
+    stat_data,
+)
 
 
 @user_bp.route("/")
@@ -12,10 +19,11 @@ from app.user.service import history_data, like_data, post_data, save_data
 def user():
     """Render the user page."""
 
-    post_result = post_data(1, 5)
-    like_result = like_data(1, 5)
-    history_result = history_data(1, 5)
-    save_result = save_data(1, 5)
+    # user data
+    post_result = post_data()
+    like_result = like_data()
+    history_result = history_data()
+    save_result = save_data()
 
     name_list = [
         post_result.get("name"),
@@ -33,11 +41,20 @@ def user():
     user_data = dict(zip(name_list, data_list))
     pagination = post_result.get("pagination")
 
+    # user stat
+    user_stat = stat_data()
+
+    # user community
+    user_community = community_data()
+    print("user_community", user_community)
+
     return render_template(
         "user.html",
         render_id="users-Posts",
         render_url="/users/lists?name=Posts",
+        user_stat=user_stat,
         user_data=user_data,
+        user_community=user_community,
         pagination=pagination,
     )
 
@@ -59,13 +76,13 @@ def user_lists():
     # retrieve data
     data_result = {}
     if name == "Posts":
-        data_result = post_data(page, 5)
+        data_result = post_data(page, per_page)
     elif name == "Likes":
-        data_result = like_data(page, 5)
+        data_result = like_data(page, per_page)
     elif name == "History":
-        data_result = history_data(page, 5)
+        data_result = history_data(page, per_page)
     elif name == "Wish":
-        data_result = save_data(page, 5)
+        data_result = save_data(page, per_page)
 
     pagination = data_result.get("pagination")
 

@@ -1,20 +1,6 @@
 $(document).ready(function () {
-  // ".count".each(function () {
-  //   $(this)
-  //     .prop("Counter", 0)
-  //     .animate(
-  //       {
-  //         Counter: $(this).text(),
-  //       },
-  //       {
-  //         duration: 1500,
-  //         easing: "linear",
-  //         step: function (now) {
-  //           $(this).text(Math.ceil(now));
-  //         },
-  //       }
-  //     );
-  // });
+  // init stat display
+  init_stat_display();
 
   const tabList = [].slice.call(
     document.querySelectorAll('a[data-bs-toggle="tab"]')
@@ -27,6 +13,24 @@ $(document).ready(function () {
     });
   });
 });
+
+const init_stat_display = () => {
+  $(".count").each(function () {
+    const $this = $(this);
+    $this.prop("Counter", 0).animate(
+      {
+        Counter: parseInt($this.text(), 10),
+      },
+      {
+        duration: 1500,
+        easing: "linear",
+        step: function (now) {
+          $this.text(Math.ceil(now));
+        },
+      }
+    );
+  });
+};
 
 const init_tab_switch = (tab_data_name) => {
   // reset render id and url

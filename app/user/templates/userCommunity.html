@@ -1,0 +1,16 @@
+{% macro render_user_community(community) -%}
+<div class="card basic_style">
+  <div class="card-img-holder">
+    <img
+      src="{{ url_for('static', filename='assets/logo.svg') }}"
+      alt="Cover image"
+    />
+  </div>
+  <h3 class="community-title">{{ community.name }}</h3>
+  <p class="description">{{ community.description }}</p>
+  <div class="options">
+    <button class="button_style">More</button>
+    <button class="button_style">Start</button>
+  </div>
+</div>
+{%- endmacro %}

@@ -33,49 +33,11 @@
       </div>
       <div class="col-6 text-start">
         <section class="charts_orb">
-          <article class="orb">
-            <div class="orb_graphic">
-              <svg>
-                <circle class="fill"></circle>
-                <circle class="progress"></circle>
-              </svg>
-              <div class="orb_value count">{{post_stat}}</div>
-            </div>
-            <div class="orb_label">Posts</div>
-          </article>
-
-          <article class="orb">
-            <div class="orb_graphic">
-              <svg>
-                <circle class="fill"></circle>
-                <circle class="progress"></circle>
-              </svg>
-              <div class="orb_value count">{{like_stat}}</div>
-            </div>
-            <div class="orb_label">Likes</div>
-          </article>
-
-          <article class="orb">
-            <div class="orb_graphic">
-              <svg>
-                <circle class="fill"></circle>
-                <circle class="progress"></circle>
-              </svg>
-              <div class="orb_value count">41</div>
-            </div>
-            <div class="orb_label">community</div>
-          </article>
-
-          <article class="orb">
-            <div class="orb_graphic">
-              <svg>
-                <circle class="fill"></circle>
-                <circle class="progress"></circle>
-              </svg>
-              <div class="orb_value count">52</div>
-            </div>
-            <div class="orb_label">Collects</div>
-          </article>
+          {% import 'userStat.html' as statItem %} {{
+          statItem.render_user_stst("posts", user_stat.request_num) }} {{
+          statItem.render_user_stst("likes", user_stat.like_num) }} {{
+          statItem.render_user_stst("community", user_stat.community_num) }} {{
+          statItem.render_user_stst("collects", user_stat.save_num) }}
         </section>
       </div>
     </div>
@@ -121,27 +83,13 @@
       </div>
       {% endif %} {% endfor %}
     </div>
+  </div>
 
-    <!-- community card -->
-    <div class="col-4 card_shadow_style">
-      <div class="card basic_style">
-        <div class="card-img-holder">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkS_oZwG3-XSRs68TNlFAkMjs-FlWhHYQOYnlTMFTJ1w&s0"
-            alt="Blog image"
-          />
-        </div>
-        <h3 class="community-title">Community Center</h3>
-        <span class="community-time">starting your social travel here!</span>
-        <p class="description">
-          community center is a place where people can come together to work on
-        </p>
-        <div class="options">
-          <span> Explore More </span>
-          <button class="button_style">Start</button>
-        </div>
-      </div>
-    </div>
+  <!-- community card -->
+  <div class="col-4 card_shadow_style">
+    {% for community in user_communities %} {% import 'userCommunity.html' as
+    communityItem %} {{ communityItem.render_user_community(community) }} {%
+    endfor %}
   </div>
 </div>
 {% block javascript %}

@@ -827,6 +827,27 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
+    def test_get_user_stat(self, app: Flask, client: FlaskClient):
+        """Test the user stat GET API."""
+
+        url = _PREFIX + "/users/stats"
+
+        user = None
+        with app.app_context():
+            user = User.query.first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()
+
     def test_get_categories(self, app: Flask, client: FlaskClient):
         """Test the categories GET API."""
 

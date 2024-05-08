@@ -461,6 +461,37 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     ).json()
 
 
+def user_stats_service() -> ApiResponse:
+    """Service for getting user stats."""
+
+    user_id = current_user.id
+
+    user_preference = (
+        db.session.query(UserPreference).filter_by(user_id=user_id).first()
+    )
+    community_ids = [
+        int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
+    ]
+
+    community_num = len(community_ids)
+    request_num = db.session.query(Request).filter_by(author_id=user_id).count()
+    reply_num = db.session.query(Reply).filter_by(replier_id=user_id).count()
+    view_num = db.session.query(UserRecord).filter_by(user_id=user_id).count()
+    like_num = db.session.query(UserLike).filter_by(user_id=user_id).count()
+    save_num = db.session.query(UserSave).filter_by(user_id=user_id).count()
+
+    stats = {
+        "community_num": community_num,
+        "request_num": request_num,
+        "view_num": view_num,
+        "reply_num": reply_num,
+        "like_num": like_num,
+        "save_num": save_num,
+    }
+
+    return ApiResponse(data={"user_stats": stats}).json()
+
+
 # Api service for community module.
 
 

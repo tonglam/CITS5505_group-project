@@ -27,6 +27,7 @@ from .service import (
     user_posts_service,
     user_replies_service,
     user_saves_service,
+    user_stats_service,
     users_notices_service,
     users_records_service,
 )
@@ -182,6 +183,13 @@ def user_notice(notice_id: int) -> ApiResponse:
         return put_user_notice_service(notice_id)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
+
+
+@api_bp.route("/users/stats", methods=["GET"])
+def user_stats():
+    """Get the user's statistics."""
+
+    return user_stats_service()
 
 
 # Api for community module.

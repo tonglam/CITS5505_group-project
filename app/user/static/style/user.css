@@ -300,11 +300,6 @@ input:focus-visible + label {
   font-size: 1rem;
 }
 
-.community-time {
-  font-size: 0.8rem;
-  color: #22215b;
-}
-
 .options {
   display: flex;
   align-items: center;
