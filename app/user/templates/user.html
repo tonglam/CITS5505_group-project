@@ -11,7 +11,7 @@
 
   <div id="userHeader">
     <div class="row">
-      <div class="col-4 text-center">
+      <div class="col-3 d-flex justify-content-end">
         <img
           class="avatar_style"
           src="{{ user.avatar_url }}"
@@ -19,19 +19,59 @@
           width="200px"
         />
       </div>
-      <div class="col-4">
+      <div class="col-3 text-center pt-5">
         <h1>{{ user.username }}</h1>
-        <div class="d-flex">
-          <button class="button_style">Edit profile</button>
-        </div>
+
+        <button class="button_style">Edit profile</button>
+
         <div class="d-flex"></div>
       </div>
-      <div class="col-4">
-        <img
-          src="{{ url_for('static', filename='assets/image/userpage1.png') }}"
-          width="260px"
-          alt="userpage1"
-        />
+      <div class="col-6 text-start">
+        <section class="charts_orb">
+          <article class="orb">
+            <div class="orb_graphic">
+              <svg>
+                <circle class="fill"></circle>
+                <circle class="progress"></circle>
+              </svg>
+              <div class="orb_value count">{{post_stat}}</div>
+            </div>
+            <div class="orb_label">Posts</div>
+          </article>
+
+          <article class="orb">
+            <div class="orb_graphic">
+              <svg>
+                <circle class="fill"></circle>
+                <circle class="progress"></circle>
+              </svg>
+              <div class="orb_value count">{{like_stat}}</div>
+            </div>
+            <div class="orb_label">Likes</div>
+          </article>
+
+          <article class="orb">
+            <div class="orb_graphic">
+              <svg>
+                <circle class="fill"></circle>
+                <circle class="progress"></circle>
+              </svg>
+              <div class="orb_value count">41</div>
+            </div>
+            <div class="orb_label">community</div>
+          </article>
+
+          <article class="orb">
+            <div class="orb_graphic">
+              <svg>
+                <circle class="fill"></circle>
+                <circle class="progress"></circle>
+              </svg>
+              <div class="orb_value count">52</div>
+            </div>
+            <div class="orb_label">Collects</div>
+          </article>
+        </section>
       </div>
     </div>
   </div>
@@ -108,9 +148,15 @@
       </p>
       <div class="options">
         <span> Explore More </span>
-        <button class="community-btn">Start</button>
+        <button class="button_style">Start</button>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
+
+{% block javascript %}
+<script
+  type="module"
+  src="{{ url_for('user.static', filename='js/user.js') }}"
+></script>
+{% endblock %} {% endblock %}

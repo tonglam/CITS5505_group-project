@@ -2,6 +2,8 @@
 
 INSERT INTO user (id, username, email, password_hash, avatar_url, use_google, use_github, security_question, security_answer, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'tonglam', 'bluedragon00000@gmail.com', '$2b$12$R49DZkkWelMYoCv2.mCQeemIVKkCNrzuA3Vekq6PxMpIk4jqjJbmW', 'https://avatars.githubusercontent.com/u/19681829?v=4', 1, 1, 'What is your favorite color?', 'blue', 'ACTIVE', '2024-04-21 14:36:18.896100', '2024-04-21 15:31:20.425434');
 INSERT INTO user (id, username, email, password_hash, avatar_url, use_google, use_github, security_question, security_answer, status, create_at, update_at) VALUES ('b4ef71f8-409f-485f-b797-b44b5853a1f5', 'tonglan', 'qitonglan@gmail.com', '$2b$12$D7uO.K4xHTA62nmLd/WM4ODTeAU2tP/aGVFQf9o7HpdfKNdryF2Oi', 'https://www.gravatar.com/avatar/4ad8c50f623b6eccf0299d12005d39e7b670ac7e49654ee662016ba1c1915b54', 0, 0, 'Which color?', 'blue', 'ACTIVE', '2024-05-02 11:50:58.257018', '2024-05-02 11:50:58.257040');
+INSERT INTO user (id, username, email, password_hash, avatar_url, use_google, use_github, security_question, security_answer, status, create_at, update_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 'Hayeensss', null, null, 'https://avatars.githubusercontent.com/u/145556077?v=4', 0, 1, '', '', 'ACTIVE', '2024-05-07 11:35:01.583653', '2024-05-07 11:35:01.583673');
+
 
 -- User Preference
 
@@ -32,11 +34,11 @@ INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-
 
 -- User Like
 
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 4, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 5, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 1, '2024-05-03 09:30:00');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 2, '2024-05-03 10:00:00');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 3, '2024-05-03 11:30:00');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 4, '2024-05-03 13:00:00');
+INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 5, '2024-05-03 14:30:00');
 INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
 INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
 INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
@@ -116,6 +118,12 @@ INSERT INTO request (author_id, title, content, community_id, category_id, view_
 INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('b4ef71f8-409f-485f-b797-b44b5853a1f5', 'Gardening tips and tricks', 'Green Thumbs Society shared some expert gardening advice. Time to make our gardens flourish!', 18, 6, 111, 98, 65, 72, '2024-05-02 12:29:00', '2024-05-02 12:29:00');
 INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('b4ef71f8-409f-485f-b797-b44b5853a1f5', 'Discussion on renewable energy', 'Renewable Energy Enthusiasts are discussing the latest advancements in renewable energy sources. Join the conversation!', 19, 1, 53, 42, 30, 40, '2024-05-02 12:31:00', '2024-05-02 12:31:00');
 INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('b4ef71f8-409f-485f-b797-b44b5853a1f5', 'Virtual reality gaming experiences', 'VR Enthusiasts just shared their latest virtual reality gaming experiences. Let''s explore new worlds together!', 20, 2, 61, 49, 35, 44, '2024-05-02 12:33:00', '2024-05-02 12:33:00');
+INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 'Exciting new hiking trail!', 'Just discovered a breathtaking new trail in the mountains. Who''s up for an adventure?', 1, 1, 20, 8, 5, 12, '2024-05-03 09:30:00', '2024-05-03 09:30:00');
+INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 'New gaming console release!', 'Gamer''s Paradise just announced the release of the latest gaming console. Let''s discuss the features and games!', 2, 2, 15, 12, 8, 10, '2024-05-03 10:00:00', '2024-05-03 10:00:00');
+INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 'New painting masterpiece', 'Art Enthusiasts just unveiled a stunning new painting. Let''s appreciate the art together!', 3, 3, 30, 20, 10, 18, '2024-05-03 11:30:00', '2024-05-03 11:30:00');
+INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 'Fitness challenge!', 'Join the Fitness Challenge group and let''s motivate each other to achieve our fitness goals!', 4, 4, 25, 18, 12, 15, '2024-05-03 13:00:00', '2024-05-03 13:00:00');
+INSERT INTO request (author_id, title, content, community_id, category_id, view_num, like_num, reply_num, save_num, create_at, update_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 'Exciting new music album!', 'Music Lovers just released a hot new album. Let''s share our favorite tracks!', 5, 5, 40, 32, 18, 25, '2024-05-03 14:30:00', '2024-05-03 14:30:00');
+
 
 -- Reply
 
