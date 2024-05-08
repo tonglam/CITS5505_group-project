@@ -19,8 +19,9 @@
       <!-- <div class="item_text">{{info.num}}33</div> -->
       <div>
         <span class="card_btn" data-info='{{ info.to_dict()|tojson|safe }}'
-          onclick="handDeleteCardClick(this)">删除</span>
-        <span class="card_btn">编辑</span>
+          onclick="handDeleteCardClick(this)">Delete</span>
+        <span class="card_btn" data-info='{{ info.to_dict()|tojson|safe }}'
+        onclick="handEditCardClick(this)">Edit</span>
       </div>
     </div>
   </div>

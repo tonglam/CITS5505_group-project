@@ -4,12 +4,12 @@ console.log(11111)
 function handDeleteCardClick(element) {
     var info = JSON.parse(element.getAttribute('data-info'));
     console.log(info);
-    // 发起DELETE请求到Python后端的删除接口
-    fetch(`/communities/delete_community/${info.id}`, {
+    // Initiate a DELETE request to the deletion interface of the Python backend
+    fetch(`/communities/update_community/${info.id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            // 如果后端接口需要身份验证或其他头部信息，请在这里添
+            // If the backend interface requires authentication or other headers, add them here
             // 'Authorization': 'Bearer ' + yourTokenVariable
         }
     })
@@ -17,13 +17,26 @@ function handDeleteCardClick(element) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            console.log('社区删除成功');
-            // 页面刷新
+            console.log('Community deleted successfully');
+            // Page refresh
             window.location.reload();
-            // 这里可以根据需要处理成功的回调，比如刷新页面或更新UI
+            // Here you can handle successful callbacks as needed, such as refreshing the page or updating the UI
         })
         .catch(error => {
-            console.error('删除社区时发生错误:', error);
-            // 这里处理错误情况
+            console.error('An error occurred while deleting the community:', error);
+            // Handle error conditions here
         });
+}
+function handEditCardClick(element) {
+    var info = JSON.parse(element.getAttribute('data-info'));
+    console.log(info);
+    window.location.href = '/communities/editCommunity/'+info.id;
+}
+async function handInfoEditClick(element) {
+    var info = JSON.parse(element.getAttribute('data-info'));
+    console.log(info);
+    const url = `/communities/update_community/${info.id}`;
+    const data = {info};
+    const response = await getFetch(url)(data)(); // The third parameter is header, if not, it will not be passed.
+    console.log(response);
 }
