@@ -150,14 +150,14 @@ def post_data(page: int = 1, per_page: int = 10):
 
     user_posts_data = posts_data["data"]["user_posts"]
     posts_item_data = [
-        {"id": post["id"], "title": post["title"]} for post in user_posts_data
+        {"id": post["id"], "title": "post+" + post["title"]} for post in user_posts_data
     ]
 
     posts_page = get_pagination_details(
         posts_data["pagination"]["page"], posts_data["pagination"]["total_pages"]
     )
 
-    return {"data": posts_item_data, "page": posts_page}
+    return {"name": "Posts", "data": posts_item_data, "pagination": posts_page}
 
 
 def like_data(page: int = 1, per_page: int = 10):
@@ -168,7 +168,7 @@ def like_data(page: int = 1, per_page: int = 10):
 
     user_likes_data = likes_data["data"]["user_likes"]
     likes_item_data = [
-        {"id": like["id"], "title": like["request"]["title"]}
+        {"id": like["id"], "title": "like+" + like["request"]["title"]}
         for like in user_likes_data
     ]
 
@@ -176,7 +176,11 @@ def like_data(page: int = 1, per_page: int = 10):
         likes_data["pagination"]["page"], likes_data["pagination"]["total_pages"]
     )
 
-    return {"data": likes_item_data, "page": likes_page}
+    return {
+        "name": "Likes",
+        "data": likes_item_data,
+        "pagination": likes_page,
+    }
 
 
 def history_data(page: int = 1, per_page: int = 10):
@@ -187,7 +191,7 @@ def history_data(page: int = 1, per_page: int = 10):
 
     user_histories_data = histories_data["data"]["user_records"]
     histories_item_data = [
-        {"id": history["id"], "title": history["request"]["title"]}
+        {"id": history["id"], "title": "history+" + history["request"]["title"]}
         for history in user_histories_data
     ]
 
@@ -196,7 +200,11 @@ def history_data(page: int = 1, per_page: int = 10):
         histories_data["pagination"]["total_pages"],
     )
 
-    return {"data": histories_item_data, "page": histories_page}
+    return {
+        "name": "History",
+        "data": histories_item_data,
+        "pagination": histories_page,
+    }
 
 
 def save_data(page: int = 1, per_page: int = 10):
@@ -208,7 +216,7 @@ def save_data(page: int = 1, per_page: int = 10):
     user_saves_data = saves_data["data"]["user_saves"]
 
     saves_item_data = [
-        {"id": save["id"], "title": save["request"]["title"]}
+        {"id": save["id"], "title": "save+" + save["request"]["title"]}
         for save in user_saves_data
     ]
 
@@ -217,4 +225,4 @@ def save_data(page: int = 1, per_page: int = 10):
         saves_data["pagination"]["total_pages"],
     )
 
-    return {"data": saves_item_data, "page": saves_page}
+    return {"name": "Wish", "data": saves_item_data, "pagination": saves_page}

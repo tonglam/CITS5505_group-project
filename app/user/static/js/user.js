@@ -1,34 +1,23 @@
 $(document).ready(function () {
-  // Add click event handler for the radio button
-  $("#tab-posts").on("click", function () {
-    // Your code to execute when the radio button is clicked
-    console.log("Radio button clicked");
+  const tabList = [].slice.call(
+    document.querySelectorAll('a[data-bs-toggle="tab"]')
+  );
+  tabList.forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", function (e) {
+      e.preventDefault();
+      const tab_data_name = e.target.id.split("-")[2];
+      init_tab_switch(tab_data_name);
+    });
   });
 });
 
-init_tab_pagination = () => {
-  reset_tab_pagination("tab-posts", "user-posts", "/users/posts");
-  reset_tab_pagination("tab-likes", "users-likes", "/users/likes");
-  reset_tab_pagination(
-    "tab-label-histories",
-    "users-histories",
-    "/users/histories"
-  );
-  reset_tab_pagination("tab-label-wishes", "users-wishes", "/users/wishes");
-};
+const init_tab_switch = (tab_data_name) => {
+  // reset render id and url
+  document.getElementById("render-id").innerHTML = `users-${tab_data_name}`;
+  document.getElementById(
+    "render-url"
+  ).innerHTML = `/users/lists?name=${tab_data_name}&page=1`;
 
-reset_tab_pagination = (id, render_id, render_url) => {
-  console.log("reset tab pagination");
-  console.log("id:", id);
-  console.log("render_id:", render_id);
-  console.log("render_url:", render_url);
-
-  document.getElementById(id).addEventListener("click", function () {
-    console.log("click tab");
-    // reset render id and url
-    document.getElementById("render-id").innerHTML = render_id;
-    document.getElementById("render-url").innerHTML = render_url;
-    // re-render
-    re_render({ page: 1 });
-  });
+  // re-render
+  re_render({ page: 1 });
 };

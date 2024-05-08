@@ -25,7 +25,7 @@ const init_search = () => {
 
 const handle_page_click = async (page) => {
   if (page === undefined || page === null || page === "") {
-    console.log("page", page);
+    console.error("page", page);
     return false;
   }
 
@@ -34,6 +34,7 @@ const handle_page_click = async (page) => {
     .querySelector(".page-item.active")
     .querySelector("a").textContent;
   if (page === parseInt(current_page)) {
+    console.error("current page", page);
     return false;
   }
 
