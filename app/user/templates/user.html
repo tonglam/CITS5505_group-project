@@ -22,7 +22,12 @@
       <div class="col-3 text-center pt-5">
         <h1>{{ user.username }}</h1>
 
-        <button class="button_style">Edit profile</button>
+        <button
+          class="button_style"
+          onclick="location.href='{{ url_for('user.profile')}}'"
+        >
+          Edit profile
+        </button>
 
         <div class="d-flex"></div>
       </div>

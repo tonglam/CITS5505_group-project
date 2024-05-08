@@ -95,6 +95,6 @@ def profile():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return render_template("userProfile.html", form=form)
+        return render_template("editProfile.html", form=form)
 
-    return render_template("userProfile.html", form=form)
+    return render_template("editProfile.html", form=form)
