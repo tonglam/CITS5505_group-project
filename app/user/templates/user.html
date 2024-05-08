@@ -81,79 +81,64 @@
 <div class="row">
   <div class="col-8">
     <!-- function tab -->
-    <div class="tabset">
-      <!-- Tab 1 -->
-      <input
-        type="radio"
-        name="tabset"
-        id="tab-posts"
-        aria-controls="posts"
-        checked
-      />
-      <label for="tab-posts" id="tab-label-posts">Posts</label>
+    <ul class="nav nav-tabs fs-5">
+      {% for name in user_data.keys() %} {% if loop.index0 == 0 %}
+      <li class="nav-item">
+        <a
+          class="nav-link active"
+          data-bs-toggle="tab"
+          href="#tab-{{ name }}"
+          id="tab-nav-{{ name }}"
+          >{{ name }}</a
+        >
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="tab"
+          href="#tab-{{ name }}"
+          id="tab-nav-{{ name }}"
+          >{{ name }}</a
+        >
+      </li>
+      {% endif %} {% endfor %}
+    </ul>
 
-      <!-- Tab 2 -->
-      <input type="radio" name="tabset" id="tab-likes" aria-controls="likes" />
-      <label for="tab-likes" id="tab-label-likes">Likes</label>
-
-      <!-- Tab 3 -->
-      <input
-        type="radio"
-        name="tabset"
-        id="tab-histories"
-        aria-controls="history"
-      />
-      <label for="tab-histories" id="tab-label-histories">History</label>
-
-      <!-- Tab 4 -->
-      <input
-        type="radio"
-        name="tabset"
-        id="tab-wishes"
-        aria-controls="WishList"
-      />
-      <label for="tab-wishes" id="tab-label-wishes">Wish List</label>
-
-      <div class="tab-panels">
-        <!-- Post List -->
-        <section class="tab-panel">{% include 'userPostList.html' %}</section>
-
-        <!-- Like List -->
-        <section class="tab-panel">{% include 'userLikeList.html' %}</section>
-
-        <!-- History List -->
-        <section class="tab-panel">
-          {% include 'userHistoryList.html' %}
-        </section>
-
-        <!-- Wish List -->
-        <section class="tab-panel">{% include 'userWishList.html' %}</section>
+    <div class="tab-content">
+      {% for name, item in user_data.items() %} {% if loop.index0 == 0 %}
+      <div class="tab-pane fade show active" id="tab-{{ name }}">
+        <div id="users-{{name}}">{% include "userList.html" %}</div>
       </div>
+      {% else %}
+      <div class="tab-pane fade" id="tab-{{ name }}">
+        <div id="users-{{name}}">{% include "userList.html" %}</div>
+      </div>
+      {% endif %} {% endfor %}
     </div>
-  </div>
 
-  <!-- community card -->
-  <div class="col-4 card_shadow_style">
-    <div class="card basic_style">
-      <div class="card-img-holder">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkS_oZwG3-XSRs68TNlFAkMjs-FlWhHYQOYnlTMFTJ1w&s0"
-          alt="Blog image"
-        />
-      </div>
-      <h3 class="community-title">Community Center</h3>
-      <span class="community-time">starting your social travel here!</span>
-      <p class="description">
-        community center is a place where people can come together to work on
-      </p>
-      <div class="options">
-        <span> Explore More </span>
-        <button class="button_style">Start</button>
+    <!-- community card -->
+    <div class="col-4 card_shadow_style">
+      <div class="card basic_style">
+        <div class="card-img-holder">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkS_oZwG3-XSRs68TNlFAkMjs-FlWhHYQOYnlTMFTJ1w&s0"
+            alt="Blog image"
+          />
+        </div>
+        <h3 class="community-title">Community Center</h3>
+        <span class="community-time">starting your social travel here!</span>
+        <p class="description">
+          community center is a place where people can come together to work on
+        </p>
+        <div class="options">
+          <span> Explore More </span>
+          <button class="button_style">Start</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 {% block javascript %}
 <script
   type="module"

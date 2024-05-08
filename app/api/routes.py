@@ -22,6 +22,7 @@ from .service import (
     stats_service,
     tag_service,
     tags_service,
+    user_communities_service,
     user_likes_service,
     user_posts_service,
     user_replies_service,
@@ -34,6 +35,18 @@ from .service import (
 
 
 # Api for user module.
+
+
+@api_bp.route("/users/communities", methods=["GET"])
+@jwt_required()
+def user_communities() -> ApiResponse:
+    """Get all communities by user id."""
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    return user_communities_service(page, per_page)
 
 
 @api_bp.route("/users/posts", methods=["GET"])

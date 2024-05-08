@@ -14,6 +14,7 @@ from app.models.trending import Trending
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
+from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
 
@@ -23,6 +24,33 @@ from . import ApiResponse
 
 
 # Api service for user module.
+
+
+def user_communities_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all user communities."""
+
+    user_id: str = current_user.id
+
+    # basic query
+    user_communities = (
+        db.session.query(UserPreference).filter_by(user_id=user_id).first()
+    )
+    community_ids = [
+        int(id.strip()) for id in user_communities.communities.strip("[]").split(",")
+    ]
+
+    # retrieve communities
+    query = db.session.query(Community).filter(Community.id.in_(community_ids))
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    community_collection = [community.to_dict() for community in pagination.items]
+
+    return ApiResponse(
+        data={"user_communities": community_collection}, pagination=pagination
+    ).json()
 
 
 def user_posts_service(page: int = 1, per_page: int = 10) -> ApiResponse:
