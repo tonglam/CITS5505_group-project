@@ -3,7 +3,7 @@
 import datetime
 
 from app.extensions import db
-from app.utils import generate_time
+from app.utils import format_datetime_to_readable_string, generate_time
 
 
 class Community(db.Model):
@@ -44,6 +44,6 @@ class Community(db.Model):
             "category": self.category.to_dict() if self.category else None,
             "description": self.description,
             "avatar_url": self.avatar_url,
-            "create_at": self.create_at,
-            "update_at": self.update_at,
+            "create_at": format_datetime_to_readable_string(self.create_at),
+            "update_at": format_datetime_to_readable_string(self.update_at),
         }

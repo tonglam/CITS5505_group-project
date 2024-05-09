@@ -3,7 +3,7 @@
 import datetime
 
 from app.extensions import db
-from app.utils import generate_time
+from app.utils import format_datetime_to_readable_string, generate_time
 
 
 class Category(db.Model):
@@ -28,5 +28,5 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "create_at": self.create_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "create_at": format_datetime_to_readable_string(self.create_at),
         }

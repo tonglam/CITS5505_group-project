@@ -79,3 +79,14 @@ def get_pagination_details(current_page: int, total_pages: int) -> dict:
         "next_page": current_page + 1 if current_page < total_pages else None,
         "total_pages": total_pages,
     }
+
+
+def format_datetime_to_readable_string(dt):
+    """Function to format datetime to readable string."""
+
+    def day_suffix(day):
+        return (
+            "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+        )
+
+    return dt.strftime(f"%-d{day_suffix(dt.day)} %B %Y")
