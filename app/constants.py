@@ -85,3 +85,6 @@ G_NOTICE_NUM = "notice_num"
 
 # Max notice number
 MAX_NOTICE_NUM = 99
+
+# Home page popular post number
+POPULAR_POST_NUM = 10
