@@ -4,16 +4,22 @@ from flask import render_template
 
 from app.models.reply import Reply
 from app.models.request import Request
+from app.models.community import Community
 from app.post import post_bp
+
+from flask_login import login_required
 
 
 @post_bp.route('/create_post')
+@login_required
 def create_post():
     """create post"""
+    communities = Community.query.all()
 
-    return render_template('create.html', mode='post')
+    return render_template('create.html', mode='post', communities=communities)
 
 @post_bp.route('/create_comment')
+@login_required
 def create_comment():
     """create comment"""
 
