@@ -90,3 +90,21 @@ def format_datetime_to_readable_string(dt):
         )
 
     return dt.strftime(f"%-d{day_suffix(dt.day)} %B %Y")
+
+
+def format_datetime_to_local_date_diff(dt):
+    """Function to format datetime to local date difference."""
+
+    local_dt = dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
+
+    today = datetime.now().date()
+    date_diff = today - local_dt.date()
+    diff = date_diff.days
+
+    if diff == 0:
+        return "today"
+
+    if diff > 0:
+        return f"{diff} days ago"
+
+    return f"in {-diff} days"

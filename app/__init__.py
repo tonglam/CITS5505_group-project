@@ -25,8 +25,10 @@ from app.api.service import (
     populars_service,
     posts_service,
     stats_service,
+    users_notices_service,
 )
 from app.constants import (
+    G_NOTICE,
     G_NOTICE_NUM,
     G_USER,
     POPULAR_POST_NUM,
@@ -40,7 +42,6 @@ from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
 from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
-from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
@@ -307,11 +308,6 @@ def register_blueprints(app: Flask) -> None:
         static_url_path="/search/static",
     )
     app.register_blueprint(
-        notice_bp,
-        url_prefix="/notifications",
-        static_url_path="/notifications/static",
-    )
-    app.register_blueprint(
         post_bp,
         url_prefix="/posts",
         static_url_path="/posts/static",
@@ -452,16 +448,27 @@ def register_context_processors(app: Flask) -> None:
 
     @app.context_processor
     def inject_notice_num():
+        notice_num = 0
         if current_user.is_authenticated:
             notice_num = UserNotice.query.filter_by(
-                user=current_user, status=False
+                user_id=current_user.id, status=False
             ).count()
-        else:
-            notice_num = 0
 
         g.notice_num = notice_num
 
         return {G_NOTICE_NUM: g.notice_num}
+
+    @app.context_processor
+    def inject_notice():
+        notices = None
+        if current_user.is_authenticated:
+            notices = (
+                users_notices_service(status="unread")
+                .json.get("data")
+                .get("user_notices")
+            )
+
+        return {G_NOTICE: notices}
 
 
 def get_oauth2_config() -> dict:

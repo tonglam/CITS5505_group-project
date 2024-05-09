@@ -3,6 +3,8 @@ $(document).ready(function () {
   init_alert();
   // search
   init_search();
+  // notification
+  init_notification();
 });
 
 const init_alert = () => {
@@ -102,4 +104,33 @@ const create_remove_param_render_url = (render_url, keyArray) => {
   url.search = params.toString();
 
   return `${url.pathname}${url.search}${url.hash}`;
+};
+
+const init_notification = () => {
+  const notice = document.getElementById("notice");
+  if (notice === undefined || notice === null) {
+    return false;
+  }
+
+  const notification = document.getElementById("notification");
+  if (notification === undefined || notice === null) {
+    return false;
+  }
+
+  notice.addEventListener("click", function () {
+    if (notification.classList.contains("d-none")) {
+      notification.classList.remove("d-none");
+    } else {
+      notification.classList.add("d-none");
+    }
+  });
+
+  const notification_close = document.getElementById("closeNotification");
+  if (notification_close === undefined || notification_close === null) {
+    return false;
+  }
+
+  notification_close.addEventListener("click", function () {
+    notification.classList.add("d-none");
+  });
 };

@@ -2,22 +2,18 @@
 
 
 from blinker import Namespace
-from flask import Blueprint, current_app, g
+from flask import current_app, g
 
 from app.constants import G_NOTICE_NUM, MAX_NOTICE_NUM
 from app.extensions import db
-from app.models.user_notice import (UserNotice, UserNoticeActionEnum,
-                                    UserNoticeModuleEnum)
+from app.models.user_notice import (
+    UserNotice,
+    UserNoticeActionEnum,
+    UserNoticeModuleEnum,
+)
 
 signals = Namespace()
 notification_signal = signals.signal("notification")
-
-notice_bp = Blueprint(
-    "notice",
-    __name__,
-    template_folder="templates",
-    static_folder="static",
-)
 
 
 def handle_notification(_, **kwargs: dict) -> None:
@@ -44,7 +40,7 @@ def handle_notification(_, **kwargs: dict) -> None:
     # insert to database
     notice = UserNotice(
         user_id=user_id,
-        subject=f"Notification: {notice_module}",
+        subject={notice_module},
         content=f"{notice_action} successfully!",
         module=notice_module,
         status=False,
@@ -63,5 +59,3 @@ def handle_notification(_, **kwargs: dict) -> None:
 
 
 notification_signal.connect(handle_notification)
-
-from . import routes
