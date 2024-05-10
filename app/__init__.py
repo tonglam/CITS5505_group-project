@@ -3,6 +3,7 @@
 import logging
 import os
 import uuid
+from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
 from alembic import command
@@ -142,6 +143,15 @@ def create_app() -> Flask:
             pagination=pagination,
         )
 
+    @app.route("/notifications")
+    @login_required
+    def notification():
+        notices = (
+            users_notices_service(status="unread").json.get("data").get("user_notices")
+        )
+
+        return render_template("components/layout/notification.html", notices=notices)
+
     return app
 
 
@@ -156,10 +166,12 @@ def init_config(app: Flask, env: str) -> None:
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
     app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
-    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
-    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token"
+    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token"
     app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
     app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
 
 def init_extensions(app: Flask) -> None:
@@ -460,7 +472,7 @@ def register_context_processors(app: Flask) -> None:
 
     @app.context_processor
     def inject_notice():
-        notices = None
+        notices = {}
         if current_user.is_authenticated:
             notices = (
                 users_notices_service(status="unread")

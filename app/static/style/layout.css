@@ -27,8 +27,9 @@
   width: 300px;
   height: auto;
   position: absolute;
-  top: 63px;
+  top: 0px;
   right: 62px;
+  z-index: 1000;
   border: 1px solid #eee;
   background-color: #fff;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);

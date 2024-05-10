@@ -24,11 +24,14 @@
       navBar.render_navBar(user, current_user, notice_num) }}
     </header>
 
-    <!-- notification -->
-    {% import './components/layout/notification.html' as notification %} {{
-    notification.render_notification(notices) }}
+    <div style="position: relative; z-index: 999">
+      <!-- notification -->
+      <div class="notifications d-none" id="notification">
+        {% include './components/layout/notification.html' %}
+      </div>
+    </div>
 
-    <main class="container-fluid vw-50 p-4 d-none" id="main">
+    <main class="container-fluid vw-50 p-4" id="main">
       <!-- alert message -->
       {% import './components/alert.html' as alert %} {{
       alert.render_sticky_alert() }}
