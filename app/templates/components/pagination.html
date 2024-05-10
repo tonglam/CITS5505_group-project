@@ -1,0 +1,59 @@
+{% macro render_pagination(pagination) -%}
+<ul class="pagination justify-content-center">
+  {% if pagination.current_page == 1 %}
+  <li class="page-item disabled">
+    <a class="page-link" href="#" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+  {% else %}
+  <li class="page-item">
+    <a
+      class="page-link"
+      href="javascript:void(0);"
+      onclick="handle_page_click({{ pagination.previous_page }})"
+      aria-label="Previous"
+    >
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+  {% endif %} {% for pageNum in range(pagination.first_page,
+  pagination.last_page + 1) %} {% if pageNum == pagination.current_page %}
+  <li class="page-item active" aria-current="page">
+    <a
+      class="page-link"
+      href="javascript:void(0);"
+      onclick="handle_page_click({{pageNum}})"
+      >{{ pageNum }}</a
+    >
+  </li>
+  {% else %}
+  <li class="page-item">
+    <a
+      class="page-link"
+      href="javascript:void(0);"
+      onclick="handle_page_click({{ pageNum }})"
+      >{{ pageNum }}</a
+    >
+  </li>
+  {% endif %} {% endfor %} {% if pagination.current_page == pagination.last_page
+  %}
+  <li class="page-item disabled">
+    <a class="page-link" href="javascript:void(0);" aria-label="Next">
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+  </li>
+  {% else %}
+  <li class="page-item">
+    <a
+      class="page-link"
+      href="javascript:void(0);"
+      onclick="handle_page_click({{ pagination.next_page }})"
+      aria-label="Next"
+    >
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+  </li>
+  {% endif %}
+</ul>
+{%- endmacro %}

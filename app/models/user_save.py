@@ -3,7 +3,7 @@
 import datetime
 
 from app.extensions import db
-from app.utils import generate_time
+from app.utils import format_datetime_to_readable_string, generate_time
 
 
 class UserSave(db.Model):
@@ -32,7 +32,7 @@ class UserSave(db.Model):
 
         return {
             "id": self.id,
-            "user_id": self.user_id,
-            "request_id": self.request_id,
-            "create_at": self.create_at,
+            "user": self.user.to_dict() if self.user else None,
+            "request": self.request.to_dict() if self.request else None,
+            "create_at": format_datetime_to_readable_string(self.create_at),
         }

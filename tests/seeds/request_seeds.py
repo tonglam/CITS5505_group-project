@@ -50,7 +50,7 @@ def seed_request():
             title=data["title"],
             content=data["content"],
             community_id=data["community_id"],
-            category_id=data["category_id"],
+            tag_id=data["category_id"],
             view_num=data["view_num"],
             like_num=data["like_num"],
             reply_num=data["reply_num"],

@@ -11,26 +11,41 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
-                            ProgrammingError, SQLAlchemyError)
+from sqlalchemy.exc import (
+    DataError,
+    IntegrityError,
+    OperationalError,
+    ProgrammingError,
+    SQLAlchemyError,
+)
 from sqlalchemy.sql import text
 
-from app.constants import (G_NOTICE_NUM, G_USER, EnvironmentEnum,
-                           HttpRequestEnum)
+from app.api.service import (
+    communities_service,
+    populars_service,
+    posts_service,
+    stats_service,
+)
+from app.constants import (
+    G_NOTICE_NUM,
+    G_USER,
+    POPULAR_POST_NUM,
+    EnvironmentEnum,
+    HttpRequestEnum,
+)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
-                         swag)
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
 from .user import user_bp
-from .utils import get_config, get_env
+from .utils import get_config, get_env, get_pagination_details
 
 
 def create_app() -> Flask:
@@ -69,7 +84,62 @@ def create_app() -> Flask:
     @app.route("/")
     @login_required
     def index():
-        return render_template("index.html")
+        # community
+        communities = get_home_communities()
+
+        # post
+        post_result = get_home_posts()
+        posts = post_result["posts"]
+
+        # pagination
+        post_pagination = post_result["pagination"]
+        pagination = get_pagination_details(
+            current_page=post_pagination["page"],
+            total_pages=post_pagination["total_pages"],
+        )
+
+        # popular
+        populars = get_home_populars()
+
+        # stat
+        stats = get_home_stats()
+
+        return render_template(
+            "index.html",
+            render_id="index-posts",
+            render_url="/index_posts",
+            communities=communities,
+            posts=posts,
+            pagination=pagination,
+            populars=populars,
+            stats=stats,
+        )
+
+    @app.route("/index_posts")
+    @login_required
+    def index_posts():
+
+        # post
+        community_id = request.args.get("community_id")
+        order_by = request.args.get("order_by")
+        page = request.args.get("page", default=1, type=int)
+        per_page = request.args.get("per_page", default=10, type=int)
+
+        post_result = get_home_posts(community_id, order_by, page, per_page)
+        posts = post_result["posts"]
+
+        # pagination
+        post_pagination = post_result["pagination"]
+        pagination = get_pagination_details(
+            current_page=post_pagination["page"],
+            total_pages=post_pagination["total_pages"],
+        )
+
+        return render_template(
+            "indexPost.html",
+            posts=posts,
+            pagination=pagination,
+        )
 
     return app
 
@@ -426,3 +496,71 @@ def get_oauth2_config() -> dict:
             "scopes": ["user"],
         },
     }
+
+
+def get_home_posts(
+    community_id: int = None,
+    order_by: str = "create_at_desc",
+    page: int = 1,
+    per_page: int = 10,
+) -> list:
+    """Get index post data."""
+
+    posts_response = posts_service(community_id, order_by, page, per_page).json
+    posts = posts_response.get("data").get("posts")
+    pagination = posts_response.get("pagination")
+
+    post_items = [
+        {
+            "id": post["id"],
+            "title": post["title"],
+            "author": post["author"]["username"],
+            "tag": post["tag"]["name"],
+            "reply_num": post["reply_num"],
+            "view_num": post["view_num"],
+            "like_num": post["like_num"],
+            "save_num": post["save_num"],
+            "create_at": post["create_at"],
+        }
+        for post in posts
+    ]
+
+    return {"posts": post_items, "pagination": pagination}
+
+
+def get_home_populars() -> list:
+    """Get index popular data."""
+
+    populars_response = populars_service(POPULAR_POST_NUM).json
+    populars = populars_response.get("data").get("populars")
+
+    return [
+        {
+            "id": popular["request"]["id"],
+            "title": popular["request"]["title"],
+            "author": popular["author"]["username"],
+            "avatar": popular["author"]["avatar_url"],
+            "view_num": popular["view_num"],
+            "reply_num": popular["reply_num"],
+            "create_at": popular["request"]["create_at"],
+        }
+        for popular in populars
+    ]
+
+
+def get_home_stats() -> list:
+    """Get index stats data."""
+
+    stats_response = stats_service().json
+    return stats_response.get("data").get("stats")
+
+
+def get_home_communities() -> list:
+    """Get index communities data."""
+
+    communities_response = communities_service().json
+    communities = communities_response.get("data").get("communities")
+
+    return [
+        {"id": community["id"], "name": community["name"]} for community in communities
+    ]
