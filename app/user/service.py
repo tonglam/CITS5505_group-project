@@ -2,9 +2,15 @@
 
 from email_validator import EmailNotValidError, validate_email
 
-from app.api.service import (user_communities_service, user_likes_service,
-                             user_posts_service, user_saves_service,
-                             user_stats_service, users_records_service)
+from app.api.service import (
+    user_communities_service,
+    user_likes_service,
+    user_posts_service,
+    user_saves_service,
+    user_stats_service,
+    users_records_service,
+)
+from app.models.community import Community
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
 from app.utils import get_pagination_details
@@ -243,5 +249,7 @@ def community_data():
 
     user_communities = user_communities_service().get_json()
     user_communities_data = user_communities.get("data").get("user_communities")
-
+    default_data = Community.query.limit(2).all()
+    if user_communities_data == []:
+        return default_data
     return user_communities_data[0:2]
