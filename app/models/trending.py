@@ -3,7 +3,7 @@
 import datetime
 
 from app.extensions import db
-from app.utils import generate_date, generate_time
+from app.utils import format_datetime_to_readable_string, generate_date, generate_time
 
 
 class Trending(db.Model):
@@ -48,5 +48,5 @@ class Trending(db.Model):
             "view_num": self.view_num,
             "reply_num": self.reply_num,
             "date": self.date,
-            "update_at": self.update_at,
+            "update_at": format_datetime_to_readable_string(self.update_at),
         }

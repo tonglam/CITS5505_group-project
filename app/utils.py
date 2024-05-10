@@ -82,3 +82,14 @@ def get_pagination_details(
         "total_pages": total_pages,
         "total_items": total_items,
     }
+
+
+def format_datetime_to_readable_string(dt):
+    """Function to format datetime to readable string."""
+
+    def day_suffix(day):
+        return (
+            "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+        )
+
+    return dt.strftime(f"%-d{day_suffix(dt.day)} %B %Y")

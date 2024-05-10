@@ -1,12 +1,19 @@
-{% macro render_popular_item(item) -%}
-<div
-  class="pos-relative px-3 pt-3 cursor"
-  onclick="window.open('{{ url_for('post.post_detail', post_id=item.id) }}', '_blank')"
->
-  <h6 class="text-primary text-sm">{{ item.title }}</h6>
-  <div class="mb-0 text-sm">
-    <p class="op-6">Posted 1h ago by {{ item.author }}</p>
+{% macro render_popular_item(item) -%} {% set _id = item.id %}
+<div class="item d-flex align-items-center">
+  <div class="image">
+    <img
+      src="{{ item.avatar }}"
+      alt="popular-{{ item.id }}"
+      class="img-fluid rounded-circle"
+    />
+  </div>
+  <div class="text">
+    <a
+      href="javascript:void(0);"
+      onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
+    >
+      <h3 class="h5">{{ item.title }}</h3></a
+    ><small>Posted on {{ item.create_at }} by {{ item.author }} </small>
   </div>
 </div>
-<hr class="m-0" />
 {%- endmacro %}

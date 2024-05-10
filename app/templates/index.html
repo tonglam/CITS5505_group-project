@@ -2,19 +2,18 @@
 {{ super() }} {% block css %}
 <link rel="stylesheet" href="/static/style/home.css" />
 {% endblock %} {% endblock %} {% block content %}
-<div class="container pt-2 pt-md-5">
+<div class="container pt-2">
   <!--  Re-Render -->
   <p class="d-none" id="render-id">{{ render_id }}</p>
   <p class="d-none" id="render-url">{{ render_url }}</p>
 
   <div class="row">
     <!-- Main content -->
-    <div class="col-lg-9 mb-3">
-      <div class="row text-left mb-5">
+    <div class="col-lg-8 mb-3">
+      <div class="row text-left mb-3">
         <div class="col-lg-6 mb-3 mb-sm-0">
           <div
-            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50"
-            style="width: 100%"
+            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50 w-100"
           >
             <select
               id="community-select"
@@ -31,8 +30,7 @@
         </div>
         <div class="col-lg-6 text-lg-right">
           <div
-            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50"
-            style="width: 100%"
+            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50 w-100"
           >
             <select
               id="sort-select"
@@ -54,45 +52,39 @@
     </div>
 
     <!-- Sidebar content -->
-    <div class="col-lg-3 mb-4 mb-lg-0 px-lg-0 mt-lg-0">
-      <div
-        style="
-          visibility: hidden;
-          display: none;
-          width: 285px;
-          height: 801px;
-          margin: 0px;
-          float: none;
-          position: static;
-          inset: 85px auto auto;
-        "
-      ></div>
+    <div class="col-lg-4 mb-4 mb-lg-0 px-lg-0 mt-lg-0">
+      <div class="indexSidebarContainer" id="sidebar"></div>
       <div
         data-settings='{"parent":"#content","mind":"#header","top":10,"breakpoint":992}'
         data-toggle="sticky"
-        class="sticky"
-        style="top: 85px"
+        class="sticky indexSidebar"
       >
-        <div class="sticky-inner">
-          <div class="bg-white mb-3">
-            <h4 class="px-3 py-4 op-5 m-0">Popular</h4>
-            <hr class="m-0" />
-            {% import './components/index/popularItem.html' as popularItem %} {%
-            for popular in populars %}
-            {{popularItem.render_popular_item(popular) }} {% endfor %}
-          </div>
+        <div class="sticky-inner" id="stat">
           <div class="bg-white text-sm">
-            <h4 class="px-3 py-4 op-5 m-0 roboto-bold">Stats</h4>
-            <hr class="my-0" />
-            {% import './components/index/statItem.html' as statItem %} {% for
-            stat in stats %} {{statItem.render_stat_item(stat) }} {% endfor %}
+            <h4 class="px-3 py-3 op-5 m-0 roboto-bold index-title">
+              Asktify Stats
+            </h4>
+
+            {% include './components/index/statItem.html' %}
+
+            <div class="bg-white mb-3 mt-2" id="popular">
+              <h4 class="px-3 py-3 op-5 m-0 index-title">Trending Posts</h4>
+
+              <div class="articles card">
+                <div class="card-body no-padding">
+                  {% for popular in populars %} {% import
+                  './components/index/popularItem.html' as popularItem %} {{
+                  popularItem.render_popular_item(popular) }} {% endfor %}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {% block javascript %}
+      <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+      {% endblock %} {% endblock %}
     </div>
   </div>
 </div>
-
-{% block javascript %}
-<script src="{{ url_for('static', filename='js/home.js') }}"></script>
-{% endblock %} {% endblock %}

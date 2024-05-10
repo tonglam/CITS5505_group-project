@@ -511,10 +511,12 @@ def get_home_posts(
             "id": post["id"],
             "title": post["title"],
             "author": post["author"]["username"],
+            "tag": post["tag"]["name"],
             "reply_num": post["reply_num"],
             "view_num": post["view_num"],
             "like_num": post["like_num"],
             "save_num": post["save_num"],
+            "create_at": post["create_at"],
         }
         for post in posts
     ]
@@ -533,8 +535,10 @@ def get_home_populars() -> list:
             "id": popular["request"]["id"],
             "title": popular["request"]["title"],
             "author": popular["author"]["username"],
+            "avatar": popular["author"]["avatar_url"],
             "view_num": popular["view_num"],
             "reply_num": popular["reply_num"],
+            "create_at": popular["request"]["create_at"],
         }
         for popular in populars
     ]
@@ -544,28 +548,7 @@ def get_home_stats() -> list:
     """Get index stats data."""
 
     stats_response = stats_service().json
-    stats = stats_response.get("data").get("stats")
-
-    return [
-        [
-            create_stat_label("Community", stats["community_num"]),
-            create_stat_label("Request", stats["request_num"]),
-        ],
-        [
-            create_stat_label("Reply", stats["reply_num"]),
-            create_stat_label("View", stats["view_num"]),
-        ],
-        [
-            create_stat_label("Like", stats["like_num"]),
-            create_stat_label("Save", stats["save_num"]),
-        ],
-    ]
-
-
-def create_stat_label(name: str, value: int) -> list:
-    """Create stat labels."""
-
-    return {"label": name, "value": value}
+    return stats_response.get("data").get("stats")
 
 
 def get_home_communities() -> list:
