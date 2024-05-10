@@ -3,7 +3,7 @@ $(document).ready(function () {
   init_stat_display();
 
   const tabList = [].slice.call(
-    document.querySelectorAll('a[data-bs-toggle="tab"]'),
+    document.querySelectorAll('a[data-bs-toggle="tab"]')
   );
   tabList.forEach((tab) => {
     tab.addEventListener("shown.bs.tab", function (e) {
@@ -11,6 +11,13 @@ $(document).ready(function () {
       const tab_data_name = e.target.id.split("-")[2];
       init_tab_switch(tab_data_name);
     });
+  });
+
+  // check if the user is verified
+  const usernameInput = document.getElementById("user_name");
+  usernameInput.addEventListener("blur", function (e) {
+    const username = usernameInput.value;
+    verify_user(username);
   });
 });
 
@@ -27,7 +34,7 @@ const init_stat_display = () => {
         step: function (now) {
           $this.text(Math.ceil(now));
         },
-      },
+      }
     );
   });
 };
@@ -35,9 +42,29 @@ const init_stat_display = () => {
 const init_tab_switch = (tab_data_name) => {
   // reset render id and url
   document.getElementById("render-id").innerHTML = `users-${tab_data_name}`;
-  document.getElementById("render-url").innerHTML =
-    `/users/lists?name=${tab_data_name}&page=1`;
+  document.getElementById(
+    "render-url"
+  ).innerHTML = `/users/lists?name=${tab_data_name}&page=1`;
 
   // re-render
   re_render({ page: 1 });
+};
+
+//verify user profile
+const verify_user = async (username) => {
+  const response = await getFetch(`/api/v1/users/${username}`)()();
+  if (!response.result) {
+    // show alert
+    const alert = document.getElementById("profileAlert");
+    alert.innerHTML = "User exists!";
+    if (alert.classList.contains("d-none")) {
+      alert.classList.remove("d-none");
+    }
+    // display 1.5s
+    setTimeout(() => {
+      alert.classList.add("d-none");
+    }, 3000);
+  }
+  // clear the input
+  document.getElementById("user_name").value = "";
 };

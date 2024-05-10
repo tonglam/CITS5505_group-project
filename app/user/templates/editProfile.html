@@ -4,6 +4,11 @@
   href="{{ url_for('user.static', filename='style/user.css') }}"
 />
 {% endblock %} {% block content %}
+<div
+  id="profileAlert"
+  class="sticky-top alert alert-danger alert-dismissible text-center fade show d-none"
+  role="alert"
+></div>
 <div class="container light-style flex-grow-1 container-p-y">
   <h4 class="font-weight-bold py-3 mb-4">Account settings</h4>
 
@@ -35,12 +40,17 @@
       <div class="col-md-9">
         <div class="tab-content">
           <div class="tab-pane fade active show" id="account-general">
+            {{ form.csrf_token and form.csrf_token(id='general_profile') }}
             <div class="card-body media align-items-center">
               <img src="{{ user.avatar_url }}" alt="" class="d-block ui-w-80" />
               <div class="media-body ml-4">
                 <label class="btn edit_btn btn-outline-primary">
                   Upload new photo
-                  <input type="file" class="account-settings-fileinput" />
+                  <input
+                    type="file"
+                    class="account-settings-fileinput"
+                    name="avatar"
+                  />
                 </label>
                 &nbsp;
                 <button
@@ -64,6 +74,8 @@
                   type="text"
                   class="form-control mb-1"
                   value="{{ user.username }}"
+                  name="name"
+                  id="user_name"
                 />
               </div>
               <div class="form-group">
@@ -72,6 +84,7 @@
                   type="text"
                   class="form-control mb-1"
                   value="{{ user.email }}"
+                  name="email"
                 />
               </div>
               <div class="form-group">
@@ -80,6 +93,7 @@
                   type="text"
                   class="form-control"
                   value="{{ user.security_question }}"
+                  name="security_question"
                 />
               </div>
               <div class="form-group">
@@ -88,25 +102,39 @@
                   type="text"
                   class="form-control"
                   value="{{ user.security_answer }}"
+                  name="security_answer"
                 />
               </div>
             </div>
           </div>
+          {{ form.csrf_token and form.csrf_token(id='password_profile') }}
           <div class="tab-pane fade" id="account-change-password">
             <div class="card-body pb-2">
               <div class="form-group">
                 <label class="form-label">Current password</label>
-                <input type="password" class="form-control" />
+                <input
+                  type="password"
+                  class="form-control"
+                  name="current_password"
+                />
               </div>
 
               <div class="form-group">
                 <label class="form-label">New password</label>
-                <input type="password" class="form-control" />
+                <input
+                  type="password"
+                  class="form-control"
+                  name="new_password"
+                />
               </div>
 
               <div class="form-group">
                 <label class="form-label">Repeat new password</label>
-                <input type="password" class="form-control" />
+                <input
+                  type="password"
+                  class="form-control"
+                  name="repeat_password"
+                />
               </div>
             </div>
           </div>
@@ -234,8 +262,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nunc arcu, digni
   </div>
 
   <div class="text-right mt-3">
-    <button type="button" class="btn edit_btn btn-primary">Save changes</button>
-    <button type="button" class="btn edit_btn btn-default">Cancel</button>
+    <button type="button" class="btn edit_btn btn-primary button_style">
+      Save changes
+    </button>
+    <button type="button" class="btn edit_btn btn-default button_style">
+      Cancel
+    </button>
   </div>
 </div>
 

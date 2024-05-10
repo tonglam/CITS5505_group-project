@@ -35,9 +35,7 @@ def user_communities_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     user_communities = (
         db.session.query(UserPreference).filter_by(user_id=user_id).first()
     )
-    community_ids = [
-        int(id.strip()) for id in user_communities.communities.strip("[]").split(",")
-    ]
+    community_ids = _get_user_community_ids(user_communities)
 
     # retrieve communities
     query = db.session.query(Community).filter(Community.id.in_(community_ids))
@@ -464,14 +462,15 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
 def user_stats_service() -> ApiResponse:
     """Service for getting user stats."""
 
+    if current_user.is_anonymous:
+        return ApiResponse(data={"user_stats": None}).json()
+
     user_id = current_user.id
 
     user_preference = (
         db.session.query(UserPreference).filter_by(user_id=user_id).first()
     )
-    community_ids = [
-        int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
-    ]
+    community_ids = _get_user_community_ids(user_preference)
 
     community_num = len(community_ids)
     request_num = db.session.query(Request).filter_by(author_id=user_id).count()
@@ -490,6 +489,22 @@ def user_stats_service() -> ApiResponse:
     }
 
     return ApiResponse(data={"user_stats": stats}).json()
+
+
+def _get_user_community_ids(user_preference: UserPreference) -> list:
+    """Get user community ids from user preference."""
+
+    print("user_preference:", user_preference)
+
+    if user_preference is None:
+        return []
+
+    if user_preference.communities is None or user_preference.communities == "":
+        return []
+
+    return [
+        int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
+    ]
 
 
 # Api service for community module.

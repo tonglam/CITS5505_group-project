@@ -5,21 +5,51 @@ from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
 from app.constants import HttpRequestEnum
+from app.models.user import User
 
 from . import ApiResponse
-from .service import (categories_service, category_service,
-                      delete_user_like_service, delete_user_record_service,
-                      delete_user_save_service, get_user_notice_service,
-                      post_user_like_service, post_user_record_service,
-                      post_user_save_service, posts_service,
-                      put_user_notice_service, stats_service, tag_service,
-                      tags_service, user_communities_service,
-                      user_likes_service, user_posts_service,
-                      user_replies_service, user_saves_service,
-                      user_stats_service, users_notices_service,
-                      users_records_service)
+from .service import (
+    categories_service,
+    category_service,
+    delete_user_like_service,
+    delete_user_record_service,
+    delete_user_save_service,
+    get_user_notice_service,
+    post_user_like_service,
+    post_user_record_service,
+    post_user_save_service,
+    posts_service,
+    put_user_notice_service,
+    stats_service,
+    tag_service,
+    tags_service,
+    user_communities_service,
+    user_likes_service,
+    user_posts_service,
+    user_replies_service,
+    user_saves_service,
+    user_stats_service,
+    users_notices_service,
+    users_records_service,
+)
+
 
 # Api for auth module.
+@api_bp.route("/users/<user_name>", methods=["GET"])
+@jwt_required()
+def user_verification(user_name: str) -> ApiResponse:
+    """verify the user's identity."""
+
+    result = User.query.filter_by(username=user_name).count()
+
+    if result:
+        return ApiResponse(data={"result": True}).json()
+
+    return (
+        ApiResponse(data={"result": True}).json()
+        if not result
+        else ApiResponse(data={"result": False}).json()
+    )
 
 
 # Api for user module.

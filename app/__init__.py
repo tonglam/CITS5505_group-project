@@ -11,22 +11,37 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
-                            ProgrammingError, SQLAlchemyError)
+from sqlalchemy.exc import (
+    DataError,
+    IntegrityError,
+    OperationalError,
+    ProgrammingError,
+    SQLAlchemyError,
+)
 from sqlalchemy.sql import text
 
-from app.api.service import (communities_service, populars_service,
-                             posts_service, stats_service)
-from app.constants import (G_NOTICE_NUM, G_POST_STAT, G_USER, POPULAR_POST_NUM,
-                           EnvironmentEnum, HttpRequestEnum)
+from app.api.service import (
+    communities_service,
+    populars_service,
+    posts_service,
+    stats_service,
+    user_stats_service,
+)
+from app.constants import (
+    G_NOTICE_NUM,
+    G_POST_STAT,
+    G_USER,
+    POPULAR_POST_NUM,
+    EnvironmentEnum,
+    HttpRequestEnum,
+)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
-                         swag)
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
 from .notice import notice_bp
 from .popular import popular_bp
 from .post import post_bp
@@ -441,16 +456,19 @@ def register_context_processors(app: Flask) -> None:
 
     @app.context_processor
     def inject_post_stat():
-        stats_data = stats_service().json
-        post_num = stats_data["data"]["stats"]["request_num"]
+        if current_user.is_authenticated:
+            stats_data = user_stats_service().json
+            post_num = stats_data["data"]["user_stats"]["request_num"]
 
-        return {G_POST_STAT: post_num}
+            return {G_POST_STAT: post_num}
+
+        return {G_POST_STAT: 0}
 
     @app.context_processor
     def inject_notice_num():
         if current_user.is_authenticated:
             notice_num = UserNotice.query.filter_by(
-                user=current_user, status=False
+                user_id=current_user.id, status=False
             ).count()
         else:
             notice_num = 0
