@@ -1,21 +1,36 @@
 """Routes for api."""
 
+import requests
 from flask import abort, request
 from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
-from app.constants import HttpRequestEnum
+from app.constants import IMAGE_BB_UPLOAD_URL, HttpRequestEnum
+from app.utils import get_config
 
 from . import ApiResponse
-from .service import (categories_service, category_service,
-                      delete_user_like_service, delete_user_record_service,
-                      delete_user_save_service, get_user_notice_service,
-                      post_user_like_service, post_user_record_service,
-                      post_user_save_service, posts_service,
-                      put_user_notice_service, stats_service, tag_service,
-                      tags_service, user_likes_service, user_posts_service,
-                      user_replies_service, user_saves_service,
-                      users_notices_service, users_records_service)
+from .service import (
+    categories_service,
+    category_service,
+    delete_user_like_service,
+    delete_user_record_service,
+    delete_user_save_service,
+    get_user_notice_service,
+    post_user_like_service,
+    post_user_record_service,
+    post_user_save_service,
+    posts_service,
+    put_user_notice_service,
+    stats_service,
+    tag_service,
+    tags_service,
+    user_likes_service,
+    user_posts_service,
+    user_replies_service,
+    user_saves_service,
+    users_notices_service,
+    users_records_service,
+)
 
 # Api for auth module.
 
@@ -234,3 +249,34 @@ def stats() -> ApiResponse:
     """Get all stats."""
 
     return stats_service()
+
+
+@api_bp.route("/upload/image", methods=["POST"])
+@jwt_required()
+def upload_image() -> ApiResponse:
+    """Upload image to imgbb."""
+
+    # image file
+    image_file = request.files.get("image")
+
+    # post image to imgbb
+    payload = payload = {
+        "key": get_config("IMG_BB", "API_KEY"),
+        "image": image_file.read(),
+    }
+
+    # request
+    response = requests.post(IMAGE_BB_UPLOAD_URL, files=payload, timeout=10)
+
+    if response.status_code != 200:
+        return ApiResponse(
+            code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
+            message="Image upload failed",
+        )
+
+    image_url = response.json()["data"]["url"]
+    print("image_url: ", image_url)
+
+    return ApiResponse(
+        data={"image_url": image_url}, message="Image uploaded successfully"
+    )

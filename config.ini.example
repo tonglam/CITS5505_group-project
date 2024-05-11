@@ -24,3 +24,6 @@ USER_URL = https://api.github.com/user
 
 [OPENAI]
 API_KEY = 
+
+[IMGBB]
+API_KEY = 

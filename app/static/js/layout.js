@@ -68,7 +68,7 @@ const re_render = async (paramsToAdd = {}, keysToRemove = []) => {
   if (keysToRemove.length > 0) {
     new_render_url = create_remove_param_render_url(
       new_render_url,
-      keysToRemove,
+      keysToRemove
     );
   }
 
@@ -138,7 +138,7 @@ const init_notification = () => {
 const handle_notification_change = (notice_id) => {
   // check for notification
   const check_notification = document.getElementById(
-    "notificationCheck-" + notice_id,
+    "notificationCheck-" + notice_id
   );
   if (check_notification === undefined || check_notification === null) {
     console.error("check_notification is missing");
@@ -178,7 +178,7 @@ const handle_notification_unchecked = async (check_notification) => {
 
 const update_notification = async (notice_id) => {
   const response = await putFetch(
-    `/api/v1/users/notifications/${notice_id}`,
+    `/api/v1/users/notifications/${notice_id}`
   )()();
 };
 
@@ -189,7 +189,7 @@ const re_render_notification = async () => {
     document.getElementById("notification").innerHTML = response;
     // re-render navbar notification
     const notification_num = parseInt(
-      document.getElementById("notification-num").textContent,
+      document.getElementById("notification-num").textContent
     );
     const spanBadge = document.getElementById("notice").querySelector("span");
     spanBadge.textContent = notification_num;
@@ -213,4 +213,8 @@ const handle_close_notification = () => {
   notification_close.addEventListener("click", function () {
     notification.classList.add("d-none");
   });
+};
+
+const upload_image = async (formData) => {
+  return postFetch("/api/v1/upload/image")(formData);
 };
