@@ -7,28 +7,15 @@ from app.api import api_bp
 from app.constants import HttpRequestEnum
 
 from . import ApiResponse
-from .service import (
-    categories_service,
-    category_service,
-    delete_user_like_service,
-    delete_user_record_service,
-    delete_user_save_service,
-    get_user_notice_service,
-    post_user_like_service,
-    post_user_record_service,
-    post_user_save_service,
-    posts_service,
-    put_user_notice_service,
-    stats_service,
-    tag_service,
-    tags_service,
-    user_likes_service,
-    user_posts_service,
-    user_replies_service,
-    user_saves_service,
-    users_notices_service,
-    users_records_service,
-)
+from .service import (categories_service, category_service,
+                      delete_user_like_service, delete_user_record_service,
+                      delete_user_save_service, get_user_notice_service,
+                      post_user_like_service, post_user_record_service,
+                      post_user_save_service, posts_service,
+                      put_user_notice_service, stats_service, tag_service,
+                      tags_service, user_likes_service, user_posts_service,
+                      user_replies_service, user_saves_service,
+                      users_notices_service, users_records_service)
 
 # Api for auth module.
 

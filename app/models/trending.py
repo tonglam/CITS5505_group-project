@@ -3,7 +3,8 @@
 import datetime
 
 from app.extensions import db
-from app.utils import format_datetime_to_readable_string, generate_date, generate_time
+from app.utils import (format_datetime_to_readable_string, generate_date,
+                       generate_time)
 
 
 class Trending(db.Model):
