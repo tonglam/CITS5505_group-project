@@ -16,7 +16,6 @@ const getCookieValue = async () => {
     return false;
   }
   cookies = JSON.parse(response);
-  console.log("cookies", cookies);
 };
 
 const getCookies = async () => {
@@ -90,14 +89,11 @@ const getFetch =
   (data = {}) =>
   async (headers = {}) => {
     const urlObject = new URL(url, window.location.origin);
-
     const params = urlObject.searchParams;
     Object.entries(data).forEach(([key, value]) => {
       params.set(key, value);
     });
-
     const getUrl = `${urlObject.pathname}${urlObject.search}`;
-
     const access_token = getJwtToken();
     const getHeaders = { ...jwtHeader(access_token), ...headers };
     return await fetchData(getUrl, { getHeaders });
@@ -109,7 +105,6 @@ const postFetch =
   async (headers = {}) => {
     const access_token = getJwtToken();
     const postHeaders = { ...jwtHeader(access_token), ...headers };
-
     let options = {};
     if (data instanceof FormData) {
       options = {
@@ -127,7 +122,6 @@ const postFetch =
         body: JSON.stringify(data),
       };
     }
-
     return await fetchData(url, options);
   };
 
@@ -137,7 +131,6 @@ const putFetch =
   async (headers = {}) => {
     const access_token = getJwtToken();
     const putHeaders = { ...jwtHeader(access_token), ...headers };
-
     const options = {
       method: "PUT",
       headers: {
@@ -146,7 +139,6 @@ const putFetch =
       },
       body: JSON.stringify(data),
     };
-
     return await fetchData(url, options);
   };
 
@@ -156,7 +148,6 @@ const deleteFetch =
   async (headers = {}) => {
     const access_token = getJwtToken();
     const deleteHeaders = { ...jwtHeader(access_token), ...headers };
-
     const options = {
       method: "DELETE",
       headers: {
@@ -165,6 +156,5 @@ const deleteFetch =
       },
       body: JSON.stringify(data),
     };
-
     return await fetchData(url, options);
   };

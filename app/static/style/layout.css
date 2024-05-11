@@ -50,10 +50,10 @@
 .notifications-item {
   display: flex;
   border-bottom: 1px solid #eee;
-  padding: 6px 9px;
+  padding: 10px;
+  padding-bottom: 0px !important;
   margin-bottom: 0px !important;
   cursor: pointer;
-  padding-top: 20px;
 }
 
 .notifications-item:hover {

@@ -133,22 +133,13 @@ const init_notification = () => {
       notification.classList.add("d-none");
     }
   });
-
-  // close notification
-  const notification_close = document.getElementById("closeNotification");
-  if (notification_close === undefined || notification_close === null) {
-    console.error("notification_close is missing");
-    return false;
-  }
-
-  notification_close.addEventListener("click", function () {
-    notification.classList.add("d-none");
-  });
 };
 
 const handle_notification_change = (notice_id) => {
   // check for notification
-  const check_notification = document.getElementById("notificationCheck");
+  const check_notification = document.getElementById(
+    "notificationCheck-" + notice_id
+  );
   if (check_notification === undefined || check_notification === null) {
     console.error("check_notification is missing");
     return false;
@@ -165,10 +156,10 @@ const handle_notification_change = (notice_id) => {
     if (check_notification.classList.contains("checked")) {
       // call api to update notification
       update_notification(notice_id);
-      // re-render
+      // re-render notification
       re_render_notification();
     }
-  }, 2000);
+  }, 1000);
 };
 
 const handle_notification_checked = async (check_notification) => {
@@ -192,7 +183,34 @@ const update_notification = async (notice_id) => {
 };
 
 const re_render_notification = async () => {
-  const response = await getFetch(`/notifications`)()();
-  // re-render notification
-  document.getElementById("notification").innerHTML = response;
+  setTimeout(async () => {
+    const response = await getFetch(`/notifications`)()();
+    // re-render notification
+    document.getElementById("notification").innerHTML = response;
+    // re-render navbar notification
+    const notification_num = parseInt(
+      document.getElementById("notification-num").textContent
+    );
+    const spanBadge = document.getElementById("notice").querySelector("span");
+    spanBadge.textContent = notification_num;
+    if (notification_num === 0) {
+      // hide notification badge
+      spanBadge.classList.add("d-none");
+      // close notification
+      document.getElementById("notification").classList.add("d-none");
+    }
+  }, 500);
+};
+
+const handle_close_notification = () => {
+  // close notification
+  const notification_close = document.getElementById("closeNotification");
+  if (notification_close === undefined || notification_close === null) {
+    console.error("notification_close is missing");
+    return false;
+  }
+
+  notification_close.addEventListener("click", function () {
+    notification.classList.add("d-none");
+  });
 };

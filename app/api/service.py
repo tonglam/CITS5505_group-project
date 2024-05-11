@@ -1,6 +1,6 @@
 """Services for api."""
 
-from flask import current_app
+from flask import current_app, g
 from flask_login import current_user
 
 from app.constants import HttpRequestEnum
@@ -426,6 +426,9 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     # update notice status
     notice_entity.status = not notice_entity.status
     db.session.commit()
+
+    # update global notice number
+    g.notice_num = db.session.query(UserNotice).filter_by(status=0).count()
 
     return ApiResponse(
         HttpRequestEnum.NO_CONTENT.value,

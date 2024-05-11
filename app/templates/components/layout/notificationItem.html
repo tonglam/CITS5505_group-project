@@ -1,12 +1,14 @@
 {% macro render_notification_item(notice) -%}
 <div
   class="notifications-item d-flex justify-content-between align-items-center"
-  id="notification"
+  onclick="handle_notification_change({{ notice.id }})"
 >
-  <img
-    src="https://img.icons8.com/flat_round/64/000000/vote-badge.png"
-    alt="img"
-  />
+  <div class="mb-3">
+    <img
+      src="https://img.icons8.com/flat_round/64/000000/vote-badge.png"
+      alt="notice icon"
+    />
+  </div>
   <div class="text">
     <h4>
       {{ notice.subject }}
@@ -18,20 +20,21 @@
     </h4>
     <p>{{ notice.content }}</p>
   </div>
-  <a
-    class="nav-link"
-    href="javascript:void(0);"
-    title="Mark As Read"
-    role="button"
-    id="notice-{{ notice.id }}"
-  >
-    <div
-      class="position-relative d-inline-block unchecked"
-      id="notificationCheck"
-      onclick="handle_notification_change({{ notice.id }})"
+  <div class="mb-2">
+    <a
+      class="nav-link"
+      href="javascript:void(0);"
+      title="Mark As Read"
+      role="button"
+      id="notice-{{ notice.id }}"
     >
-      <i class="fa-regular fa-square fa-xl"></i>
-    </div>
-  </a>
+      <div
+        class="position-relative d-inline-block unchecked"
+        id="notificationCheck-{{ notice.id }}"
+      >
+        <i class="fa-regular fa-square fa-xl"></i>
+      </div>
+    </a>
+  </div>
 </div>
 {%- endmacro %}
