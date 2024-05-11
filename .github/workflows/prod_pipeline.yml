@@ -92,6 +92,7 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ secrets.MY_GITHUB_CLIENT_SECRET }}
           GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
         run: |
           cat <<EOF > config.test.ini
           [APP]
@@ -121,6 +122,10 @@ jobs:
 
           [OPENAI]
           API_KEY = ${OPENAI_API_KEY}
+
+          [IMGBB]
+          API_KEY = ${IMGBB_API_KEY}
+
           EOF
 
       - name: Test with Flask-Unittest
@@ -152,6 +157,7 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ secrets.MY_GITHUB_CLIENT_SECRET }}
           GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
         run: |
           cat <<EOF > config.prod.ini
           [APP]
@@ -181,6 +187,10 @@ jobs:
 
           [OPENAI]
           API_KEY = ${OPENAI_API_KEY}
+
+          [IMGBB]
+          API_KEY = ${IMGBB_API_KEY}
+
           EOF
 
       - name: Docker Login
