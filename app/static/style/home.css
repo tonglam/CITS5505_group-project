@@ -43,7 +43,8 @@ p.text-primary:hover {
   --background-color: white;
   --stroke-color: lightblue;
 
-  text-shadow: var(--x-offset) var(--y-offset) 0px var(--background-color),
+  text-shadow:
+    var(--x-offset) var(--y-offset) 0px var(--background-color),
     calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke))
       0px var(--stroke-color);
 }
@@ -197,7 +198,9 @@ p {
   min-width: auto;
   font-size: 0.9em;
   border-radius: 0;
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1), -2px -2px 3px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    3px 3px 3px rgba(0, 0, 0, 0.1),
+    -2px -2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .card-close .dropdown-menu a {

@@ -3,6 +3,7 @@
 import logging
 import os
 import uuid
+from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
 from alembic import command
@@ -11,36 +12,23 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (
-    DataError,
-    IntegrityError,
-    OperationalError,
-    ProgrammingError,
-    SQLAlchemyError,
-)
+from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
+                            ProgrammingError, SQLAlchemyError)
 from sqlalchemy.sql import text
 
-from app.api.service import (
-    communities_service,
-    populars_service,
-    posts_service,
-    stats_service,
-)
-from app.constants import (
-    G_NOTICE_NUM,
-    G_USER,
-    POPULAR_POST_NUM,
-    EnvironmentEnum,
-    HttpRequestEnum,
-)
+from app.api.service import (communities_service, populars_service,
+                             posts_service, stats_service,
+                             users_notices_service)
+from app.constants import (G_NOTICE, G_NOTICE_NUM, G_USER, POPULAR_POST_NUM,
+                           EnvironmentEnum, HttpRequestEnum)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
-from .notice import notice_bp
+from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
+                         swag)
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
@@ -141,6 +129,15 @@ def create_app() -> Flask:
             pagination=pagination,
         )
 
+    @app.route("/notifications")
+    @login_required
+    def notification():
+        notices = (
+            users_notices_service(status="unread").json.get("data").get("user_notices")
+        )
+
+        return render_template("components/layout/notification.html", notices=notices)
+
     return app
 
 
@@ -155,10 +152,12 @@ def init_config(app: Flask, env: str) -> None:
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
     app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
-    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
-    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token"
+    app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token"
     app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
     app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
 
 def init_extensions(app: Flask) -> None:
@@ -307,11 +306,6 @@ def register_blueprints(app: Flask) -> None:
         static_url_path="/search/static",
     )
     app.register_blueprint(
-        notice_bp,
-        url_prefix="/notifications",
-        static_url_path="/notifications/static",
-    )
-    app.register_blueprint(
         post_bp,
         url_prefix="/posts",
         static_url_path="/posts/static",
@@ -452,16 +446,27 @@ def register_context_processors(app: Flask) -> None:
 
     @app.context_processor
     def inject_notice_num():
+        notice_num = 0
         if current_user.is_authenticated:
             notice_num = UserNotice.query.filter_by(
-                user=current_user, status=False
+                user_id=current_user.id, status=False
             ).count()
-        else:
-            notice_num = 0
 
         g.notice_num = notice_num
 
         return {G_NOTICE_NUM: g.notice_num}
+
+    @app.context_processor
+    def inject_notice():
+        notices = {}
+        if current_user.is_authenticated:
+            notices = (
+                users_notices_service(status="unread")
+                .json.get("data")
+                .get("user_notices")
+            )
+
+        return {G_NOTICE: notices}
 
 
 def get_oauth2_config() -> dict:

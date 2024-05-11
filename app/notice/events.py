@@ -19,6 +19,18 @@ class NoticeTypeEnum(enum.Enum):
     USER_UPDATED_PROFILE = f"{UserNoticeModuleEnum.USER.value}, \
         {UserNoticeActionEnum.UPDATED_PROFILE.value}"
 
+    COMMUNITY_CREATED = (
+        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.CREATED.value}"
+    )
+
+    COMMUNITY_UPDATED = (
+        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.UPDATED.value}"
+    )
+
+    COMMUNITY_DELETED = (
+        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.DELETED.value}"
+    )
+
     POST_CREATED = (
         f"{UserNoticeModuleEnum.POST.value}, {UserNoticeActionEnum.CREATED.value}"
     )
@@ -27,16 +39,6 @@ class NoticeTypeEnum(enum.Enum):
     )
     POST_DELETED = (
         f"{UserNoticeModuleEnum.POST.value}, {UserNoticeActionEnum.DELETED.value}"
-    )
-
-    COMMENT_CREATED = (
-        f"{UserNoticeModuleEnum.COMMENT.value}, {UserNoticeActionEnum.CREATED.value}"
-    )
-    COMMENT_UPDATED = (
-        f"{UserNoticeModuleEnum.COMMENT.value}, {UserNoticeActionEnum.UPDATED.value}"
-    )
-    COMMENT_DELETED = (
-        f"{UserNoticeModuleEnum.COMMENT.value}, {UserNoticeActionEnum.DELETED.value}"
     )
 
     REPLY_CREATED = (
@@ -56,31 +58,11 @@ class NoticeTypeEnum(enum.Enum):
         f"{UserNoticeModuleEnum.LIKE.value}, {UserNoticeActionEnum.CANCELLED.value}"
     )
 
-    FOLLOW_CREATED = (
-        f"{UserNoticeModuleEnum.FOLLOW.value}, {UserNoticeActionEnum.CREATED.value}"
-    )
-
-    FOLLOW_CANCEL = (
-        f"{UserNoticeModuleEnum.FOLLOW.value}, {UserNoticeActionEnum.CANCELLED.value}"
-    )
-
     SAVE_CREATED = (
         f"{UserNoticeModuleEnum.SAVE.value}, {UserNoticeActionEnum.CREATED.value}"
     )
     SAVE_CANCEL = (
         f"{UserNoticeModuleEnum.SAVE.value}, {UserNoticeActionEnum.CANCELLED.value}"
-    )
-
-    COMMUNITY_CREATED = (
-        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.CREATED.value}"
-    )
-
-    COMMUNITY_UPDATED = (
-        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.UPDATED.value}"
-    )
-
-    COMMUNITY_DELETED = (
-        f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.DELETED.value}"
     )
 
     SYSTEM = f"{UserNoticeModuleEnum.SYSTEM.value}, {UserNoticeActionEnum.ANNOUNCEMENT.value}"
