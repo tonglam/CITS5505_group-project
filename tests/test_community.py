@@ -123,7 +123,7 @@ class TestCommunity(TestBase):
         self.assertStatus(response, HttpRequestEnum.SUCCESS_OK.value)
         self.assertIn("id", response.json)
         community_id = response.json["id"]
-        # 验证社区是否已创建于数据库中
+        # Verify that the community has been created in the database
         created_community = Community.query.get(community_id)
         self.assertIsNotNone(created_community)
         self.assertEqual(created_community.name, community_data["name"])
@@ -137,7 +137,7 @@ class TestCommunity(TestBase):
         }
         response = client.post(f"/communities/update_community/{community_id}", data=community_data)
         self.assertEqual(json.loads(response.data)["ok"], StatusEnum.SUCCESS.value)
-        # 验证社区是否已修改于数据库中
+        # Verify that the community has been modified in the database
         created_community = Community.query.get(community_id)
         self.assertIsNotNone(created_community)
         self.assertEqual(created_community.name, community_data["name"])
@@ -147,7 +147,7 @@ class TestCommunity(TestBase):
         response = client.delete(f"/communities/update_community/{community_id}")
         self.assertEqual(json.loads(response.data)["ok"], StatusEnum.SUCCESS.value)
 
-        # 验证社区已被删除
+        #Verified community has been deleted 
         deleted_community = Community.query.get(community_id)
         self.assertIsNone(deleted_community)
         # logout

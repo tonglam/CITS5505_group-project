@@ -5,7 +5,7 @@ async function handDeleteCardClick(id) {
     if (response.ok!=="ok") {
         alert(response.message);
     }else{
-        // 页面刷新
+        // page update
         window.location.reload();
     }
 }
@@ -16,5 +16,5 @@ async function handInfoEditClick(element) {
     const info = JSON.parse(element.getAttribute('data-info'));
     const url = `/communities/update_community/${info.id}`;
     const data = { info };
-    const response = await getFetch(url)(data)(); // 第三个参数是header，没有就不传
+    const response = await getFetch(url)(data)(); // The third parameter is header, if not, it will not be passed.
 }
