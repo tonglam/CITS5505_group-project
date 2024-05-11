@@ -23,6 +23,36 @@ from . import ApiResponse
 # Api service for auth module.
 
 
+def user_verification_service(user_name: str) -> ApiResponse:
+    """verify the user's identity."""
+
+    result = User.query.filter_by(username=user_name).count()
+
+    if result:
+        return ApiResponse(data={"result": True}).json()
+
+    return (
+        ApiResponse(data={"result": True}).json()
+        if not result
+        else ApiResponse(data={"result": False}).json()
+    )
+
+
+def user_email_verify_service(user_email: str) -> ApiResponse:
+    """verify the user's identity."""
+
+    result = User.query.filter_by(email=user_email).count()
+
+    if result:
+        return ApiResponse(data={"result": True}).json()
+
+    return (
+        ApiResponse(data={"result": True}).json()
+        if not result
+        else ApiResponse(data={"result": False}).json()
+    )
+
+
 # Api service for user module.
 
 

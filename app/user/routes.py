@@ -3,6 +3,7 @@
 from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_login import login_required
 
+from app.api.service import user_verification_service
 from app.constants import FlashAlertTypeEnum
 from app.extensions import db
 from app.models.user import User
@@ -104,23 +105,16 @@ def profile():
     profile_form = forms.ProfileForm(request.form)
 
     if profile_form.validate_on_submit():
-        user = User.query.filter_by(email=profile_form.email.data).first()
-        if user is None:
+
+        verify_username = user_verification_service(profile_form.username)
+
+        if verify:
             current_app.logger.error(
                 "No user with that email exists, email: %s.", {profile_form.email.data}
             )
             flash("No user with that email exists.", FlashAlertTypeEnum.DANGER.value)
-
-        if user.security_answer != profile_form.security_answer.data:
-            current_app.logger.error(
-                "Invalid security answer, email: %s, security answer: %s.",
-                {profile_form.email.data},
-                {profile_form.security_answer.data},
-            )
-            flash("Invalid security answer.", FlashAlertTypeEnum.DANGER.value)
-            user.password = password_form.password.data
-
-        # update user password
+            return redirect(url_for("user.editProfile"))
+        # update user general profile
         db.session.commit()
         current_app.logger.info(
             "User profile updated, email: %s, id: %s.", {user.email}, {user.id}

@@ -83,8 +83,16 @@
                 <input
                   type="text"
                   class="form-control mb-1"
+                  {%
+                  if
+                  user.email
+                  %}
                   value="{{ user.email }}"
+                  {%
+                  endif
+                  %}
                   name="email"
+                  id="user_email"
                 />
               </div>
               <div class="form-group">

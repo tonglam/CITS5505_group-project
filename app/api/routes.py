@@ -24,11 +24,13 @@ from .service import (
     tag_service,
     tags_service,
     user_communities_service,
+    user_email_verify_service,
     user_likes_service,
     user_posts_service,
     user_replies_service,
     user_saves_service,
     user_stats_service,
+    user_verification_service,
     users_notices_service,
     users_records_service,
 )
@@ -40,16 +42,15 @@ from .service import (
 def user_verification(user_name: str) -> ApiResponse:
     """verify the user's identity."""
 
-    result = User.query.filter_by(username=user_name).count()
+    return user_verification_service(user_name)
 
-    if result:
-        return ApiResponse(data={"result": True}).json()
 
-    return (
-        ApiResponse(data={"result": True}).json()
-        if not result
-        else ApiResponse(data={"result": False}).json()
-    )
+@api_bp.route("/users/<user_email>", methods=["GET"])
+@jwt_required()
+def user_verification_email(user_email: str) -> ApiResponse:
+    """verify the user's email."""
+
+    return user_email_verify_service(user_email)
 
 
 # Api for user module.

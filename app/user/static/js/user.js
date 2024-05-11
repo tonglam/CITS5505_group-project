@@ -19,6 +19,12 @@ $(document).ready(function () {
     const username = usernameInput.value;
     verify_user(username);
   });
+
+  const userEmailInput = document.getElementById("user_email");
+  userEmailInput.addEventListener("blur", function (e) {
+    const email = userEmailInput.value;
+    verify_email(email);
+  });
 });
 
 const init_stat_display = () => {
@@ -50,7 +56,7 @@ const init_tab_switch = (tab_data_name) => {
   re_render({ page: 1 });
 };
 
-//verify user profile
+//verify user profile - check if the user name exists
 const verify_user = async (username) => {
   const response = await getFetch(`/api/v1/users/${username}`)()();
   if (!response.result) {
@@ -60,11 +66,30 @@ const verify_user = async (username) => {
     if (alert.classList.contains("d-none")) {
       alert.classList.remove("d-none");
     }
-    // display 1.5s
+    // the alert displays 3s
     setTimeout(() => {
       alert.classList.add("d-none");
     }, 3000);
   }
   // clear the input
   document.getElementById("user_name").value = "";
+};
+
+//verify user profile - check if the email exists
+const verify_email = async (email) => {
+  const response = await getFetch(`/api/v1/users/${email}`)()();
+  if (!response.result) {
+    // show alert
+    const alert = document.getElementById("profileAlert");
+    alert.innerHTML = "Email exists!";
+    if (alert.classList.contains("d-none")) {
+      alert.classList.remove("d-none");
+    }
+    // the alert displays 3s
+    setTimeout(() => {
+      alert.classList.add("d-none");
+    }, 3000);
+  }
+  // clear the input
+  document.getElementById("user_email").value = "";
 };
