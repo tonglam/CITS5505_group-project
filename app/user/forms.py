@@ -1,15 +1,5 @@
 """WTF form for user module."""
 
-from flask import (
-    abort,
-    current_app,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
@@ -25,17 +15,16 @@ class ProfileForm(FlaskForm):
     email = EmailField(
         name="email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
     )
-    security_question = StringField(name="squestion", validators=[DataRequired()])
-    security_answer = StringField(name="sanswer", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+    security_question = StringField(
+        name="security_question", validators=[DataRequired()]
+    )
+    security_answer = StringField(name="security_answer", validators=[DataRequired()])
 
 
 class PasswordForm(FlaskForm):
     """WTF form for user password."""
 
-    current_password = PasswordField(
-        name="current_password", validators=[DataRequired(), Length(min=8, max=25)]
-    )
+    current_password = PasswordField(name="current_password")
 
     new_password = PasswordField(
         name="new_password",
@@ -54,8 +43,6 @@ class PasswordForm(FlaskForm):
         name="repeat_password",
         validators=[
             DataRequired(),
-            EqualTo("password", message="Passwords must match."),
+            EqualTo("new_password", message="Passwords must match."),
         ],
     )
-
-    submit = SubmitField("Submit")

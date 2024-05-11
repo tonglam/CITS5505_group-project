@@ -40,111 +40,160 @@
       <div class="col-md-9">
         <div class="tab-content">
           <div class="tab-pane fade active show" id="account-general">
-            {{ form.csrf_token and form.csrf_token(id='general_profile') }}
-            <div class="card-body media align-items-center">
-              <img src="{{ user.avatar_url }}" alt="" class="d-block ui-w-80" />
-              <div class="media-body ml-4">
-                <label class="btn edit_btn btn-outline-primary">
-                  Upload new photo
-                  <input
-                    type="file"
-                    class="account-settings-fileinput"
-                    name="avatar"
-                  />
-                </label>
-                &nbsp;
-                <button
-                  type="button"
-                  class="btn edit_btn btn-default md-btn-flat"
-                >
-                  Reset
-                </button>
+            <form
+              action="{{url_for('user.profile')}}"
+              method="post"
+              id="general_profile"
+            >
+              {{ form.csrf_token and form.csrf_token(id='general_profile') }}
+              <div class="card-body media align-items-center">
+                <img
+                  src="{{ user.avatar_url }}"
+                  alt=""
+                  class="d-block ui-w-80"
+                />
+                <div class="media-body ml-4">
+                  <label class="btn edit_btn btn-outline-primary">
+                    Upload new photo
+                    <input
+                      type="file"
+                      class="account-settings-fileinput"
+                      name="avatar"
+                    />
+                  </label>
+                  &nbsp;
+                  <button
+                    type="button"
+                    class="btn edit_btn btn-default md-btn-flat"
+                  >
+                    Reset
+                  </button>
 
-                <div class="text-light small mt-1">
-                  Allowed JPG, GIF or PNG. Max size of 800K
+                  <div class="text-light small mt-1">
+                    Allowed JPG, GIF or PNG. Max size of 800K
+                  </div>
                 </div>
               </div>
-            </div>
-            <hr class="border-light m-0" />
+              <hr class="border-light m-0" />
 
-            <div class="card-body">
-              <div class="form-group">
-                <label class="form-label">Username</label>
-                <input
-                  type="text"
-                  class="form-control mb-1"
-                  value="{{ user.username }}"
-                  name="name"
-                  id="user_name"
-                />
+              <div class="card-body">
+                <div class="d-none" id="current_user">{{ user.username }}</div>
+                <div class="form-group">
+                  <label class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control mb-1"
+                    value="{{ user.username }}"
+                    name="name"
+                    id="user_name"
+                  />
+                </div>
+                <div class="form-group">
+                  <div class="d-none" id="current_email">{{ user.email }}</div>
+                  <label class="form-label">E-mail</label>
+                  <input
+                    type="text"
+                    class="form-control mb-1"
+                    {%
+                    if
+                    user.email
+                    %}
+                    value="{{ user.email }}"
+                    {%
+                    endif
+                    %}
+                    name="email"
+                    id="user_email"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Security Question</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    value="{{ user.security_question }}"
+                    name="security_question"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Security Answer</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    value="{{ user.security_answer }}"
+                    name="security_answer"
+                  />
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">E-mail</label>
-                <input
-                  type="text"
-                  class="form-control mb-1"
-                  {%
-                  if
-                  user.email
-                  %}
-                  value="{{ user.email }}"
-                  {%
-                  endif
-                  %}
-                  name="email"
-                  id="user_email"
-                />
+              <div class="text-right mt-3">
+                <button
+                  type="submit"
+                  class="btn edit_btn btn-primary button_style"
+                >
+                  Save changes
+                </button>
+                <button
+                  type="button"
+                  onclick="location.href='{{ url_for('user.user') }}'"
+                  class="btn edit_btn btn-default button_style"
+                >
+                  Cancel
+                </button>
               </div>
-              <div class="form-group">
-                <label class="form-label">Security Question</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  value="{{ user.security_question }}"
-                  name="security_question"
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Security Answer</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  value="{{ user.security_answer }}"
-                  name="security_answer"
-                />
-              </div>
-            </div>
+            </form>
           </div>
-          {{ form.csrf_token and form.csrf_token(id='password_profile') }}
+
           <div class="tab-pane fade" id="account-change-password">
-            <div class="card-body pb-2">
-              <div class="form-group">
-                <label class="form-label">Current password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  name="current_password"
-                />
-              </div>
+            <form
+              action="{{url_for('user.change_password')}}"
+              method="post"
+              id="password_profile"
+            >
+              {{ form.csrf_token and form.csrf_token(id='password_profile') }}
+              <div class="card-body pb-2">
+                <div class="form-group">
+                  <label class="form-label">Current password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="current_password"
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label">New password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  name="new_password"
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label">New password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="new_password"
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label">Repeat new password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  name="repeat_password"
-                />
+                <div class="form-group">
+                  <label class="form-label">Repeat new password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="repeat_password"
+                  />
+                </div>
               </div>
-            </div>
+              <div class="text-right mt-3">
+                <button
+                  type="submit"
+                  class="btn edit_btn btn-primary button_style"
+                >
+                  Save changes
+                </button>
+                <button
+                  type="button"
+                  onclick="location.href='{{ url_for('user.user') }}'"
+                  class="btn edit_btn btn-default button_style"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
           <div class="tab-pane fade" id="account-info">
             <div class="card-body pb-2">
@@ -268,20 +317,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nunc arcu, digni
       </div>
     </div>
   </div>
-
-  <div class="text-right mt-3">
-    <button type="button" class="btn edit_btn btn-primary button_style">
-      Save changes
-    </button>
-    <button type="button" class="btn edit_btn btn-default button_style">
-      Cancel
-    </button>
-  </div>
 </div>
 
 {% block javascript %}
 <script
   type="module"
-  src="{{ url_for('user.static', filename='js/user.js') }}"
+  src="{{ url_for('user.static', filename='js/profile.js') }}"
 ></script>
 {% endblock %} {% endblock %}

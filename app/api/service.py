@@ -26,30 +26,39 @@ from . import ApiResponse
 def user_verification_service(user_name: str) -> ApiResponse:
     """verify the user's identity."""
 
-    result = User.query.filter_by(username=user_name).count()
+    print("user_name:", user_name)
 
-    if result:
-        return ApiResponse(data={"result": True}).json()
+    result_count = User.query.filter_by(username=user_name).count()
 
     return (
-        ApiResponse(data={"result": True}).json()
-        if not result
-        else ApiResponse(data={"result": False}).json()
+        ApiResponse(data={"result": False}).json()
+        if result_count
+        else ApiResponse(data={"result": True}).json()
     )
 
 
 def user_email_verify_service(user_email: str) -> ApiResponse:
     """verify the user's identity."""
 
-    result = User.query.filter_by(email=user_email).count()
-
-    if result:
-        return ApiResponse(data={"result": True}).json()
+    result_count = User.query.filter_by(email=user_email).count()
+    print("result_count:", result_count)
 
     return (
-        ApiResponse(data={"result": True}).json()
-        if not result
-        else ApiResponse(data={"result": False}).json()
+        ApiResponse(data={"result": False}).json()
+        if result_count
+        else ApiResponse(data={"result": True}).json()
+    )
+
+
+def user_password_verify_service(user_password: str) -> ApiResponse:
+    """verify the user's password."""
+
+    result_count = User.query.filter_by(password_hash=user_password).count()
+
+    return (
+        ApiResponse(data={"result": False}).json()
+        if result_count
+        else ApiResponse(data={"result": True}).json()
     )
 
 

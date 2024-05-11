@@ -27,8 +27,10 @@ from app.api.service import (
     posts_service,
     stats_service,
     user_stats_service,
+    users_notices_service,
 )
 from app.constants import (
+    G_NOTICE,
     G_NOTICE_NUM,
     G_POST_STAT,
     G_USER,

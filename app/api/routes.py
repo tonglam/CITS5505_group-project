@@ -5,7 +5,6 @@ from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
 from app.constants import HttpRequestEnum
-from app.models.user import User
 
 from . import ApiResponse
 from .service import (
@@ -26,6 +25,7 @@ from .service import (
     user_communities_service,
     user_email_verify_service,
     user_likes_service,
+    user_password_verify_service,
     user_posts_service,
     user_replies_service,
     user_saves_service,
@@ -37,7 +37,7 @@ from .service import (
 
 
 # Api for auth module.
-@api_bp.route("/users/<user_name>", methods=["GET"])
+@api_bp.route("/users/username/<user_name>", methods=["GET"])
 @jwt_required()
 def user_verification(user_name: str) -> ApiResponse:
     """verify the user's identity."""
@@ -45,12 +45,20 @@ def user_verification(user_name: str) -> ApiResponse:
     return user_verification_service(user_name)
 
 
-@api_bp.route("/users/<user_email>", methods=["GET"])
+@api_bp.route("/users/email/<user_email>", methods=["GET"])
 @jwt_required()
 def user_verification_email(user_email: str) -> ApiResponse:
     """verify the user's email."""
 
     return user_email_verify_service(user_email)
+
+
+@api_bp.route("/users/email/<user_password>", methods=["GET"])
+@jwt_required()
+def user_verification_password(user_password: str) -> ApiResponse:
+    """verify the user's password."""
+
+    return user_password_verify_service(user_password)
 
 
 # Api for user module.
