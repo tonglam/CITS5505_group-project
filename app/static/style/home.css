@@ -43,8 +43,7 @@ p.text-primary:hover {
   --background-color: white;
   --stroke-color: lightblue;
 
-  text-shadow:
-    var(--x-offset) var(--y-offset) 0px var(--background-color),
+  text-shadow: var(--x-offset) var(--y-offset) 0px var(--background-color),
     calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke))
       0px var(--stroke-color);
 }
@@ -198,9 +197,7 @@ p {
   min-width: auto;
   font-size: 0.9em;
   border-radius: 0;
-  box-shadow:
-    3px 3px 3px rgba(0, 0, 0, 0.1),
-    -2px -2px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1), -2px -2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .card-close .dropdown-menu a {
@@ -216,3 +213,190 @@ p {
   margin-right: 10px;
   transition: none;
 }
+
+/*===== title with logo container settings =====*/
+/* Variables */
+:root {
+  --font-01: "Raleway", sans-serif;
+  --gradient-02: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --gradient-01: linear-gradient(to top, #accbee 0%, #e7f0fd 100%);
+  --m-01: #9197ae;
+  --m-02: #637498;
+}
+
+/* Media mixin */
+@media screen and (max-width: 799px) {
+  .sm {
+    display: block;
+  }
+}
+
+/* Main Nav */
+.mainNav {
+  width: 100%;
+  height: 80px;
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--m-01);
+  text-transform: uppercase;
+  padding: 0 40px;
+}
+.mainNav .mainNav__icon {
+  display: none;
+}
+.mainNav .mainNav__links {
+  display: flex;
+}
+.mainNav .mainNav__links.sm {
+  display: none;
+}
+.mainNav .mainNav__link {
+  letter-spacing: 1px;
+  font-size: 14px;
+  margin-left: 20px;
+  font-weight: 600;
+  box-shadow: inset 0px -10px 0px rgba(255, 255, 255, 0.5);
+  transition: all 0.4s ease, transform 0.2s ease;
+  padding: 2px 4px;
+  transform: translateY(0px);
+}
+.mainNav .mainNav__link:hover {
+  transform: translateY(-5px);
+  box-shadow: inset 0px -20px 0px white;
+}
+.mainNav .mainNav__icon {
+  background-image: url(https://rafaelalucas91.github.io/assets/icons/black/icon-141.svg);
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: none;
+}
+.mainNav .mainNav__icon.sm {
+  display: block;
+}
+
+/* Main Heading */
+.mainHeading {
+  top: 0;
+  width: 100vw;
+
+  margin: 0;
+  padding: 0;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  transform: translateX(-50%);
+  padding: 0 40px;
+  margin-top: -24px !important;
+  background-image: var(--gradient-01);
+}
+.mainHeading .mainHeading__content {
+  max-width: 1110px;
+  min-height: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+.mainHeading .mainHeading__content.sm {
+  min-height: 500px;
+}
+.mainHeading .mainHeading__text {
+  z-index: 1;
+  color: var(--m-02);
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0 40px;
+  max-width: 620px;
+  margin-top: 100px;
+  width: 70%;
+  backdrop-filter: blur(8px);
+  animation: text 0.8s 0.6s ease backwards;
+  position: relative;
+}
+.mainHeading .mainHeading__text.sm {
+  padding: 20px;
+  margin: 90px 0 40px 0;
+}
+.mainHeading .mainHeading__text:before {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  top: 0;
+  left: 0;
+  animation: line 0.8s 0.6s ease backwards;
+}
+.mainHeading .mainHeading__title {
+  text-transform: uppercase;
+  font-weight: 200;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  font-size: 40px;
+  color: var(--m-02);
+}
+.mainHeading .mainHeading__title.sm {
+  margin-bottom: 16px;
+  font-size: 28px;
+}
+.mainHeading .mainHeading__description {
+  letter-spacing: 0.5px;
+  font-size: 16px;
+  line-height: 26px;
+}
+.mainHeading .mainHeading__description.sm {
+  font-size: 14px;
+}
+.mainHeading .mainHeading__image {
+  right: 0;
+  max-width: 600px;
+  width: 60%;
+  height: 600px;
+  transform: translatey(100px);
+  position: absolute;
+  overflow: hidden;
+  animation: image 0.6s 0.2s ease backwards;
+}
+.mainHeading .mainHeading__image.sm {
+  height: 480px;
+  width: 70%;
+  transform: translatey(80px);
+  right: -6%;
+}
+.mainHeading .mainHeading__image img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Call to Action Button */
+.cta {
+  padding: 16px 32px;
+  color: var(--m-02);
+  background-color: transparent;
+  border: 1px solid rgba(var(--m-02), 0.4);
+  font-family: var(--font-01);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin-top: 32px;
+  cursor: pointer;
+  box-shadow: inset 0px 0px 0px rgba(var(--m-02), 0.2);
+  transition: all 0.4s ease;
+}
+.cta:hover {
+  border: 1px solid rgba(var(--m-02), 0.1);
+  box-shadow: inset 0px -80px 0px rgba(var(--m-02), 0.1);
+  transform: translateY(-5px);
+}
+.cta.sm {
+  margin-top: 16px;
+}
+
+/*===== title with logo container settings =====*/

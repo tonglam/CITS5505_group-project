@@ -254,3 +254,7 @@ const handle_close_notification = () => {
     notification.classList.add("d-none");
   });
 };
+
+const upload_image = async (formData) => {
+  return postFetch("/api/v1/upload/image")(formData);
+};
