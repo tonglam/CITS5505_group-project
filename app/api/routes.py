@@ -280,13 +280,3 @@ def upload_image() -> ApiResponse:
     return ApiResponse(
         data={"image_url": image_url}, message="Image uploaded successfully"
     )
-
-
-@api_bp.route("/download/image", methods=["GET"])
-@jwt_required()
-def download_image() -> ApiResponse:
-    """Download image from imgbb."""
-
-    return ApiResponse(
-        data={"image_url": "https://example.com/image.jpg"}, message="Image downloaded"
-    )
