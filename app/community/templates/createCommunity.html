@@ -5,7 +5,7 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
 <div class="contain">
   <div>
     <form class="create"
-      action="{% if record_entity %}{{ url_for('community.update_community', record_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}"
+      action="{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}"
       method="post" id="createForm">
       {{form.csrf_token}}
       <div class="card2">
@@ -46,11 +46,51 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
         </div>
         <div class="bootom_btn">
           <!-- <div class="bootom_btn_item">Cancel</div> -->
-          <button class="bootom_btn_item" type="submit">{% if record_entity %}Edit{% else %}Create{% endif %} your
+          <button class="bootom_btn_item" id="submitBtn" type="submit">{% if record_entity %}Edit{% else %}Create{% endif %} your
             community</button>
         </div>
       </div>
     </form>
   </div>
 </div>
+{% block javascript %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const submitBtn = document.getElementById('submitBtn');    
+    const nameInput = document.getElementById('name');
+    const descriptionInput = document.getElementById('description');
+    const categoryIdSelect = document.getElementById('category_id');
+    const csrf_token = document.getElementById('csrf_token');
+    // 监听表单提交事件
+    submitBtn.addEventListener('click', async function(event) {
+      event.preventDefault(); // 阻止表单默认提交
+      const { postFetch } = await import('../../../static/js/fetch.js');
+
+      // 手动收集表单数据
+
+      const postDataObj = {
+        name: nameInput.value,
+        description: descriptionInput.value,
+        category_id: categoryIdSelect.value,
+        csrf_token:csrf_token.value
+      };
+      // 将普通对象转换为FormData实例
+      const postData = new FormData();
+      for (let key in postDataObj) {
+        postData.append(key, postDataObj[key]);
+      }
+      // 使用postFetch发送POST请求
+      const response = await postFetch("{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}")(postData)({});
+      if (response.ok === "ok") {
+        // 处理成功响应，如重定向或提示
+        alert(response.message);
+        window.location.href = '/communities/';
+      } else {
+        // 处理错误响应
+        alert(response.message);
+      }
+    });
+  });
+</script>
+{% endblock %}
 {% endblock %}

@@ -1,5 +1,7 @@
 """Tests for the API module."""
 
+from datetime import datetime
+
 from flask import Flask
 from flask.testing import FlaskClient
 
@@ -277,6 +279,11 @@ class TestApi(TestBase):
         self.assertEqual(
             len(response_data["data"]["user_posts"]), min(user_posts_count, 10)
         )
+
+    #     response = client.put(url + username, json=update_data)
+    #     self.assertEqual(response.status_code, HttpRequstEnum.SUCCESS_OK.value)
+    #     self.assertEqual(response.json["code"], HttpRequstEnum.BAD_REQUEST.value)
+    #     self.assertEqual(response.json["message"], "[status] is invalid")
 
     def test_get_user_replies(self, app: Flask, client: FlaskClient):
         """Test the user replies API."""
@@ -684,12 +691,32 @@ class TestApi(TestBase):
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
+        self.assertGreaterEqual(
+            datetime.strptime(
+                response_data["data"]["user_notices"][1]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+            datetime.strptime(
+                response_data["data"]["user_notices"][0]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+        )
 
         response = client.get(f"{url}?order_by=update_at_desc")
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
+        self.assertGreaterEqual(
+            datetime.strptime(
+                response_data["data"]["user_notices"][0]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+            datetime.strptime(
+                response_data["data"]["user_notices"][1]["update_at"],
+                "%a, %d %b %Y %H:%M:%S %Z",
+            ),
+        )
 
         # logout
         AuthActions(client).logout()
@@ -881,23 +908,6 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequestEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
-
-        # logout
-        AuthActions(client).logout()
-
-    def test_get_stats(self, _, client: FlaskClient):
-        """Test the stats GET API."""
-
-        url = _PREFIX + "/stats"
-
-        # login
-        AuthActions(client).login()
-
-        response = client.get(url)
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
         AuthActions(client).logout()

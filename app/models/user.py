@@ -9,8 +9,7 @@ from sqlalchemy import event
 
 from app.constants import GRAVATAR_URL
 from app.extensions import bcrypt, db
-from app.utils import (format_datetime_to_readable_string, generate_time,
-                       generate_uuid)
+from app.utils import generate_time, generate_uuid
 
 
 class UserStatusEnum(enum.Enum):
@@ -89,8 +88,8 @@ class User(UserMixin, db.Model):
             "security_question": self.security_question,
             "security_answer": self.security_answer,
             "status": self.status,
-            "create_at": format_datetime_to_readable_string(self.create_at),
-            "update_at": format_datetime_to_readable_string(self.update_at),
+            "create_at": self.create_at,
+            "update_at": self.update_at,
         }
 
     def verify_password(self, password: str) -> bool:

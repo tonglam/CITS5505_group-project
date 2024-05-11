@@ -1,8 +1,5 @@
 <div class="card">
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='style/card.css') }}"
-  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/card.css') }}" />
 
   <div class="card-header">
     <h5 class="card-title">{{ request.title }}</h5>
@@ -21,20 +18,13 @@
     </footer>
   </div>
   <div class="card-footer">
-    <button
-      id="like-button"
-      class="btn-like"
-      onclick="toggleLike({{ request.id }})"
-    >
+    <button id="like-button" class="btn-like" onclick="toggleLike({{ request.id }})">
       Like
     </button>
     <button id="save-button" class="btn-save" onclick="toggleSave()">
       Save
     </button>
-    <button
-      class="btn-create"
-      onclick="window.open('{{ url_for('post.create') }}', '_blank')"
-    >
+    <button class="btn-create" onclick="window.open('{{ url_for('post.create') }}', '_blank')">
       Create New Comment
     </button>
     Views: {{ request.view_num }}, Likes: {{ request.like_num }}, Replies: {{

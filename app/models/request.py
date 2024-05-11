@@ -3,7 +3,7 @@
 import datetime
 
 from app.extensions import db
-from app.utils import format_datetime_to_readable_string, generate_time
+from app.utils import generate_time
 
 
 # pylint: disable=too-many-instance-attributes
@@ -15,7 +15,7 @@ class Request(db.Model):
     title: str = db.Column(db.String(40), nullable=False)
     content: str = db.Column(db.String(1000), default="")
     community_id: int = db.Column(db.Integer, db.ForeignKey("community.id"))
-    tag_id: int = db.Column(db.Integer, db.ForeignKey("tag.id"))
+    category_id: int = db.Column(db.Integer, db.ForeignKey("category.id"))
     view_num: int = db.Column(db.Integer)
     like_num: int = db.Column(db.Integer)
     reply_num: int = db.Column(db.Integer)
@@ -27,7 +27,7 @@ class Request(db.Model):
 
     author = db.relationship("User", backref=db.backref("requests", lazy=True))
     community = db.relationship("Community", backref=db.backref("requests", lazy=True))
-    tag = db.relationship("Tag", backref=db.backref("requests", lazy=True))
+    category = db.relationship("Category", backref=db.backref("requests", lazy=True))
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -36,7 +36,7 @@ class Request(db.Model):
         title: str,
         content: str,
         community_id: int,
-        tag_id: int,
+        category_id: int,
         view_num: int,
         like_num: int,
         reply_num: int,
@@ -46,7 +46,7 @@ class Request(db.Model):
         self.title = title
         self.content = content
         self.community_id = community_id
-        self.tag_id = tag_id
+        self.category_id = category_id
         self.view_num = view_num
         self.like_num = like_num
         self.reply_num = reply_num
@@ -63,15 +63,15 @@ class Request(db.Model):
 
         return {
             "id": self.id,
-            "author": self.author.to_dict() if self.author else None,
+            "author_id": self.author_id,
             "title": self.title,
             "content": self.content,
-            "community": self.community.to_dict() if self.community else None,
-            "tag": self.tag.to_dict() if self.tag else None,
+            "community_id": self.community_id,
+            "category_id": self.category_id,
             "view_num": self.view_num,
             "like_num": self.like_num,
             "reply_num": self.reply_num,
             "save_num": self.save_num,
-            "create_at": format_datetime_to_readable_string(self.create_at),
-            "update_at": format_datetime_to_readable_string(self.update_at),
+            "create_at": self.create_at,
+            "update_at": self.update_at,
         }

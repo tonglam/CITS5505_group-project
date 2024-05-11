@@ -11,11 +11,11 @@ from .service import (categories_service, category_service,
                       delete_user_like_service, delete_user_record_service,
                       delete_user_save_service, get_user_notice_service,
                       post_user_like_service, post_user_record_service,
-                      post_user_save_service, posts_service,
-                      put_user_notice_service, stats_service, tag_service,
-                      tags_service, user_likes_service, user_posts_service,
-                      user_replies_service, user_saves_service,
-                      users_notices_service, users_records_service)
+                      post_user_save_service, put_user_notice_service,
+                      tag_service, tags_service, user_likes_service,
+                      user_posts_service, user_replies_service,
+                      user_saves_service, users_notices_service,
+                      users_records_service)
 
 # Api for auth module.
 
@@ -167,24 +167,6 @@ def user_notice(notice_id: int) -> ApiResponse:
 # Api for post module.
 
 
-@api_bp.route("/posts", methods=["GET"])
-@jwt_required()
-def posts() -> ApiResponse:
-    """Get all posts."""
-
-    # get filter parameters
-    community_id = request.args.get("community_id")
-
-    # get sort parameters
-    order_by = request.args.get("order_by")
-
-    # get pagination parameters
-    page = request.args.get("page", default=1, type=int)
-    per_page = request.args.get("per_page", default=10, type=int)
-
-    return posts_service(community_id, order_by, page, per_page)
-
-
 # Api for others.
 
 
@@ -226,11 +208,3 @@ def tag(tag_id: int) -> ApiResponse:
     """Get a tag by id."""
 
     return tag_service(tag_id)
-
-
-@api_bp.route("/stats", methods=["GET"])
-@jwt_required()
-def stats() -> ApiResponse:
-    """Get all stats."""
-
-    return stats_service()

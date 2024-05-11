@@ -7,7 +7,7 @@
       </span>
       <span> {{info.name}} </span>
     </div>
-    <a class="title_btn" href="{{ url_for('community.create') }}"> Join </a>
+    <a class="title_btn" href="{{ url_for('community.add_community') }}"> Join </a>
   </div>
   <div class="card_text">{{info.description}}</div>
   <div class="card_list">
@@ -18,10 +18,10 @@
     <div class="card_list_item">
       <!-- <div class="item_text">{{info.num}}33</div> -->
       <div>
-        <span class="card_btn" data-info='{{ info.to_dict()|tojson|safe }}'
-          onclick="handDeleteCardClick(this)">Delete</span>
-        <span class="card_btn" data-info='{{ info.to_dict()|tojson|safe }}'
-        onclick="handEditCardClick(this)">Edit</span>
+        <span class="card_btn" id='{{info.id}}'
+          onclick="handDeleteCardClick(id)">删除</span>
+        <span class="card_btn" id='{{info.id}}'
+        onclick="handEditCardClick(id)">编辑</span>
       </div>
     </div>
   </div>
