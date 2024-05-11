@@ -3,7 +3,7 @@
 import datetime
 
 from app.extensions import db
-from app.utils import generate_time
+from app.utils import format_datetime_to_readable_string, generate_time
 
 
 class UserPreference(db.Model):
@@ -37,8 +37,8 @@ class UserPreference(db.Model):
 
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "user": self.user.to_dict() if self.user else None,
             "communities": self.communities,
             "interests": self.interests,
-            "update_at": self.update_at,
+            "update_at": format_datetime_to_readable_string(self.update_at),
         }
