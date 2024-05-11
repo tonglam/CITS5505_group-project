@@ -83,6 +83,7 @@ GRAVATAR_URL = "https://www.gravatar.com/avatar/"
 G_USER = "user"
 G_POST_STAT = "post_stat"
 G_NOTICE_NUM = "notice_num"
+G_NOTICE = "notices"
 
 # Max notice number
 MAX_NOTICE_NUM = 99

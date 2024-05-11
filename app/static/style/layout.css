@@ -115,3 +115,57 @@ a {
 }
 
 /*===== userProfile html card settings =====*/
+.notifications {
+  width: 300px;
+  height: auto;
+  position: absolute;
+  top: 0px;
+  right: 62px;
+  z-index: 1000;
+  border: 1px solid #eee;
+  background-color: #fff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.notifications h2 {
+  font-size: 14px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  color: #999;
+  margin-bottom: 0px !important;
+}
+
+.notifications h2 span {
+  color: #f00;
+}
+
+.notifications-item {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding: 10px;
+  padding-bottom: 0px !important;
+  margin-bottom: 0px !important;
+  cursor: pointer;
+}
+
+.notifications-item:hover {
+  background-color: #eee;
+}
+
+.notifications-item img {
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin-right: 9px;
+  border-radius: 50%;
+}
+
+.notifications-item .text h4 {
+  color: #777;
+  font-size: 16px;
+}
+
+.notifications-item .text p {
+  color: #aaa;
+  font-size: 12px;
+}

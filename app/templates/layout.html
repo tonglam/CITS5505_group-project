@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -28,6 +28,11 @@
       <!-- profile -->
       {% import './components/layout/userProfile.html' as userProfile %} {{
       userProfile.render_user_userProfile(user, post_stat) }}
+
+      <!-- notification -->
+      <div class="notifications d-none" id="notification">
+        {% include './components/layout/notification.html' %}
+      </div>
     </div>
 
     <main class="container-fluid vw-50 p-4" id="main">

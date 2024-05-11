@@ -1,6 +1,6 @@
 """Services for api."""
 
-from flask import current_app
+from flask import current_app, g
 from flask_login import current_user
 
 from app.constants import HttpRequestEnum
@@ -414,9 +414,9 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
 def users_notices_service(
     notice_type: str = None,
     status: str = None,
-    order_by: str = "update_at_desc",
+    order_by: str = "create_at_desc",
     page: int = 1,
-    per_page: int = 10,
+    per_page: int = 5,
 ) -> ApiResponse:
     """Service for getting all users notices."""
 
@@ -426,8 +426,8 @@ def users_notices_service(
     query = (
         db.session.query(UserNotice)
         .filter_by(user_id=user_id)
-        .order_by(UserNotice.id)
         .order_by(UserNotice.status)
+        .order_by(UserNotice.create_at.desc())
     )
 
     # apply filters
@@ -438,10 +438,10 @@ def users_notices_service(
         query = query.filter(UserNotice.status == status)
 
     # apply sort
-    if order_by == "update_at":
-        query = query.order_by(UserNotice.update_at)
-    elif order_by == "update_at_desc":
-        query = query.order_by(UserNotice.update_at.desc())
+    if order_by == "create_at":
+        query = query.order_by(UserNotice.create_at)
+    elif order_by == "create_at_desc":
+        query = query.order_by(UserNotice.create_at.desc())
     elif order_by == "status":
         query = query.order_by(UserNotice.status)
 
@@ -482,6 +482,9 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     # update notice status
     notice_entity.status = not notice_entity.status
     db.session.commit()
+
+    # update global notice number
+    g.notice_num = db.session.query(UserNotice).filter_by(status=0).count()
 
     return ApiResponse(
         HttpRequestEnum.NO_CONTENT.value,

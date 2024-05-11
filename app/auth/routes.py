@@ -17,13 +17,12 @@ from flask import (
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
-    get_jwt_identity,
-    jwt_required,
     set_access_cookies,
     set_refresh_cookies,
     unset_jwt_cookies,
 )
 from flask_login import current_user, login_required, login_user, logout_user
+from flask_wtf.csrf import generate_csrf
 
 from app.auth import auth_bp, forms
 from app.constants import (
@@ -184,6 +183,11 @@ def login():
             "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
         )
 
+        # csrf token
+        csrf_token = generate_csrf()
+        response.set_cookie("csrf_token", csrf_token)
+        current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
+
         flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
 
         return response
@@ -199,24 +203,6 @@ def login():
         return render_template("auth.html", form=form)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
-
-
-@auth_bp.route("/refresh", methods=["POST"])
-@jwt_required(refresh=True)
-def refresh():
-    """Refresh JWT token."""
-
-    current_jwt_user = get_jwt_identity()
-    refresh_access_token = create_access_token(identity=current_jwt_user)
-    response = {"refresh": True}
-    set_access_cookies(response, refresh_access_token)
-    current_app.logger.info(
-        "JWT refreshed for user, id: %s, JWT: %s.",
-        {current_jwt_user.id},
-        {refresh_access_token},
-    )
-
-    return response
 
 
 @auth_bp.route("/logout")
@@ -410,6 +396,22 @@ def callback(provider: str):
         "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
     )
 
+    # csrf token
+    csrf_token = generate_csrf()
+    response.set_cookie("csrf_token", csrf_token)
+    current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
+
     flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
 
     return response
+
+
+@auth_bp.route("/cookies", methods=["GET"])
+@login_required
+def cookie():
+    """Get cookies."""
+
+    if current_user.is_anonymous:
+        return []
+
+    return request.cookies
