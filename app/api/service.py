@@ -1,14 +1,17 @@
 """Services for api."""
 
-from flask import current_app
+from flask import current_app, g
 from flask_login import current_user
 
 from app.constants import HttpRequestEnum
 from app.extensions import db
 from app.models.category import Category
+from app.models.community import Community
 from app.models.reply import Reply
 from app.models.request import Request
 from app.models.tag import Tag
+from app.models.trending import Trending
+from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
 from app.models.user_record import UserRecord
@@ -355,9 +358,9 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
 def users_notices_service(
     notice_type: str = None,
     status: str = None,
-    order_by: str = "update_at_desc",
+    order_by: str = "create_at_desc",
     page: int = 1,
-    per_page: int = 10,
+    per_page: int = 5,
 ) -> ApiResponse:
     """Service for getting all users notices."""
 
@@ -367,8 +370,8 @@ def users_notices_service(
     query = (
         db.session.query(UserNotice)
         .filter_by(user_id=user_id)
-        .order_by(UserNotice.id)
         .order_by(UserNotice.status)
+        .order_by(UserNotice.create_at.desc())
     )
 
     # apply filters
@@ -379,10 +382,10 @@ def users_notices_service(
         query = query.filter(UserNotice.status == status)
 
     # apply sort
-    if order_by == "update_at":
-        query = query.order_by(UserNotice.update_at)
-    elif order_by == "update_at_desc":
-        query = query.order_by(UserNotice.update_at.desc())
+    if order_by == "create_at":
+        query = query.order_by(UserNotice.create_at)
+    elif order_by == "create_at_desc":
+        query = query.order_by(UserNotice.create_at.desc())
     elif order_by == "status":
         query = query.order_by(UserNotice.status)
 
@@ -424,6 +427,9 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     notice_entity.status = not notice_entity.status
     db.session.commit()
 
+    # update global notice number
+    g.notice_num = db.session.query(UserNotice).filter_by(status=0).count()
+
     return ApiResponse(
         HttpRequestEnum.NO_CONTENT.value,
         message="update success",
@@ -433,10 +439,74 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
 # Api service for community module.
 
 
+def communities_service() -> ApiResponse:
+    """Service for getting all communities."""
+
+    # query
+    query = db.session.query(Community).order_by(Community.id)
+
+    # convert to JSON data
+    community_collection = [community.to_dict() for community in query]
+
+    return ApiResponse(data={"communities": community_collection}).json()
+
+
 # Api service for popular module.
 
 
+def populars_service(limit: int = 10) -> ApiResponse:
+    """Get all popular requests by limit."""
+
+    # query
+    trendings = (
+        db.session.query(Trending).order_by(Trending.view_num.desc()).limit(limit)
+    )
+
+    # convert to JSON data
+    popular_collection = [trending.to_dict() for trending in trendings]
+
+    return ApiResponse(data={"populars": popular_collection}).json()
+
+
 # Api service for post module.
+
+
+def posts_service(
+    community_id: int,
+    order_by: str = "create_at_desc",
+    page: int = 1,
+    per_page: int = 10,
+) -> ApiResponse:
+    """Service for getting all posts."""
+
+    # basic query
+    query = db.session.query(Request)
+
+    # apply filters
+    if community_id:
+        query = query.filter(Request.community_id == community_id)
+
+    # apply sort
+    if order_by == "create_at_desc":
+        query = query.order_by(Request.create_at.desc())
+    elif order_by == "update_at_desc":
+        query = query.order_by(Request.update_at.desc())
+    elif order_by == "reply_num_desc":
+        query = query.order_by(Request.reply_num.desc())
+    elif order_by == "view_num_desc":
+        query = query.order_by(Request.view_num.desc())
+    elif order_by == "like_num_desc":
+        query = query.order_by(Request.like_num.desc())
+    elif order_by == "save_num_desc":
+        query = query.order_by(Request.save_num.desc())
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    post_collection = [post.to_dict() for post in pagination.items]
+
+    return ApiResponse(data={"posts": post_collection}, pagination=pagination).json()
 
 
 # Api service for notice module.
@@ -501,3 +571,27 @@ def tag_service(tag_id: int) -> ApiResponse:
         ).json()
 
     return ApiResponse(data={"tag": tag.to_dict()}).json()
+
+
+def stats_service() -> ApiResponse:
+    """Service for getting stats."""
+
+    user_num = db.session.query(User).count()
+    community_num = db.session.query(Community).count()
+    request_num = db.session.query(Request).count()
+    reply_num = db.session.query(Reply).count()
+    view_num = db.session.query(UserRecord).count()
+    like_num = db.session.query(UserLike).count()
+    save_num = db.session.query(UserSave).count()
+
+    stats = {
+        "user_num": user_num,
+        "community_num": community_num,
+        "request_num": request_num,
+        "view_num": view_num,
+        "reply_num": reply_num,
+        "like_num": like_num,
+        "save_num": save_num,
+    }
+
+    return ApiResponse(data={"stats": stats}).json()

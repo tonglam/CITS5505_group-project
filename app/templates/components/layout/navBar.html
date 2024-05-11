@@ -36,8 +36,8 @@
       fa-lg", targetBlank=True) }}
 
       <!-- notice icon -->
-      {{ icon_button("notice", url_for('notice.notice'), "fa-solid fa-bell
-      fa-lg", showBadge=True, badgeNum=notice_num ) }}
+      {{ icon_button("notice", None, "fa-solid fa-bell fa-lg", showBadge=True,
+      badgeNum=notice_num ) }}
 
       <!-- login bar -->
 
@@ -140,6 +140,7 @@ False, badgeNum = 0) -%}
     target="_blank"
     title="{{ title }}"
     role="button"
+    id="{{ title }}"
   >
     <div class="position-relative d-inline-block">
       <i class="{{ icon_class }}"></i>
@@ -153,8 +154,14 @@ False, badgeNum = 0) -%}
       {% endif %}
     </div>
   </a>
-  {% else %}
-  <a class="nav-link" href="{{ url }}" title="{{ title }}" role="button">
+  {% else %} {% if url %}
+  <a
+    class="nav-link"
+    href="{{ url }}"
+    title="{{ title }}"
+    role="button"
+    id="{{ title }}"
+  >
     <div class="position-relative d-inline-block">
       <i class="{{ icon_class }}"></i>
       <!-- badge -->
@@ -167,7 +174,27 @@ False, badgeNum = 0) -%}
       {% endif %}
     </div>
   </a>
-  {% endif %}
+  {% else %}
+  <a
+    class="nav-link"
+    href="javascript:void(0);"
+    title="{{ title }}"
+    role="button"
+    id="{{ title }}"
+  >
+    <div class="position-relative d-inline-block">
+      <i class="{{ icon_class }}"></i>
+      <!-- badge -->
+      {% if (showBadge and badgeNum > 0) %}
+      <span
+        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
+        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
+        >{{ badgeNum }}</span
+      >
+      {% endif %}
+    </div>
+  </a>
+  {% endif %} {% endif %}
 </li>
 {%- endmacro %}
 
