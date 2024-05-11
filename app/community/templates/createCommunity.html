@@ -61,12 +61,12 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
     const descriptionInput = document.getElementById('description');
     const categoryIdSelect = document.getElementById('category_id');
     const csrf_token = document.getElementById('csrf_token');
-    // 监听表单提交事件
+    // Listen for form submission events
     submitBtn.addEventListener('click', async function(event) {
-      event.preventDefault(); // 阻止表单默认提交
+      event.preventDefault(); // Prevent form from submitting by default
       const { postFetch } = await import('../../../static/js/fetch.js');
 
-      // 手动收集表单数据
+      // Manually collect form data
 
       const postDataObj = {
         name: nameInput.value,
@@ -74,19 +74,19 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
         category_id: categoryIdSelect.value,
         csrf_token:csrf_token.value
       };
-      // 将普通对象转换为FormData实例
+      //Convert ordinary object to FormData instance 
       const postData = new FormData();
       for (let key in postDataObj) {
         postData.append(key, postDataObj[key]);
       }
-      // 使用postFetch发送POST请求
+      // Send POST request using postFetch
       const response = await postFetch("{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}")(postData)({});
       if (response.ok === "ok") {
-        // 处理成功响应，如重定向或提示
+        // Handle successful responses such as redirects or prompts
         alert(response.message);
         window.location.href = '/communities/';
       } else {
-        // 处理错误响应
+        //Handling error responses 
         alert(response.message);
       }
     });
