@@ -6,8 +6,11 @@ from flask import current_app, g
 
 from app.constants import G_NOTICE_NUM, MAX_NOTICE_NUM
 from app.extensions import db
-from app.models.user_notice import (UserNotice, UserNoticeActionEnum,
-                                    UserNoticeModuleEnum)
+from app.models.user_notice import (
+    UserNotice,
+    UserNoticeActionEnum,
+    UserNoticeModuleEnum,
+)
 
 signals = Namespace()
 notification_signal = signals.signal("notification")
@@ -37,7 +40,7 @@ def handle_notification(_, **kwargs: dict) -> None:
     # insert to database
     notice = UserNotice(
         user_id=user_id,
-        subject={notice_module},
+        subject=notice_module,
         content=f"{notice_action} successfully!",
         module=notice_module,
         status=False,
