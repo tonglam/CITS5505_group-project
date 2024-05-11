@@ -89,3 +89,6 @@ MAX_NOTICE_NUM = 99
 
 # Home page popular post number
 POPULAR_POST_NUM = 10
+
+# Image BB
+IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
