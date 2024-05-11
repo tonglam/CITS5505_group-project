@@ -216,7 +216,5 @@ const handle_close_notification = () => {
 };
 
 const upload_image = async (formData) => {
-  const response = postFetch("/api/v1/upload/image")(formData);
-  console.log("response", response);
-  return response;
+  return postFetch("/api/v1/upload/image")(formData);
 };
