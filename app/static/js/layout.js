@@ -217,9 +217,7 @@ const handle_notification_unchecked = async (check_notification) => {
 };
 
 const update_notification = async (notice_id) => {
-  const response = await putFetch(
-    `/api/v1/users/notifications/${notice_id}`
-  )()();
+  await putFetch(`/api/v1/users/notifications/${notice_id}`)()();
 };
 
 const re_render_notification = async () => {
@@ -253,8 +251,4 @@ const handle_close_notification = () => {
   notification_close.addEventListener("click", function () {
     notification.classList.add("d-none");
   });
-};
-
-const upload_image = async (formData) => {
-  return postFetch("/api/v1/upload/image")(formData);
 };

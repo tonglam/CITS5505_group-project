@@ -1,31 +1,31 @@
 """WTF form for user module."""
 
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, StringField, SubmitField
+from flask_wtf.file import FileAllowed, FileField
+from wtforms import EmailField, PasswordField, StringField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
 
 
 class ProfileForm(FlaskForm):
     """WTF form for user profile."""
 
+    avatar = FileField(
+        "avatar", validators=[FileAllowed(["jpg", "jpeg", "png"], "Images only!")]
+    )
     username = StringField(
-        name="name", validators=[DataRequired(), Length(min=2, max=50)]
+        "username", validators=[DataRequired(), Length(min=2, max=50)]
     )
-
     email = EmailField(
-        name="email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
+        "email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
     )
-    security_question = StringField(
-        name="security_question", validators=[DataRequired()]
-    )
-    security_answer = StringField(name="security_answer", validators=[DataRequired()])
+    security_question = StringField("security_question", validators=[DataRequired()])
+    security_answer = StringField("security_answer", validators=[DataRequired()])
 
 
 class PasswordForm(FlaskForm):
     """WTF form for user password."""
 
     current_password = PasswordField(name="current_password")
-
     new_password = PasswordField(
         name="new_password",
         validators=[
@@ -38,7 +38,6 @@ class PasswordForm(FlaskForm):
             ),
         ],
     )
-
     rpassword = PasswordField(
         name="repeat_password",
         validators=[

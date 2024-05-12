@@ -11,6 +11,7 @@ from app.notice.events import NoticeTypeEnum, notice_event
 from app.user import forms, user_bp
 from app.user.service import (
     community_data,
+    get_upload_avatar_url,
     history_data,
     like_data,
     post_data,
@@ -99,134 +100,171 @@ def user_lists():
 
 @user_bp.route("/profile", methods=["GET", "POST"])
 @login_required
-def profile():
-    """Render the user profile page."""
+def user_profile():
+    """Get the user's profile account page."""
 
-    user_profile = db.session.query(User).filter_by(id=current_user.id).first()
-    username = user_profile.username
-    email = user_profile.email
-    security_question = user_profile.security_question
-    security_answer = user_profile.security_answer
-
-    profile_form = forms.ProfileForm(request.form)
+    user_id = current_user.id
+    profile_form = forms.ProfileForm()
 
     if profile_form.validate_on_submit():
+        user_entity = db.session.query(User).filter_by(id=user_id).first()
+
+        update = False
+
+        avatar_file = profile_form.avatar.data
+        username = user_entity.username
+        email = user_entity.email
+        security_question = user_entity.security_question
+        security_answer = user_entity.security_answer
+
+        if profile_form.avatar.data:
+            upload_avatar_url = get_upload_avatar_url(avatar_file)
+            if upload_avatar_url:
+                current_user.avatar_url = upload_avatar_url
+                user_entity.avatar_url = upload_avatar_url
+                update = True
 
         if profile_form.username.data != username:
-            verify_response = user_verification_service(
-                profile_form.username.data
-            ).get_json()
-            verify_username = verify_response.get("data").get("result")
+            # verify username
+            verify_username = (
+                user_verification_service(profile_form.username.data)
+                .get_json()
+                .get("data")
+                .get("result")
+            )
 
             if not verify_username:
-                current_app.logger.error(
-                    "Username exists, name: %s.", {profile_form.username.data}
-                )
+                current_app.logger.error("Username: %s exists.", {username})
                 flash("Username exists.", FlashAlertTypeEnum.DANGER.value)
                 return redirect(url_for("user.profile"))
 
-            user_profile.username = profile_form.username.data
+            user_entity.username = profile_form.username.data
+            update = True
 
         if profile_form.email.data != email:
-            verify_email = user_email_verify_service(profile_form.email.data).get_json()
-            verify_email = verify_email.get("data").get("result")
+            # verify email
+            verify_email = (
+                user_email_verify_service(profile_form.email.data)
+                .get_json()
+                .get("data")
+                .get("result")
+            )
 
             if verify_email:
-                current_app.logger.error(
-                    "Username or E-mail exists, name: %s.", {profile_form.username.data}
-                )
-                flash("Username or E-mail exists.", FlashAlertTypeEnum.DANGER.value)
+                current_app.logger.error("Email: %s exists", {username})
+                flash("E-mail exists.", FlashAlertTypeEnum.DANGER.value)
                 return redirect(url_for("user.profile"))
 
-            user_profile.email = profile_form.email.data
+            user_entity.email = profile_form.email.data
+            update = True
 
         if profile_form.security_question.data != security_question:
-            user_profile.security_question = profile_form.security_question.data
+            user_entity.security_question = profile_form.security_question.data
+            update = True
 
         if profile_form.security_answer.data != security_answer:
-            user_profile.security_answer = profile_form.security_answer.data
+            user_entity.security_answer = profile_form.security_answer.data
+            update = True
 
-        # update user general profile
-        db.session.commit()
-        current_app.logger.info(
-            "User profile updated, email: %s, id: %s.",
-            {user_profile.email},
-            {user_profile.id},
-        )
+        if update:
+            # update user general profile
+            db.session.commit()
+            current_app.logger.info("User: %s profile updated.", {username})
 
-        # send notification
-        notice_event(
-            user_id=user_profile.id, notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE
-        )
+            # send notification
+            notice_event(
+                user_id=user_id, notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE
+            )
 
-        current_app.logger.info("Profile updated for user, id: %s.", {user_profile.id})
-        flash("Profile has been updated.", FlashAlertTypeEnum.SUCCESS.value)
+            current_app.logger.info("Profile updated for user: %s.", {username})
+            flash("Profile has been updated.", FlashAlertTypeEnum.SUCCESS.value)
 
-    if profile_form.errors:
-        for field, errors in profile_form.errors.items():
-            for error in errors:
-                current_app.logger.error(
-                    "Profile error in field %s: %s",
-                    {getattr(profile_form, field).label.text},
-                    {error},
-                )
-        return render_template("editprofile.html", form=profile_form)
+        if profile_form.errors:
+            for field, errors in profile_form.errors.items():
+                for error in errors:
+                    current_app.logger.error(
+                        "User %s edit profile error in field %s: %s",
+                        {username},
+                        {getattr(profile_form, field).label.text},
+                        {error},
+                    )
+                    flash(
+                        f"{getattr(profile_form, field).label.text}, {error}",
+                        FlashAlertTypeEnum.DANGER.value,
+                    )
 
-    return render_template("editProfile.html", form=profile_form)
+    return render_template("userProfile.html", tab="profile", form=profile_form)
 
 
-@user_bp.route("/change_password", methods=["POST"])
+@user_bp.route("/password", methods=["GET", "POST"])
 @login_required
-def change_password():
-    """Render the user edit profile - password page."""
+def user_password():
+    """Get the user's profile password page."""
 
+    user_id = current_user.id
     password_form = forms.PasswordForm(request.form)
-    user_profile = db.session.get(User, current_user.id)
 
     if password_form.validate_on_submit():
-        if password_form.current_password.data and not user_profile.verify_password(
-            password_form.current_password.data
-        ):
-            current_app.logger.error(
-                "Invalid password with this email, email: %s.",
-                {password_form.email.data},
+        user_entity = db.session.query(User).filter_by(id=user_id).first()
+
+        username = user_entity.username
+        current_password = password_form.current_password.data
+        new_password = password_form.new_password.data
+
+        if not current_password:
+            flash("Password not changed.", FlashAlertTypeEnum.DANGER.value)
+            return render_template(
+                "userPassword.html", tab="password", form=password_form
             )
+
+        if not user_entity.verify_password(current_password):
+            current_app.logger.error("Invalid password for user: %s.", {username})
 
             flash(
-                "Invalid password. Please try a different login method or attempt again.",
+                "Invalid password. Please try again.",
                 FlashAlertTypeEnum.DANGER.value,
             )
-            return redirect(url_for("user.profile"))
 
-        user_profile.password = password_form.new_password.data
+        user_entity.password = new_password
 
         # update user password
         db.session.commit()
-        current_app.logger.info(
-            "User password updated, email: %s, id: %s.",
-            {user_profile.email},
-            {user_profile.id},
-        )
+        current_app.logger.info("User: %s password updated.", {username})
 
         # send notification
-        notice_event(
-            user_id=user_profile.id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD
-        )
+        notice_event(user_id=user_id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
-        current_app.logger.info("Password reset for user, id: %s.", {user_profile.id})
+        current_app.logger.info("Password reset for user: %s.", {username})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
 
-        return redirect(url_for("user.profile"))
+        if password_form.errors:
+            for field, errors in password_form.errors.items():
+                for error in errors:
+                    current_app.logger.error(
+                        "User: %s edit profile error in field %s: %s",
+                        {username},
+                        {getattr(password_form, field).label.text},
+                        {error},
+                    )
+                    flash(
+                        f"{getattr(password_form, field).label.text}, {error}",
+                        FlashAlertTypeEnum.DANGER.value,
+                    )
 
-    if password_form.errors:
-        for field, errors in password_form.errors.items():
-            for error in errors:
-                current_app.logger.error(
-                    "Password validate error in field %s: %s",
-                    {getattr(password_form, field).label.text},
-                    {error},
-                )
+    return render_template("userPassword.html", tab="password", form=password_form)
 
-        return redirect(url_for("user.profile"))
 
-    return redirect(url_for("user.profile"))
+@user_bp.route("/info", methods=["GET"])
+@login_required
+def user_info():
+    """Get the user's profile info."""
+
+    return render_template("userInfo.html", tab="info")
+
+
+@user_bp.route("/notification", methods=["GET"])
+@login_required
+def user_notification():
+    """Get the user's profile notification."""
+
+    return render_template("userNotification.html", tab="notification")

@@ -3,6 +3,7 @@
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
+
 .button_style {
   background-color: #03bfcb;
   border: 1px solid #03bfcb;
@@ -105,7 +106,9 @@
 
 .gap_items {
   background: var(--sec);
+}
 
+.list-border-bottom {
   border-bottom: 1px solid var(--dark-pri);
 }
 
@@ -187,6 +190,10 @@
   padding: 1.5rem;
   overflow: hidden;
   position: relative;
+}
+
+.card-body {
+  padding: 0 !important;
 }
 
 .card-img-holder {

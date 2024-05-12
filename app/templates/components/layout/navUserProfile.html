@@ -1,15 +1,15 @@
 {% macro render_user_userProfile(user, post_stat) -%}
 <div class="userProfile_card d-none" id="userProfileCard">
   <div class="card text-center pr-2">
-    <div class="d-flex justify-content-end mt-3 mx-2" id="closeUserProfile">
+    <div class="d-flex justify-content-end" id="closeUserProfile">
       <i class="fa-regular fa-circle-xmark fa-lg" style="cursor: pointer"></i>
     </div>
-    <div class="mt-2">
+    <div class="mt-3">
       {% if user.email %}
-      <p class="text-muted mb-0 mt-2">
+      <div class="d-flex align-items-baseline text-muted">
         <i class="fa-solid fa-envelope pe-2" style="color: #47a7f0"></i>
-        {{ user.email }}
-      </p>
+        <p>{{ user.email }}</p>
+      </div>
       {% endif %}
     </div>
 
@@ -29,11 +29,17 @@
       </h5>
       <span class="badge badge-soft-danger mb-0">Posts:{{ post_stat }} </span>
       <div class="pt-3">
-        <button class="button_style">Manage your account</button>
+        <button
+          type="button"
+          class="btn btn-sm button_style"
+          onclick="location.href='{{ url_for('user.user_profile') }}'"
+        >
+          Manage your account
+        </button>
       </div>
     </div>
 
-    <div class="btn-group mt-3" role="group">
+    <div class="btn-group mt-4" role="group">
       <button
         type="button"
         class="btn btn-outline-secondary"

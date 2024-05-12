@@ -1,4 +1,7 @@
 $(document).ready(function () {
+  // init avatar change
+  init_avatar_change();
+
   // check if the user is verified
   const usernameInput = document.getElementById("user_name");
   usernameInput.addEventListener("blur", function () {
@@ -10,19 +13,29 @@ $(document).ready(function () {
   userEmailInput.addEventListener("blur", function () {
     verify_email(userEmailInput);
   });
-
-  // check if the password is verified
-  const passwordInput = document.getElementById("user_password");
-  passwordInput.addEventListener("blur", function () {
-    verify_password(passwordInput);
-  });
 });
+
+const init_avatar_change = () => {
+  const avatarInput = document.getElementById("avatarInput");
+  if (avatarInput === null || avatarInput === undefined) {
+    return false;
+  }
+  avatarInput.addEventListener("change", function () {
+    const file = avatarInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function () {
+      const avatar = document.getElementById("profileAvatar");
+      avatar.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+};
 
 // verify user profile - check if the user name exists
 const verify_user = async (usernameInput) => {
   const username = usernameInput.value;
-  const current_userneme = document.getElementById("current_email").innerHTML;
-  if (username === current_userneme) {
+  const current_username = document.getElementById("current_email").innerHTML;
+  if (username === current_username) {
     return false;
   }
 
@@ -67,24 +80,5 @@ const verify_email = async (userEmailInput) => {
     }, 3000);
     // clear the input
     document.getElementById("user_email").value = "";
-  }
-};
-
-// verify user profile - check if the password is valid
-const verify_password = (passwordInput) => {
-  const password = passwordInput.value;
-  if (password.length < 8) {
-    // show alert
-    const alert = document.getElementById("profileAlert");
-    alert.innerHTML = "Password must be at least 8 characters!";
-    if (alert.classList.contains("d-none")) {
-      alert.classList.remove("d-none");
-    }
-    // the alert displays 3s
-    setTimeout(() => {
-      alert.classList.add("d-none");
-    }, 3000);
-    // clear the input
-    document.getElementById("user_password").value = "";
   }
 };

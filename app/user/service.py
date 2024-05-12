@@ -1,8 +1,10 @@
 "Service for user views."
 
 from email_validator import EmailNotValidError, validate_email
+from werkzeug.datastructures import FileStorage
 
 from app.api.service import (
+    upload_image_service,
     user_communities_service,
     user_likes_service,
     user_posts_service,
@@ -253,3 +255,10 @@ def community_data():
     if user_communities_data == []:
         return default_data
     return user_communities_data[0:2]
+
+
+def get_upload_avatar_url(avatar_file: FileStorage):
+    """Get upload avatar url."""
+
+    upload_avatar_response = upload_image_service(avatar_file).get_json()
+    return upload_avatar_response.get("data").get("image_url")

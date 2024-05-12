@@ -154,7 +154,9 @@ def create_app() -> Flask:
             users_notices_service(status="unread").json.get("data").get("user_notices")
         )
 
-        return render_template("components/layout/notification.html", notices=notices)
+        return render_template(
+            "components/layout/navNotification.html", notices=notices
+        )
 
     return app
 
@@ -163,6 +165,7 @@ def init_config(app: Flask, env: str) -> None:
     """Initialize application configuration."""
 
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
+    app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
     app.config["SWAGGER"] = get_swagger_config()

@@ -19,7 +19,13 @@
     </div>
   </div>
 
+  {% if pagination.total_items >0 %}
+  <div class="list-border-bottom"></div>
+  {% endif %}
+
   <!-- List Pagination -->
-  {% if pagination.total_items>0 %} {% import './components/pagination.html' as
-  pageItem %} {{ pageItem.render_pagination(pagination) }} {% endif %}
+  <div class="mt-4">
+    {% if pagination.total_items >0 %} {% import './components/pagination.html'
+    as pageItem %} {{ pageItem.render_pagination(pagination) }} {% endif %}
+  </div>
 </div>

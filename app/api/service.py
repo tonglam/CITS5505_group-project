@@ -1,9 +1,11 @@
 """Services for api."""
 
+import requests
 from flask import current_app, g
 from flask_login import current_user
+from werkzeug.datastructures import FileStorage
 
-from app.constants import HttpRequestEnum
+from app.constants import IMAGE_BB_UPLOAD_URL, HttpRequestEnum
 from app.extensions import db
 from app.models.category import Category
 from app.models.community import Community
@@ -17,6 +19,7 @@ from app.models.user_notice import UserNotice
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
+from app.utils import get_config
 
 from . import ApiResponse
 
@@ -25,8 +28,6 @@ from . import ApiResponse
 
 def user_verification_service(user_name: str) -> ApiResponse:
     """verify the user's identity."""
-
-    print("user_name:", user_name)
 
     result_count = User.query.filter_by(username=user_name).count()
 
@@ -41,7 +42,6 @@ def user_email_verify_service(user_email: str) -> ApiResponse:
     """verify the user's identity."""
 
     result_count = User.query.filter_by(email=user_email).count()
-    print("result_count:", result_count)
 
     return (
         ApiResponse(data={"result": False}).json()
@@ -536,8 +536,6 @@ def user_stats_service() -> ApiResponse:
 def _get_user_community_ids(user_preference: UserPreference) -> list:
     """Get user community ids from user preference."""
 
-    print("user_preference:", user_preference)
-
     if user_preference is None:
         return []
 
@@ -708,3 +706,27 @@ def stats_service() -> ApiResponse:
     }
 
     return ApiResponse(data={"stats": stats}).json()
+
+
+def upload_image_service(image_file: FileStorage) -> ApiResponse:
+    """Service for uploading image."""
+
+    payload = payload = {"key": get_config("IMGBB", "API_KEY")}
+    files = {
+        "image": (image_file.filename, image_file, image_file.content_type),
+    }
+
+    response = requests.post(IMAGE_BB_UPLOAD_URL, data=payload, files=files, timeout=10)
+    current_app.logger.info(f"Image BB upload response: {response}")
+
+    if response.status_code != 200:
+        return ApiResponse(
+            code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
+            message="Image upload failed",
+        )
+
+    image_url = response.json()["data"]["url"]
+
+    return ApiResponse(
+        data={"image_url": image_url}, message="Image uploaded successfully"
+    ).json()
