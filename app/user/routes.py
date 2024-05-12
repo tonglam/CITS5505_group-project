@@ -119,10 +119,9 @@ def user_profile():
 
         if profile_form.avatar.data:
             upload_avatar_url = get_upload_avatar_url(avatar_file)
-            if upload_avatar_url:
-                current_user.avatar_url = upload_avatar_url
-                user_entity.avatar_url = upload_avatar_url
-                update = True
+            current_user.avatar_url = upload_avatar_url
+            user_entity.avatar_url = upload_avatar_url
+            update = True
 
         if profile_form.username.data != username:
             # verify username
