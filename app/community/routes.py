@@ -51,7 +51,7 @@ def add_community():
             db.session.add(new_community)
             db.session.commit()
             return jsonify({"message": "Create success","ok":"ok","id":community.id}), 200
-        # 如果到了这里，说明验证未通过
+        # If you get here, it means the verification has not passed.
         message=""
         for field, errors in form.errors.items():
             for error in errors:
@@ -81,10 +81,10 @@ def update_community(community_id: int):
             record_entity.name = form.name.data
             record_entity.description = form.description.data
             record_entity.category_id = form.category_id.data
-            db.session.commit()  # 提交更改到数据库
-            # 成功更新后，重定向到编辑页面
+            db.session.commit()  # Submit changes to the database
+            # After successful update, redirect to edit page
             return jsonify({"message": "Edit success","ok":"ok","id":community_id}), 200
-        # 如果到了这里，说明验证未通过
+        # If you get here, it means the verification has not passed.
         message=""
         for field, errors in form.errors.items():
             for error in errors:
