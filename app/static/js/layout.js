@@ -3,11 +3,13 @@ $(document).ready(function () {
   init_alert();
   // search
   init_search();
+  // notification
+  init_notification();
 });
 
 const init_alert = () => {
   window.setTimeout(function () {
-    let alertElement = document.getElementById("alert");
+    const alertElement = document.getElementById("alert");
     if (typeof alertElement != "undefined" && alertElement != null) {
       document.getElementById("alert").classList.add("d-none");
     }
@@ -15,8 +17,8 @@ const init_alert = () => {
 };
 
 const init_search = () => {
-  let search = document.getElementById("search");
-  search.addEventListener("focus", function (event) {
+  const search = document.getElementById("search");
+  search.addEventListener("focus", function () {
     location.href = "/search";
   });
 };

@@ -4,7 +4,7 @@ import datetime
 import enum
 
 from app.extensions import db
-from app.utils import generate_time
+from app.utils import format_datetime_to_readable_string, generate_time
 
 
 class ReplySourceEnum(enum.Enum):
@@ -65,13 +65,13 @@ class Reply(db.Model):
 
         return {
             "id": self.id,
-            "request_id": self.request_id,
-            "replier_id": self.replier_id,
+            "request": self.request.to_dict() if self.request else None,
+            "replier": self.replier.to_dict() if self.replier else None,
             "reply_id": self.reply_id,
             "content": self.content,
             "source": self.source.value,
             "like_num": self.like_num,
             "save_num": self.save_num,
-            "create_at": self.create_at,
-            "update_at": self.update_at,
+            "create_at": format_datetime_to_readable_string(self.create_at),
+            "update_at": format_datetime_to_readable_string(self.update_at),
         }

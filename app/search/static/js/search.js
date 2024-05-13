@@ -1,5 +1,3 @@
-import { getFetch } from "../../../static/js/fetch.js";
-
 $(document).ready(function () {
   // disable navbar search input
   document.getElementById("search").disabled = true;
@@ -38,7 +36,8 @@ $(document).ready(function () {
 });
 
 const init_search = async () => {
-  let searchInputElement = document.getElementById("searchInput");
+  const searchInputElement = document.getElementById("searchInput");
+
   if (searchInputElement === null) {
     return false;
   }
@@ -54,6 +53,7 @@ const handle_search_click = async () => {
     .getElementById("searchInput")
     .value.toLowerCase()
     .trim();
+
   search_fetch(keyword);
 };
 

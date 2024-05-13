@@ -4,7 +4,8 @@ import datetime
 import enum
 
 from app.extensions import db
-from app.utils import generate_time
+from app.utils import (format_datetime_to_local_date_diff,
+                       format_datetime_to_readable_string, generate_time)
 
 
 class UserNoticeModuleEnum(enum.Enum):
@@ -79,11 +80,12 @@ class UserNotice(db.Model):
 
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "user": self.user.to_dict() if self.user else None,
             "subject": self.subject,
             "content": self.content,
             "module": self.module.value,
             "status": self.status,
-            "create_at": self.create_at,
-            "update_at": self.update_at,
+            "create_at": format_datetime_to_readable_string(self.create_at),
+            "update_at": format_datetime_to_readable_string(self.update_at),
+            "diff_date": format_datetime_to_local_date_diff(self.create_at),
         }

@@ -1,0 +1,77 @@
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  overflow: hidden;
+  font-family: "Arial", sans-serif;
+}
+
+.card-header {
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #eee;
+  padding: 10px 15px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: #888;
+}
+
+.card-text {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-height: 1.6em;
+  height: 4.8em;
+}
+
+.card-text.expanded {
+  display: block;
+  height: auto;
+}
+
+.btn-like,
+.btn-save,
+.btn-create {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0px 16px;
+  margin-left: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.blockquote-footer {
+  font-style: italic;
+  font-size: 12px;
+  margin-top: 20px;
+  padding-bottom: 10px;
+}
+
+.expand-button {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  padding: 8px 15px;
+  margin-top: 15px;
+  display: block;
+}
+
+.card-footer {
+  background-color: #f7f7f7;
+  border-top: 1px solid #eee;
+  padding: 10px 15px;
+  font-size: 14px;
+}
