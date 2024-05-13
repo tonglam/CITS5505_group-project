@@ -28,7 +28,6 @@ def create_seed_community_data(length: int = 100) -> list:
                 "name": names[i],
                 "category_id": random.choice(category_ids),
                 "description": faker.text(),
-                "avatar_url": "",
                 "creator_id": random.choice(creator_ids),
             }
         )
@@ -59,7 +58,6 @@ def seed_community():
             name=data["name"],
             category_id=data["category_id"],
             description=data["description"],
-            avatar_url=data["avatar_url"],
             creator_id=data["creator_id"],
         )
         db.session.add(community)
