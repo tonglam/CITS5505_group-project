@@ -7,8 +7,10 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
 {% endblock %}
 <div class="contain">
   <div class="community">
-    {% for item in infolist %} {% import 'card.html' as macros %} {{
+    {% for item in communities %} {% import 'communityCard.html' as macros %} {{
     macros.print_card(item) }} {% endfor %}
   </div>
 </div>
-{% endblock %}
+{% block javascript %}
+<script src="{{ url_for('community.static', filename='js/community.js') }}"></script>
+{% endblock %} {% endblock %}
