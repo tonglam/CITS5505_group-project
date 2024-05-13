@@ -19,7 +19,9 @@ from .service import (
     post_user_like_service,
     post_user_record_service,
     post_user_save_service,
+    posts_service,
     put_user_notice_service,
+    stats_service,
     tag_service,
     tags_service,
     user_likes_service,
@@ -178,6 +180,24 @@ def user_notice(notice_id: int) -> ApiResponse:
 
 
 # Api for post module.
+
+
+@api_bp.route("/posts", methods=["GET"])
+@jwt_required()
+def posts() -> ApiResponse:
+    """Get all posts."""
+
+    # get filter parameters
+    community_id = request.args.get("community_id")
+
+    # get sort parameters
+    order_by = request.args.get("order_by")
+
+    # get pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    return posts_service(community_id, order_by, page, per_page)
 
 
 # Api for others.
