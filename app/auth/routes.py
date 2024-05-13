@@ -4,20 +4,42 @@ import secrets
 from urllib.parse import urlencode
 
 import requests
-from flask import (abort, current_app, flash, redirect, render_template,
-                   request, session, url_for)
-from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                set_access_cookies, set_refresh_cookies,
-                                unset_jwt_cookies)
+from flask import (
+    abort,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import generate_csrf
 
 from app.auth import auth_bp, forms
-from app.constants import (AUTHORIZATION_CODE, AUTHORIZE_URL, CALLBACK_URL,
-                           CLIENT_ID, CLIENT_SECRET, OAUTH2_PROVIDERS,
-                           OAUTH2_STATE, RESPONSE_TYPE, SCOPES, TOKEN_URL,
-                           FlashAlertTypeEnum, HttpRequestEnum,
-                           OAuthProviderEnum)
+from app.constants import (
+    AUTHORIZATION_CODE,
+    AUTHORIZE_URL,
+    CALLBACK_URL,
+    CLIENT_ID,
+    CLIENT_SECRET,
+    OAUTH2_PROVIDERS,
+    OAUTH2_STATE,
+    RESPONSE_TYPE,
+    SCOPES,
+    TOKEN_URL,
+    FlashAlertTypeEnum,
+    HttpRequestEnum,
+    OAuthProviderEnum,
+)
 from app.extensions import db, login_manager
 from app.models.user import User
 from app.notice.events import NoticeTypeEnum, notice_event
@@ -174,7 +196,7 @@ def login():
         for field, errors in form.errors.items():
             for error in errors:
                 current_app.logger.error(
-                    "Register error in field %s: %s",
+                    "Login error in field %s: %s",
                     {getattr(form, field).label.text},
                     {error},
                 )

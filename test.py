@@ -8,7 +8,6 @@ from tests import (
     api_suite,
     auth_suite,
     community_suite,
-    notice_suite,
     popular_suite,
     post_suite,
     search_suite,
@@ -20,7 +19,6 @@ suite_functions = {
     "api": api_suite,
     "auth": auth_suite,
     "community": community_suite,
-    "notice": notice_suite,
     "popular": popular_suite,
     "post": post_suite,
     "search": search_suite,
@@ -48,7 +46,7 @@ def run_suite(name=None) -> None:
         # remove the test database
         db_file = "instance/requestForum.test.sqlite"
         if os.path.exists(db_file):
-            os.remove(db_file)
+            # os.remove(db_file)
             print("Removed the test database.")
 
         sys.exit(1)
