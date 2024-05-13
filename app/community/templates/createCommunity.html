@@ -1,96 +1,68 @@
 {% extends "layout.html" %} {% block title %}Community{% endblock %} {% block
 head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
-<link rel="stylesheet" href="{{ url_for('community.static', filename='style/community.css') }}" />
+<link
+  rel="stylesheet"
+  href="{{ url_for('community.static', filename='style/community.css') }}"
+/>
 {% endblock %}
 <div class="contain">
-  <div>
-    <form class="create"
-      action="{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}"
-      method="post" id="createForm">
-      {{form.csrf_token}}
-      <div class="card2">
-        <div class="card2_title">
-          <div class="card2_title_left_img"></div>
-          <div class="card2_title_text" id="comunityTitle">
-            {% if record_entity %}Edit{% else %}Create{% endif %} a community
-          </div>
-        </div>
-        <div class="card2_desc">
-          Build and grow a community about something you care about. We'll help
-          you set things up.
-        </div>
-        <div id="form" class="form">
-          <div class="one_input">
-            <label for="name">Name</label>
-            <input name="name" id="name" type="text" placeholder="name"
-              value="{% if record_entity %}{{record_entity.name}}{% else %}{% endif %}" />
-          </div>
-          <div class="one_text">
-            Choose wisely. Once you pick a name, it can't be changed
-          </div>
-          <div class="one_input">
-            <label for="description">description</label>
-            <input name="description" id="description" type="text" placeholder="description"
-              value="{% if record_entity %}{{record_entity.description}}{% else %}{% endif %}" />
-          </div>
-
-          <div class="one_input">
-            <label for="category_id">category</label>
-            <select name="category_id" id="category_id">
-              {% for item in optionList %}
-              <option value={{item.id}} {% if record_entity and item.id==record_entity.category_id %}selected="selected"
-                {% endif %}>{{item.name}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="bootom_btn">
-          <!-- <div class="bootom_btn_item">Cancel</div> -->
-          <button class="bootom_btn_item" id="submitBtn" type="submit">{% if record_entity %}Edit{% else %}Create{% endif %} your
-            community</button>
+  <form
+    class="create"
+    action="{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}"
+    method="post"
+    id="createForm"
+  >
+    {{form.csrf_token}}
+    <div class="card2">
+      <div class="card2_title">
+        <div class="card2_title_left_img"></div>
+        <div class="card2_title_text" id="comunityTitle">
+          {% if record_entity %}Edit{% else %}Create{% endif %} a community
         </div>
       </div>
-    </form>
-  </div>
+      <div class="card2_desc">
+        Build and grow a community about something you care about. We'll help
+        you set things up.
+      </div>
+      <div id="form" class="form">
+        <div class="one_input">
+          <label for="name">Name</label>
+          <input
+            name="name"
+            id="name"
+            type="text"
+            placeholder="name"
+            value="{% if record_entity %}{{record_entity.name}}{% else %}{% endif %}"
+          />
+        </div>
+        <div class="one_text">
+          Choose wisely. Once you pick a name, it can't be changed
+        </div>
+        <div class="one_input">
+          <label for="description">description</label>
+          <input
+            name="description"
+            id="description"
+            type="text"
+            placeholder="description"
+            value="{% if record_entity %}{{record_entity.description}}{% else %}{% endif %}"
+          />
+        </div>
+
+        <div class="one_input">
+          <label for="category_id">category</label>
+          <select name="category_id" id="category_id"></select>
+        </div>
+      </div>
+      <div class="bootom_btn">
+        <!-- <div class="bootom_btn_item">Cancel</div> -->
+        <button class="bootom_btn_item" id="submitBtn" type="submit">
+          {% if record_entity %}Edit{% else %}Create{% endif %} your community
+        </button>
+      </div>
+    </div>
+  </form>
 </div>
 {% block javascript %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const submitBtn = document.getElementById('submitBtn');    
-    const nameInput = document.getElementById('name');
-    const descriptionInput = document.getElementById('description');
-    const categoryIdSelect = document.getElementById('category_id');
-    const csrf_token = document.getElementById('csrf_token');
-    // Listen for form submission events
-    submitBtn.addEventListener('click', async function(event) {
-      event.preventDefault(); // Prevent form from submitting by default
-      const { postFetch } = await import('../../../static/js/fetch.js');
-
-      // Manually collect form data
-
-      const postDataObj = {
-        name: nameInput.value,
-        description: descriptionInput.value,
-        category_id: categoryIdSelect.value,
-        csrf_token:csrf_token.value
-      };
-      //Convert ordinary object to FormData instance 
-      const postData = new FormData();
-      for (let key in postDataObj) {
-        postData.append(key, postDataObj[key]);
-      }
-      // Send POST request using postFetch
-      const response = await postFetch("{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}")(postData)({});
-      if (response.ok === "ok") {
-        // Handle successful responses such as redirects or prompts
-        alert(response.message);
-        window.location.href = '/communities/';
-      } else {
-        //Handling error responses 
-        alert(response.message);
-      }
-    });
-  });
-</script>
-{% endblock %}
-{% endblock %}
+<script src="{{ url_for('community.static', filename='js/community.js') }}"></script>
+{% endblock %} {% endblock %}

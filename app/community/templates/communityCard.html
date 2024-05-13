@@ -3,25 +3,41 @@
   <div class="title">
     <div class="title_left">
       <span class="bar">
+        {% if info.avatar_url %}
         <img class="bar_img" src="{{info.avatar_url}}" />
+        {% endif %}
       </span>
       <span> {{info.name}} </span>
     </div>
-    <a class="title_btn" href="{{ url_for('community.add_community') }}"> Join </a>
+    <a
+      role="button"
+      class="title_btn"
+      href="{{ url_for('community.add_community') }}"
+    >
+      Join
+    </a>
   </div>
   <div class="card_text">{{info.description}}</div>
   <div class="card_list">
     <div class="card_list_item">
       <div class="item_text">{{info.create_at}}</div>
-      <!-- <div>{{info.name1}}33</div> -->
     </div>
     <div class="card_list_item">
-      <!-- <div class="item_text">{{info.num}}33</div> -->
       <div>
-        <span class="card_btn" id='{{info.id}}'
-          onclick="handDeleteCardClick(id)">delete</span>
-        <span class="card_btn" id='{{info.id}}'
-        onclick="handEditCardClick(id)">edit</span>
+        <button
+          class="btn btn-sm btn-primary card_btn"
+          id="{{info.id}}"
+          onclick="location.href='{{ url_for('community.edit', community_id=info.id) }}'"
+        >
+          edit
+        </button>
+        <button
+          class="btn btn-sm btn-danger card_btn"
+          id="{{info.id}}"
+          onclick="handleDeleteCardClick(id)"
+        >
+          delete
+        </button>
       </div>
     </div>
   </div>

@@ -1,17 +1,16 @@
 {% extends "layout.html" %} {% block title %}Community{% endblock %} {% block
-head %} {{ super() }} {% endblock %} {% block content %}
-{% block css %}
-<link rel="stylesheet" href="{{ url_for('community.static', filename='style/community.css') }}" />
+head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('community.static', filename='style/community.css') }}"
+/>
 {% endblock %}
 <div class="contain">
-    <div class="community">
-        {% for item in infolist %}
-        {% import 'communityCard.html' as macros %}
-        {{ macros.print_card(item) }}
-        {% endfor %}
-    </div>
+  <div class="community">
+    {% for item in communities %} {% import 'communityCard.html' as macros %} {{
+    macros.print_card(item) }} {% endfor %}
+  </div>
 </div>
 {% block javascript %}
 <script src="{{ url_for('community.static', filename='js/community.js') }}"></script>
-{% endblock %}
-{% endblock %}
+{% endblock %} {% endblock %}
