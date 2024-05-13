@@ -6,6 +6,7 @@ from app.extensions import db
 from app.utils import format_datetime_to_readable_string, generate_time
 
 
+# pylint: disable=too-many-arguments
 class Community(db.Model):
     """Community model."""
 
@@ -34,7 +35,7 @@ class Community(db.Model):
         self.name = name
         self.category_id = category_id
         self.description = description
-        self.avatar_url = (avatar_url,)
+        self.avatar_url = avatar_url
         self.creator_id = creator_id
 
     def __repr__(self) -> str:
