@@ -1,9 +1,11 @@
 """Services for api."""
 
+import requests
 from flask import current_app, g
 from flask_login import current_user
+from werkzeug.datastructures import FileStorage
 
-from app.constants import HttpRequestEnum
+from app.constants import IMAGE_BB_UPLOAD_URL, HttpRequestEnum
 from app.extensions import db
 from app.models.category import Category
 from app.models.community import Community
@@ -14,15 +16,78 @@ from app.models.trending import Trending
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
+from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
+from app.utils import get_config
 
 from . import ApiResponse
 
 # Api service for auth module.
 
 
+def user_verification_service(user_name: str) -> ApiResponse:
+    """verify the user's identity."""
+
+    result_count = User.query.filter_by(username=user_name).count()
+
+    return (
+        ApiResponse(data={"result": False}).json()
+        if result_count
+        else ApiResponse(data={"result": True}).json()
+    )
+
+
+def user_email_verify_service(user_email: str) -> ApiResponse:
+    """verify the user's identity."""
+
+    result_count = User.query.filter_by(email=user_email).count()
+
+    return (
+        ApiResponse(data={"result": False}).json()
+        if result_count
+        else ApiResponse(data={"result": True}).json()
+    )
+
+
+def user_password_verify_service(user_password: str) -> ApiResponse:
+    """verify the user's password."""
+
+    result_count = User.query.filter_by(password_hash=user_password).count()
+
+    return (
+        ApiResponse(data={"result": False}).json()
+        if result_count
+        else ApiResponse(data={"result": True}).json()
+    )
+
+
 # Api service for user module.
+
+
+def user_communities_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+    """Service for getting all user communities."""
+
+    user_id: str = current_user.id
+
+    # basic query
+    user_communities = (
+        db.session.query(UserPreference).filter_by(user_id=user_id).first()
+    )
+    community_ids = _get_user_community_ids(user_communities)
+
+    # retrieve communities
+    query = db.session.query(Community).filter(Community.id.in_(community_ids))
+
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    community_collection = [community.to_dict() for community in pagination.items]
+
+    return ApiResponse(
+        data={"user_communities": community_collection}, pagination=pagination
+    ).json()
 
 
 def user_posts_service(page: int = 1, per_page: int = 10) -> ApiResponse:
@@ -436,6 +501,52 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     ).json()
 
 
+def user_stats_service() -> ApiResponse:
+    """Service for getting user stats."""
+
+    if current_user.is_anonymous:
+        return ApiResponse(data={"user_stats": None}).json()
+
+    user_id = current_user.id
+
+    user_preference = (
+        db.session.query(UserPreference).filter_by(user_id=user_id).first()
+    )
+    community_ids = _get_user_community_ids(user_preference)
+
+    community_num = len(community_ids)
+    request_num = db.session.query(Request).filter_by(author_id=user_id).count()
+    reply_num = db.session.query(Reply).filter_by(replier_id=user_id).count()
+    view_num = db.session.query(UserRecord).filter_by(user_id=user_id).count()
+    like_num = db.session.query(UserLike).filter_by(user_id=user_id).count()
+    save_num = db.session.query(UserSave).filter_by(user_id=user_id).count()
+
+    stats = {
+        "community_num": community_num,
+        "request_num": request_num,
+        "view_num": view_num,
+        "reply_num": reply_num,
+        "like_num": like_num,
+        "save_num": save_num,
+    }
+
+    return ApiResponse(data={"user_stats": stats}).json()
+
+
+def _get_user_community_ids(user_preference: UserPreference) -> list:
+    """Get user community ids from user preference."""
+
+    if user_preference is None:
+        return []
+
+    if user_preference.communities is None or user_preference.communities == "":
+        return []
+
+    return [
+        int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
+    ]
+
+
 # Api service for community module.
 
 
@@ -595,3 +706,27 @@ def stats_service() -> ApiResponse:
     }
 
     return ApiResponse(data={"stats": stats}).json()
+
+
+def upload_image_service(image_file: FileStorage) -> ApiResponse:
+    """Service for uploading image."""
+
+    payload = payload = {"key": get_config("IMGBB", "API_KEY")}
+    files = {
+        "image": (image_file.filename, image_file, image_file.content_type),
+    }
+
+    response = requests.post(IMAGE_BB_UPLOAD_URL, data=payload, files=files, timeout=10)
+    current_app.logger.info(f"Image BB upload response: {response}")
+
+    if response.status_code != 200:
+        return ApiResponse(
+            code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
+            message="Image upload failed",
+        )
+
+    image_url = response.json()["data"]["url"]
+
+    return ApiResponse(
+        data={"image_url": image_url}, message="Image uploaded successfully"
+    ).json()

@@ -11,6 +11,7 @@ from app.models.tag import Tag
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
+from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
 from tests.config import AuthActions, TestBase
@@ -253,6 +254,38 @@ class TestApi(TestBase):
 
     #     # logout
     #     AuthActions(client).logout()
+
+    def test_get_user_communities(self, app: Flask, client: FlaskClient):
+        """Test the user communities API."""
+
+        url = _PREFIX + "/users/communities"
+
+        user_preference = None
+        user = None
+        with app.app_context():
+            user_preference = UserPreference.query.first()
+            user = User.query.filter_by(id=user_preference.user_id).first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # check valid data
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
+
+        community_ids = [
+            int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
+        ]
+        self.assertEqual(
+            len(response_data["data"]["user_communities"]),
+            min(len(community_ids), 10),
+        )
+
+        # logout
+        AuthActions(client).logout()
 
     def test_get_user_posts(self, app: Flask, client: FlaskClient):
         """Test the user posts API."""
@@ -757,6 +790,27 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequestEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_stat(self, app: Flask, client: FlaskClient):
+        """Test the user stat GET API."""
+
+        url = _PREFIX + "/users/stats"
+
+        user = None
+        with app.app_context():
+            user = User.query.first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
         AuthActions(client).logout()

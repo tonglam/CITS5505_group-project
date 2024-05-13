@@ -24,18 +24,58 @@ from .service import (
     stats_service,
     tag_service,
     tags_service,
+    user_communities_service,
+    user_email_verify_service,
     user_likes_service,
+    user_password_verify_service,
     user_posts_service,
     user_replies_service,
     user_saves_service,
+    user_stats_service,
+    user_verification_service,
     users_notices_service,
     users_records_service,
 )
 
+
 # Api for auth module.
+@api_bp.route("/users/username/<user_name>", methods=["GET"])
+@jwt_required()
+def user_verification(user_name: str) -> ApiResponse:
+    """verify the user's identity."""
+
+    return user_verification_service(user_name)
+
+
+@api_bp.route("/users/email/<user_email>", methods=["GET"])
+@jwt_required()
+def user_verification_email(user_email: str) -> ApiResponse:
+    """verify the user's email."""
+
+    return user_email_verify_service(user_email)
+
+
+@api_bp.route("/users/email/<user_password>", methods=["GET"])
+@jwt_required()
+def user_verification_password(user_password: str) -> ApiResponse:
+    """verify the user's password."""
+
+    return user_password_verify_service(user_password)
 
 
 # Api for user module.
+
+
+@api_bp.route("/users/communities", methods=["GET"])
+@jwt_required()
+def user_communities() -> ApiResponse:
+    """Get all communities by user id."""
+
+    # pagination parameters
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
+
+    return user_communities_service(page, per_page)
 
 
 @api_bp.route("/users/posts", methods=["GET"])
@@ -63,7 +103,7 @@ def user_replies() -> ApiResponse:
 
 
 @api_bp.route("/users/records", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_records() -> ApiResponse:
     """Retrieve all records associated with the logged-in user."""
 
@@ -89,7 +129,7 @@ def users_record(request_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/likes", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_likes() -> ApiResponse:
     """Get all likes by user id."""
 
@@ -115,7 +155,7 @@ def user_like(request_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/saves", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def user_saves() -> ApiResponse:
     """Get all saves by user id."""
 
@@ -171,6 +211,13 @@ def user_notice(notice_id: int) -> ApiResponse:
         return put_user_notice_service(notice_id)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
+
+
+@api_bp.route("/users/stats", methods=["GET"])
+def user_stats():
+    """Get the user's statistics."""
+
+    return user_stats_service()
 
 
 # Api for community module.

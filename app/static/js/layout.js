@@ -3,6 +3,8 @@ $(document).ready(function () {
   init_alert();
   // search
   init_search();
+  // user
+  init_user_profile();
   // notification
   init_notification();
 });
@@ -25,15 +27,27 @@ const init_search = () => {
 
 const handle_page_click = async (page) => {
   if (page === undefined || page === null || page === "") {
-    console.log("page", page);
+    console.error("page", page);
+    return false;
+  }
+
+  // get render id
+  const render_id = document.getElementById("render-id").textContent;
+  if (render_id === "undefined" || render_id === null || render_id === "") {
+    console.error("render id is missing");
     return false;
   }
 
   // current page do not fetch again
   current_page = document
+    .getElementById(render_id)
     .querySelector(".page-item.active")
     .querySelector("a").textContent;
   if (page === parseInt(current_page)) {
+    console.error(
+      "current page is the same with navigate page: ",
+      current_page
+    );
     return false;
   }
 
@@ -77,6 +91,10 @@ const re_render = async (paramsToAdd = {}, keysToRemove = []) => {
 
   // fetch page content
   const response = await getFetch(new_render_url)()();
+  if (response === undefined || response === null || response === "") {
+    console.error("re-render response is missing");
+    return false;
+  }
 
   // re-render search results, client side rendering here
   document.getElementById(render_id).innerHTML = response;
@@ -104,6 +122,28 @@ const create_remove_param_render_url = (render_url, keyArray) => {
   url.search = params.toString();
 
   return `${url.pathname}${url.search}${url.hash}`;
+};
+
+const init_user_profile = () => {
+  const user_profile_card = document.getElementById("userProfileCard");
+
+  // display user profile card
+  document
+    .getElementById("navUserProfile")
+    .addEventListener("click", function () {
+      if (user_profile_card.classList.contains("d-none")) {
+        user_profile_card.classList.remove("d-none");
+      } else {
+        user_profile_card.classList.add("d-none");
+      }
+    });
+
+  // close user profile card
+  document
+    .getElementById("closeUserProfile")
+    .addEventListener("click", function (event) {
+      user_profile_card.classList.add("d-none");
+    });
 };
 
 const init_notification = () => {
@@ -177,9 +217,7 @@ const handle_notification_unchecked = async (check_notification) => {
 };
 
 const update_notification = async (notice_id) => {
-  const response = await putFetch(
-    `/api/v1/users/notifications/${notice_id}`
-  )()();
+  await putFetch(`/api/v1/users/notifications/${notice_id}`)()();
 };
 
 const re_render_notification = async () => {
@@ -213,8 +251,4 @@ const handle_close_notification = () => {
   notification_close.addEventListener("click", function () {
     notification.classList.add("d-none");
   });
-};
-
-const upload_image = async (formData) => {
-  return postFetch("/api/v1/upload/image")(formData);
 };

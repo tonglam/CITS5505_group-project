@@ -1,4 +1,103 @@
 {% extends "layout.html" %} {% block title %}User{% endblock %} {% block head %}
-{{ super() }} {% endblock %} {% block content %}
-<div class="contain"><p>User</p></div>
-{% endblock %}
+{{ super() }}<link
+  rel="stylesheet"
+  href="{{ url_for('user.static', filename='style/user.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="container">
+  <!--  Re-Render -->
+  <p class="d-none" id="render-id">{{ render_id }}</p>
+  <p class="d-none" id="render-url">{{ render_url }}</p>
+
+  <div id="userHeader">
+    <div class="row align-items-center justify-content-center text-center">
+      <div class="col-6 col-sm-2">
+        <img
+          class="avatar_style"
+          src="{{ user.avatar_url }}"
+          alt="user avatar"
+          width="100%"
+          height="100%"
+        />
+      </div>
+
+      <div class="col-6 col-sm-2">
+        <h1>{{ user.username }}</h1>
+        <button
+          class="button_style mt-3"
+          onclick="location.href='{{ url_for('user.user_profile')}}'"
+        >
+          Edit profile
+        </button>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <section class="charts_orb">
+          {% import 'userStat.html' as statItem %} {{
+          statItem.render_user_stst("posts", user_stat.request_num) }} {{
+          statItem.render_user_stst("likes", user_stat.like_num) }} {{
+          statItem.render_user_stst("community", user_stat.community_num) }} {{
+          statItem.render_user_stst("collects", user_stat.save_num) }}
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- function tab & community card -->
+  <div id="userData">
+    <div class="row pt-5 mb-5">
+      <div class="col-12 col-md-8">
+        <!-- function tab -->
+        <ul class="nav nav-tabs fs-5">
+          {% for name in user_data.keys() %} {% if loop.index0 == 0 %}
+          <li class="nav-item">
+            <a
+              class="nav-link active"
+              data-bs-toggle="tab"
+              href="#tab-{{ name }}"
+              id="tab-nav-{{ name }}"
+              >{{ name }}</a
+            >
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              data-bs-toggle="tab"
+              href="#tab-{{ name }}"
+              id="tab-nav-{{ name }}"
+              >{{ name }}</a
+            >
+          </li>
+          {% endif %} {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+          {% for name, item in user_data.items() %} {% if loop.index0 == 0 %}
+          <div class="tab-pane fade show active" id="tab-{{ name }}">
+            <div id="users-{{name}}">{% include "userList.html" %}</div>
+          </div>
+          {% else %}
+          <div class="tab-pane fade" id="tab-{{ name }}">
+            <div id="users-{{name}}">{% include "userList.html" %}</div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+
+      <!-- community card -->
+
+      <div class="col-12 col-md-4">
+        {% for community in user_communities %} {% import 'userCommunity.html'
+        as communityItem %} {{ communityItem.render_user_community(community) }}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% block javascript %}
+<script
+  type="module"
+  src="{{ url_for('user.static', filename='js/user.js') }}"
+></script>
+{% endblock %} {% endblock %}

@@ -1,9 +1,21 @@
 "Service for user views."
 
 from email_validator import EmailNotValidError, validate_email
+from werkzeug.datastructures import FileStorage
 
+from app.api.service import (
+    upload_image_service,
+    user_communities_service,
+    user_likes_service,
+    user_posts_service,
+    user_saves_service,
+    user_stats_service,
+    users_records_service,
+)
+from app.models.community import Community
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
+from app.utils import get_pagination_details
 
 
 def validate_username(username: str) -> None:
@@ -133,3 +145,120 @@ def validate_interests(interests: str) -> None:
 
     if not isinstance(interests, str):
         raise TypeError("[interests] must be a string")
+
+
+def post_data(page: int = 1, per_page: int = 10):
+    """Get the user's posts."""
+
+    posts = user_posts_service(page, per_page)
+    posts_data = posts.get_json()
+
+    user_posts_data = posts_data["data"]["user_posts"]
+    posts_item_data = [
+        {"id": post["id"], "title": post["title"]} for post in user_posts_data
+    ]
+
+    posts_page = get_pagination_details(
+        posts_data["pagination"]["page"],
+        posts_data["pagination"]["total_pages"],
+        posts_data["pagination"]["total_items"],
+    )
+
+    return {"name": "Posts", "data": posts_item_data, "pagination": posts_page}
+
+
+def like_data(page: int = 1, per_page: int = 10):
+    """Get the user's likes."""
+
+    likes = user_likes_service(page, per_page)
+    likes_data = likes.get_json()
+
+    user_likes_data = likes_data["data"]["user_likes"]
+    likes_item_data = [
+        {"id": like["id"], "title": like["request"]["title"]}
+        for like in user_likes_data
+    ]
+
+    likes_page = get_pagination_details(
+        likes_data["pagination"]["page"],
+        likes_data["pagination"]["total_pages"],
+        likes_data["pagination"]["total_items"],
+    )
+
+    return {
+        "name": "Likes",
+        "data": likes_item_data,
+        "pagination": likes_page,
+    }
+
+
+def history_data(page: int = 1, per_page: int = 10):
+    """Get the user's history."""
+
+    histories = users_records_service(page, per_page)
+    histories_data = histories.get_json()
+
+    user_histories_data = histories_data["data"]["user_records"]
+    histories_item_data = [
+        {"id": history["id"], "title": history["request"]["title"]}
+        for history in user_histories_data
+    ]
+
+    histories_page = get_pagination_details(
+        histories_data["pagination"]["page"],
+        histories_data["pagination"]["total_pages"],
+        histories_data["pagination"]["total_items"],
+    )
+
+    return {
+        "name": "History",
+        "data": histories_item_data,
+        "pagination": histories_page,
+    }
+
+
+def save_data(page: int = 1, per_page: int = 10):
+    """Get the user's wishlist."""
+
+    saves = user_saves_service(page, per_page)
+    saves_data = saves.get_json()
+
+    user_saves_data = saves_data["data"]["user_saves"]
+
+    saves_item_data = [
+        {"id": save["id"], "title": save["request"]["title"]}
+        for save in user_saves_data
+    ]
+
+    saves_page = get_pagination_details(
+        saves_data["pagination"]["page"],
+        saves_data["pagination"]["total_pages"],
+        saves_data["pagination"]["total_items"],
+    )
+
+    return {"name": "Collects", "data": saves_item_data, "pagination": saves_page}
+
+
+def stat_data():
+    """Get the user's statistics."""
+
+    user_stat = user_stats_service().get_json()
+    return user_stat.get("data").get("user_stats")
+
+
+def community_data():
+    """Get the user's communities."""
+
+    user_communities = user_communities_service().get_json()
+    user_communities_data = user_communities.get("data").get("user_communities")
+    default_data = Community.query.limit(2).all()
+    if user_communities_data == []:
+        return default_data
+    return user_communities_data[0:2]
+
+
+def get_upload_avatar_url(avatar_file: FileStorage):
+    """Get upload avatar url."""
+
+    upload_avatar_response = upload_image_service(avatar_file).get_json()
+    return upload_avatar_response.get("data").get("image_url")

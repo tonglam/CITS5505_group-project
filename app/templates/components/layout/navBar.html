@@ -4,9 +4,7 @@
   <div class="container-fluid justify-content-between mx-0 mx-md-2">
     <div class="d-flex">
       <!-- logo -->
-      {{
-      logo("https://www.premierleague.com/resources/rebrand/v7.129.2/i/elements/pl-main-logo.png")
-      }}
+      {{ logo('https://i.ibb.co/GV52mLp/logo.webp') }}
 
       <!-- navlinks -->
       <ul class="navbar-nav flex-row d-none d-md-flex">
@@ -51,8 +49,8 @@
       <!-- authenticated -->
       {% else %}
 
-      <!-- user dropdown -->
-      {{ user_dropdown(current_user) }}
+      <!-- user profile -->
+      {{ user_profile(current_user) }}
 
       <!-- end login bar -->
       {% endif %}
@@ -198,15 +196,13 @@ False, badgeNum = 0) -%}
 </li>
 {%- endmacro %}
 
-<!-- user dropdown -->
-{% macro user_dropdown(user) -%}
-<li class="nav-item dropdown">
+<!-- user profile -->
+{% macro user_profile(user) -%}
+<div id="navUserProfile">
   <button
-    class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
+    class="btn btn-link nav-link py-2 px-0 px-lg-2 d-flex align-items-center"
     id="useDropdown"
     type="button"
-    aria-expanded="false"
-    data-bs-toggle="dropdown"
     style="margin-top: -5px"
     title="Hello, {{ user.username }}"
   >
@@ -217,28 +213,5 @@ False, badgeNum = 0) -%}
       alt="User Avatar"
     />
   </button>
-  <ul class="dropdown-menu dropdown-menu-end useDropdown">
-    <!-- user -->
-    {{ user_dropdown_item("User", url_for('user.user'), "fa-solid fa-user
-    fa-lg") }}
-
-    <!-- logout -->
-    {{ user_dropdown_item("Logout", url_for('auth.logout'), "fa-solid
-    fa-right-to-bracket fa-lg") }}
-  </ul>
-</li>
-{%- endmacro %}
-
-<!-- user dropdown item -->
-{% macro user_dropdown_item(title, url, icon_class) -%}
-<li>
-  <a
-    class="btn btn-lg btn-outline-dark border-0 userDropdownItem w-100"
-    href="{{ url }}"
-    role="button"
-  >
-    <i class="{{ icon_class }}"></i>
-    {{ title }}
-  </a>
-</li>
+</div>
 {%- endmacro %}

@@ -1,4 +1,104 @@
-{% extends "layout.html" %} {% block title %}User Profile{% endblock %} {% block
-head %} {{ super() }} {% endblock %} {% block content %}
-<div class="contain"><p>User Profile</p></div>
+{% extends "userProfileBase.html" %} {% block tabContent %}
+<form
+  action="{{url_for('user.user_profile')}}"
+  method="post"
+  enctype="multipart/form-data"
+  id="profileForm"
+>
+  {{ form.csrf_token and form.csrf_token(id='csrf_token_account') }}
+  <div class="card-body media align-items-center text-center mt-2">
+    <img
+      src="{{ user.avatar_url }}"
+      alt="uploadAvatar"
+      class="ui-w-80"
+      id="profileAvatar"
+    />
+    <div class="media-body ml-4 mt-1">
+      <label class="btn btn-sm edit_btn btn-outline-primary">
+        Upload
+        <input
+          type="file"
+          class="account-settings-fileinput"
+          name="avatar"
+          id="avatarInput"
+        />
+        {{ form.avatar(class="account-settings-fileinput") }}</label
+      >
+
+      <div class="text-light small mt-1">
+        Allowed JPG, JPEG or PNG. Max size of 1M.
+      </div>
+    </div>
+  </div>
+
+  <hr class="border-light m-0" />
+
+  <div class="card-body mt-3">
+    <div class="d-none" id="current_user">{{ user.username }}</div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input
+        type="text"
+        class="form-control mb-1"
+        value="{{ user.username }}"
+        name="username"
+        id="user_name"
+      />
+    </div>
+    <div class="form-group">
+      <div class="d-none" id="current_email">{{ user.email }}</div>
+      <label class="form-label">E-mail</label>
+      <input
+        type="text"
+        class="form-control mb-1"
+        {%
+        if
+        user.email
+        %}
+        value="{{ user.email }}"
+        {%
+        endif
+        %}
+        name="email"
+        id="user_email"
+      />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Security Question</label>
+      <input
+        type="text"
+        class="form-control"
+        value="{{ user.security_question }}"
+        name="security_question"
+        id="security_question"
+      />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Security Answer</label>
+      <input
+        type="text"
+        class="form-control"
+        value="{{ user.security_answer }}"
+        name="security_answer"
+        id="security_answer"
+      />
+    </div>
+  </div>
+  <div class="text-right mt-3">
+    <button
+      type="submit"
+      class="btn btn-sm edit_btn btn-primary button_style"
+      id="profileSubmit"
+    >
+      Save changes
+    </button>
+    <button
+      type="button"
+      onclick="location.href='{{ url_for('user.user') }}'"
+      class="btn btn-sm edit_btn btn-default button_style"
+    >
+      Cancel
+    </button>
+  </div>
+</form>
 {% endblock %}
