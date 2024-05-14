@@ -246,15 +246,15 @@ def stat_data():
     return user_stat.get("data").get("user_stats")
 
 
-def community_data():
-    """Get the user's communities."""
+def display_community_data():
+    """Get the user's display communities."""
 
     user_communities = user_communities_service().get_json()
     user_communities_data = user_communities.get("data").get("user_communities")
-    default_data = Community.query.limit(2).all()
+    default_data = Community.query.limit(1).all()
     if user_communities_data == []:
         return default_data
-    return user_communities_data[0:2]
+    return user_communities_data[0:1]
 
 
 def get_upload_avatar_url(avatar_file: FileStorage):

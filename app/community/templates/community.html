@@ -5,7 +5,7 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
   href="{{ url_for('community.static', filename='style/community.css') }}"
 />
 {% endblock %}
-<div class="container px-0 px-lg-5 mx-0 mx-lg-5">
+<div class="container">
   <!--  Re-Render -->
   <p class="d-none" id="render-id">{{ render_id }}</p>
   <p class="d-none" id="render-url">{{ render_url }}</p>
@@ -16,7 +16,7 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
     role="alert"
   ></div>
 
-  <div class="row" id="community-list">
+  <div class="row justify-content-center" id="community-list">
     {% include './communityList.html' %}
   </div>
 </div>

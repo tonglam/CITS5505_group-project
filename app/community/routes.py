@@ -3,7 +3,11 @@
 from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
-from app.api.service import categories_service, communities_service
+from app.api.service import (
+    categories_service,
+    communities_service,
+    user_communities_service,
+)
 from app.community import community_bp, forms, service
 from app.constants import FlashAlertTypeEnum, HttpRequestEnum
 from app.extensions import db
@@ -62,6 +66,66 @@ def community_list():
     return render_template(
         "communityList.html",
         communities=communities,
+        pagination=pagination,
+    )
+
+
+@community_bp.route("/user")
+@login_required
+def user_community():
+    """Get the user's community."""
+
+    # requests
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=6, type=int)
+
+    # user communities
+    user_communities_response = user_communities_service(
+        page=page, per_page=per_page
+    ).get_json()
+    user_communities = user_communities_response.get("data").get("user_communities")
+
+    # pagination
+    pagination = get_pagination_details(
+        user_communities_response.get("pagination")["page"],
+        user_communities_response.get("pagination")["total_pages"],
+        user_communities_response.get("pagination")["total_items"],
+    )
+
+    return render_template(
+        "community.html",
+        render_id="community-list",
+        render_url="/communities/community_list/user",
+        communities=user_communities,
+        pagination=pagination,
+    )
+
+
+@community_bp.route("/community_list/user")
+@login_required
+def user_community_list():
+    """Render the community list page."""
+
+    # requests
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=6, type=int)
+
+    # user communities
+    user_communities_response = user_communities_service(
+        page=page, per_page=per_page
+    ).get_json()
+    user_communities = user_communities_response.get("data").get("user_communities")
+
+    # pagination
+    pagination = get_pagination_details(
+        user_communities_response.get("pagination")["page"],
+        user_communities_response.get("pagination")["total_pages"],
+        user_communities_response.get("pagination")["total_items"],
+    )
+
+    return render_template(
+        "communityList.html",
+        communities=user_communities,
         pagination=pagination,
     )
 

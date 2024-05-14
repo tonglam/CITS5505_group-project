@@ -16,26 +16,13 @@
 {%- endmacro %}
 
 <!-- navlink item -->
-{% macro navlink_item(title, url, item_class = "nav-item me-3 me-lg-1", active =
-False) -%}
+{% macro navlink_item(title, url, item_class = "nav-menu nav-item me-3 me-lg-1")
+-%}
 
-<!-- active nalink item -->
-{% if active %}
-<li class="nav-item me-3 me-lg-1 active">
-  <a class="nav-link active" aria-current="page" href="{{ url }}"
-    >{{ title }}</a
-  >
-</li>
-
-<!-- inactive nalink item -->
-{% else %}
 <li class="{{ item_class }}">
   <a class="nav-link" href="{{ url }}">{{ title }}</a>
 </li>
 
-{% endif %}
-
-<!-- end navlink item -->
 {%- endmacro %}
 
 <!-- search bar -->
@@ -54,7 +41,7 @@ False) -%}
 
 <!-- create button -->
 {% macro create_button(url) -%}
-<li class="nav-item me-3 me-lg-1 d-none d-lg-flex">
+<li class="nav-menu nav-item me-3 me-lg-1 d-none d-lg-flex">
   <button
     type="button"
     class="btn btn-outline-dark rounded-pill w-auto fs-8"
@@ -68,7 +55,7 @@ False) -%}
 <!-- icon button -->
 {% macro icon_button(title, url, icon_class, targetBlank = False, showBadge =
 False, badgeNum = 0) -%}
-<li class="nav-item mx-2 mx-lg-1">
+<li class="nav-menu nav-item mx-2 mx-lg-1">
   {% if targetBlank %}
   <a
     class="nav-link"

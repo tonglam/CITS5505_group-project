@@ -10,7 +10,7 @@ from app.models.user import User
 from app.notice.events import NoticeTypeEnum, notice_event
 from app.user import forms, user_bp
 from app.user.service import (
-    community_data,
+    display_community_data,
     get_upload_avatar_url,
     history_data,
     like_data,
@@ -50,8 +50,8 @@ def user():
     # user stat
     user_stat = stat_data()
 
-    # user community
-    user_communities = community_data()
+    # display user community
+    display_user_communities = display_community_data()
 
     return render_template(
         "user.html",
@@ -59,7 +59,7 @@ def user():
         render_url="/users/lists?name=Posts",
         user_stat=user_stat,
         user_data=user_data,
-        user_communities=user_communities,
+        display_user_communities=display_user_communities,
         pagination=pagination,
     )
 

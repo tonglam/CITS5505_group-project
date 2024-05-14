@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  // nav active
+  init_nav_active();
   // alert
   init_alert();
   // search
@@ -8,6 +10,32 @@ $(document).ready(function () {
   // notification
   init_notification();
 });
+
+const init_nav_active = () => {
+  const navItems = document.querySelectorAll(".nav-menu");
+  navItems.forEach((navItem) => {
+    const navLink = navItem.querySelector(".nav-link");
+    if (!navLink) {
+      return;
+    }
+    const activeItem = get_nav_item();
+    if (navLink.textContent.trim() === activeItem) {
+      navLink.classList.add("active");
+    } else {
+      navLink.classList.remove("active");
+    }
+  });
+};
+
+const get_nav_item = () => {
+  const path = window.location.pathname;
+  if (path.includes("/populars")) {
+    return "Popular";
+  } else if (path.includes("/communities")) {
+    return "Community";
+  }
+  return "Home";
+};
 
 const init_alert = () => {
   window.setTimeout(function () {

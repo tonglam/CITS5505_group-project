@@ -7,8 +7,7 @@
     <!-- navlinks -->
     <ul class="navbar-nav flex-row d-none d-md-flex">
       <!-- home navlink -->
-      {{ navItem.navlink_item("Home", url_for('index'), "nav-item me-3 me-lg-1
-      active", True) }}
+      {{ navItem.navlink_item("Home", url_for('index')) }}
 
       <!-- popular navlink -->
       {{ navItem.navlink_item("Popular", url_for('popular.popular'))}}
