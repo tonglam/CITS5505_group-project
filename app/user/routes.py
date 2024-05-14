@@ -1,10 +1,10 @@
 """ User routes for the user blueprint."""
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.api.service import user_email_verify_service, user_verification_service
-from app.constants import FlashAlertTypeEnum
+from app.constants import FlashAlertTypeEnum, HttpRequestEnum
 from app.extensions import db
 from app.models.user import User
 from app.notice.events import NoticeTypeEnum, notice_event
@@ -72,7 +72,7 @@ def user_lists():
     # name, required
     name = request.args.get("name", type=str)
     if name is None:
-        return "Name is required", 400
+        abort(HttpRequestEnum.BAD_REQUEST.value)
 
     # pagination
     page = request.args.get("page", 1, type=int)

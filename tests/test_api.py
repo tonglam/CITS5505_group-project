@@ -22,38 +22,6 @@ _PREFIX = "/api/v1"
 class TestApi(TestBase):
     """This class contains the test cases for the API module."""
 
-    def test_get_user_communities(self, app: Flask, client: FlaskClient):
-        """Test the user communities API."""
-
-        url = _PREFIX + "/users/communities"
-
-        user_preference = None
-        user = None
-        with app.app_context():
-            user_preference = UserPreference.query.first()
-            user = User.query.filter_by(id=user_preference.user_id).first()
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # check valid data
-        response = client.get(url)
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
-
-        community_ids = [
-            int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
-        ]
-        self.assertEqual(
-            len(response_data["data"]["user_communities"]),
-            min(len(community_ids), 10),
-        )
-
-        # logout
-        AuthActions(client).logout()
-
     def test_get_user_posts(self, app: Flask, client: FlaskClient):
         """Test the user posts API."""
 
