@@ -99,6 +99,29 @@
 /*===== user data container settings =====*/
 
 /*===== function Sub-Tab settings =====*/
+#userData .nav-link:focus,
+#userData .nav-link:hover {
+  color: #06c !important;
+}
+
+.tab_active {
+  color: #06c;
+  border-bottom: 5px solid #06c !important;
+}
+
+.tab_active:hover {
+  color: #06c;
+  border-bottom: 5px solid #06c !important;
+}
+
+.tab_inactive {
+  color: #021d24;
+}
+
+.tab_inactive:hover {
+  color: #021d24;
+}
+
 .custom-colors {
   --sec: #fffffe;
   --dark-pri: #0b5aa2;
