@@ -39,7 +39,7 @@ const handle_page_click = async (page) => {
   }
 
   // current page do not fetch again
-  current_page = document
+  const current_page = document
     .getElementById(render_id)
     .querySelector(".page-item.active")
     .querySelector("a").textContent;
@@ -53,6 +53,9 @@ const handle_page_click = async (page) => {
 
   // re-render
   re_render({ page: page });
+
+  // scroll to top
+  window.scrollTo(0, 0);
 };
 
 const re_render = async (paramsToAdd = {}, keysToRemove = []) => {

@@ -171,9 +171,7 @@ def user_profile():
             current_app.logger.info("User: %s profile updated.", {username})
 
             # send notification
-            notice_event(
-                user_id=user_id, notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE
-            )
+            notice_event(notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE)
 
             current_app.logger.info("Profile updated for user: %s.", {username})
             flash("Profile has been updated.", FlashAlertTypeEnum.SUCCESS.value)
@@ -231,7 +229,7 @@ def user_password():
         current_app.logger.info("User: %s password updated.", {username})
 
         # send notification
-        notice_event(user_id=user_id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
+        notice_event(notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user: %s.", {username})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)

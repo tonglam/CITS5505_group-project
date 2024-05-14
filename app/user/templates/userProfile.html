@@ -51,14 +51,7 @@
       <input
         type="text"
         class="form-control mb-1"
-        {%
-        if
-        user.email
-        %}
-        value="{{ user.email }}"
-        {%
-        endif
-        %}
+        value="{{ user.email|default('', true) }}"
         name="email"
         id="user_email"
       />

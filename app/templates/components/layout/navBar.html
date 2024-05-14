@@ -1,217 +1,56 @@
-{% macro render_navBar(user, current_user, notice_num) -%}
+{% import 'components/layout/navBarItem.html' as navItem %}
+<div class="container-fluid justify-content-between mx-0 mx-md-2">
+  <div class="d-flex">
+    <!-- logo -->
+    {{ navItem.logo('https://i.ibb.co/GV52mLp/logo.webp') }}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary" id="navMenu">
-  <div class="container-fluid justify-content-between mx-0 mx-md-2">
-    <div class="d-flex">
-      <!-- logo -->
-      {{ logo('https://i.ibb.co/GV52mLp/logo.webp') }}
+    <!-- navlinks -->
+    <ul class="navbar-nav flex-row d-none d-md-flex">
+      <!-- home navlink -->
+      {{ navItem.navlink_item("Home", url_for('index'), "nav-item me-3 me-lg-1
+      active", True) }}
 
-      <!-- navlinks -->
-      <ul class="navbar-nav flex-row d-none d-md-flex">
-        <!-- home navlink -->
-        {{ navlink_item("Home", url_for('index'), "nav-item me-3 me-lg-1
-        active", True) }}
+      <!-- popular navlink -->
+      {{ navItem.navlink_item("Popular", url_for('popular.popular'))}}
 
-        <!-- popular navlink -->
-        {{ navlink_item("Popular", url_for('popular.popular'))}}
-
-        <!-- community navlink -->
-        {{ navlink_item("Community", url_for('community.community')) }}
-      </ul>
-
-      <!-- search bar -->
-      {{ search_bar() }}
-    </div>
-
-    <!-- right bar -->
-    <ul class="navbar-nav flex-row">
-      <!-- create button -->
-      {{ create_button(url_for('post.create')) }}
-
-      <!-- github icon -->
-      {{ icon_button("github",
-      "https://github.com/tonglam/CITS5505_group-project", "fa-brands fa-github
-      fa-lg", targetBlank=True) }}
-
-      <!-- notice icon -->
-      {{ icon_button("notice", None, "fa-solid fa-bell fa-lg", showBadge=True,
-      badgeNum=notice_num ) }}
-
-      <!-- login bar -->
-
-      <!-- not authenticated -->
-      {% if not current_user.is_authenticated %}
-
-      <!-- login icon -->
-      {{ icon_button("login", url_for('auth.auth'), "fa-solid
-      fa-arrow-right-to-bracket fa-lg") }}
-
-      <!-- authenticated -->
-      {% else %}
-
-      <!-- user profile -->
-      {{ user_profile(current_user) }}
-
-      <!-- end login bar -->
-      {% endif %}
+      <!-- community navlink -->
+      {{ navItem.navlink_item("Community", url_for('community.community')) }}
     </ul>
+
+    <!-- search bar -->
+    {{ navItem.search_bar() }}
   </div>
-</nav>
 
-{%- endmacro %}
+  <!-- right bar -->
+  <ul class="navbar-nav flex-row">
+    <!-- create button -->
+    {{ navItem.create_button(url_for('post.create')) }}
 
-<!-- logo -->
-{% macro logo(src) -%}
-<a
-  class="navbar-brand me-2 mb-1 d-flex align-items-center rounded-circle"
-  href="{{ url_for('index') }}"
->
-  <img
-    id="logo"
-    src="{{ src }}"
-    height="30"
-    width="30"
-    alt="Logo"
-    loading="lazy"
-  />
-</a>
-{%- endmacro %}
+    <!-- github icon -->
+    {{ navItem.icon_button("github",
+    "https://github.com/tonglam/CITS5505_group-project", "fa-brands fa-github
+    fa-lg", targetBlank=True) }}
 
-<!-- navlink item -->
-{% macro navlink_item(title, url, item_class = "nav-item me-3 me-lg-1", active =
-False) -%}
+    <!-- notice icon -->
+    {{ navItem.icon_button("notice", None, "fa-solid fa-bell fa-lg",
+    showBadge=True, badgeNum=notice_num ) }}
 
-<!-- active nalink item -->
-{% if active %}
-<li class="nav-item me-3 me-lg-1 active">
-  <a class="nav-link active" aria-current="page" href="{{ url }}"
-    >{{ title }}</a
-  >
-</li>
+    <!-- login bar -->
 
-<!-- inactive nalink item -->
-{% else %}
-<li class="{{ item_class }}">
-  <a class="nav-link" href="{{ url }}">{{ title }}</a>
-</li>
+    <!-- not authenticated -->
+    {% if not current_user.is_authenticated %}
 
-{% endif %}
+    <!-- login icon -->
+    {{ navItem.icon_button("login", url_for('auth.auth'), "fa-solid
+    fa-arrow-right-to-bracket fa-lg") }}
 
-<!-- end navlink item -->
-{%- endmacro %}
+    <!-- authenticated -->
+    {% else %}
 
-<!-- search bar -->
-{% macro search_bar() -%}
-<div class="container-fluid input-group w-100 my-auto d-none d-sm-flex">
-  <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
-  <input
-    autocomplete="on"
-    type="search"
-    class="form-control rounded-pill"
-    placeholder="Search for Anything..."
-    id="search"
-  />
+    <!-- user profile -->
+    {{ navItem.user_profile(current_user) }}
+
+    <!-- end login bar -->
+    {% endif %}
+  </ul>
 </div>
-{%- endmacro %}
-
-<!-- create button -->
-{% macro create_button(url) -%}
-<li class="nav-item me-3 me-lg-1 d-none d-lg-flex">
-  <button
-    type="button"
-    class="btn btn-outline-dark rounded-pill w-auto fs-8"
-    href="{{ url }}"
-  >
-    +&nbsp;&nbsp;Create
-  </button>
-</li>
-{%- endmacro %}
-
-<!-- icon button -->
-{% macro icon_button(title, url, icon_class, targetBlank = False, showBadge =
-False, badgeNum = 0) -%}
-<li class="nav-item mx-2 mx-lg-1">
-  {% if targetBlank %}
-  <a
-    class="nav-link"
-    href="{{ url }}"
-    target="_blank"
-    title="{{ title }}"
-    role="button"
-    id="{{ title }}"
-  >
-    <div class="position-relative d-inline-block">
-      <i class="{{ icon_class }}"></i>
-      <!-- badge -->
-      {% if showBadge %}
-      <span
-        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
-        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
-        >{{ badgeNum }}</span
-      >
-      {% endif %}
-    </div>
-  </a>
-  {% else %} {% if url %}
-  <a
-    class="nav-link"
-    href="{{ url }}"
-    title="{{ title }}"
-    role="button"
-    id="{{ title }}"
-  >
-    <div class="position-relative d-inline-block">
-      <i class="{{ icon_class }}"></i>
-      <!-- badge -->
-      {% if (showBadge and badgeNum > 0) %}
-      <span
-        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
-        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
-        >{{ badgeNum }}</span
-      >
-      {% endif %}
-    </div>
-  </a>
-  {% else %}
-  <a
-    class="nav-link"
-    href="javascript:void(0);"
-    title="{{ title }}"
-    role="button"
-    id="{{ title }}"
-  >
-    <div class="position-relative d-inline-block">
-      <i class="{{ icon_class }}"></i>
-      <!-- badge -->
-      {% if (showBadge and badgeNum > 0) %}
-      <span
-        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
-        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
-        >{{ badgeNum }}</span
-      >
-      {% endif %}
-    </div>
-  </a>
-  {% endif %} {% endif %}
-</li>
-{%- endmacro %}
-
-<!-- user profile -->
-{% macro user_profile(user) -%}
-<div id="navUserProfile">
-  <button
-    class="btn btn-link nav-link py-2 px-0 px-lg-2 d-flex align-items-center"
-    id="useDropdown"
-    type="button"
-    style="margin-top: -5px"
-    title="Hello, {{ user.username }}"
-  >
-    <img
-      src="{{ user.avatar_url }}"
-      class="rounded-circle"
-      style="height: 30px; border: none; box-shadow: none"
-      alt="User Avatar"
-    />
-  </button>
-</div>
-{%- endmacro %}

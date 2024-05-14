@@ -88,11 +88,15 @@ def create_app() -> Flask:
     @app.route("/")
     @login_required
     def index():
+
+        # request args
+        community_id = request.args.get("community_id", default=None, type=int)
+
         # community
         communities = get_home_communities()
 
         # post
-        post_result = get_home_posts()
+        post_result = get_home_posts(community_id)
         posts = post_result["posts"]
 
         # pagination
@@ -113,6 +117,7 @@ def create_app() -> Flask:
             "index.html",
             render_id="index-posts",
             render_url="/index_posts",
+            community_id=community_id,
             communities=communities,
             posts=posts,
             pagination=pagination,
@@ -143,9 +148,15 @@ def create_app() -> Flask:
 
         return render_template(
             "indexPost.html",
+            community_id=community_id,
             posts=posts,
             pagination=pagination,
         )
+
+    @app.route("/navbar")
+    @login_required
+    def navbar():
+        return render_template("components/layout/navBar.html")
 
     @app.route("/notifications")
     @login_required

@@ -1,0 +1,6 @@
+{% for item in communities %} {% import 'communityItem.html' as community_item
+%} {{ community_item.render_community_item(item, user) }} {% endfor %}
+<div class="mt-2 mb-5" id="pagination">
+  {% import './components/pagination.html' as pageItem %} {{
+  pageItem.render_pagination(pagination) }}
+</div>

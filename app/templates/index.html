@@ -45,9 +45,14 @@
               tabindex="-98"
             >
               <option id="all">Community</option>
-              {% for community in communities %}
+              {% for community in communities %} {% if community.id ==
+              community_id %}
+              <option id="{{ community.id }}" selected>
+                {{ community.name }}
+              </option>
+              {% else %}
               <option id="{{ community.id }}">{{ community.name }}</option>
-              {% endfor %}
+              {% endif %} {% endfor %}
             </select>
           </div>
         </div>
@@ -71,7 +76,7 @@
         </div>
       </div>
 
-      {% include './indexPost.html' %}
+      <div id="index-posts">{% include './indexPost.html' %}</div>
     </div>
 
     <!-- Sidebar content -->

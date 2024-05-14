@@ -20,8 +20,12 @@
   <body>
     <header>
       <!-- navbar -->
-      {% import './components/layout/navBar.html' as navBar %} {{
-      navBar.render_navBar(user, current_user, notice_num) }}
+      <nav
+        class="navbar navbar-expand-lg navbar-light bg-body-tertiary"
+        id="navMenu"
+      >
+        {% include './components/layout/navBar.html' %}
+      </nav>
     </header>
 
     <div style="position: relative; z-index: 999">

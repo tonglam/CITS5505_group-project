@@ -1,107 +1,164 @@
 """This module contains the routes for the community blueprint."""
 
-from flask import jsonify, render_template, request
+from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
-from app.api.service import communities_service
-from app.community import community_bp, forms
+from app.api.service import categories_service, communities_service
+from app.community import community_bp, forms, service
+from app.constants import FlashAlertTypeEnum, HttpRequestEnum
 from app.extensions import db
-from app.models.category import Category
 from app.models.community import Community
+from app.notice.events import NoticeTypeEnum, notice_event
+from app.utils import get_pagination_details
 
 
 @community_bp.route("/")
 @login_required
 def community():
     """Render the community page."""
-    communities = communities_service().get_json().get("data").get("communities")
-    return render_template("community.html", communities=communities)
 
+    # communities
+    communities_result = communities_service(page=1, per_page=6).get_json()
+    communities = communities_result.get("data").get("communities")
 
-@community_bp.route("/edit/<int:community_id>")
-@login_required
-def edit(community_id: int):
-    """Render the create page."""
-    form = forms.CreateForm(request.form)
-    record_entity = (
-        db.session.query(Community)
-        .filter_by(id=community_id, creator_id=current_user.id)
-        .first()
+    # pagination
+    community_pagination = communities_result.get("pagination")
+    pagination = get_pagination_details(
+        current_page=community_pagination["page"],
+        total_pages=community_pagination["total_pages"],
+        total_items=community_pagination["total_items"],
     )
-    option_list = db.session.query(Category).all()
+
     return render_template(
-        "createCommunity.html",
-        optionList=option_list,
-        record_entity=record_entity,
-        form=form,
+        "community.html",
+        render_id="community-list",
+        render_url="/communities/community_list",
+        communities=communities,
+        pagination=pagination,
     )
 
 
-@community_bp.route("/add_community", methods=["POST", "GET"])
+@community_bp.route("/community_list")
 @login_required
-def add_community():
-    """Render the create page. or do add with community"""
-    if request.method == "GET":
-        form = forms.CreateForm(request.form)
-        option_list = db.session.query(Category).all()
-        return render_template(
-            "createCommunity.html", optionList=option_list, form=form
-        )
-    if request.method == "POST":
-        form = forms.CreateForm(request.form)
-        if form.validate_on_submit():
-            new_community = Community(
-                name=form.name.data,
-                description=form.description.data,
-                category_id=form.category_id.data,
-                creator_id=current_user.id,
+def community_list():
+    """Render the community list page."""
+
+    # requests
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=6, type=int)
+
+    # communities
+    communities_result = communities_service(page=page, per_page=per_page).get_json()
+    communities = communities_result.get("data").get("communities")
+
+    # pagination
+    community_pagination = communities_result.get("pagination")
+    pagination = get_pagination_details(
+        current_page=community_pagination["page"],
+        total_pages=community_pagination["total_pages"],
+        total_items=community_pagination["total_items"],
+    )
+
+    return render_template(
+        "communityList.html",
+        communities=communities,
+        pagination=pagination,
+    )
+
+
+@community_bp.route("/management", methods=["GET", "POST"])
+@community_bp.route("/management/<int:community_id>", methods=["GET", "POST"])
+@login_required
+def community_management(community_id: int = None):
+    """Render the community management page."""
+
+    form = forms.CommunityForm()
+    form.creator_id.data = current_user.id
+
+    # community
+    community_entity = None
+    if community_id:
+        community_entity = db.session.query(Community).get(community_id)
+
+    # categories
+    categories = categories_service().get_json().get("data").get("categories")
+    form.category_select.choices = [
+        (category.get("id"), category.get("name")) for category in categories
+    ]
+
+    if form.validate_on_submit():
+        print("community_entity: ", community_entity)
+
+        if not community_entity:
+            create_response = service.create_community_service(form)
+            if create_response.get("code") == HttpRequestEnum.CREATED.value:
+                community_entity = create_response.get("data")
+                # add community to the database
+                db.session.add(community_entity)
+                current_app.logger.info(
+                    "Community %s create successfully.", {community_entity.name}
+                )
+                notice_event(notice_type=NoticeTypeEnum.COMMUNITY_CREATED)
+                flash(
+                    "Community create successfully.", FlashAlertTypeEnum.SUCCESS.value
+                )
+            else:
+                message = create_response.get("message")
+                current_app.logger.error("Community create failed: %s.", {message})
+                flash(message, FlashAlertTypeEnum.DANGER.value)
+
+            return redirect(url_for("community.community_management"))
+
+        # only the creator can update the community
+        if community_entity.creator_id != form.creator_id.data:
+            current_app.logger.error(
+                "Community %s update failed, the creator is not the same.",
+                {community_entity.name},
             )
-            db.session.add(new_community)
+            flash(
+                "Only the creator can update the community.",
+                FlashAlertTypeEnum.DANGER.value,
+            )
+
+            return redirect(url_for("community.community_management"))
+
+        update_response = service.update_community_service(community_entity, form)
+        if update_response.get("code") == HttpRequestEnum.SUCCESS_OK.value:
+            data = update_response.get("data")
+            # data not changed
+            if not data:
+                return redirect(url_for("community.community_management"))
+
+            # update community to the database
             db.session.commit()
-            return (
-                jsonify({"message": "Create success", "ok": "ok", "id": community.id}),
-                200,
+            current_app.logger.info(
+                "Community %s update successfully.", {community_entity.name}
             )
-        # If you get here, it means the verification has not passed.
-        message = ""
-        for field, errors in form.errors.items():
-            for error in errors:
-                message += f"{field.capitalize()}: {error}"
-        return jsonify({"message": message, "ok": "notok"}), 200
-    return jsonify({"message": "method not support", "ok": "notok"}), 200
+            notice_event(notice_type=NoticeTypeEnum.COMMUNITY_UPDATED)
+            flash("Community update successfully.", FlashAlertTypeEnum.SUCCESS.value)
+        else:
+            message = update_response.get("message")
+            current_app.logger.error("Community %s update failed: %s.", {message})
+            flash(message, FlashAlertTypeEnum.DANGER.value)
 
+            return redirect(url_for("community.community_management"))
 
-@community_bp.route("/update_community/<int:community_id>", methods=["POST", "DELETE"])
-@login_required
-def update_community(community_id: int):
-    """Update the details of a community given its ID."""
-    record_entity = (
-        db.session.query(Community)
-        .filter_by(id=community_id, creator_id=current_user.id)
-        .first()
+        if form.errors:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    current_app.logger.error(
+                        "Community %s management error in field %s: %s",
+                        {community_entity.name if community_entity else "creation"},
+                        {getattr(form, field).label.text},
+                        {error},
+                    )
+                    flash(
+                        f"{getattr(form, field).label.text}, {error}",
+                        FlashAlertTypeEnum.DANGER.value,
+                    )
+
+    return render_template(
+        "communityManagement.html",
+        form=form,
+        community=community_entity,
     )
-    if record_entity is None:
-        return jsonify({"message": "Record not found", "ok": "notok"}), 200
-    if request.method == "DELETE":
-        db.session.delete(record_entity)
-        db.session.commit()
-        return jsonify({"message": "Community deleted successfully", "ok": "ok"}), 200
-    if request.method == "POST":
-        form = forms.CreateForm(request.form)
-        if form.validate_on_submit():
-            record_entity.name = form.name.data
-            record_entity.description = form.description.data
-            record_entity.category_id = form.category_id.data
-            db.session.commit()  # Submit changes to the database
-            # After successful update, redirect to edit page
-            return (
-                jsonify({"message": "Edit success", "ok": "ok", "id": community_id}),
-                200,
-            )
-        # If you get here, it means the verification has not passed.
-        message = ""
-        for field, errors in form.errors.items():
-            for error in errors:
-                message += f"{field.capitalize()}: {error}"
-        return jsonify({"message": message, "ok": "notok", "id": community_id}), 200
-    return jsonify({"message": "method not support", "ok": "notok"}), 200

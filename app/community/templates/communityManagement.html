@@ -1,0 +1,128 @@
+{% extends "layout.html" %} {% block title %}Community Management{% endblock %}
+{% block head %} {{ super() }}<link
+  rel="stylesheet"
+  href="{{ url_for('community.static', filename='style/community.css') }}"
+/>
+{% endblock %} {% block content %}
+<div
+  id="profileAlert"
+  class="sticky-top alert alert-danger alert-dismissible text-center fade show d-none"
+  role="alert"
+></div>
+<div class="container light-style flex-grow-1 container-p-y mt-5">
+  <div class="edit_card card overflow-hidden">
+    <div class="row no-gutters row-bordered row-border-light">
+      <div class="col-md-3 pt-5">
+        <div class="list-group list-group-flush community-links">
+          <a
+            class="list-group-item list-group-item-action active"
+            href="javascript:void(0);"
+            >Community</a
+          >
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="mt-2">
+          <form
+            action="{% if community.id %}{{ url_for('community.community_management', community_id=community.id) }}{% else %}{{ url_for('community.community_management') }}{% endif %}"
+            method="post"
+            enctype="multipart/form-data"
+            id="communityForm"
+          >
+            {{ form.csrf_token }}
+            <div class="card-body media align-items-center text-center mt-4">
+              <img
+                src="{{ community.avatar_url }}"
+                alt="uploadAvatar"
+                class="ui-w-80"
+                id="communityAvatar"
+              />
+              <div class="media-body ml-4 mt-1">
+                <label class="btn btn-sm edit_btn btn-outline-primary">
+                  Upload
+                  <input
+                    type="file"
+                    class="community-fileinput"
+                    name="avatar"
+                    id="avatarInput"
+                  />
+                  {{ form.avatar(class="community-fileinput") }}</label
+                >
+
+                <div class="text-light small mt-1">
+                  Allowed JPG, JPEG or PNG. Max size of 1M.
+                </div>
+              </div>
+            </div>
+
+            <hr class="border-light m-0" />
+
+            <div class="card-body mt-3">
+              <div class="form-group">
+                <label class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control mb-1"
+                  value="{{ community.name|default('', true) }}"
+                  name="name"
+                  id="name"
+                />
+              </div>
+
+              <div class="form-group my-3">
+                <label class="form-label">Category</label>
+                <select
+                  class="form-select custom-select"
+                  name="category_select"
+                  id="category_select"
+                >
+                  {% for value, label in form.category_select.choices %} {% if
+                  value == community.category_id %}
+                  <option value="{{ value }}" selected>{{ label }}</option>
+                  {% else %}
+                  <option value="{{ value }}">{{ label }}</option>
+                  {% endif %} {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea
+                  class="form-control mb-1"
+                  name="description"
+                  id="description"
+                >
+{{ community.description|default('', true) }}</textarea
+                >
+              </div>
+            </div>
+
+            <div class="text-right my-3">
+              <button
+                type="submit"
+                class="btn btn-sm edit_btn btn-primary button_style"
+                id="communitySubmit"
+              >
+                Save changes
+              </button>
+
+              <button
+                type="button"
+                onclick="location.href='{{ url_for('community.community') }}'"
+                class="btn btn-sm edit_btn btn-default button_style"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% block javascript %}
+<script
+  type="module"
+  src="{{ url_for('community.static', filename='js/community.js') }}"
+></script>
+{% endblock %} {% endblock %}

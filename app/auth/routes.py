@@ -266,7 +266,7 @@ def forgot_password():
         )
 
         # send notification
-        notice_event(user_id=user.id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
+        notice_event(notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user, id: %s.", {user.id})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)

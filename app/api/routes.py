@@ -12,10 +12,13 @@ from . import ApiResponse
 from .service import (
     categories_service,
     category_service,
+    delete_community_service,
     delete_user_like_service,
     delete_user_record_service,
     delete_user_save_service,
     get_user_notice_service,
+    join_community_service,
+    leave_community_service,
     post_user_like_service,
     post_user_record_service,
     post_user_save_service,
@@ -221,6 +224,30 @@ def user_stats():
 
 
 # Api for community module.
+
+
+@api_bp.route("/communities/<int:community_id>/join", methods=["POST"])
+@jwt_required()
+def join_community(community_id: int) -> ApiResponse:
+    """Join a community by user id and community id."""
+
+    return join_community_service(community_id)
+
+
+@api_bp.route("/communities/<int:community_id>/leave", methods=["POST"])
+@jwt_required()
+def leave_community(community_id: int) -> ApiResponse:
+    """Leave a community by user id and community id."""
+
+    return leave_community_service(community_id)
+
+
+@api_bp.route("/communities/<int:community_id>/delete", methods=["DELETE"])
+@jwt_required()
+def delete_community(community_id: int) -> ApiResponse:
+    """Delete a community by id."""
+
+    return delete_community_service(community_id)
 
 
 # Api for popular module.
