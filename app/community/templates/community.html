@@ -5,7 +5,7 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
   href="{{ url_for('community.static', filename='style/community.css') }}"
 />
 {% endblock %}
-<div class="contain">
+<div class="container">
   <div class="community">
     {% for item in communities %} {% import 'communityCard.html' as macros %} {{
     macros.print_card(item) }} {% endfor %}
