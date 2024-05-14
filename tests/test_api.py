@@ -11,7 +11,6 @@ from app.models.tag import Tag
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
-from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
 from tests.config import AuthActions, TestBase
