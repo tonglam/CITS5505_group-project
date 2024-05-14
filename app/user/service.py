@@ -12,6 +12,7 @@ from app.api.service import (
     user_stats_service,
     users_records_service,
 )
+from app.constants import HttpRequestEnum
 from app.models.community import Community
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
@@ -261,4 +262,6 @@ def get_upload_avatar_url(avatar_file: FileStorage):
     """Get upload avatar url."""
 
     upload_avatar_response = upload_image_service(avatar_file).get_json()
+    if upload_avatar_response.get("code") != HttpRequestEnum.SUCCESS_OK.value:
+        return None
     return upload_avatar_response.get("data").get("image_url")

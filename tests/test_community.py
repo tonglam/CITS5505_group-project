@@ -1,24 +1,150 @@
 """Tests for the community module."""
 
-import enum
+from flask import Flask
+from flask.testing import FlaskClient
 
-from tests.config import TestBase
-
-
-class InvalidUpdateEnum(enum.Enum):
-    """Enum for invalid Create type."""
-
-    NAME_EMPTY = "Name empty"
-    CATEGORY_ID_EMPTY = "Category_id empty"
-    DESCRIPTION_EMPTY = "Description empty"
-
-
-class StatusEnum(enum.Enum):
-    """Enum for invalid Update type."""
-
-    SUCCESS = "ok"
-    FAIL = "notok"
+from app.constants import HttpRequestEnum
+from app.models.community import Community
+from app.models.user import User
+from tests.config import AuthActions, TestBase
 
 
 class TestCommunity(TestBase):
     """This class contains the test cases for the community module."""
+
+    def test_get_community(self, _, client: FlaskClient):
+        """Test community page."""
+
+        url = "/communities/"
+
+        # login
+        AuthActions(client).login()
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_community_list(self, _, client: FlaskClient):
+        """Test community page re-render."""
+
+        url = "/communities/community_list"
+
+        # login
+        AuthActions(client).login()
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_community(self, _, client: FlaskClient):
+        """Test user community page."""
+
+        url = "/communities/community_list/user"
+
+        # login
+        AuthActions(client).login()
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_community_list(self, _, client: FlaskClient):
+        """Test user community page re-render."""
+
+        url = "/communities/community_list/user"
+
+        # login
+        AuthActions(client).login()
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_community_management(self, _, client: FlaskClient):
+        """Test community management page."""
+
+        url = "/communities/management"
+
+        # login
+        AuthActions(client).login()
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        community = Community.query.first()
+        url = f"/communities/management/{community.id}"
+
+        # smoke test
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_post_community_management(self, app: Flask, client: FlaskClient):
+        """Test community management page post request."""
+
+        community = None
+        user = None
+        with app.app_context():
+            community = Community.query.first()
+            user = User.query.filter_by(id=community.creator_id).first()
+
+        url = "/communities/management"
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # create community
+        response = client.post(
+            url,
+            data={
+                "name": "test",
+                "category_select": 1,
+                "description": "test",
+                "avatar_url": "test",
+                "creator_id": user.id,
+            },
+        )
+        self.assertEqual(response.status_code, HttpRequestEnum.FOUND.value)
+
+        # check if community is created
+        with app.app_context():
+            community = Community.query.filter_by(name="test").first()
+            self.assertIsNotNone(community)
+
+        url = f"/communities/management/{community.id}"
+
+        # update community
+        response = client.post(
+            url,
+            data={
+                "name": "test",
+                "category_select": 2,
+                "description": "test",
+                "avatar_url": "test",
+                "creator_id": user.id,
+            },
+        )
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        # check if community is updated
+        with app.app_context():
+            community = Community.query.filter_by(name="test").first()
+            self.assertEqual(community.category_id, 2)
+
+        # logout
+        AuthActions(client).logout()

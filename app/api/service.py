@@ -854,6 +854,12 @@ def stats_service() -> ApiResponse:
 def upload_image_service(image_file: FileStorage) -> ApiResponse:
     """Service for uploading image."""
 
+    if image_file is None:
+        return ApiResponse(
+            code=HttpRequestEnum.BAD_REQUEST.value,
+            message="Image file is required",
+        ).json()
+
     payload = payload = {"key": get_config("IMGBB", "API_KEY")}
     files = {
         "image": (image_file.filename, image_file, image_file.content_type),
@@ -866,7 +872,7 @@ def upload_image_service(image_file: FileStorage) -> ApiResponse:
         return ApiResponse(
             code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
             message="Image upload failed",
-        )
+        ).json()
 
     image_url = response.json()["data"]["url"]
 
