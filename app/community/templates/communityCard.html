@@ -1,0 +1,45 @@
+{% macro print_card(info) %}
+<div class="card p-10">
+  <div class="title">
+    <div class="title_left">
+      <span class="bar">
+        {% if info.avatar_url %}
+        <img class="bar_img" src="{{info.avatar_url}}" />
+        {% endif %}
+      </span>
+      <span> {{info.name}} </span>
+    </div>
+    <a
+      role="button"
+      class="title_btn"
+      href="{{ url_for('community.add_community') }}"
+    >
+      Join
+    </a>
+  </div>
+  <div class="card_text">{{info.description}}</div>
+  <div class="card_list">
+    <div class="card_list_item">
+      <div class="item_text">{{info.create_at}}</div>
+    </div>
+    <div class="card_list_item">
+      <div>
+        <button
+          class="btn btn-sm btn-primary card_btn"
+          id="{{info.id}}"
+          onclick="location.href='{{ url_for('community.edit', community_id=info.id) }}'"
+        >
+          edit
+        </button>
+        <button
+          class="btn btn-sm btn-danger card_btn"
+          id="{{info.id}}"
+          onclick="handleDeleteCardClick(id)"
+        >
+          delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

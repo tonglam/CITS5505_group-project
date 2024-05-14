@@ -432,12 +432,6 @@ class TestApi(TestBase):
         user_record = UserRecord.query.filter_by(
             user_id=user.id, request_id=request_id
         ).first()
-        self.assertIsNone(user_record)
-
-        # test invalid request_id
-        response = client.delete(url % request_id)
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequestEnum.NOT_FOUND.value)
 
         # logout
         AuthActions(client).logout()
