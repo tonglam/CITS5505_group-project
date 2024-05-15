@@ -86,7 +86,8 @@ def create_app() -> Flask:
     register_context_processors(app)
 
     # start scheduler
-    scheduler.start()
+    if env != EnvironmentEnum.TEST.value:
+        scheduler.start()
 
     # home page
     @app.route("/")

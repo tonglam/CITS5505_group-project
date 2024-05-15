@@ -41,11 +41,11 @@ def create_user_job():
 def create_user():
     """Create a new user."""
 
-    if User.query.count() >= USER_MAX_NUM:
-        scheduler.app.logger.info("User reached the maximum number.")
-        return
-
     with scheduler.app.app_context():
+        if User.query.count() >= USER_MAX_NUM:
+            scheduler.app.logger.info("User reached the maximum number.")
+            return
+
         username = faker.name()
 
         user = User(
@@ -102,11 +102,11 @@ def create_user_record_job():
 def create_user_record():
     """Create a new user record."""
 
-    if User.query.count() >= USER_RECORD_MAX_NUM:
-        scheduler.app.logger.info("User Record reached the maximum number.")
-        return
-
     with scheduler.app.app_context():
+        if User.query.count() >= USER_RECORD_MAX_NUM:
+            scheduler.app.logger.info("User Record reached the maximum number.")
+            return
+
         users = [user.id for user in User.query.all()]
         requests = [request.id for request in Request.query.all()]
 
@@ -140,11 +140,11 @@ def create_user_like_job():
 def create_user_like():
     """Create a new user like."""
 
-    if User.query.count() >= USER_LIKE_MAX_NUM:
-        scheduler.app.logger.info("User like reached the maximum number.")
-        return
-
     with scheduler.app.app_context():
+        if User.query.count() >= USER_LIKE_MAX_NUM:
+            scheduler.app.logger.info("User like reached the maximum number.")
+            return
+
         users = [user.id for user in User.query.all()]
         requests = [request.id for request in Request.query.all()]
 
@@ -178,11 +178,11 @@ def create_user_save_job():
 def create_user_save():
     """Create a new user save."""
 
-    if User.query.count() >= USER_SAVE_MAX_NUM:
-        scheduler.app.logger.info("User save reached the maximum number.")
-        return
-
     with scheduler.app.app_context():
+        if User.query.count() >= USER_SAVE_MAX_NUM:
+            scheduler.app.logger.info("User save reached the maximum number.")
+            return
+
         users = [user.id for user in User.query.all()]
         requests = [request.id for request in Request.query.all()]
 

@@ -101,7 +101,7 @@ IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
 JOB_INTERVAL = {
     "create_request": 60,
     "create_reply": 60,
-    "create_user": 600,
+    "create_user": 60,
     "create_user_record": 10,
     "create_user_like": 10,
     "create_user_save": 10,

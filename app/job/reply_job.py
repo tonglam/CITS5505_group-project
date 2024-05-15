@@ -32,11 +32,11 @@ def create_reply_job():
 def create_reply():
     """Create a new reply."""
 
-    if Reply.query.count() >= REPLY_MAX_NUM:
-        scheduler.app.logger.info("Reply reached the maximum number.")
-        return
-
     with scheduler.app.app_context():
+        if Reply.query.count() >= REPLY_MAX_NUM:
+            scheduler.app.logger.info("Reply reached the maximum number.")
+            return
+
         requests = [request.id for request in Request.query.all()]
         users = [user.id for user in User.query.all()]
         request_id = random.choice(requests)

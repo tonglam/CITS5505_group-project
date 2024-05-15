@@ -112,10 +112,6 @@ def register():
             user.password = form.password.data
             db.session.add(user)
 
-            # add user preference
-            user_preference = UserPreference(user_id=user.id)
-            db.session.add(user_preference)
-
         db.session.commit()
         login_user(user, remember=True)
         current_app.logger.info(

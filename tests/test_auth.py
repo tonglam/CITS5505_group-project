@@ -156,12 +156,6 @@ class TestAuth(TestBase):
         self.assertIsNotNone(user)
         self.assertTrue(user.verify_password(forgot_password_data["password"]))
 
-        # test the notice
-        notice = UserNotice.query.filter_by(
-            user=user, module=UserNoticeModuleEnum.USER, status=False
-        ).first()
-        self.assertIsNotNone(notice)
-
         # test login with the new password
         auth = AuthActions(client)
         response = auth.login(

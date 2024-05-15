@@ -34,11 +34,11 @@ def create_request_job():
 def create_request():
     """Create a new request."""
 
-    if Request.query.count() >= REQUEST_MAX_NUM:
-        scheduler.app.logger.info("Request reached the maximum number.")
-        return
-
     with scheduler.app.app_context():
+        if Request.query.count() >= REQUEST_MAX_NUM:
+            scheduler.app.logger.info("Request reached the maximum number.")
+            return
+
         users = [user.id for user in User.query.all()]
         communities = [community.id for community in Community.query.all()]
         categories = [category.id for category in Category.query.all()]
