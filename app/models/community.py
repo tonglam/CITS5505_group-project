@@ -2,6 +2,9 @@
 
 import datetime
 
+from sqlalchemy import event
+
+from app.constants import DICEBEAR_AVATAR_URL
 from app.extensions import db
 from app.utils import format_datetime_to_readable_string, generate_time
 
@@ -57,3 +60,19 @@ class Community(db.Model):
             "create_at": format_datetime_to_readable_string(self.create_at),
             "update_at": format_datetime_to_readable_string(self.update_at),
         }
+
+
+@event.listens_for(Community, "before_insert")
+def before_insert_listener(_, __, target) -> None:
+    """Update the create time before inserting a new user."""
+
+    target.avatar_url = check_avatar_url(target.avatar_url, target.name)
+
+
+def check_avatar_url(avatar_url: str, name: str) -> None:
+    """Check the avatar url."""
+
+    if not avatar_url:
+        return f"{DICEBEAR_AVATAR_URL}{name}"
+
+    return avatar_url

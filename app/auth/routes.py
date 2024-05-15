@@ -42,6 +42,7 @@ from app.constants import (
 )
 from app.extensions import db, login_manager
 from app.models.user import User
+from app.models.user_preference import UserPreference
 from app.notice.events import NoticeTypeEnum, notice_event
 
 
@@ -110,6 +111,10 @@ def register():
             )
             user.password = form.password.data
             db.session.add(user)
+
+            # add user preference
+            user_preference = UserPreference(user_id=user.id)
+            db.session.add(user_preference)
 
         db.session.commit()
         login_user(user, remember=True)
@@ -372,6 +377,7 @@ def callback(provider: str):
     user = db.session.scalar(db.select(User).where(User.email == email))
 
     if user is None:
+        # add a new user
         user = User(
             username=username,
             email=email,
@@ -382,7 +388,11 @@ def callback(provider: str):
             security_answer="",
         )
         db.session.add(user)
-        db.session.commit()
+
+        # add user preference
+        user_preference = UserPreference(user_id=user.id)
+        db.session.add(user_preference)
+
     else:
         if not user.use_google and provider == OAuthProviderEnum.GOOGLE.value:
             user.use_google = True
@@ -394,7 +404,8 @@ def callback(provider: str):
             user.username = username
         if not user.email and email:
             user.email = email
-        db.session.commit()
+
+    db.session.commit()
 
     login_user(user, remember=True)
     current_app.logger.info(

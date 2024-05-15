@@ -151,8 +151,6 @@ def community_management(community_id: int = None):
     ]
 
     if form.validate_on_submit():
-        print("community_entity: ", community_entity)
-
         if not community_entity:
             create_response = service.create_community_service(form)
             if create_response.get("code") == HttpRequestEnum.CREATED.value:

@@ -45,6 +45,7 @@ from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
 from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
+from .job import job_bp
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
@@ -83,6 +84,9 @@ def create_app() -> Flask:
 
     # global context processors
     register_context_processors(app)
+
+    # start scheduler
+    scheduler.start()
 
     # home page
     @app.route("/")
@@ -357,6 +361,7 @@ def register_blueprints(app: Flask) -> None:
         url_prefix="/users",
         static_url_path="/users/static",
     )
+    app.register_blueprint(job_bp)
 
 
 def register_error_handlers(app: Flask) -> None:

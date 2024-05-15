@@ -79,6 +79,9 @@ class OAuthProviderEnum(enum.Enum):
 # Gravatar
 GRAVATAR_URL = "https://www.gravatar.com/avatar/"
 
+# Dicebear Avatar
+DICEBEAR_AVATAR_URL = "https://api.dicebear.com/8.x/pixel-art/jpg?seed="
+
 # Flask Global Variable
 G_USER = "user"
 G_POST_STAT = "post_stat"
@@ -93,3 +96,21 @@ POPULAR_POST_NUM = 10
 
 # Image BB
 IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
+
+# Scheduler job interval
+JOB_INTERVAL = {
+    "create_request": 60,
+    "create_reply": 60,
+    "create_user": 600,
+    "create_user_record": 10,
+    "create_user_like": 10,
+    "create_user_save": 10,
+}
+
+# Max limitation
+USER_MAX_NUM = 999
+REQUEST_MAX_NUM = 9999
+REPLY_MAX_NUM = 9999
+USER_RECORD_MAX_NUM = 99999
+USER_LIKE_MAX_NUM = 99999
+USER_SAVE_MAX_NUM = 99999

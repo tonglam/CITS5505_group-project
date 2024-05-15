@@ -21,7 +21,9 @@ class UserPreference(db.Model):
 
     user = db.relationship("User", backref=db.backref("user_preference", lazy=True))
 
-    def __init__(self, user_id: str, communities: str, interests: str) -> None:
+    def __init__(
+        self, user_id: str, communities: str = "", interests: str = ""
+    ) -> None:
         self.user_id = user_id
         self.communities = communities
         self.interests = interests
