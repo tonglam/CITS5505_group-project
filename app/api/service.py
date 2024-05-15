@@ -285,6 +285,7 @@ def post_user_like_service(request_id: int) -> ApiResponse:
 
     # add user like
     user_like_entity = UserLike(user_id=user_id, request_id=request_id)
+    request_entity.like_num += 1
     db.session.add(user_like_entity)
     db.session.commit()
     current_app.logger.info(f"User {user_id} liked Request {request_id} successfully")
@@ -317,6 +318,7 @@ def delete_user_like_service(request_id: int) -> ApiResponse:
         ).json()
 
     # unlike request
+    request_entity.like_num -= 1
     db.session.delete(user_like_entity)
     db.session.commit()
 
@@ -378,6 +380,7 @@ def post_user_save_service(request_id: int) -> ApiResponse:
 
     # add user save
     user_save_entity = UserSave(user_id=user_id, request_id=request_id)
+    request_entity.save_num += 1
     db.session.add(user_save_entity)
     db.session.commit()
     current_app.logger.info(f"User {user_id} saved Request {request_id} successfully")
@@ -410,6 +413,7 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
         ).json()
 
     # unsave request
+    request_entity.save_num -= 1
     db.session.delete(user_save_entity)
     db.session.commit()
 
@@ -618,6 +622,106 @@ def posts_service(
     post_collection = [post.to_dict() for post in pagination.items]
 
     return ApiResponse(data={"posts": post_collection}, pagination=pagination).json()
+
+
+def post_user_comments_service(post_id, reply_id, content):
+    """Service for user post comment."""
+
+    user_id: str = current_user.id
+
+
+    request_entity = db.session.query(Request).get(post_id)
+
+    if reply_id == post_id:
+        reply_id = None
+
+    new_comment = Reply(
+        request_id=post_id,
+        replier_id=user_id,
+        reply_id=reply_id,
+        content=content,
+        source="HUMAN",
+        like_num=0,
+        save_num=0,
+    )
+    db.session.add(new_comment)
+    request_entity.reply_num += 1
+
+    db.session.commit()
+
+    return ApiResponse(201, 'Comment posted successfully', {'id': new_comment.id, 'post_id': new_comment.request_id}).json()
+
+def user_post_service(title_name, community_name, content, tag_name):
+    """Service for user post."""
+
+    user_id: str = current_user.id    
+    community_query = db.session.query(Community).filter_by(name=community_name).first()
+    if not community_query:
+        return ApiResponse(404, 'Community not found', {"community":community_name}).json()
+    community_id = community_query.id
+    tag_query = db.session.query(Tag).filter_by(name=tag_name).first()
+    if not tag_query:
+        return ApiResponse(404, 'Tag not found').json()
+    tag_id = tag_query.id
+    new_post = Request(
+        author_id=user_id,
+        title=title_name,
+        content=content,
+        community_id=community_id,
+        tag_id=tag_id,
+        view_num=0,
+        like_num=0,
+        reply_num=0,
+        save_num=0,
+    )
+    
+    db.session.add(new_post)
+    db.session.commit()
+    
+    return ApiResponse(201, 'Comment posted successfully', {'post_id': new_post.id}).json()
+
+
+def delete_post_service(post_id):
+    """Service to delete a post and its replies."""
+
+    replies = db.session.query(Reply).filter_by(request_id=post_id).all()
+    
+    for reply in replies:
+        db.session.delete(reply)
+    
+    user_records = db.session.query(UserRecord).filter_by(request_id=post_id).all()
+    for record in user_records:
+        db.session.delete(record)
+
+    post = db.session.query(Request).get(post_id)
+    if not post:
+        return ApiResponse(404, 'Post not found', {'post_id': post_id}).json()
+    
+    db.session.delete(post)
+    db.session.commit()
+    
+    return ApiResponse(200, 'Post and related replies deleted successfully', {'post_id': post_id}).json()
+
+
+def delete_user_comments_service(post_id, reply_id):
+    """Service to delete a comment and its child comments."""
+
+    child_replies = db.session.query(Reply).filter_by(reply_id=reply_id).all()
+    child_count = len(child_replies)
+
+    for child_reply in child_replies:
+        db.session.delete(child_reply)
+    
+    reply = db.session.query(Reply).filter_by(id=reply_id).first()
+    request = db.session.query(Request).filter_by(id=post_id).first()
+
+    if reply:
+        db.session.delete(reply)
+        db.session.commit()
+        request.reply_num -= (child_count + 1)
+        db.session.commit()
+        return ApiResponse(200, 'Comment and its child comments deleted successfully').json()
+    return ApiResponse(404, 'Comment not found').json()
 
 
 # Api service for notice module.

@@ -16,34 +16,60 @@
 
 .btn-like-reply,
 .btn-save-reply,
+.btn-edit-reply,
+.btn-delete-reply,
 .btn-create-reply {
-  background-color: #ec977d;
-  color: white;
+  margin-top: 20px;
+  background-color: #f0f2f4;
+  color: rgb(205, 194, 194);
   border: none;
-  padding: 0px 16px;
+  padding: 2px 8px;
   margin-left: 0;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .reply-container {
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
+  border: 1px solid transparent;  margin-bottom: 10px;
   padding: 10px;
   border-radius: 5px;
-  background-color: #f8f9fa;
+  background-color: #f9f7f7;
+  position: relative;
+}
+
+.reply-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 10%; /* End line a bit higher to make it shorter */
+  left: 0;
+  width: 4px; /* Thicker line */
+  background-color: #bcece7;
+  border-radius: 5px; /* Rounded ends */
 }
 
 .reply {
+  font-size: 20px;
   padding-left: 20px;
 }
 
 .show-replies {
   background-color: transparent;
   border: none;
-  color: #007bff;
+  color: #bfd6ee;
   cursor: pointer;
   padding: 8px 15px;
   margin-top: 15px;
   display: block;
+}
+
+.reply-date{
+  color: #d7b7b7;
+
+}
+
+h5.mb-1 {
+  font-family: 'Noto Serif', serif;
+  padding-left: 20px;
 }

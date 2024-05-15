@@ -2,7 +2,8 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 20px;
+  margin: 20px auto; /* Center the card horizontally */
+  max-width: 1300px; /* Set a maximum width to prevent full-width stretch */
   overflow: hidden;
   font-family: "Arial", sans-serif;
 }
@@ -15,24 +16,27 @@
 
 .card-title {
   margin: 0;
-  font-size: 18px;
-  color: #333;
+  font-size: 40px;
+  color: #509ea2;
+}
+
+.card-body {
+  padding: 15px;
 }
 
 .card-subtitle {
   font-size: 14px;
-  color: #888;
+  color: #6c757d;
 }
 
 .card-text {
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-top: 40px;
   overflow: hidden;
+  font-size: 20px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   line-height: 1.6em;
-  height: 4.8em;
 }
 
 .card-text.expanded {
@@ -43,16 +47,21 @@
 .btn-like,
 .btn-save,
 .btn-create {
-  background-color: #007bff;
+  background-color: #bcd5f0;
   color: white;
   border: none;
+  font-size:smaller;
   padding: 0px 16px;
   margin-left: 0;
   border-radius: 4px;
   cursor: pointer;
+  margin-left: auto; 
+  margin-right: auto;
 }
 
+
 .blockquote-footer {
+  text-align: right;
   font-style: italic;
   font-size: 12px;
   margin-top: 20px;
@@ -62,7 +71,7 @@
 .expand-button {
   background-color: transparent;
   border: none;
-  color: #007bff;
+  color: #b1d0f1;
   cursor: pointer;
   padding: 8px 15px;
   margin-top: 15px;
@@ -74,4 +83,19 @@
   border-top: 1px solid #eee;
   padding: 10px 15px;
   font-size: 14px;
+}
+
+.btn-edit-request, .btn-delete-request {
+  background-color: #ADD8E6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.btn-edit-request:hover, .btn-delete-request:hover {
+  background-color: #87CEEB; 
 }

@@ -1,6 +1,7 @@
 """Routes for api."""
 
 import requests
+from urllib.parse import urlparse, parse_qs
 from flask import abort, request
 from flask_jwt_extended import jwt_required
 
@@ -35,6 +36,10 @@ from .service import (
     user_verification_service,
     users_notices_service,
     users_records_service,
+    post_user_comments_service,
+    delete_user_comments_service,
+    user_post_service,
+    delete_post_service,
 )
 
 
@@ -245,6 +250,63 @@ def posts() -> ApiResponse:
     per_page = request.args.get("per_page", default=10, type=int)
 
     return posts_service(community_id, order_by, page, per_page)
+
+@api_bp.route("/posts/create_comment", methods=["POST", "DELETE"])
+@jwt_required()
+def post_comment() -> ApiResponse:
+    """Post and delete comment."""
+
+    referer = request.headers.get('Referer')
+    if referer:
+
+        query = urlparse(referer).query
+        params = parse_qs(query)
+        post_id = params.get('post_id', [None])[0]
+        reply_id = params.get('reply_id', [post_id])[0]
+    else:
+        post_id = None
+        reply_id = None
+
+    content = request.json.get('content')
+
+
+    if request.method == "POST":
+        if not post_id or not content:
+            return ApiResponse(400, 'Wrong parameters for post comment').json()
+        return post_user_comments_service(post_id, reply_id, content)
+
+    reply_id1 = request.json.get('reply_id')
+    post_id1 = request.json.get('post_id')
+
+
+
+
+    if request.method == "DELETE" and not reply_id:
+        return delete_user_comments_service(post_id1, reply_id1)
+
+
+
+@api_bp.route("/posts/create_post", methods=["POST", "DELETE"])
+@jwt_required()
+def post_related() -> ApiResponse:
+    """Post and delete comment."""
+
+    title = request.json.get('title')
+    community = request.json.get('community')
+    content = request.json.get('content')
+    tag = request.json.get('tag')
+    post_id = request.json.get('post_id')
+
+
+    if request.method == "POST":
+        if not title or not community or not content:
+            return ApiResponse(400, 'Wrong parameters for post ').json()
+        return user_post_service(title, community, content, tag)
+
+    # Assuming you'd also want to handle DELETE requests
+    if request.method == "DELETE":
+        return delete_post_service(post_id)
+
 
 
 # Api for others.
