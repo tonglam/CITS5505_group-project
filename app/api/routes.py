@@ -155,7 +155,7 @@ def user_like(request_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/saves", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def user_saves() -> ApiResponse:
     """Get all saves by user id."""
 
@@ -322,7 +322,6 @@ def upload_image() -> ApiResponse:
         )
 
     image_url = response.json()["data"]["url"]
-    print("image_url: ", image_url)
 
     return ApiResponse(
         data={"image_url": image_url}, message="Image uploaded successfully"
