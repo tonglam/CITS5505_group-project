@@ -9,43 +9,33 @@
   <h1 class="text-center pb-2">Top Posts</h1>
   <div class="row justify-content-center mb-5" id="popular">
     <div class="col-12 col-md-6 col-lg-4">
+      <div class="text-center fs-5 fw-bold my-2">Most Viewed Posts</div>
+
       <ol class="popular-card alternating-colors">
-        <li>
-          <strong>Half-Life 2</strong>
-          <p>Fight aliens, wear a head crab, learn about gravity</p>
+        {% for item in topViews %}
+        <li
+          onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
+        >
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.description|truncate(10, true, '...') }}</p>
         </li>
-        <li>
-          <strong>Halo: Combat Evolved</strong>
-          <p>Fight aliens, wear an AI, learn about screen peeking siblings</p>
-        </li>
-        <li>
-          <strong>Team Fortress 2</strong>
-          <p>Fight non-alien residents, wear hats, learn about teamwork</p>
-        </li>
-        <li>
-          <strong>Tribes</strong>
-          <p>Ski, slip, and slide your way to victory</p>
-        </li>
+        {% endfor %}
       </ol>
     </div>
     <div class="col-12 col-md-6 col-lg-4">
+      <div class="text-center my-2">
+        <div class="text-center fs-5 fw-bold my-2">Most Replied Posts</div>
+      </div>
+
       <ol class="popular-card alternating-colors">
-        <li>
-          <strong>Half-Life 2</strong>
-          <p>Fight aliens, wear a head crab, learn about gravity</p>
+        {% for item in topReplies %}
+        <li
+          onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
+        >
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.description|truncate(10, true, '...') }}</p>
         </li>
-        <li>
-          <strong>Halo: Combat Evolved</strong>
-          <p>Fight aliens, wear an AI, learn about screen peeking siblings</p>
-        </li>
-        <li>
-          <strong>Team Fortress 2</strong>
-          <p>Fight non-alien residents, wear hats, learn about teamwork</p>
-        </li>
-        <li>
-          <strong>Tribes</strong>
-          <p>Ski, slip, and slide your way to victory</p>
-        </li>
+        {% endfor %}
       </ol>
     </div>
   </div>
@@ -55,46 +45,18 @@
   <h1 class="text-center">Top Communities</h1>
 
   <ul class="tilesWrap">
+    {% for item in topCommunities %}
     <li>
-      <h2>01</h2>
-      <h3>Title 1</h3>
-      <p>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry's standard dummy text ever
-        since the 1500s.
-      </p>
-      <button>Read more</button>
+      <h2>0{{ loop.index +1 }}</h2>
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description|truncate(120, true, '...') }}</p>
+      <button
+        onclick="location.href='{{ url_for('index', community_id=item.id }}'"
+      >
+        Explore
+      </button>
     </li>
-    <li>
-      <h2>02</h2>
-      <h3>Title 2</h3>
-      <p>
-        When an unknown printer took a galley of type and scrambled it to make a
-        type specimen book. It has survived not only five centuries.
-      </p>
-      <button>Read more</button>
-    </li>
-    <li>
-      <h2>03</h2>
-      <h3>Title 3</h3>
-      <p>
-        But also the leap into electronic typesetting, remaining essentially
-        unchanged. It was popularised in the 1960s.
-      </p>
-      <button>Read more</button>
-    </li>
-    <li>
-      <h2>04</h2>
-      <h3>Title 4</h3>
-      <p>
-        With the release of Letraset sheets containing Lorem Ipsum passages, and
-        more recently with desktop publishing software like Aldus PageMaker
-        including versions of Lorem Ipsum.
-      </p>
-      <button>Read more</button>
-    </li>
+    {% endfor %}
   </ul>
 </div>
-{% block javascript %}
-<script src="{{ url_for('popular.static', filename='js/popular.js') }}"></script>
-{% endblock %} {% endblock %}
+{% endblock %}
