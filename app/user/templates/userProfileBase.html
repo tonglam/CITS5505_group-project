@@ -1,0 +1,96 @@
+{% extends "layout.html" %} {% block title %}User{% endblock %} {% block head %}
+{{ super() }}<link
+  rel="stylesheet"
+  href="{{ url_for('user.static', filename='style/user.css') }}"
+/>
+{% endblock %} {% block content %}
+<div
+  id="profileAlert"
+  class="sticky-top alert alert-danger alert-dismissible text-center fade show d-none"
+  role="alert"
+></div>
+<div class="container light-style flex-grow-1 container-p-y">
+  <h4 class="font-weight-bold py-3 mb-4">Account settings</h4>
+
+  <div class="edit_card card overflow-hidden">
+    <div class="row no-gutters row-bordered row-border-light">
+      <div class="col-md-3 pt-0">
+        <div class="list-group list-group-flush account-settings-links">
+          <!-- Profile -->
+          {% if tab == 'profile' %}
+          <a
+            class="list-group-item list-group-item-action active"
+            href="{{ url_for('user.user_profile') }}"
+            >General</a
+          >
+          {% else %}
+          <a
+            class="list-group-item list-group-item-action"
+            href="{{ url_for('user.user_profile') }}"
+            >General</a
+          >
+          {% endif %}
+
+          <!-- Password -->
+          {% if tab == 'password' %}
+          <a
+            class="list-group-item list-group-item-action active"
+            href="{{ url_for('user.user_password') }}"
+            >Change password</a
+          >
+          {% else %}
+          <a
+            class="list-group-item list-group-item-action"
+            href="{{ url_for('user.user_password') }}"
+            >Change password</a
+          >
+          {% endif %}
+
+          <!-- Info -->
+          {% if tab == 'info' %}
+          <a
+            class="list-group-item list-group-item-action active"
+            href="{{ url_for('user.user_info') }}"
+            >Info</a
+          >
+          {% else %}
+          <a
+            class="list-group-item list-group-item-action"
+            href="{{ url_for('user.user_info') }}"
+            >Info</a
+          >
+          {% endif %}
+
+          <!-- Notification -->
+          {% if tab == 'notification' %}
+          <a
+            class="list-group-item list-group-item-action"
+            href="{{ url_for('user.user_notification') }}"
+            >Notification</a
+          >
+          {% else %}
+          <a
+            class="list-group-item list-group-item-action"
+            href="{{ url_for('user.user_notification') }}"
+            >Notification</a
+          >
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-9">
+        <div class="tab-content mt-2">
+          <div class="tab-pane fade active show" id="{{ tab }}">
+            {% block tabContent %}{% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% block javascript %}
+<script
+  type="module"
+  src="{{ url_for('user.static', filename='js/profile.js') }}"
+></script>
+{% endblock %} {% endblock %}

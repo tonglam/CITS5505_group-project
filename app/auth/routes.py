@@ -4,20 +4,42 @@ import secrets
 from urllib.parse import urlencode
 
 import requests
-from flask import (abort, current_app, flash, redirect, render_template,
-                   request, session, url_for)
-from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                set_access_cookies, set_refresh_cookies,
-                                unset_jwt_cookies)
+from flask import (
+    abort,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import generate_csrf
 
 from app.auth import auth_bp, forms
-from app.constants import (AUTHORIZATION_CODE, AUTHORIZE_URL, CALLBACK_URL,
-                           CLIENT_ID, CLIENT_SECRET, OAUTH2_PROVIDERS,
-                           OAUTH2_STATE, RESPONSE_TYPE, SCOPES, TOKEN_URL,
-                           FlashAlertTypeEnum, HttpRequestEnum,
-                           OAuthProviderEnum)
+from app.constants import (
+    AUTHORIZATION_CODE,
+    AUTHORIZE_URL,
+    CALLBACK_URL,
+    CLIENT_ID,
+    CLIENT_SECRET,
+    OAUTH2_PROVIDERS,
+    OAUTH2_STATE,
+    RESPONSE_TYPE,
+    SCOPES,
+    TOKEN_URL,
+    FlashAlertTypeEnum,
+    HttpRequestEnum,
+    OAuthProviderEnum,
+)
 from app.extensions import db, login_manager
 from app.models.user import User
 from app.notice.events import NoticeTypeEnum, notice_event
@@ -105,6 +127,11 @@ def register():
                     {getattr(form, field).label.text},
                     {error},
                 )
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
+
         return render_template("auth.html", form=form)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
@@ -178,6 +205,11 @@ def login():
                     {getattr(form, field).label.text},
                     {error},
                 )
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
+
         return render_template("auth.html", form=form)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
@@ -249,7 +281,10 @@ def forgot_password():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return render_template("forgotPassword.html", form=form)
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
 
     return render_template("forgotPassword.html", form=form)
 
@@ -353,8 +388,12 @@ def callback(provider: str):
             user.use_google = True
         if not user.use_github and provider == OAuthProviderEnum.GITHUB.value:
             user.use_github = True
-        user.username = username
-        user.avatar_url = avatar
+        if not user.avatar_url and avatar:
+            user.avatar_url = avatar
+        if not user.username and username:
+            user.username = username
+        if not user.email and email:
+            user.email = email
         db.session.commit()
 
     login_user(user, remember=True)

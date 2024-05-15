@@ -1,0 +1,380 @@
+/*=====start User html =====*/
+.card_shadow_style {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.button_style {
+  background-color: #03bfcb;
+  border: 1px solid #03bfcb;
+  border-radius: 3px;
+  color: #231e39;
+  font-family: Montserrat, sans-serif;
+  font-weight: 500;
+  padding: 10px 25px;
+  background-color: transparent;
+  color: #1e456c;
+}
+
+/*===== profile container settings =====*/
+.avatar_style {
+  border: 1px solid #03bfcb;
+  border-radius: 50%;
+  padding: 7px;
+}
+
+/*===== profile container settings =====*/
+
+/*===== user data container settings =====*/
+.charts_orb {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.charts_orb .orb {
+  padding: 20px;
+}
+
+.charts_orb .orb .orb_graphic {
+  position: relative;
+}
+
+.charts_orb .orb .orb_graphic .orb_value {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #1e456c;
+}
+
+.charts_orb .orb .orb_label {
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.charts_orb svg {
+  width: 110px;
+  height: 110px;
+}
+
+.charts_orb svg circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  stroke-dasharray: 314.16, 314.16;
+  stroke-width: 2;
+  fill: transparent;
+  r: 50;
+  cx: 55;
+  cy: 55;
+}
+
+.charts_orb svg circle.fill {
+  stroke: #d3d3d3;
+}
+
+.charts_orb svg circle.progress {
+  stroke: #03bfcb;
+  transition: stroke-dashoffset 0.35s;
+  stroke-dashoffset: 214.16;
+}
+
+@keyframes NAME-YOUR-ANIMATION {
+  0% {
+    stroke-dashoffset: 314.16;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*===== user data container settings =====*/
+
+/*===== function Sub-Tab settings =====*/
+#userData .nav-link:focus,
+#userData .nav-link:hover {
+  color: #06c !important;
+}
+
+.tab_active {
+  color: #06c;
+  border-bottom: 5px solid #06c !important;
+}
+
+.tab_active:hover {
+  color: #06c;
+  border-bottom: 5px solid #06c !important;
+}
+
+.tab_inactive {
+  color: #021d24;
+}
+
+.tab_inactive:hover {
+  color: #021d24;
+}
+
+.custom-colors {
+  --sec: #fffffe;
+  --dark-pri: #0b5aa2;
+}
+
+.gap_items {
+  background: var(--sec);
+}
+
+.list-border-bottom {
+  border-bottom: 1px solid var(--dark-pri);
+}
+
+.items-body {
+  padding: 10px;
+  margin: 10px;
+  display: grid;
+  grid-gap: 10px;
+}
+
+.items-body-content {
+  padding: 10px;
+  padding-right: 0px;
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+  font-size: 15px;
+  color: rgb(15, 90, 93);
+  grid-gap: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.items-body-content:hover {
+  border-radius: 15px;
+  border: 1px solid var(--dark-pri);
+}
+
+.items-body-content i {
+  align-self: center;
+  font-size: 15px;
+  color: var(--dark-pri);
+  font-weight: bold;
+  animation: icon 1.5s infinite forwards;
+}
+
+@keyframes icon {
+  0%,
+  100% {
+    transform: translate(0px);
+  }
+  50% {
+    transform: translate(3px);
+  }
+}
+
+/*===== function Sub-Tab settings =====*/
+
+/*===== community card settings =====*/
+
+.basic_style {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  outline: 0;
+}
+
+.basic_style,
+.basic_style:after,
+.basic_style:before {
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 465px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+.card {
+  height: auto;
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-body {
+  padding: 0 !important;
+}
+
+.card-img-holder {
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+.card-img-holder img {
+  width: 100%;
+  height: auto;
+  max-height: 15rem;
+  object-fit: cover;
+  border-radius: 1.5rem;
+}
+
+.community-title {
+  color: #22215b;
+  padding: 1rem 0 0 0;
+  font-size: 1.2rem;
+}
+
+.description {
+  color: #22215b80;
+  font-size: 1rem;
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.options span {
+  font-weight: 600;
+  color: #22215b;
+}
+
+.community-btn {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 400;
+  background: #eef7fe;
+  color: #22215b;
+  cursor: pointer;
+}
+
+/*===== community card settings =====*/
+/*===== end User html =====*/
+
+/*===== start editProfile html=====*/
+
+.ui-w-80 {
+  width: 80px !important;
+  height: auto;
+}
+
+.btn-default {
+  border-color: rgba(24, 28, 33, 0.1);
+  background: rgba(0, 0, 0, 0);
+  color: #4e5155;
+}
+
+label.edit_btn {
+  margin-bottom: 0;
+}
+
+.btn-outline-primary {
+  border-color: #26b4ff;
+  background: transparent;
+  color: #26b4ff;
+}
+
+.edit_btn {
+  cursor: pointer;
+}
+
+.text-light {
+  color: #babbbc !important;
+}
+
+.btn-facebook {
+  border-color: rgba(0, 0, 0, 0);
+  background: #3b5998;
+  color: #fff;
+}
+
+.btn-instagram {
+  border-color: rgba(0, 0, 0, 0);
+  background: #000;
+  color: #fff;
+}
+
+.edit_card {
+  background-clip: padding-box;
+  box-shadow: 0 1px 4px rgba(24, 28, 33, 0.012);
+}
+
+.row-bordered {
+  overflow: hidden;
+}
+
+.account-settings-fileinput {
+  position: absolute;
+  visibility: hidden;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.account-settings-links .list-group-item.active {
+  font-weight: bold !important;
+}
+
+html:not(.dark-style) .account-settings-links .list-group-item.active {
+  background: transparent !important;
+}
+
+.account-settings-multiselect ~ .select2-container {
+  width: 100% !important;
+}
+
+.light-style .account-settings-links .list-group-item {
+  padding: 0.85rem 1.5rem;
+  border-color: rgba(24, 28, 33, 0.03) !important;
+}
+
+.light-style .account-settings-links .list-group-item.active {
+  color: #4e5155 !important;
+}
+
+.material-style .account-settings-links .list-group-item {
+  padding: 0.85rem 1.5rem;
+  border-color: rgba(24, 28, 33, 0.03) !important;
+}
+
+.material-style .account-settings-links .list-group-item.active {
+  color: #4e5155 !important;
+}
+
+.dark-style .account-settings-links .list-group-item {
+  padding: 0.85rem 1.5rem;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark-style .account-settings-links .list-group-item.active {
+  color: #fff !important;
+}
+
+.light-style .account-settings-links .list-group-item.active {
+  color: #4e5155 !important;
+}
+
+.light-style .account-settings-links .list-group-item {
+  padding: 0.85rem 1.5rem;
+  border-color: rgba(24, 28, 33, 0.03) !important;
+}
+
+/*===== end editProfile html=====*/
