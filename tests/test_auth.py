@@ -7,7 +7,6 @@ from flask.testing import FlaskClient
 
 from app.constants import GRAVATAR_URL, HttpRequestEnum
 from app.models.user import User
-from app.models.user_notice import UserNotice, UserNoticeModuleEnum
 from tests.config import AuthActions, TestBase, Utils
 from tests.seeds.user_seeds import seed_user_data
 
