@@ -1,4 +1,62 @@
 {% extends "layout.html" %} {% block title %}Popular{% endblock %} {% block head
-%} {{ super() }} {% endblock %} {% block content %}
-<div class="contain"><p>Popular</p></div>
+%} {{ super() }} {% endblock %} {% block content %} {% block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('popular.static', filename='style/popular.css') }}"
+/>
+{% endblock %}
+<div class="container">
+  <h1 class="text-center pb-2">Top Posts</h1>
+  <div class="row justify-content-center mb-5" id="popular">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="text-center fs-5 fw-bold my-2">Most Viewed Posts</div>
+
+      <ol class="popular-card alternating-colors">
+        {% for item in topViews %}
+        <li
+          onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
+        >
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.description|truncate(10, true, '...') }}</p>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="text-center my-2">
+        <div class="text-center fs-5 fw-bold my-2">Most Replied Posts</div>
+      </div>
+
+      <ol class="popular-card alternating-colors">
+        {% for item in topReplies %}
+        <li
+          onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
+        >
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.description|truncate(10, true, '...') }}</p>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="my-3">
+  <h1 class="text-center">Top Communities</h1>
+
+  <ul class="tilesWrap">
+    {% for item in topCommunities %}
+    <li>
+      <h2>0{{ loop.index +1 }}</h2>
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description|truncate(120, true, '...') }}</p>
+      <button
+        onclick="location.href='{{ url_for('index', community_id=item.id }}'"
+      >
+        Explore
+      </button>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}
