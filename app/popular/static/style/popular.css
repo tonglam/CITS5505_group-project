@@ -1,4 +1,4 @@
-/*===== popular rank container settings =====*/
+/*===== popular posts rank container settings =====*/
 #popular {
   font-family: "Space Mono", monospace;
 }
@@ -44,10 +44,10 @@
 #popular ol.alternating-colors li:nth-child(even):before {
   border-color: #2378d5;
 }
-/*===== popular rank container settings =====*/
+/*===== popular posts rank container settings =====*/
 
 /*===== Community container settings =====*/
-
+/* start community card global styles */
 .tilesWrap {
   padding: 0;
   list-style: none;
@@ -65,7 +65,7 @@
   font-family: "helvetica", san-serif;
   min-height: 25vh;
   color: initial;
-  background: #262a2b;
+  background: #0b5b70;
   border: 1px solid #252727;
   text-align: left;
 }
@@ -81,8 +81,8 @@
 }
 
 .tilesWrap li h3 {
-  font-size: 20px;
-  color: #b7b7b7;
+  font-size: 25px;
+  color: #269b99;
   margin-bottom: 5px;
 }
 
@@ -172,13 +172,49 @@
 }
 .tilesWrap li:nth-child(3):before {
   background: #c21500;
-  background: -webkit-linear-gradient(to right, #ffc500, #c21500);
-  background: linear-gradient(to right, #ffc500, #c21500);
+  background: -webkit-linear-gradient(to right, #e8d492, #f3cbc7);
+  background: linear-gradient(to right, #d1c7a8, #eb9891);
 }
 .tilesWrap li:nth-child(4):before {
   background: #fc354c;
-  background: -webkit-linear-gradient(to right, #0abfbc, #fc354c);
-  background: linear-gradient(to right, #0abfbc, #fc354c);
+  background: -webkit-linear-gradient(to right, #0abfbc, #e9d0d3);
+  background: linear-gradient(to right, #0abfbc, #d5cacb);
 }
+/* end community card global styles */
+
+/* start category tag styles */
+.tag {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.2em 0.5em 0.3em;
+  border-radius: 2px;
+  background: var(--tag-bg);
+  color: var(--text-color);
+  font-weight: 600;
+  margin: 0.25em 0.1em;
+  border-radius: 4px;
+}
+
+.tag_style1 {
+  background: #fff;
+  color: #4a8afc;
+}
+
+.tag_style2 {
+  color: #313244;
+  background: #adecf3;
+}
+
+.tag_style3 {
+  background: #a4c34a;
+  color: #fff;
+}
+
+.tag_style4 {
+  background: #2775c3;
+  color: #fff;
+}
+
+/* end category tag styles */
 
 /*===== Community container settings =====*/

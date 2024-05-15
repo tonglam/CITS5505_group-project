@@ -17,7 +17,7 @@
           onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
         >
           <strong>{{ item.title }}</strong>
-          <p>{{ item.description|truncate(10, true, '...') }}</p>
+          <p>{{ item.username }}</p>
         </li>
         {% endfor %}
       </ol>
@@ -33,7 +33,7 @@
           onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
         >
           <strong>{{ item.title }}</strong>
-          <p>{{ item.description|truncate(10, true, '...') }}</p>
+          <p>{{ item.username }}</p>
         </li>
         {% endfor %}
       </ol>
@@ -47,11 +47,12 @@
   <ul class="tilesWrap">
     {% for item in topCommunities %}
     <li>
-      <h2>0{{ loop.index +1 }}</h2>
-      <h3>{{ item.name }}</h3>
+      <h2>0{{ loop.index }}</h2>
+      <h3>{{ item.communityname }}</h3>
       <p>{{ item.description|truncate(120, true, '...') }}</p>
+      <span class="tag">#javascript</span>
       <button
-        onclick="location.href='{{ url_for('index', community_id=item.id }}'"
+        onclick="location.href='{{ url_for('index', community_id=item.id) }}'"
       >
         Explore
       </button>
