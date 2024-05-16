@@ -20,12 +20,15 @@
           <div class="subtitle_style my-2">Top Viewed Posts</div>
         </div>
         {% for item in topViews %}
+
         <li
           onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
         >
-          <strong>{{ item.title }}</strong>
+          <strong class="subtitle">{{ item.title }}</strong>
+          <i class="fa fa-angle-right"></i>
           <p>{{ item.username }}</p>
         </li>
+
         {% endfor %}
       </ol>
     </div>
@@ -38,7 +41,8 @@
         <li
           onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
         >
-          <strong>{{ item.title }}</strong>
+          <strong class="subtitle">{{ item.title }}</strong>
+          <i class="fa fa-angle-right"></i>
           <p>{{ item.username }}</p>
         </li>
         {% endfor %}

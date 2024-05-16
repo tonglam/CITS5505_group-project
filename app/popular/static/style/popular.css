@@ -117,6 +117,13 @@
 #popular ol.alternating-colors li:nth-child(even):before {
   border-color: #2378d5;
 }
+
+/* effect for each post */
+.subtitle:hover {
+  border-bottom: 2px solid #daecbb;
+  text-decoration: none;
+  cursor: pointer;
+}
 /*===== popular posts rank container settings =====*/
 
 /*===== Community container settings =====*/
