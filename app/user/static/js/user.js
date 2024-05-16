@@ -33,6 +33,20 @@ const init_stat_display = () => {
 };
 
 const init_tab_switch = (tab_data_name) => {
+  // active tab
+  const tabList = [].slice.call(
+    document.querySelectorAll('a[data-bs-toggle="tab"]')
+  );
+  tabList.forEach((tab) => {
+    if (tab.id === `tab-nav-${tab_data_name}`) {
+      tab.classList.add("tab_active");
+      tab.classList.remove("tab_inactive");
+    } else {
+      tab.classList.add("tab_inactive");
+      tab.classList.remove("tab_active");
+    }
+  });
+
   // reset render id and url
   document.getElementById("render-id").innerHTML = `users-${tab_data_name}`;
   document.getElementById(

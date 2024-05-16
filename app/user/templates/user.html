@@ -52,7 +52,7 @@
           {% for name in user_data.keys() %} {% if loop.index0 == 0 %}
           <li class="nav-item">
             <a
-              class="nav-link active"
+              class="nav-link tab_active active"
               data-bs-toggle="tab"
               href="#tab-{{ name }}"
               id="tab-nav-{{ name }}"
@@ -62,7 +62,7 @@
           {% else %}
           <li class="nav-item">
             <a
-              class="nav-link"
+              class="nav-link tab_inactive"
               data-bs-toggle="tab"
               href="#tab-{{ name }}"
               id="tab-nav-{{ name }}"

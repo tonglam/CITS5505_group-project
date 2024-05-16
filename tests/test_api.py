@@ -105,12 +105,21 @@ class TestApi(TestBase):
         url = _PREFIX + "/users/records/%s"
 
         user = None
-        request = None
+        user_records_ids = []
+        request_ids = []
         with app.app_context():
             user = User.query.first()
-            request = Request.query.first()
+            user_records_ids = [
+                record.request_id
+                for record in UserRecord.query.filter_by(user_id=user.id).all()
+            ]
+            request_ids = [request.id for request in Request.query.all()]
 
-        request_id = request.id
+        request_id = [
+            request_id
+            for request_id in request_ids
+            if request_id not in user_records_ids
+        ][0]
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -203,12 +212,19 @@ class TestApi(TestBase):
         url = _PREFIX + "/users/likes/%s"
 
         user = None
-        request = None
+        user_likes_ids = []
+        request_ids = []
         with app.app_context():
             user = User.query.first()
-            request = Request.query.first()
+            user_likes_ids = [
+                like.request_id
+                for like in UserLike.query.filter_by(user_id=user.id).all()
+            ]
+            request_ids = [request.id for request in Request.query.all()]
 
-        request_id = request.id
+        request_id = [
+            request_id for request_id in request_ids if request_id not in user_likes_ids
+        ][0]
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -307,12 +323,19 @@ class TestApi(TestBase):
         url = _PREFIX + "/users/saves/%s"
 
         user = None
-        request = None
+        user_saves_ids = []
+        request_ids = []
         with app.app_context():
             user = User.query.first()
-            request = Request.query.filter_by(author_id=user.id).first()
+            user_saves_ids = [
+                save.request_id
+                for save in UserSave.query.filter_by(user_id=user.id).all()
+            ]
+            request_ids = [request.id for request in Request.query.all()]
 
-        request_id = request.id
+        request_id = [
+            request_id for request_id in request_ids if request_id not in user_saves_ids
+        ][0]
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
