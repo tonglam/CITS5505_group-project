@@ -73,11 +73,6 @@ p.text-primary:hover {
   font-size: 12px;
 }
 
-#stat > span,
-p {
-  color: white;
-}
-
 .mini-stat-info span {
   display: block;
   font-size: 30px;
@@ -130,7 +125,6 @@ p {
   color: #205081 !important;
 }
 
-////////
 .articles a {
   text-decoration: none !important;
   display: block;
@@ -284,15 +278,13 @@ p {
 .mainHeading {
   top: 0;
   width: 100vw;
-
-  margin: 0;
-  padding: 0;
   position: relative;
   left: 50%;
   right: 50%;
   transform: translateX(-50%);
   padding: 0 40px;
   margin-top: -24px !important;
+  margin-bottom: 80px;
   background-image: var(--gradient-01);
 }
 .mainHeading .mainHeading__content {

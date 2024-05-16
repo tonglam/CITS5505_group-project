@@ -27,15 +27,18 @@ def handle_notification(_, **kwargs: dict) -> None:
     notice_type = kwargs.get("notice_type")
     notice_module = notice_type.split(", ")[0].strip()
     notice_action = notice_type.split(", ")[1].strip()
-    current_app.logger.info(f"Received notification: {notice_module}, {notice_action}")
+
+    current_app.logger.info(
+        "Received notification: %s, %s", {notice_module}, {notice_action}
+    )
 
     if notice_module not in [module.value for module in UserNoticeModuleEnum]:
-        current_app.logger.error(f"Invalid notice module: {notice_module}")
-        raise ValueError(f"Invalid notice module: {notice_module}")
+        current_app.logger.error("Invalid notice module: %s", {notice_action})
+        raise ValueError("Invalid notice module: %s", {notice_module})
 
     if notice_action not in [action.value for action in UserNoticeActionEnum]:
-        current_app.logger.error(f"Invalid notice action: {notice_action}")
-        raise ValueError(f"Invalid notice action: {notice_action}")
+        current_app.logger.error("Invalid notice action: %s", {notice_action})
+        raise ValueError("Invalid notice action: %s", {notice_action})
 
     # insert to database
     notice = UserNotice(
@@ -48,14 +51,16 @@ def handle_notification(_, **kwargs: dict) -> None:
 
     db.session.add(notice)
     db.session.commit()
+
     current_app.logger.info(
-        f"Notification: {notice_module}, {notice_action} inserted into database"
+        "Notification: %s, %s inserted into database", {notice_module}, {notice_action}
     )
 
     # update layout notification number
     notice_num = getattr(g, G_NOTICE_NUM, 0) + 1
     g.notice_num = min(notice_num, MAX_NOTICE_NUM)
-    current_app.logger.info(f"Notice number updated: [{g.notice_num}]")
+
+    current_app.logger.info("Notice number updated: [%s]", {g.notice_num})
 
 
 notification_signal.connect(handle_notification)
