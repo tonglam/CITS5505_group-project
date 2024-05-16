@@ -30,8 +30,9 @@
 
     <div style="position: relative; z-index: 999">
       <!-- profile -->
-      {% import './components/layout/navUserProfile.html' as userProfile %} {{
-      userProfile.render_user_userProfile(user, post_stat) }}
+      {% if current_user.is_authenticated %} {% import
+      './components/layout/navUserProfile.html' as userProfile %} {{
+      userProfile.render_user_userProfile(user, post_stat) }} {% endif %}
 
       <!-- notification -->
       <div class="notifications notification-card d-none" id="notification">

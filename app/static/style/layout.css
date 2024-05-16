@@ -23,6 +23,11 @@
   box-shadow: none;
 }
 
+.nav-badge {
+  font-size: 0.7rem !important;
+  padding: 0.1rem 0.3rem !important;
+}
+
 /*===== userProfile card settings =====*/
 .userProfile_card {
   width: 300px;

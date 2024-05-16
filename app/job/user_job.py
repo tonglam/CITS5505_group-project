@@ -65,7 +65,7 @@ def create_user():
 
         user_preference = UserPreference(
             user_id=user.id,
-            communities=user_communities,
+            communities=str(user_communities),
         )
         db.session.add(user_preference)
 

@@ -14,16 +14,14 @@
       id="profileAvatar"
     />
     <div class="media-body ml-4 mt-1">
-      <label class="btn btn-sm edit_btn btn-outline-primary">
-        Upload
-        <input
-          type="file"
-          class="account-settings-fileinput"
-          name="avatar"
-          id="avatarInput"
-        />
-        {{ form.avatar(class="account-settings-fileinput") }}</label
-      >
+      <label class="btn btn-sm edit_btn btn-outline-primary">Upload</label>
+      <input
+        type="file"
+        class="account-settings-fileinput"
+        name="avatar"
+        id="avatarInput"
+      />
+      {{ form.avatar(class="account-settings-fileinput") }}
 
       <div class="text-light small mt-1">
         Allowed JPG, JPEG or PNG. Max size of 1M.

@@ -45,7 +45,7 @@
   <button
     type="button"
     class="btn btn-outline-dark rounded-pill w-auto fs-8"
-    href="{{ url }}"
+    onclick="window.location.href='{{ url }}'"
   >
     +&nbsp;&nbsp;Create
   </button>
@@ -58,64 +58,55 @@ False, badgeNum = 0) -%}
 <li class="nav-menu nav-item mx-2 mx-lg-1">
   {% if targetBlank %}
   <a
-    class="nav-link"
+    class="nav-link position-relative d-inline-block"
     href="{{ url }}"
     target="_blank"
     title="{{ title }}"
     role="button"
     id="{{ title }}"
   >
-    <div class="position-relative d-inline-block">
-      <i class="{{ icon_class }}"></i>
-      <!-- badge -->
-      {% if showBadge %}
-      <span
-        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
-        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
-        >{{ badgeNum }}</span
-      >
-      {% endif %}
-    </div>
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if showBadge %}
+    <span
+      class="badge nav-badge position-absolute start-100 translate-middle rounded-pill bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
   </a>
   {% else %} {% if url %}
   <a
-    class="nav-link"
+    class="nav-link position-relative d-inline-block"
     href="{{ url }}"
     title="{{ title }}"
     role="button"
     id="{{ title }}"
   >
-    <div class="position-relative d-inline-block">
-      <i class="{{ icon_class }}"></i>
-      <!-- badge -->
-      {% if (showBadge and badgeNum > 0) %}
-      <span
-        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
-        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
-        >{{ badgeNum }}</span
-      >
-      {% endif %}
-    </div>
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if (showBadge and badgeNum > 0) %}
+    <span
+      class="badge nav-badge position-absolute start-100 translate-middle rounded-pill bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
   </a>
   {% else %}
   <a
-    class="nav-link"
+    class="nav-link position-relative d-inline-block"
     href="javascript:void(0);"
     title="{{ title }}"
     role="button"
     id="{{ title }}"
   >
-    <div class="position-relative d-inline-block">
-      <i class="{{ icon_class }}"></i>
-      <!-- badge -->
-      {% if (showBadge and badgeNum > 0) %}
-      <span
-        class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"
-        style="font-size: 0.7rem; padding: 0.1rem 0.3rem"
-        >{{ badgeNum }}</span
-      >
-      {% endif %}
-    </div>
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if (showBadge and badgeNum > 0) %}
+    <span
+      class="badge nav-badge position-absolute start-100 translate-middle rounded-pill bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
   </a>
   {% endif %} {% endif %}
 </li>
@@ -123,7 +114,7 @@ False, badgeNum = 0) -%}
 
 <!-- user profile -->
 {% macro user_profile(user) -%}
-<div id="navUserProfile">
+<li id="navUserProfile">
   <button
     class="btn btn-link nav-link py-2 px-0 px-lg-2 d-flex align-items-center"
     id="useDropdown"
@@ -138,5 +129,5 @@ False, badgeNum = 0) -%}
       alt="User Avatar"
     />
   </button>
-</div>
+</li>
 {%- endmacro %}

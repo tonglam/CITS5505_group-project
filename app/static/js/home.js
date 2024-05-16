@@ -22,7 +22,7 @@ const init_community_select = () => {
       return false;
     }
 
-    if (community_id === "all") {
+    if (community_id === "all-community") {
       // reset page to 1 and re-render
       re_render({ page: 1 }, ["community_id"]);
     } else {
@@ -47,7 +47,7 @@ const init_sort_select = () => {
       return false;
     }
 
-    if (order_by === "all") {
+    if (order_by === "all-sort") {
       // reset page to 1 and re-render
       re_render({ page: 1 }, ["order_by"]);
     } else {

@@ -159,15 +159,18 @@ const init_user_profile = () => {
   const user_profile_card = document.getElementById("userProfileCard");
 
   // display user profile card
-  document
-    .getElementById("navUserProfile")
-    .addEventListener("click", function () {
-      if (user_profile_card.classList.contains("d-none")) {
-        user_profile_card.classList.remove("d-none");
-      } else {
-        user_profile_card.classList.add("d-none");
-      }
-    });
+  const user_profile = document.getElementById("navUserProfile");
+  if (user_profile === undefined || user_profile === null) {
+    return false;
+  }
+
+  user_profile.addEventListener("click", function () {
+    if (user_profile_card.classList.contains("d-none")) {
+      user_profile_card.classList.remove("d-none");
+    } else {
+      user_profile_card.classList.add("d-none");
+    }
+  });
 
   // close user profile card
   document

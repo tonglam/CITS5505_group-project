@@ -367,28 +367,4 @@ p.text-primary:hover {
   height: 100%;
 }
 
-/* Call to Action Button */
-.cta {
-  padding: 16px 32px;
-  color: var(--m-02);
-  background-color: transparent;
-  border: 1px solid rgba(var(--m-02), 0.4);
-  font-family: var(--font-01);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 600;
-  margin-top: 32px;
-  cursor: pointer;
-  box-shadow: inset 0px 0px 0px rgba(var(--m-02), 0.2);
-  transition: all 0.4s ease;
-}
-.cta:hover {
-  border: 1px solid rgba(var(--m-02), 0.1);
-  box-shadow: inset 0px -80px 0px rgba(var(--m-02), 0.1);
-  transform: translateY(-5px);
-}
-.cta.sm {
-  margin-top: 16px;
-}
-
 /*===== title with logo container settings =====*/
