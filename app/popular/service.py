@@ -2,6 +2,7 @@
 
 from sqlalchemy import func
 
+from app.constants import TOP_COMMUNITY_NUM, TOP_DATA_NUM
 from app.extensions import db
 from app.models import Category, Reply, Request, UserRecord
 
@@ -14,7 +15,7 @@ def top_replied_service():
         db.session.query(Reply)
         .group_by(Reply.request_id)
         .order_by(func.count(Reply.request_id))
-        .limit(5)
+        .limit(TOP_DATA_NUM)
         .all()
     )
 
@@ -38,7 +39,7 @@ def top_viewed_service():
         db.session.query(UserRecord)
         .group_by(UserRecord.request_id)
         .order_by(func.count(UserRecord.request_id))
-        .limit(5)
+        .limit(TOP_DATA_NUM)
         .all()
     )
 
@@ -62,7 +63,7 @@ def top_community_service():
         db.session.query(Request)
         .group_by(Request.community_id)
         .order_by(func.count(Request.id))
-        .limit(4)
+        .limit(TOP_COMMUNITY_NUM)
         .all()
     )
 
