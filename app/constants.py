@@ -96,4 +96,4 @@ IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
 
 # Top data number
 TOP_DATA_NUM = 5
-TOP_COMMUNITY_NUM = 5
+TOP_COMMUNITY_NUM = 4
