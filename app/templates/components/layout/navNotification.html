@@ -1,16 +1,12 @@
-<div class="d-flex justify-content-between mx-1">
-  <h2>
-    Unread Notifications -
-    <span id="notification-num">{{ notice_num }}</span>
-  </h2>
-  <div class="mt-1" id="closeNotification">
-    <i
-      class="fa-regular fa-circle-xmark fa-lg"
-      style="cursor: pointer"
-      onclick="handle_close_notification()"
-    ></i>
-  </div>
+<div id="noticeItem">
+  <form action="">
+    <fieldset>
+      <legend>
+        <i class="fa-regular fa-bell" style="color: #3e5c93"></i> Notifications
+      </legend>
+      {% for notice in notices %} {% import
+      './components/layout/navNotificationItem.html' as notificationItem %} {{
+      notificationItem.render_notification_item(notice) }} {% endfor%}
+    </fieldset>
+  </form>
 </div>
-{% for notice in notices %} {% import
-'./components/layout/navNotificationItem.html' as notificationItem %} {{
-notificationItem.render_notification_item(notice) }} {% endfor%}
