@@ -19,6 +19,9 @@ class NoticeTypeEnum(enum.Enum):
     USER_UPDATED_PROFILE = f"{UserNoticeModuleEnum.USER.value}, \
         {UserNoticeActionEnum.UPDATED_PROFILE.value}"
 
+    USER_UPDATED_AVATAR = f"{UserNoticeModuleEnum.USER.value}, \
+        {UserNoticeActionEnum.UPDATED_AVATAR.value}"
+
     COMMUNITY_CREATED = (
         f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.CREATED.value}"
     )

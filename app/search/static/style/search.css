@@ -1,17 +1,17 @@
-.card {
+.search-card {
   width: 80%;
   border-radius: 20px;
 }
 
 @media screen and (min-width: 601px) {
-  .card {
+  .search-card {
     width: 70%;
     border-radius: 20px;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .card {
+  .search-card {
     width: 95%;
     border-radius: 20px;
   }

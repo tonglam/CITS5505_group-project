@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,7 +11,7 @@
     globalLinks.render_links() }}
 
     <!-- page title -->
-    <title>{% block title %}Welcome{% endblock %} - Request Forum</title>
+    <title>{% block title %}Welcome {% endblock %} - ASKIFY</title>
 
     <!-- end head -->
     {% endblock %}
@@ -25,9 +25,13 @@
     </header>
 
     <div style="position: relative; z-index: 999">
+      <!-- profile -->
+      {% import './components/layout/navUserProfile.html' as userProfile %} {{
+      userProfile.render_user_userProfile(user, post_stat) }}
+
       <!-- notification -->
-      <div class="notifications d-none" id="notification">
-        {% include './components/layout/notification.html' %}
+      <div class="notifications notification-card d-none" id="notification">
+        {% include './components/layout/navNotification.html' %}
       </div>
     </div>
 
