@@ -25,7 +25,8 @@
     {% if current_user.id == request.author_id %}
     <button 
     id="editPostButton"
-    data-post-id="{{ request.id }}" 
+    data-post-id="{{ request.id }}"
+    onclick="window.open('{{ url_for('post.edit_post', post_id=request.id, target_type='post') }}', '_blank')"
     class="fa fa-edit btn-edit-request"
     >Edit</button>
     <button 
@@ -35,13 +36,13 @@
   </div>
   <div class="card-footer">
     <button
-      id="like-button"
+      id="like-button-no-reply"
       class="fa fa-heart btn-like"
-      onclick="toggleLike({{ request.id }})"
+      onclick="toggleLike({{ request.id }}, null)"
     >
       LIKE
     </button>
-    <button id="save-button" class="fa fa-save btn-save" onclick="toggleSave({{ request.id }})">
+    <button id="save-button-no-reply" class="fa fa-save btn-save" onclick="toggleSave({{ request.id }}, null)">
       SAVE
     </button>
     <button

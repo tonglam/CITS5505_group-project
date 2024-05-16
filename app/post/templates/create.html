@@ -9,9 +9,23 @@
 {%endblock%}
 {% block content%}
 <div class="container">
-  <h1>{{ 'Edit' if mode == 'edit' else 'Create' }} {{ 'Post' if mode == 'post' else 'Comment' }}</h1>  <form id="postForm" method="post">
+  {% if mode == 'edit_comment' %}
+    <div class="comment-content">
+      <h2>My Comment</h2>
+        <p>{{ replies.content |safe }}</p>
+    </div>
+  {% elif mode == 'edit_post' %}
+    <div class="edit-post-content">
+      <h2>My Post</h2>
+      <p><strong>Title:</strong> {{ requests.title }}</p>
+      <p><strong>Tag:</strong> {{ requests.tag.name }}</p>
+      <p><strong>Community:</strong> {{ requests.community.name }}</p>
+      <p><strong>Content:</strong> {{ requests.content | safe }}</p>
+    </div>
+  {% endif %}
+  <h1>{{ 'Edit' if 'edit' in mode else 'Create' }} {{ 'Post' if 'post' in mode else 'Comment' }}</h1>  <form id="postForm" method="post">
 
-      {% if mode == 'post' %}
+      {% if 'post' in mode %}
       <div>
           <label for="postTitle">Title:</label>
           <input type="text" id="postTitle" name="title" required placeholder="Enter title">

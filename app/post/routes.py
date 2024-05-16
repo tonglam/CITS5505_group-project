@@ -37,6 +37,32 @@ def create_comment():
     
     return render_template('create.html', mode='comment', post_id=post_id, target_type=target_type, replies=replies)
 
+
+@post_bp.route('/edit_post')
+@login_required
+def edit_post():
+    """edit post"""
+
+    post_id = request.args.get('post_id')
+    communities = Community.query.all()
+    tags = Tag.query.all()
+    requests = Request.query.filter_by(id = post_id).first()
+
+    return render_template('create.html', mode='edit_post', communities=communities, tags=tags, requests=requests)
+
+@post_bp.route('/edit_comment')
+@login_required
+def edit_comment():
+    """create comment"""
+
+    post_id = request.args.get('post_id')
+    reply_id = int(request.args.get('reply_id'))
+    replies = Reply.query.filter_by(id = reply_id).first()
+
+    target_type = request.args.get('target_type', 'post')
+    
+    return render_template('create.html', mode='edit_comment', post_id=post_id, target_type=target_type, reply_id=reply_id, replies= replies)
+
 @post_bp.route("/<int:post_id>")
 @login_required
 def post_detail(post_id):

@@ -236,6 +236,7 @@ def delete_user_record_service(request_id: int) -> ApiResponse:
     ).json()
 
 
+
 def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     """Service for getting all user likes."""
 
@@ -259,11 +260,11 @@ def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     ).json()
 
 
-def post_user_like_service(request_id: int) -> ApiResponse:
+def post_user_like_service(request_id: int, reply_id: int) -> ApiResponse:
     """Service for liking a request of a reply."""
 
-    # validate request_id
-    request_entity = db.session.query(Request).get(request_id)
+    # Validate request_id
+    request_entity = db.session.query(Request).filter_by(id=request_id).first()
     if request_entity is None:
         return ApiResponse(
             HttpRequestEnum.NOT_FOUND.value, message="request not found"
@@ -271,10 +272,10 @@ def post_user_like_service(request_id: int) -> ApiResponse:
 
     user_id: str = current_user.id
 
-    # check if user like already exists
+    # Check if user like already exists
     user_like_entity = (
         db.session.query(UserLike)
-        .filter_by(user_id=user_id, request_id=request_id)
+        .filter_by(user_id=user_id, request_id=request_id, reply_id=reply_id)
         .first()
     )
 
@@ -283,20 +284,30 @@ def post_user_like_service(request_id: int) -> ApiResponse:
             HttpRequestEnum.BAD_REQUEST.value, message="like already exists"
         ).json()
 
-    # add user like
-    user_like_entity = UserLike(user_id=user_id, request_id=request_id)
-    request_entity.like_num += 1
+    # Add user like
+    user_like_entity = UserLike(user_id=user_id, request_id=request_id, reply_id=reply_id)
     db.session.add(user_like_entity)
-    db.session.commit()
-    current_app.logger.info(f"User {user_id} liked Request {request_id} successfully")
+
+    if reply_id is None:
+        request_entity.like_num += 1
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} liked Request {request_id} successfully")
+    else:
+        reply_entity = db.session.query(Reply).get(reply_id)
+        if reply_entity is None:
+            return ApiResponse(
+                HttpRequestEnum.NOT_FOUND.value, message="reply not found"
+            ).json()
+        reply_entity.like_num += 1
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} liked Reply {reply_id} successfully")
 
     return ApiResponse(HttpRequestEnum.CREATED.value, message="like success").json()
 
+def delete_user_like_service(request_id: int, reply_id: int) -> ApiResponse:
+    """Service for unliking a request or a reply."""
 
-def delete_user_like_service(request_id: int) -> ApiResponse:
-    """Service for unliking a request of a reply."""
-
-    # validate request_id
+    # Validate request_id
     request_entity = db.session.query(Request).get(request_id)
     if request_entity is None:
         return ApiResponse(
@@ -305,10 +316,10 @@ def delete_user_like_service(request_id: int) -> ApiResponse:
 
     user_id: str = current_user.id
 
-    # check if user like exists
+    # Check if user like exists
     user_like_entity = (
         db.session.query(UserLike)
-        .filter_by(user_id=user_id, request_id=request_id)
+        .filter_by(user_id=user_id, request_id=request_id, reply_id=reply_id)
         .first()
     )
 
@@ -317,12 +328,22 @@ def delete_user_like_service(request_id: int) -> ApiResponse:
             HttpRequestEnum.NOT_FOUND.value, message="like not found"
         ).json()
 
-    # unlike request
-    request_entity.like_num -= 1
-    db.session.delete(user_like_entity)
-    db.session.commit()
-
-    current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
+    # Unlike request or reply
+    if reply_id is None:
+        request_entity.like_num -= 1
+        db.session.delete(user_like_entity)
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
+    else:
+        reply_entity = db.session.query(Reply).get(reply_id)
+        if reply_entity is None:
+            return ApiResponse(
+                HttpRequestEnum.NOT_FOUND.value, message="reply not found"
+            ).json()
+        reply_entity.like_num -= 1
+        db.session.delete(user_like_entity)
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} unliked Reply {reply_id} successfully")
 
     return ApiResponse(
         HttpRequestEnum.NO_CONTENT.value, message="unlike success"
@@ -353,11 +374,10 @@ def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
         pagination=pagination,
     ).json()
 
+def post_user_save_service(request_id: int, reply_id: int) -> ApiResponse:
+    """Service for saving a request or a reply."""
 
-def post_user_save_service(request_id: int) -> ApiResponse:
-    """Service for saving a post of a reply."""
-
-    # validate request_id
+    # Validate request_id
     request_entity = db.session.query(Request).get(request_id)
     if request_entity is None:
         return ApiResponse(
@@ -366,10 +386,10 @@ def post_user_save_service(request_id: int) -> ApiResponse:
 
     user_id: str = current_user.id
 
-    # check if user save already exists
+    # Check if user save already exists
     user_save_entity = (
         db.session.query(UserSave)
-        .filter_by(user_id=user_id, request_id=request_id)
+        .filter_by(user_id=user_id, request_id=request_id, reply_id=reply_id)
         .first()
     )
 
@@ -378,20 +398,31 @@ def post_user_save_service(request_id: int) -> ApiResponse:
             HttpRequestEnum.BAD_REQUEST.value, message="save already exists"
         ).json()
 
-    # add user save
-    user_save_entity = UserSave(user_id=user_id, request_id=request_id)
-    request_entity.save_num += 1
+    # Add user save
+    user_save_entity = UserSave(user_id=user_id, request_id=request_id, reply_id=reply_id)
     db.session.add(user_save_entity)
-    db.session.commit()
-    current_app.logger.info(f"User {user_id} saved Request {request_id} successfully")
+
+    if reply_id is None:
+        request_entity.save_num += 1
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} saved Request {request_id} successfully")
+    else:
+        reply_entity = db.session.query(Reply).get(reply_id)
+        if reply_entity is None:
+            return ApiResponse(
+                HttpRequestEnum.NOT_FOUND.value, message="reply not found"
+            ).json()
+        reply_entity.save_num += 1
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} saved Reply {reply_id} successfully")
 
     return ApiResponse(HttpRequestEnum.CREATED.value, message="save success").json()
 
 
-def delete_user_save_service(request_id: int) -> ApiResponse:
-    """Service for deleting a user save of a reply."""
+def delete_user_save_service(request_id: int, reply_id: int) -> ApiResponse:
+    """Service for deleting a user save of a request or a reply."""
 
-    # validate request_id
+    # Validate request_id
     request_entity = db.session.query(Request).get(request_id)
     if request_entity is None:
         return ApiResponse(
@@ -400,10 +431,10 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
 
     user_id: str = current_user.id
 
-    # check if user save exists
+    # Check if user save exists
     user_save_entity = (
         db.session.query(UserSave)
-        .filter_by(user_id=user_id, request_id=request_id)
+        .filter_by(user_id=user_id, request_id=request_id, reply_id=reply_id)
         .first()
     )
 
@@ -412,12 +443,22 @@ def delete_user_save_service(request_id: int) -> ApiResponse:
             HttpRequestEnum.NOT_FOUND.value, message="save not found"
         ).json()
 
-    # unsave request
-    request_entity.save_num -= 1
-    db.session.delete(user_save_entity)
-    db.session.commit()
-
-    current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
+    # Unsave request or reply
+    if reply_id is None:
+        request_entity.save_num -= 1
+        db.session.delete(user_save_entity)
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
+    else:
+        reply_entity = db.session.query(Reply).get(reply_id)
+        if reply_entity is None:
+            return ApiResponse(
+                HttpRequestEnum.NOT_FOUND.value, message="reply not found"
+            ).json()
+        reply_entity.save_num -= 1
+        db.session.delete(user_save_entity)
+        db.session.commit()
+        current_app.logger.info(f"User {user_id} unsaved Reply {reply_id} successfully")
 
     return ApiResponse(
         HttpRequestEnum.NO_CONTENT.value, message="unsave success"
@@ -624,6 +665,19 @@ def posts_service(
     return ApiResponse(data={"posts": post_collection}, pagination=pagination).json()
 
 
+def update_user_comments_service(reply_id1, content):
+    """Service for updating user comment."""
+
+    comment_query = db.session.query(Reply).filter_by(id=reply_id1).first()
+    if not comment_query:
+        return ApiResponse(404, 'Comment not found or not authorized', {"comment_id": reply_id1,"message": reply_id1}).json()
+
+    comment_query.content = content
+    
+    db.session.commit()
+    
+    return ApiResponse(200, 'Comment updated successfully', {'comment_id': comment_query.id, 'post_id':comment_query.request_id}).json()
+
 def post_user_comments_service(post_id, reply_id, content):
     """Service for user post comment."""
 
@@ -679,6 +733,31 @@ def user_post_service(title_name, community_name, content, tag_name):
     db.session.commit()
     
     return ApiResponse(201, 'Comment posted successfully', {'post_id': new_post.id}).json()
+
+
+def update_user_post_service(post_id, title_name, community_name, content, tag_name):
+    """Service for updating user post."""
+
+    user_id: str = current_user.id    
+    post_query = db.session.query(Request).filter_by(id=post_id).first()
+    if not post_query:
+        return ApiResponse(404, 'Post not found or not authorized', {"post_id": post_id}).json()
+    
+    community_query = db.session.query(Community).filter_by(name=community_name).first()
+    if not community_query:
+        return ApiResponse(404, 'Community not found', {"community": community_name}).json()
+    community_id = community_query.id
+    
+    tag_query = db.session.query(Tag).filter_by(name=tag_name).first()
+    if not tag_query:
+        return ApiResponse(404, 'Tag not found', {"tag": tag_name}).json()
+    tag_id = tag_query.id
+    post_query.title = title_name
+    post_query.content = content
+    post_query.community_id = community_id
+    post_query.tag_id = tag_id
+    db.session.commit()
+    return ApiResponse(200, 'Post updated successfully', {'post_id': post_query.id}).json()
 
 
 def delete_post_service(post_id):

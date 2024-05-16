@@ -7,14 +7,6 @@ function initializeEditor() {
      theme: 'snow'
    });
 
-/*    var postForm = document.getElementById('postForm');
-  var mode = postForm.getAttribute('data-mode');
-  var replyContent = postForm.getAttribute('data-reply-content');
-
-  if (mode === 'edit' && replyContent) {
-    quill.clipboard.dangerouslyPasteHTML(replyContent);
-  } */
-
    document.getElementById('postForm').onsubmit = function() {
      var content = document.createElement('input');
      content.setAttribute('type', 'hidden');
@@ -47,6 +39,25 @@ async function createPost(title, community, content, tag) {
 }
 
 
+async function editPost(title, community, content, tag) {
+  const data = {
+      title: title,
+      community: community,
+      content: content,
+      tag: tag
+  };
+  console.log(data);
+
+
+  const response = await putFetch(postUrl)(data)();
+  if (response.code == 200) {
+    window.location.href = "/posts/" + response.message.post_id;
+} else {
+    alert(response.message);
+}
+}
+
+
 
 async function createComment(content) {
     const data = {
@@ -64,6 +75,22 @@ async function createComment(content) {
 }
 
 
+async function editComment(content) {
+  const data = {
+
+      content: content
+  };
+
+  const response = await putFetch(commentUrl)(data)();
+  console.log(response.message.post_id)
+  console.log(response.code)
+  if (response.code == 200) {
+      window.location.href = "/posts/" + response.message.post_id;
+  } else {
+      alert(response.message);
+  }
+}
+
 
 
 document.getElementById('postForm').addEventListener('submit', function(event) {
@@ -80,5 +107,9 @@ document.getElementById('postForm').addEventListener('submit', function(event) {
       createPost(title, community, content, tag);
   } else if (mode === 'comment') {
       createComment(content);
-  } 
+  } else if (mode === 'edit_comment'){
+      editComment(content);
+  } else if (mode === 'edit_post'){
+      editPost(title, community, content, tag);
+  }
 });

@@ -18,13 +18,13 @@
         </div>
         <div class="reply">{{ reply.content | safe}}</div>
         <div>
-          <button id="like-button-reply" class="fa fa-heart btn-like-reply" onclick="toggleLike({{ request.id }})">Like</button>
-          <button id="save-button-reply" class="fa fa-save btn-save-reply" onclick="toggleSave()">Save</button>
+          <button id="like-button-{{reply.id}}" class="fa fa-heart btn-like-reply" onclick="toggleLike({{ request.id }}, {{ reply.id }})">Like</button>
+          <button id="save-button-{{reply.id}}" class="fa fa-save btn-save-reply" onclick="toggleSave({{ request.id }}, {{ reply.id }})">Save</button>
           {% if  reply.reply_id is none %}
           <button class="fa fa-reply btn-create-reply" onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, reply_id=reply.id, mode='comment', target_type='reply') }}', '_blank')">Reply</button>
           {% endif %}
           {% if current_user.id == reply.replier_id %}
-          <button class="fa fa-edit btn-edit-reply" onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, reply_id=reply.id, mode='edit', target_type='reply') }}', '_blank')")">Edit</button>
+          <button class="fa fa-edit btn-edit-reply" onclick="window.open('{{ url_for('post.edit_comment', post_id=request.id, reply_id=reply.id, target_type='reply') }}', '_blank')")">Edit</button>
           <button
           data-reply-id="{{ reply.id }}"
           data-post-id="{{ request.id }}"

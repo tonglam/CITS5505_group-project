@@ -39,52 +39,82 @@ let userStatus = {
   saves: {}
 };
 
-async function sendRequest(requestId, actionType, method) {
-  const url = `${apiUrlBase}${actionType}s/${requestId}`;
-  const response = await (method === 'POST' ? postFetch : deleteFetch)(url)({})();
+async function sendRequest(requestId, replyId, actionType, method) {
+  const data = {
+    request_id: requestId,
+    reply_id: replyId
+  };
+
+  const url = `${apiUrlBase}${actionType}s`;
+  console.log("Sending request to:", url, "with data:", data);
+
+  const response = await (method === 'POST' ? postFetch : deleteFetch)(url)(data)();
   return response;
 }
 
-function handleResponse(response, requestId, actionType) {
-    const statusKey = actionType === 'like' ? 'likes' : 'saves';
-    switch (response.message) {
-        case `${actionType} success`:
-        case `${actionType} already exists`:
-            userStatus[statusKey][requestId] = true;
-            alert(`${actionType.charAt(0).toUpperCase() + actionType.slice(1)} successful for request ID ${requestId}`);
-            updateButtonStyle(requestId, actionType);
-            break;
-        case `un${actionType} success`:
-            userStatus[statusKey][requestId] = false;
-            alert(`Un${actionType} successful for request ID ${requestId}`);
-            updateButtonStyle(requestId, actionType);
-            break;
-        default:
-            alert('Unexpected error occurred.');
-            break;
-    }
+function handleResponse(response, requestId, replyId, actionType) {
+  const statusKey = actionType === 'like' ? 'likes' : 'saves';
+
+  if (!userStatus[statusKey][requestId]) {
+    userStatus[statusKey][requestId] = {};
+  }
+
+  const replyKey = replyId || 'no-reply';
+
+  switch (response.message) {
+    case `${actionType} success`:
+    case `${actionType} already exists`:
+      userStatus[statusKey][requestId][replyKey] = true;
+      alert(`${actionType.charAt(0).toUpperCase() + actionType.slice(1)} successful for request ID ${requestId} replyID ${replyId}`);
+      break;
+    case `un${actionType} success`:
+      userStatus[statusKey][requestId][replyKey] = false;
+      alert(`Un${actionType} successful for request ID ${requestId} replyID ${replyId}`);
+      break;
+    default:
+      alert('Unexpected error occurred.');
+      break;
+  }
+  updateButtonStyle(requestId, replyKey, actionType);
 }
 
-function updateButtonStyle(requestId, actionType) {
-  const button = document.getElementById(`${actionType}-button`);
-  const isActioned = userStatus[actionType === 'like' ? 'likes' : 'saves'][requestId];
+function updateButtonStyle(requestId, replyKey, actionType) {
+  const button = document.getElementById(`${actionType}-button-${replyKey}`);
+  const isActioned = userStatus[actionType === 'like' ? 'likes' : 'saves'][requestId][replyKey];
   button.innerHTML = isActioned ? `Un${actionType}` : actionType.charAt(0).toUpperCase() + actionType.slice(1);
   button.classList.toggle('actioned', isActioned);
+  if (actionType === 'like') {
+    button.style.color = isActioned ? 'red' : '';
+  } else if (actionType === 'save') {
+    button.style.color = isActioned ? 'blue' : '';
+  }
 }
 
-async function toggleAction(requestId, actionType) {
-    
-    const statusKey = actionType === 'like' ? 'likes' : 'saves';
-    const isActioned = userStatus[statusKey][requestId];
-    const method = isActioned ? 'DELETE' : 'POST';
-    try {
-        const response = await sendRequest(requestId, actionType, method);
-        handleResponse(response, requestId, actionType);
-    } catch (error) {
-        console.error(`Error sending toggle ${actionType} request:`, error);
-        alert(`An internet issue occurred while toggling the ${actionType}. Please try again.`);
-    }
+async function toggleAction(requestId, replyId, actionType) {
+  const statusKey = actionType === 'like' ? 'likes' : 'saves';
+  let isActioned;
+
+  if (!userStatus[statusKey][requestId]) {
+    userStatus[statusKey][requestId] = {};
+  }
+
+  const replyKey = replyId || 'no-reply';
+  isActioned = userStatus[statusKey][requestId][replyKey];
+
+  const method = isActioned ? 'DELETE' : 'POST';
+  try {
+    const response = await sendRequest(requestId, replyId, actionType, method);
+    handleResponse(response, requestId, replyId, actionType);
+  } catch (error) {
+    alert(`An internet issue occurred while toggling the ${actionType}. Please try again.`);
+    console.error("Error details:", error);
+  }
 }
+
+window.toggleLike = (requestId, replyId) => toggleAction(requestId, replyId, 'like');
+window.toggleSave = (requestId, replyId) => toggleAction(requestId, replyId, 'save');
+
+
 
 async function deletePost(postId) {
   const data = {
@@ -99,6 +129,7 @@ async function deletePost(postId) {
   }
 }
 
+
 async function deleteComment(postId,replyId) {
   const data = {
     post_id: postId,
@@ -108,10 +139,6 @@ async function deleteComment(postId,replyId) {
   console.log(response)
 
 }
-
-window.toggleLike = (requestId) => toggleAction(requestId, 'like');
-window.toggleSave = (requestId) => toggleAction(requestId, 'save');
-
 
 document.getElementById('deletePostButton').addEventListener('click', function(event) {
   event.preventDefault();
@@ -135,3 +162,21 @@ for (var i = 0; i < deleteButtons.length; i++) {
     });;
   });
 }
+
+
+// for set the initial status
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    // Fetch user likes
+    const likesResponse = await getFetch('/api/user/likes')()();
+    initializeLikes(likesResponse.user_likes);
+
+    // Fetch user saves
+    const savesResponse = await getFetch('/api/user/saves');
+    const savesData = await savesResponse.json();
+    initializeSaves(savesData.user_saves);
+  } catch (error) {
+    console.error("Error fetching likes or saves:", error);
+  }
+});

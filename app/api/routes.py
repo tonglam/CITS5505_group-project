@@ -38,8 +38,10 @@ from .service import (
     users_records_service,
     post_user_comments_service,
     delete_user_comments_service,
+    update_user_comments_service,
     user_post_service,
     delete_post_service,
+    update_user_post_service,
 )
 
 
@@ -145,16 +147,19 @@ def user_likes() -> ApiResponse:
     return user_likes_service(page, per_page)
 
 
-@api_bp.route("/users/likes/<int:request_id>", methods=["POST", "DELETE"])
+@api_bp.route("/users/likes", methods=["POST", "DELETE"])
 @jwt_required()
-def user_like(request_id: int) -> ApiResponse:
+def user_like() -> ApiResponse:
     """Like or unlike a request by user id and request id."""
+    data = request.get_json()
+    request_id = data.get("request_id")
+    reply_id = data.get("reply_id")
 
     if request.method == "POST":
-        return post_user_like_service(request_id)
+        return post_user_like_service(request_id, reply_id)
 
     if request.method == "DELETE":
-        return delete_user_like_service(request_id)
+        return delete_user_like_service(request_id, reply_id)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
@@ -171,16 +176,19 @@ def user_saves() -> ApiResponse:
     return user_saves_service(page, per_page)
 
 
-@api_bp.route("/users/saves/<int:request_id>", methods=["POST", "DELETE"])
+@api_bp.route("/users/saves", methods=["POST", "DELETE"])
 @jwt_required()
-def user_save(request_id: int) -> ApiResponse:
-    """Save or unsave a request by user id and request id."""
+def user_save() -> ApiResponse:
+    """Save or unsave a request or a reply by user id and request id."""
+    data = request.get_json()
+    request_id = data.get("request_id")
+    reply_id = data.get("reply_id")
 
     if request.method == "POST":
-        return post_user_save_service(request_id)
+        return post_user_save_service(request_id, reply_id)
 
     if request.method == "DELETE":
-        return delete_user_save_service(request_id)
+        return delete_user_save_service(request_id, reply_id)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
@@ -251,7 +259,7 @@ def posts() -> ApiResponse:
 
     return posts_service(community_id, order_by, page, per_page)
 
-@api_bp.route("/posts/create_comment", methods=["POST", "DELETE"])
+@api_bp.route("/posts/create_comment", methods=["POST","PUT","DELETE"])
 @jwt_required()
 def post_comment() -> ApiResponse:
     """Post and delete comment."""
@@ -278,15 +286,15 @@ def post_comment() -> ApiResponse:
     reply_id1 = request.json.get('reply_id')
     post_id1 = request.json.get('post_id')
 
+    if request.method == "PUT":
+        return update_user_comments_service(reply_id, content)
 
-
-
-    if request.method == "DELETE" and not reply_id:
+    if request.method == "DELETE":
         return delete_user_comments_service(post_id1, reply_id1)
 
 
 
-@api_bp.route("/posts/create_post", methods=["POST", "DELETE"])
+@api_bp.route("/posts/create_post", methods=["POST","PUT", "DELETE"])
 @jwt_required()
 def post_related() -> ApiResponse:
     """Post and delete comment."""
@@ -297,13 +305,20 @@ def post_related() -> ApiResponse:
     tag = request.json.get('tag')
     post_id = request.json.get('post_id')
 
+    referer = request.headers.get('Referer')
+    if referer:
+        query = urlparse(referer).query
+        params = parse_qs(query)
+        post_id1 = params.get('post_id', [None])[0]
 
     if request.method == "POST":
         if not title or not community or not content:
             return ApiResponse(400, 'Wrong parameters for post ').json()
         return user_post_service(title, community, content, tag)
+    # pylint: disable=no-value-for-parameter
+    if request.method == "PUT":
+        return update_user_post_service(post_id1, title, community, content, tag)
 
-    # Assuming you'd also want to handle DELETE requests
     if request.method == "DELETE":
         return delete_post_service(post_id)
 
