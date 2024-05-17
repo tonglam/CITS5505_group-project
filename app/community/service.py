@@ -66,7 +66,6 @@ def update_community_service(community: Community, form: CommunityForm) -> dict:
     # get avatar url
     if avatar_file:
         upload_avatar_url = get_upload_avatar_url(avatar_file)
-        print("upload_avatar_url: ", upload_avatar_url)
         community.avatar_url = upload_avatar_url
         update = True
 

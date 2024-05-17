@@ -1,7 +1,7 @@
 <div class="container custom-colors">
   <div class="gap_items">
     <div class="items-body">
-      {% if items|length > 0 %} {% for data in item %} {% set _id = data.id %}
+      {% for data in item %} {% set _id = data.id %}
 
       <div
         class="items-body-content"
@@ -14,17 +14,17 @@
         >
         <i class="fa fa-angle-right"></i>
       </div>
-      {% endfor %} {% endif %}
+      {% endfor %}
     </div>
   </div>
 
-  {% if pagination and pagination.total_items >0 %}
+  {% if pagination and pagination.total_items > 0 %}
   <div class="list-border-bottom"></div>
   {% endif %}
 
   <!-- List Pagination -->
   <div class="mt-4">
-    {% if pagination.total_items >0 %} {% import './components/pagination.html'
+    {% if pagination.total_items > 0 %} {% import './components/pagination.html'
     as pageItem %} {{ pageItem.render_pagination(pagination) }} {% endif %}
   </div>
 </div>

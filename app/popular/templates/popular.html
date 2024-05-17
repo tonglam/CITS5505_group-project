@@ -66,7 +66,7 @@
       onclick="location.href='{{ url_for('index', community_id=item.id, _anchor='content') }}'"
     >
       <h2>0{{ loop.index }}</h2>
-      <h3>{{ item.communityname }}</h3>
+      <h3>{{ item.community }}</h3>
       <p>{{ item.description|truncate(120, true, '...') }}</p>
       <button>Explore</button>
       <hr />
