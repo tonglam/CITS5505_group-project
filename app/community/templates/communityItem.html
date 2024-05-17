@@ -1,101 +1,66 @@
-{% macro render_community_item(item, user) -%}
-<div class="col-xl-4 col-md-4 mb-3 mb-lg-5">
-  <!--Card-->
-  <div class="card community-card overflow-hidden text-center">
+{% macro render_community_item(item, user) -%} {% set img_random_int = range(1,
+10) | random %} {% set tag_random_int = range(1, 5) | random %}
+<li>
+  <a href="" class="community_card">
     <img
-      src="https://i.ibb.co/8BqFFVk/111-Photoroom.jpg"
-      class="card-img-top img-fluid"
-      alt=""
+      src="{{url_for('static',filename='assets/community' ~ img_random_int ~ '.jpg')}}"
+      class="card__image"
+      alt="card image"
+      width="450"
     />
-
-    <!--Card body-->
-    <div class="card-body p-0">
-      <!--avatar-->
-      <a
-        href="{{ url_for('index', community_id=item.id) }}"
-        class="avatar xl rounded-circle bg-gray bg-opacity-10 p-1 position-relative mt-n5 d-block mx-auto"
-      >
+    <div class="card__overlay">
+      <div class="card__header">
+        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+          <path />
+        </svg>
         <img
+          class="card__thumb"
           src="{{ item.avatar_url }}"
-          class="avatar-img img-fluid rounded-circle"
-          alt="community-avatar"
+          alt="community avatar"
         />
-      </a>
-      <h5 class="mb-0 pt-3">
-        <a
-          href="{{ url_for('index', community_id=item.id) }}"
-          class="text-reset"
-          >{{ item.name }}</a
-        >
-      </h5>
-      <span class="text-muted small d-block mb-4 mt-3 mx-2"
-        >{{ item.description|truncate(120, true, '...') }}</span
-      >
-      <div class="row mx-0 border-top border-bottom">
-        <div class="col-6 text-center border-end py-3">
-          <h5 class="mb-0">{{ item.posts }}</h5>
-          <small class="text-muted">Posts</small>
-        </div>
-        <div class="col-6 text-center py-3">
-          <h5 class="mb-0">{{ item.members }}</h5>
-          <small class="text-muted">Members</small>
-        </div>
-      </div>
-      <ul class="list-group list-group-flush">
-        <li
-          class="list-group-item px-3 d-flex align-items-center justify-content-between"
-        >
-          <span class="text-muted small">Creator</span>
-          <strong>{{ item.creator.username }}</strong>
-        </li>
-        <li
-          class="list-group-item px-3 d-flex align-items-center justify-content-between"
-        >
-          <span class="text-muted small">Create at</span>
-          <small>{{ item.create_at }}</small>
-        </li>
-        <li
-          class="list-group-item px-3 d-flex align-items-center justify-content-between"
-        >
-          <span class="text-muted small d-flex align-items-center">
-            <span
-              class="align-middle lh-1 me-1 size-5 border border-4 border-success rounded-circle d-inline-block"
-            ></span>
-            <strong> {{ item.category.name }}</strong>
-          </span>
-          <div class="text-end">
+
+        <div class="card__header-text">
+          <h3 class="card__title">{{ item.name }}</h3>
+          <span
+            class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3"
+            >#{{ item.category.name }}</span
+          >
+          <span class="card__status">{{ item.create_at }}</span>
+          <div>
             {% if not item.joined %}
             <button
-              class="btn btn-sm btn-primary"
+              class="btn btn-sm btn_style"
               onclick="handle_join_community({{ item.id }})"
             >
               Join
             </button>
             {% else %}
             <button
-              class="btn btn-sm btn-primary"
+              class="btn btn-sm btn_style"
               onclick="handle_leave_community({{ item.id }})"
             >
               Leave
             </button>
             {% endif %} {% if item.creator.id == user.id %}
             <button
-              class="btn btn-sm btn-warning"
+              class="btn btn-sm btn_style"
               onclick="location.href='{{ url_for('community.community_management', community_id=item.id) }}'"
             >
               Edit
             </button>
             <button
-              class="btn btn-sm btn-danger"
+              class="btn btn-sm btn_style"
               onclick="handle_delete_community({{ item.id }})"
             >
               Delete
             </button>
             {% endif %}
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
+      <p class="card__description">{{ item.description }}</p>
+      <p class="text-center card__status">- POSTS:10086 FOLLOWER:10086 -</p>
     </div>
-  </div>
-</div>
+  </a>
+</li>
 {%- endmacro %}
