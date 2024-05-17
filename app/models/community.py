@@ -73,6 +73,7 @@ def check_avatar_url(avatar_url: str, name: str) -> None:
     """Check the avatar url."""
 
     if not avatar_url:
-        return f"{DICEBEAR_AVATAR_URL}{name}"
+        formatted_name = name.replace(" ", "_")
+        return f"{DICEBEAR_AVATAR_URL}{formatted_name}"
 
     return avatar_url

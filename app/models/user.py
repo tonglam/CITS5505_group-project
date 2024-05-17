@@ -120,6 +120,8 @@ def check_avatar_url(avatar_url: str, email: str, username: str) -> None:
     if not avatar_url:
         if email:
             return f"{GRAVATAR_URL}{hashlib.sha256(email.lower().encode()).hexdigest()}"
-        return f"{DICEBEAR_AVATAR_URL}{username}"
+
+        formatted_username = username.replace(" ", "_")
+        return f"{DICEBEAR_AVATAR_URL}{formatted_username}"
 
     return avatar_url
