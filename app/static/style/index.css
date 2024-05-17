@@ -24,21 +24,18 @@
 .gap_line {
   border-bottom: 1px solid #8c8c8c93;
 }
+
 /*===== global container settings =====*/
 
 /*===== community search container settings =====*/
 .icon-1x {
   font-size: 24px !important;
 }
+
 .border-color .text-primary,
-p.text-primary:focus {
-  color: #637498 !important;
-}
-.border-color .text-primary,
+p.text-primary:focus,
 p.text-primary:hover {
-  border-bottom: 2px solid #637498;
-  text-decoration: none;
-  cursor: pointer;
+  color: #637498 !important;
 }
 
 .text-black,
@@ -77,8 +74,7 @@ p.text-primary:hover {
   --stroke-color: #99bbde;
 
   text-shadow: var(--x-offset) var(--y-offset) 0px var(--background-color),
-    calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke))
-      0px var(--stroke-color);
+    calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke)) 0px var(--stroke-color);
 }
 
 .index-post-card {
@@ -246,13 +242,6 @@ p.text-primary:hover {
   border-radius: 10px;
 }
 
-/* effect for each post */
-.subtitle:hover {
-  border-bottom: 2px solid #637498;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 .commmunityTag_style1 {
   background-color: #a377a2;
 }
@@ -272,6 +261,7 @@ p.text-primary:hover {
 .commmunityTag_style5 {
   background-color: #90bc99;
 }
+
 /*===== community search container settings =====*/
 
 /*===== title with logo container settings =====*/
@@ -717,11 +707,13 @@ p.text-primary:hover {
   box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%),
     0 2px 6px 0 rgb(206 206 238 / 54%);
 }
+
 .bg-gradient-scooter {
   background: #17ead9;
   background: -webkit-linear-gradient(45deg, #17ead9, #6078ea) !important;
   background: linear-gradient(45deg, #17ead9, #6078ea) !important;
 }
+
 .widgets-icons-2 {
   width: 56px;
   height: 56px;
@@ -732,12 +724,15 @@ p.text-primary:hover {
   font-size: 27px;
   border-radius: 10px;
 }
+
 .rounded-circle {
   border-radius: 50% !important;
 }
+
 .text-white {
   color: #fff !important;
 }
+
 .ms-auto {
   margin-left: auto !important;
 }
@@ -745,6 +740,7 @@ p.text-primary:hover {
 .stats-text {
   color: #637498;
 }
+
 /* .bg-gradient-bloody {
   background: #f54ea2;
   background: -webkit-linear-gradient(45deg, #f54ea2, #ff7676) !important;
@@ -763,3 +759,9 @@ p.text-primary:hover {
   background: linear-gradient(45deg, #ffdf40, #ff8359) !important;
 } */
 /*===== stats container settings =====*/
+
+/* postItem.html */
+
+.postItem {
+  cursor: pointer
+}

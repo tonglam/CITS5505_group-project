@@ -2,8 +2,7 @@
   margin-top: 2px;
 }
 
-.login {
-}
+.login {}
 
 .useDropdown {
   display: inline-block;
@@ -132,12 +131,12 @@ a {
   font-weight: 700;
 }
 
-#noticeItem fieldset > * + * {
+#noticeItem fieldset>*+* {
   margin-top: 0.5rem;
   margin-top: 1.5rem;
 }
 
-#noticeItem form > * + * {
+#noticeItem form>*+* {
   margin-top: 1.5rem;
 }
 
@@ -151,3 +150,34 @@ a {
 }
 
 /*===== notification container settings =====*/
+
+/* navBarItem.html */
+.navUserProfileBtn {
+  margin-top: -5px
+}
+
+.navUserProfileImg {
+  height: 30px;
+  border: none;
+  box-shadow: none
+}
+
+/* noticeItem.html */
+.noticeItemI {
+  color: #3e5c93
+}
+
+/* navUserProfile.html */
+.navUserProfileI {
+  cursor: pointer
+}
+
+.navUserProfileIC {
+  color: #47a7f0
+}
+
+/* layout.html */
+.layoutBox {
+  position: relative;
+  z-index: 999
+}

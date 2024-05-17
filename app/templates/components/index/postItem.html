@@ -1,19 +1,11 @@
 {% macro render_post_item(item, color_type) -%} {% set _id = item.id %}
-<div
-  class="card border-color row-hover pos-relative pt-2 px-3 mb-3 border rounded-0"
-  onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
-  style="cursor: pointer"
->
+<div class="postItem card border-color row-hover pos-relative pt-2 px-3 mb-3 border rounded-0"
+  onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')">
   <div class="row align-items-center">
     <div class="col-md-8 mb-3 mb-sm-0">
-      <span
-        class="badge rounded-pill commmunityTag_style{{ color_type }} module-name mb-3"
-        >{{ item.tag }}</span
-      >
+      <span class="badge rounded-pill commmunityTag_style{{ color_type }} module-name mb-3">{{ item.tag }}</span>
       <h5 class="text-primary">{{ item.title }}</h5>
-      <small class="text-secondary"
-        >Posted on {{ item.create_at }} by {{ item.author }}</small
-      >
+      <small class="text-secondary">Posted on {{ item.create_at }} by {{ item.author }}</small>
     </div>
 
     <div class="col-md-4">
@@ -28,17 +20,13 @@
           <div class="ion-ios-eye-outline icon-1x">
             <i class="fa-regular fa-eye fa-sm icon_style"></i>
           </div>
-          <span class="d-block small_font_style"
-            >{{ item.view_num }} Views</span
-          >
+          <span class="d-block small_font_style">{{ item.view_num }} Views</span>
         </div>
         <div class="col px-1">
           <div class="ion-ios-eye-outline icon-1x">
             <i class="fa-regular fa-thumbs-up fa-sm icon_style"></i>
           </div>
-          <span class="d-block small_font_style"
-            >{{ item.like_num }} Likes</span
-          >
+          <span class="d-block small_font_style">{{ item.like_num }} Likes</span>
         </div>
       </div>
     </div>
