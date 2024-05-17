@@ -763,15 +763,27 @@ def update_user_post_service(post_id, title_name, community_name, content, tag_n
 def delete_post_service(post_id):
     """Service to delete a post and its replies."""
 
+    # Delete all replies related to the post
     replies = db.session.query(Reply).filter_by(request_id=post_id).all()
-    
     for reply in replies:
         db.session.delete(reply)
-    
+
+    # Delete all user records related to the post
     user_records = db.session.query(UserRecord).filter_by(request_id=post_id).all()
     for record in user_records:
         db.session.delete(record)
 
+    # Delete all user saves related to the post
+    user_saves = db.session.query(UserSave).filter_by(request_id=post_id).all()  # Corrected the model
+    for save in user_saves:
+        db.session.delete(save)
+
+    # Delete all user likes related to the post
+    user_likes = db.session.query(UserLike).filter_by(request_id=post_id).all()  # Corrected the model
+    for like in user_likes:
+        db.session.delete(like)
+
+    # Delete the post
     post = db.session.query(Request).get(post_id)
     if not post:
         return ApiResponse(404, 'Post not found', {'post_id': post_id}).json()
@@ -790,6 +802,14 @@ def delete_user_comments_service(post_id, reply_id):
 
     for child_reply in child_replies:
         db.session.delete(child_reply)
+
+    user_saves = db.session.query(UserSave).filter_by(reply_id=reply_id).all()  # Corrected the model
+    for save in user_saves:
+        db.session.delete(save)
+
+    user_likes = db.session.query(UserLike).filter_by(reply_id=reply_id).all()  # Corrected the model
+    for like in user_likes:
+        db.session.delete(like)
     
     reply = db.session.query(Reply).filter_by(id=reply_id).first()
     request = db.session.query(Request).filter_by(id=post_id).first()

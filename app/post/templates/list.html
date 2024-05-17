@@ -18,8 +18,8 @@
         </div>
         <div class="reply">{{ reply.content | safe}}</div>
         <div>
-          <button id="like-button-{{reply.id}}" class="fa fa-heart btn-like-reply" onclick="toggleLike({{ request.id }}, {{ reply.id }})">Like</button>
-          <button id="save-button-{{reply.id}}" class="fa fa-save btn-save-reply" onclick="toggleSave({{ request.id }}, {{ reply.id }})">Save</button>
+          <button id="like-button-{{reply.id}}" class="fa fa-heart btn-like-reply {% if reply.id in user_likes %}liked{% endif %}" onclick="toggleLike({{ request.id }}, {{ reply.id }})">Like</button>
+          <button id="save-button-{{reply.id}}" class="fa fa-save btn-save-reply {% if reply.id in user_saves %}saved{% endif %}" onclick="toggleSave({{ request.id }}, {{ reply.id }})">Save</button>
           {% if  reply.reply_id is none %}
           <button class="fa fa-reply btn-create-reply" onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, reply_id=reply.id, mode='comment', target_type='reply') }}', '_blank')">Reply</button>
           {% endif %}

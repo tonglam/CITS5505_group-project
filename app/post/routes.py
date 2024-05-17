@@ -8,6 +8,8 @@ from app.extensions import db
 from app.models.reply import Reply
 from app.models.request import Request
 from app.models.user_record import UserRecord
+from app.models.user_like import UserLike
+from app.models.user_save import UserSave
 from app.models.community import Community
 from app.models.tag import Tag
 from app.post import post_bp
@@ -82,6 +84,14 @@ def post_detail(post_id):
     request_item.view_num += 1
     db.session.commit()
 
+    # for likes and saves
 
+    likes = db.session.query(UserLike).filter_by(user_id=user_id, request_id=post_id).all()
+    user_likes = {like.reply_id for like in likes if like.reply_id is not None}
+    post_likes = any(like.reply_id is None and like.request_id == post_id for like in likes)
 
-    return render_template("post.html", request=request_item, replies=replies, current_user=current_user)
+    saves = db.session.query(UserSave).filter_by(user_id=user_id, request_id=post_id).all()
+    user_saves = {save.reply_id for save in saves if save.reply_id is not None}
+    post_saves = any(save.reply_id is None and save.request_id == post_id for save in saves)    
+
+    return render_template("post.html", request=request_item, replies=replies, current_user=current_user, user_likes=user_likes, post_likes=post_likes, user_saves=user_saves, post_saves=post_saves)

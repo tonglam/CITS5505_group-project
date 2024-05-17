@@ -12,7 +12,7 @@ class UserLike(db.Model):
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     request_id: int = db.Column(db.Integer, db.ForeignKey("request.id"), nullable=False)
-    reply_id: int = db.Column(db.Integer, db.ForeignKey("reply.reply_id"), nullable=True)
+    reply_id: int = db.Column(db.Integer, db.ForeignKey("reply.id"), nullable=True)
     create_at: datetime = db.Column(db.DateTime, default=generate_time())
 
     user = db.relationship("User", backref=db.backref("user_likes", lazy=True))

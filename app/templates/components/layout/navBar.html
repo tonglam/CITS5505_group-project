@@ -26,7 +26,7 @@
     <!-- right bar -->
     <ul class="navbar-nav flex-row">
       <!-- create button -->
-      {{ create_button(url_for('post.create_comment')) }}
+      {{ create_button(url_for('post.create_post')) }}
 
       <!-- github icon -->
       {{ icon_button("github",
@@ -120,7 +120,7 @@ False) -%}
   <button
     type="button"
     class="btn btn-outline-dark rounded-pill w-auto fs-8"
-    href="{{ url }}"
+    onclick="window.location.href='{{ url }}'"
   >
     +&nbsp;&nbsp;Create
   </button>

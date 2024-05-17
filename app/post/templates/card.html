@@ -37,17 +37,17 @@
   <div class="card-footer">
     <button
       id="like-button-no-reply"
-      class="fa fa-heart btn-like"
+      class="fa fa-heart btn-like  {% if post_likes %}liked{% endif %}"
       onclick="toggleLike({{ request.id }}, null)"
     >
-      LIKE
+      like
     </button>
-    <button id="save-button-no-reply" class="fa fa-save btn-save" onclick="toggleSave({{ request.id }}, null)">
+    <button id="save-button-no-reply" class="fa fa-save btn-save  {% if post_saves %}saved{% endif %}" onclick="toggleSave({{ request.id }}, null)">
       SAVE
     </button>
     <button
       class="fa fa-reply btn-create"
-  onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, mode='comment', target_type='post') }}', '_blank')"
+      onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, mode='comment', target_type='post') }}', '_blank')"
     >
       Create New Comment
     </button>

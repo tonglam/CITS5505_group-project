@@ -25,6 +25,7 @@
 }
 
 .card-subtitle {
+  margin-top: 5px;
   font-size: 14px;
   color: #6c757d;
 }
@@ -47,11 +48,11 @@
 .btn-like,
 .btn-save,
 .btn-create {
-  background-color: #bcd5f0;
+  background-color: #9fb6ce;
   color: white;
   border: none;
   font-size:smaller;
-  padding: 0px 16px;
+  padding: 4px 24px;
   margin-left: 0;
   border-radius: 4px;
   cursor: pointer;

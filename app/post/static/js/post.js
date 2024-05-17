@@ -114,6 +114,57 @@ async function toggleAction(requestId, replyId, actionType) {
 window.toggleLike = (requestId, replyId) => toggleAction(requestId, replyId, 'like');
 window.toggleSave = (requestId, replyId) => toggleAction(requestId, replyId, 'save');
 
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const likeButtons = document.querySelectorAll('.btn-like, .btn-like-reply');
+    console.log('Like buttons found:', likeButtons);
+
+    likeButtons.forEach(button => {
+      console.log('Processing button:', button);
+      const requestId = button.getAttribute('data-request-id');
+      const replyId = button.getAttribute('data-reply-id') || 'no-reply';
+
+      if (!userStatus.likes[requestId]) {
+        userStatus.likes[requestId] = {};
+      }
+
+      if (button.classList.contains('liked')) {
+        console.log('Button is liked:', button);
+        button.innerHTML = 'Unlike';
+        button.style.color = 'red';
+        userStatus.likes[requestId][replyId] = true;
+      } else {
+        button.innerHTML = 'Like';
+        userStatus.likes[requestId][replyId] = false;
+      }
+    });
+
+    const saveButtons = document.querySelectorAll('.btn-save, .btn-save-reply');
+    console.log('Save buttons found:', saveButtons);
+
+    saveButtons.forEach(button => {
+      console.log('Processing button:', button);
+      const requestId = button.getAttribute('data-request-id');
+      const replyId = button.getAttribute('data-reply-id') || 'no-reply';
+
+      if (!userStatus.saves[requestId]) {
+        userStatus.saves[requestId] = {};
+      }
+
+      if (button.classList.contains('saved')) {
+        console.log('Button is saved:', button);
+        button.innerHTML = 'Unsave';
+        button.style.color = 'blue';
+        userStatus.saves[requestId][replyId] = true;
+      } else {
+        button.innerHTML = 'Save';
+        userStatus.saves[requestId][replyId] = false;
+      }
+    });
+  } catch (error) {
+    console.error("Error initializing like or save buttons:", error);
+  }
+});
 
 
 async function deletePost(postId) {
@@ -140,13 +191,7 @@ async function deleteComment(postId,replyId) {
 
 }
 
-document.getElementById('deletePostButton').addEventListener('click', function(event) {
-  event.preventDefault();
 
-  var postId = this.getAttribute('data-post-id');
-  deletePost(postId);
-  
-});
 
 var deleteButtons = document.getElementsByClassName('btn-delete-reply');
 
@@ -163,20 +208,14 @@ for (var i = 0; i < deleteButtons.length; i++) {
   });
 }
 
+var deletePostButton = document.getElementById('deletePostButton');
+if (deletePostButton) {
+  deletePostButton.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    var postId = this.getAttribute('data-post-id');
+    deletePost(postId);
+  });
+}
 
 // for set the initial status
-
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    // Fetch user likes
-    const likesResponse = await getFetch('/api/user/likes')()();
-    initializeLikes(likesResponse.user_likes);
-
-    // Fetch user saves
-    const savesResponse = await getFetch('/api/user/saves');
-    const savesData = await savesResponse.json();
-    initializeSaves(savesData.user_saves);
-  } catch (error) {
-    console.error("Error fetching likes or saves:", error);
-  }
-});
