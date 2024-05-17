@@ -31,9 +31,14 @@
   font-size: 24px !important;
 }
 .border-color .text-primary,
-p.text-primary:focus,
-p.text-primary:hover {
+p.text-primary:focus {
   color: #637498 !important;
+}
+.border-color .text-primary,
+p.text-primary:hover {
+  border-bottom: 2px solid #637498;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .text-black,
@@ -239,6 +244,13 @@ p.text-primary:hover {
 .post_card_border {
   border: 1px solid #99bbde;
   border-radius: 10px;
+}
+
+/* effect for each post */
+.subtitle:hover {
+  border-bottom: 2px solid #637498;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .commmunityTag_style1 {
