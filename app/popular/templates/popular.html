@@ -62,8 +62,8 @@
   <ul class="tilesWrap">
     {% for item in topCommunities %}
     <li
-      onclick="location.href='{{ url_for('index', community_id=item.id) }}'"
-      style="cursor: pointer"
+      class="clickCommunity"
+      onclick="location.href='{{ url_for('index', community_id=item.id, _anchor='content') }}'"
     >
       <h2>0{{ loop.index }}</h2>
       <h3>{{ item.communityname }}</h3>

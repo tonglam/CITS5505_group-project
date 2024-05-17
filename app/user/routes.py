@@ -22,14 +22,23 @@ from app.user.service import (
 
 @user_bp.route("/")
 @login_required
-def user():
+def user(username: str = None):
     """Render the user page."""
 
+    # get user_id
+    user_id = ""
+    if username:
+        user_id = current_user.id
+    user_entity = db.session.query(User).filter_by(username=username).first()
+    if user_entity is None:
+        abort(HttpRequestEnum.NOT_FOUND.value)
+    user_id = user_entity.id
+
     # user data
-    post_result = post_data()
-    like_result = like_data()
-    history_result = history_data()
-    save_result = save_data()
+    post_result = post_data(user_id)
+    like_result = like_data(user_id)
+    history_result = history_data(user_id)
+    save_result = save_data(user_id)
 
     name_list = [
         post_result.get("name"),

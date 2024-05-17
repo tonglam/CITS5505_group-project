@@ -94,6 +94,9 @@ MAX_NOTICE_NUM = 99
 # Home page popular post number
 POPULAR_POST_NUM = 8
 
+# Home page community option number
+COMMUNITY_OPTION_NUM = 20
+
 # Image BB
 IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
 
@@ -105,6 +108,7 @@ JOB_INTERVAL = {
     "create_user_record": 10,
     "create_user_like": 10,
     "create_user_save": 10,
+    "update_trending": 300,
 }
 
 # Max limitation
@@ -114,6 +118,7 @@ REPLY_MAX_NUM = 9999
 USER_RECORD_MAX_NUM = 99999
 USER_LIKE_MAX_NUM = 99999
 USER_SAVE_MAX_NUM = 99999
+
 # Top data number
 TOP_DATA_NUM = 5
 TOP_COMMUNITY_NUM = 4

@@ -30,6 +30,7 @@ from app.api.service import (
     users_notices_service,
 )
 from app.constants import (
+    COMMUNITY_OPTION_NUM,
     G_NOTICE,
     G_NOTICE_NUM,
     G_POST_STAT,
@@ -611,7 +612,7 @@ def get_home_stats() -> list:
 def get_home_communities() -> list:
     """Get index communities data."""
 
-    communities_response = communities_service().json
+    communities_response = communities_service(per_page=COMMUNITY_OPTION_NUM).json
     communities = communities_response.get("data").get("communities")
 
     return [

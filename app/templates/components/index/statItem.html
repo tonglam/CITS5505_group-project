@@ -1,64 +1,14 @@
-<!-- <div class="text-center">
-  <div class="row justify-content-center gap-0 gap-md-2">
-    
-    <div class="col-8 col-md-5 mini-stat clearfix bg-user stat-rounded">
-      <span class="mini-stat-icon"
-        ><i class="fa-solid fa-user fg-user"></i
-      ></span>
-      <div class="mini-stat-info">
-        <span>{{ stats.user_num }}</span>
-        User
-      </div>
-    </div>
-
-    
-    <div class="col-8 col-md-5 mini-stat clearfix bg-community stat-rounded">
-      <span class="mini-stat-icon"
-        ><i class="fa-solid fa-layer-group fg-community"></i
-      ></span>
-      <div class="mini-stat-info">
-        <span>{{ stats.community_num }}</span>
-        Community
-      </div>
-    </div>
-  </div>
-
-
-  <div class="row justify-content-center gap-0 gap-md-2">
-    <div class="col-8 col-md-5 mini-stat clearfix bg-post stat-rounded">
-      <span class="mini-stat-icon"
-        ><i class="fa-solid fa-note-sticky fg-post"></i
-      ></span>
-      <div class="mini-stat-info">
-        <span>{{ stats.request_num }}</span>
-        Post
-      </div>
-    </div>
-
-   
-    <div class="col-8 col-md-5 mini-stat clearfix bg-like stat-rounded">
-      <span class="mini-stat-icon"
-        ><i class="fa-solid fa-thumbs-up fg-like"></i
-      ></span>
-      <div class="mini-stat-info">
-        <span>{{ stats.like_num }}</span>
-        Like
-      </div>
-    </div>
-  </div>
-</div> -->
-
 <div class="container">
-  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+  <div class="row row-cols-1 row-cols-md-2">
     <div class="col">
       <div
         class="stats_card radius-10 border-start border-0 border-3 border-info"
       >
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div>
-              <p class="mb-0 text-secondary">Total Likes</p>
-              <h4 class="my-1 stats-text">4805</h4>
+            <div class="mx-2">
+              <p class="mb-0 text-secondary">Likes</p>
+              <h4 class="my-1 stats-text">{{ stats.like_num }}</h4>
             </div>
             <div
               class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto"
@@ -78,9 +28,9 @@
       >
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div>
-              <p class="mb-0 text-secondary">Total Communities</p>
-              <h4 class="my-1 stats-text">84</h4>
+            <div class="mx-2">
+              <p class="mb-0 text-secondary">Communities</p>
+              <h4 class="my-1 stats-text">{{ stats.community_num }}</h4>
             </div>
             <div
               class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"
@@ -100,9 +50,9 @@
       >
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div>
-              <p class="mb-0 text-secondary">Total Posts</p>
-              <h4 class="my-1 stats-text">34.6%</h4>
+            <div class="mx-2">
+              <p class="mb-0 text-secondary">Posts</p>
+              <h4 class="my-1 stats-text">{{ stats.request_num }}</h4>
             </div>
             <div
               class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"
@@ -122,9 +72,9 @@
       >
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div>
-              <p class="mb-0 text-secondary">Total Users</p>
-              <h4 class="my-1 stats-text">8.4K</h4>
+            <div class="mx-2">
+              <p class="mb-0 text-secondary">Users</p>
+              <h4 class="my-1 stats-text">{{ stats.user_num }}</h4>
             </div>
             <div
               class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto"

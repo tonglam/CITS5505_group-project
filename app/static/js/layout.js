@@ -82,8 +82,16 @@ const handle_page_click = async (page) => {
   // re-render
   re_render({ page: page });
 
-  // scroll to top
-  window.scrollTo(0, 0);
+  // scroll to
+  const element = document.getElementById("content");
+  if (element === undefined || element === null) {
+    return false;
+  }
+  element.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+    inline: "nearest",
+  });
 };
 
 const re_render = async (paramsToAdd = {}, keysToRemove = []) => {

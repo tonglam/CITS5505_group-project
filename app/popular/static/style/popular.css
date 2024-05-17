@@ -4,6 +4,10 @@
   border-top: 1px solid #8c8c8c93;
 }
 
+.clickCommunity {
+  cursor: pointer;
+}
+
 /*===== global style settings =====*/
 
 /*===== headings style settings =====*/

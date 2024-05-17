@@ -1,12 +1,10 @@
 <div id="noticeItem">
-  <form action="">
-    <fieldset>
-      <legend>
-        <i class="noticeItemI fa-regular fa-bell"></i> Notifications
-      </legend>
-      {% for notice in notices %} {% import
-      './components/layout/navNotificationItem.html' as notificationItem %} {{
-      notificationItem.render_notification_item(notice) }} {% endfor%}
-    </fieldset>
-  </form>
+  <fieldset>
+    <legend>
+      <i class="noticeItemI fa-regular fa-bell"></i> Notifications
+    </legend>
+    {% for notice in notices %} {% import
+    './components/layout/navNotificationItem.html' as notificationItem %} {{
+    notificationItem.render_notification_item(notice) }} {% endfor%}
+  </fieldset>
 </div>

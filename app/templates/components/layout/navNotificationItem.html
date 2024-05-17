@@ -1,7 +1,11 @@
 {% macro render_notification_item(notice) -%}
 <div class="form__group">
-  <input type="checkbox" id="berries_1" value="strawberries" name="berries" />
-  <label for="berries_1">{{ notice.content }}</label>
+  <input
+    type="checkbox"
+    id="notice-{{notice.id}}"
+    name="notice-{{notice.id}}"
+  />
+  <label for="notice-{{notice.id}}">{{ notice.content }}</label>
 </div>
 
 {%- endmacro %}

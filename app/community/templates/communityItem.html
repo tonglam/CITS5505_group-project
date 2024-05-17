@@ -1,7 +1,7 @@
 {% macro render_community_item(item, user) -%} {% set img_random_int = range(1,
 10) | random %} {% set tag_random_int = range(1, 5) | random %}
 <li>
-  <a href="" class="community_card">
+  <a href="javascript:void(0);" class="community_card">
     <img
       src="{{url_for('static',filename='assets/community' ~ img_random_int ~ '.jpg')}}"
       class="card__image"

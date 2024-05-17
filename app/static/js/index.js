@@ -1,7 +1,6 @@
 $(document).ready(function () {
   // community select
   init_community_select();
-
   // sort select
   init_sort_select();
 });
@@ -14,20 +13,20 @@ const init_community_select = () => {
   }
 
   communitySelect.addEventListener("change", function () {
-    const community_id =
+    const community_id_element =
       communitySelect.options[communitySelect.selectedIndex].id;
 
-    if (community_id === "undefined" || community_id === null) {
+    if (community_id_element === "undefined" || community_id_element === null) {
       console.error("community id is missing");
       return false;
     }
 
-    if (community_id === "all-community") {
+    if (community_id_element === "all-community") {
       // reset page to 1 and re-render
       re_render({ page: 1 }, ["community_id"]);
     } else {
       // reset page to 1 and re-render
-      re_render({ community_id: community_id, page: 1 });
+      re_render({ community_id: community_id_element, page: 1 });
     }
   });
 };

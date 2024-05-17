@@ -91,10 +91,13 @@ def user_communities_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     ).json()
 
 
-def user_posts_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def user_posts_service(
+    user_id: str = None, page: int = 1, per_page: int = 10
+) -> ApiResponse:
     """Service for getting all user posts."""
 
-    user_id: str = current_user.id
+    if user_id is None:
+        user_id: str = current_user.id
 
     # basic query
     query = (
@@ -138,12 +141,14 @@ def user_replies_service(page: int = 1, per_page: int = 10) -> ApiResponse:
 
 
 def users_records_service(
+    user_id: str = None,
     page: int = 1,
     per_page: int = 10,
 ) -> ApiResponse:
     """Service for getting all users records."""
 
-    user_id: str = current_user.id
+    if user_id is None:
+        user_id: str = current_user.id
 
     # basic query
     query = (
@@ -237,10 +242,13 @@ def delete_user_record_service(request_id: int) -> ApiResponse:
     ).json()
 
 
-def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def user_likes_service(
+    user_id: str = None, page: int = 1, per_page: int = 10
+) -> ApiResponse:
     """Service for getting all user likes."""
 
-    user_id: str = current_user.id
+    if user_id is None:
+        user_id: str = current_user.id
 
     # basic query
     query = (
@@ -328,10 +336,13 @@ def delete_user_like_service(request_id: int) -> ApiResponse:
     ).json()
 
 
-def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def user_saves_service(
+    user_id: str = None, page: int = 1, per_page: int = 10
+) -> ApiResponse:
     """Service for getting all user saves."""
 
-    user_id: str = current_user.id
+    if user_id is None:
+        user_id: str = current_user.id
 
     # basic query
     query = (

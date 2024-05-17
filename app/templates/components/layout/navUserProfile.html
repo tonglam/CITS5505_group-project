@@ -6,7 +6,9 @@
     </div>
     <div class="mt-3">
       {% if user.email %}
-      <div class="d-flex align-items-baseline text-muted">
+      <div
+        class="d-flex justify-content-center pt-3 align-items-baseline text-muted"
+      >
         <i class="navUserProfileIC fa-solid fa-envelope pe-2"></i>
         <p>{{ user.email }}</p>
       </div>
@@ -15,8 +17,12 @@
 
     <div class="card-body">
       <div>
-        <img src="{{ user.avatar_url }}" alt="avatar" class="avatar-md rounded-circle img-thumbnail"
-          onclick="location.href='{{ url_for('user.user') }}'" />
+        <img
+          src="{{ user.avatar_url }}"
+          alt="avatar"
+          class="avatar-md rounded-circle img-thumbnail"
+          onclick="location.href='{{ url_for('user.user') }}'"
+        />
       </div>
     </div>
     <div class="flex-1">
@@ -25,21 +31,34 @@
       </h5>
       <span class="badge badge-soft-danger mb-0">Posts:{{ post_stat }} </span>
       <div class="pt-3">
-        <button type="button" class="btn btn-sm button_style"
-          onclick="location.href='{{ url_for('user.user_profile') }}'">
+        <button
+          type="button"
+          class="btn btn-sm button_style"
+          onclick="location.href='{{ url_for('user.user_profile') }}'"
+        >
           Manage your account
         </button>
       </div>
     </div>
 
     <div class="btn-group mt-4" role="group">
-      <button type="button" class="btn btn-outline-secondary" onclick="location.href='{{ url_for('user.user') }}'">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        onclick="location.href='{{ url_for('user.user') }}'"
+      >
         <i class="navUserProfileIC fa-regular fa-user pe-3"></i>
         Profile
       </button>
 
-      <button type="button" class="btn btn-outline-secondary" onclick="location.href='{{ url_for('auth.logout') }}'">
-        <i class="navUserProfileIC fa-solid fa-arrow-right-from-bracket pe-3"></i>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        onclick="location.href='{{ url_for('auth.logout') }}'"
+      >
+        <i
+          class="navUserProfileIC fa-solid fa-arrow-right-from-bracket pe-3"
+        ></i>
         Sign Out
       </button>
     </div>
