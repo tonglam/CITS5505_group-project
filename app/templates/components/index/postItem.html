@@ -1,12 +1,13 @@
 {% macro render_post_item(item, color_type) -%} {% set _id = item.id %}
 <div
-  class="card row-hover pos-relative pt-2 px-3 mb-3 border-{{ color_type }} border-2 rounded-0"
+  class="card border-color row-hover pos-relative pt-2 px-3 mb-3 border rounded-0"
   onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
   style="cursor: pointer"
 >
   <div class="row align-items-center">
     <div class="col-md-8 mb-3 mb-sm-0">
-      <span class="badge rounded-pill text-bg-{{ color_type }} module-name mb-3"
+      <span
+        class="badge rounded-pill commmunityTag_style{{ color_type }} module-name mb-3"
         >{{ item.tag }}</span
       >
       <h5 class="text-primary">{{ item.title }}</h5>
@@ -19,21 +20,25 @@
       <div class="row text-center">
         <div class="col px-1">
           <div class="ion-ios-eye-outline icon-1x">
-            <i class="fa-solid fa-comment-dots"></i>
+            <i class="fa-regular fa-comment-dots fa-sm icon_style"></i>
           </div>
-          <span class="text-sm">{{ item.reply_num }} Replys</span>
+          <span class="small_font_style">{{ item.reply_num }} Replies</span>
         </div>
         <div class="col px-1">
           <div class="ion-ios-eye-outline icon-1x">
-            <i class="fa-solid fa-eye"></i>
+            <i class="fa-regular fa-eye fa-sm icon_style"></i>
           </div>
-          <span class="d-block text-sm">{{ item.view_num }} Views</span>
+          <span class="d-block small_font_style"
+            >{{ item.view_num }} Views</span
+          >
         </div>
         <div class="col px-1">
           <div class="ion-ios-eye-outline icon-1x">
-            <i class="fa-solid fa-thumbs-up"></i>
+            <i class="fa-regular fa-thumbs-up fa-sm icon_style"></i>
           </div>
-          <span class="d-block text-sm">{{ item.like_num }} Likes</span>
+          <span class="d-block small_font_style"
+            >{{ item.like_num }} Likes</span
+          >
         </div>
       </div>
     </div>
