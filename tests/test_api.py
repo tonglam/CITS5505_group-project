@@ -254,7 +254,6 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-
     def test_get_user_saves(self, app: Flask, client: FlaskClient):
         """Test the user saves API."""
 
@@ -281,7 +280,6 @@ class TestApi(TestBase):
 
         # logout
         AuthActions(client).logout()
-
 
     def test_post_user_save(self, app: Flask, client: FlaskClient):
         """Test POST the user save API."""
@@ -331,8 +329,6 @@ class TestApi(TestBase):
 
         # logout
         AuthActions(client).logout()
-
-
 
     def test_get_user_notifications(self, app: Flask, client: FlaskClient):
         """Test the user notifications GET API."""
@@ -621,176 +617,3 @@ class TestApi(TestBase):
 
         # logout
         AuthActions(client).logout()
-""" 
-    def test_post_comment(self, app: Flask, client: FlaskClient):
-
-        url = _PREFIX + "/posts/create/comment"
-
-        user = None
-        request = None
-        with app.app_context():
-            user = User.query.first()
-            request = Request.query.first()
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # test valid comment
-        response = client.post(url, json={"post_id": request.id, "content": "This is a test comment"})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.CREATED.value)
-        self.assertEqual(response_data["message"], "Comment posted successfully")
-
-        comment = Reply.query.filter_by(user_id=user.id, post_id=request.id).first()
-        self.assertIsNotNone(comment)
-        self.assertEqual(comment.content, "This is a test comment")
-
-        # test invalid parameters
-        response = client.post(url, json={"content": "This is a test comment"})
-        self.assertEqual(response.status_code, HttpRequestEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], 'Wrong parameters for post comment')
-
-        # logout
-        AuthActions(client).logout()
-
-    def test_put_comment(self, app: Flask, client: FlaskClient):
-
-        url = _PREFIX + "/posts/create/comment"
-
-        user = None
-        comment = None
-        with app.app_context():
-            user = User.query.first()
-            comment = Reply.query.filter_by(user_id=user.id).first()
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # test valid update
-        response = client.put(url, json={"reply_id": comment.id, "content": "This is an updated test comment"})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["message"], "Comment updated successfully")
-
-        updated_comment = Reply.query.filter_by(id=comment.id).first()
-        self.assertIsNotNone(updated_comment)
-        self.assertEqual(updated_comment.content, "This is an updated test comment")
-
-        # test invalid parameters
-        response = client.put(url, json={"content": "This is an updated test comment"})
-        self.assertEqual(response.status_code, HttpRequestEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], 'Invalid request method')
-
-        # logout
-        AuthActions(client).logout()
-
-
-    def test_delete_comment(self, app: Flask, client: FlaskClient):
-
-        url = _PREFIX + "/posts/create/comment"
-
-        user = None
-        comment = None
-        with app.app_context():
-            user = User.query.first()
-            comment = Reply.query.filter_by(user_id=user.id).first()
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # test valid delete
-        response = client.delete(url, json={"post_id": comment.post_id, "reply_id": comment.id})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.NO_CONTENT.value)
-
-        deleted_comment = Reply.query.filter_by(id=comment.id).first()
-        self.assertIsNone(deleted_comment)
-
-        # test invalid parameters
-        response = client.delete(url, json={"post_id": 9999999, "reply_id": 9999999})
-        self.assertEqual(response.status_code, HttpRequestEnum.BAD_REQUEST.value)
-        self.assertEqual(response.json["message"], 'Invalid request method')
-
-        # logout
-        AuthActions(client).logout()
-
-     def test_delete_user_save(self, app: Flask, client: FlaskClient):
-
-        url = _PREFIX + "/users/saves"
-
-        user_save = None
-        user = None
-        with app.app_context():
-            user_save = UserSave.query.first()
-            user = User.query.filter_by(id=user_save.user_id).first()
-
-        request_id = user_save.request_id
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # test valid unsave
-        response = client.delete(url, json={"request_id": request_id})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.NO_CONTENT.value)
-
-        user_save = UserSave.query.filter_by(
-            user_id=user.id, request_id=request_id
-        ).first()
-        self.assertIsNone(user_save)
-
-        # test invalid request_id
-        invalid_request_id = 9999999
-        response = client.delete(url, json={"request_id": invalid_request_id})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequestEnum.NOT_FOUND.value)
-
-        # logout
-        AuthActions(client).logout()
-
-
- def test_delete_user_like(self, app: Flask, client: FlaskClient):
-
-        url = _PREFIX + "/users/likes"
-
-        user_like = None
-        user = None
-        with app.app_context():
-            user_like = UserLike.query.first()
-            user = User.query.filter_by(id=user_like.user_id).first()
-
-        request_id = user_like.request_id
-
-        # login
-        AuthActions(client).login(email=user.email, password="Password@123")
-
-        # test valid unlike
-        response = client.delete(url, json={"request_id": request_id})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-        self.assertEqual(response_data["code"], HttpRequestEnum.NO_CONTENT.value)
-
-        user_like = UserLike.query.filter_by(
-            user_id=user.id, request_id=request_id
-        ).first()
-        self.assertIsNone(user_like)
-
-        # test invalid request_id
-        invalid_request_id = 9999999
-        response = client.delete(url, json={"request_id": invalid_request_id})
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequestEnum.NOT_FOUND.value)
-
-        # logout
-        AuthActions(client).logout()
-
- """

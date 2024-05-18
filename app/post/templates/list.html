@@ -1,78 +1,81 @@
-<div class="container mt-5">
-  <div class="list-group">
-    {% macro render_reply(reply, child_replies, show_create_button=True) %}
-    <div class="list-group-item flex-column align-items-start reply-container">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{ reply.replier.username }} says:</h5>
-        <em class="reply-date"> Likes: {{ reply.like_num }}, Saved: {{ reply.save_num }}, {{ reply.create_at.strftime('%Y-%m-%d') }}</em>
-      </div>
-      <div class="reply">{{ reply.content | safe}}</div>
-      <div>
-        <button 
-        id="like-button-{{reply.id}}" 
-        class="fa fa-heart btn-like-reply {% if reply.id in user_likes %}liked{% endif %}"
-        data-request-id="{{ request.id }}"
-        data-reply-id="{{ reply.id }}"
-        onclick="toggleLike({{ request.id }}, {{ reply.id }})">Like</button>
-        <button 
-        id="save-button-{{reply.id}}" 
-        class="fa fa-save btn-save-reply {% if reply.id in user_saves %}saved{% endif %}" 
-        data-request-id="{{ request.id }}"
-        data-reply-id="{{ reply.id }}"
-        onclick="toggleSave({{ request.id }}, {{ reply.id }})">Save</button>
-        {% if  reply.reply_id is none %}
-        <button class="fa fa-reply btn-create-reply" onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, reply_id=reply.id, mode='comment', target_type='reply') }}', '_blank')">Reply</button>
-        {% endif %}
-        {% if current_user.id == reply.replier_id %}
-        <button class="fa fa-edit btn-edit-reply" onclick="window.open('{{ url_for('post.edit_comment', post_id=request.id, reply_id=reply.id, target_type='reply') }}', '_blank')">Edit</button>
-        <button
-        data-reply-id="{{ reply.id }}"
-        data-post-id="{{ request.id }}"
-        class="fa fa-trash btn-delete-reply">Delete</button>
-        {% endif %}
-      </div>
-      {% if child_replies %}
-      {% if child_replies|length > 2 %}
-      <button class="show-replies" onclick="toggleReplies(this, 'more-replies')">Show Replies</button>
-      {% endif %}
-      <div class="replies123">
-        {% for child_reply in child_replies[:2] %}
-        <div class="reply">{{ render_reply(child_reply, [], False) }}</div>
-        {% endfor %}
-        {% if child_replies|length > 2 %}
-        <div class="more-replies hidden">
-          {% for child_reply in child_replies[2:] %}
-          <div class="reply">{{ render_reply(child_reply, [], False) }}</div>
-          {% endfor %}
-        </div>
-        {% endif %}
-      </div>
-      {% endif %}
-    </div>
-    {% endmacro %}
-
-    {% set parent_replies = {} %}
-    {% set child_replies = {} %}
-    {% for reply in replies %}
-    {% if reply.reply_id is none %}
-    {% if reply.request_id not in parent_replies %}
-    {% set _dummy = parent_replies.update({reply.request_id: []}) %}
-    {% endif %}
-    {% set _dummy = parent_replies[reply.request_id].append(reply) %}
-    {% else %}
-    {% if reply.reply_id not in child_replies %}
-    {% set _dummy = child_replies.update({reply.reply_id: []}) %}
-    {% endif %}
-    {% set _dummy = child_replies[reply.reply_id].append(reply) %}
-    {% endif %}
-    {% endfor %}
-    {% for request_id, replies in parent_replies.items() %}
-    {% for parent_reply in replies %}
-    {{ render_reply(parent_reply, child_replies.get(parent_reply.id, [])) }}
-    {% endfor %}
-    {% endfor %}
+{% macro render_reply(reply, child_replies, show_create_button=True) %}
+<div class="list-group-item flex-column align-items-start reply-container">
+  <div class="d-flex w-100 justify-content-between">
+    <h5 class="mb-1">{{ reply.replier.username }} says:</h5>
+    <em class="reply-date">
+      Likes: {{ reply.like_num }}, Saved: {{ reply.save_num }}, {{
+      reply.create_at.strftime('%Y-%m-%d') }}</em
+    >
   </div>
+  <div class="reply">{{ reply.content | safe}}</div>
+  <div>
+    <button
+      id="like-button-{{reply.id}}"
+      class="fa fa-heart btn-like-reply {% if reply.id in user_likes %}liked{% endif %}"
+      data-request-id="{{ request.id }}"
+      data-reply-id="{{ reply.id }}"
+      onclick="toggleLike({{ request.id }}, {{ reply.id }})"
+    >
+      Like
+    </button>
+    <button
+      id="save-button-{{reply.id}}"
+      class="fa fa-save btn-save-reply {% if reply.id in user_saves %}saved{% endif %}"
+      data-request-id="{{ request.id }}"
+      data-reply-id="{{ reply.id }}"
+      onclick="toggleSave({{ request.id }}, {{ reply.id }})"
+    >
+      Save
+    </button>
+    {% if reply.reply_id is none %}
+    <button
+      class="fa fa-reply btn-create-reply"
+      onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, reply_id=reply.id, mode='comment', target_type='reply') }}', '_blank')"
+    >
+      Reply
+    </button>
+    {% endif %} {% if current_user.id == reply.replier_id %}
+    <button
+      class="fa fa-edit btn-edit-reply"
+      onclick="window.open('{{ url_for('post.edit_comment', post_id=request.id, reply_id=reply.id, target_type='reply') }}', '_blank')"
+    >
+      Edit
+    </button>
+    <button
+      data-reply-id="{{ reply.id }}"
+      data-post-id="{{ request.id }}"
+      class="fa fa-trash btn-delete-reply"
+    >
+      Delete
+    </button>
+    {% endif %}
+  </div>
+  {% if child_replies %} {% if child_replies|length > 2 %}
+  <button class="show-replies" onclick="toggleReplies(this, 'more-replies')">
+    Show Replies
+  </button>
+  {% endif %}
+  <div class="replies123">
+    {% for child_reply in child_replies[:2] %}
+    <div class="reply">{{ render_reply(child_reply, [], False) }}</div>
+    {% endfor %} {% if child_replies|length > 2 %}
+    <div class="more-replies hidden">
+      {% for child_reply in child_replies[2:] %}
+      <div class="reply">{{ render_reply(child_reply, [], False) }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
-<link rel="stylesheet" href="{{ url_for('post.static', filename='style/list.css') }}" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap" rel="stylesheet">
+{% endmacro %} {% set parent_replies = {} %} {% set child_replies = {} %} {% for
+reply in replies %} {% if reply.reply_id is none %} {% if reply.request_id not
+in parent_replies %} {% set _dummy = parent_replies.update({reply.request_id:
+[]}) %} {% endif %} {% set _dummy =
+parent_replies[reply.request_id].append(reply) %} {% else %} {% if
+reply.reply_id not in child_replies %} {% set _dummy =
+child_replies.update({reply.reply_id: []}) %} {% endif %} {% set _dummy =
+child_replies[reply.reply_id].append(reply) %} {% endif %} {% endfor %} {% for
+request_id, replies in parent_replies.items() %} {% for parent_reply in replies
+%} {{ render_reply(parent_reply, child_replies.get(parent_reply.id, [])) }} {%
+endfor %} {% endfor %}

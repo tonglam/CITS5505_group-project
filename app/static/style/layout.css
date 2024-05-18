@@ -3,6 +3,10 @@ body {
   font-family: "Lato", sans-serif !important;
 }
 
+main {
+  min-height: 100vh;
+}
+
 /*===== global style =====*/
 .logo {
   margin-top: 2px;
