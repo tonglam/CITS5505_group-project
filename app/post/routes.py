@@ -90,6 +90,6 @@ def post_detail(post_id):
 
     saves = db.session.query(UserSave).filter_by(user_id=user_id, request_id=post_id).all()
     user_saves = {save.reply_id for save in saves if save.reply_id is not None}
-    post_saves = any(save.reply_id is None and save.request_id == post_id for save in saves) 
+    post_saves = any(save.reply_id is None and save.request_id == post_id for save in saves)
 
     return render_template("post.html", request=request_item, replies=replies, current_user=current_user, user_likes=user_likes, post_likes=post_likes, user_saves=user_saves, post_saves=post_saves)
