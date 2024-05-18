@@ -6,34 +6,44 @@
 />
 {% endblock %}
 <div class="container">
-  <h1 class="text-center pb-2">Top Posts</h1>
+  <div class="heading_container">
+    <h1 contenteditable>Trending Topics</h1>
+    <p>
+      - Discover the hottest questions and answers currently buzzing on our
+      site! -
+    </p>
+  </div>
   <div class="row justify-content-center mb-5" id="popular">
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="text-center fs-5 fw-bold my-2">Most Viewed Posts</div>
-
+    <div class="col-12 col-md-6 col-lg-6">
       <ol class="popular-card alternating-colors">
+        <div class="text-center">
+          <div class="subtitle_style my-2">Top Viewed Posts</div>
+        </div>
         {% for item in topViews %}
+
         <li
           onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
         >
-          <strong>{{ item.title }}</strong>
-          <p>{{ item.description|truncate(10, true, '...') }}</p>
+          <strong class="subtitle">{{ item.title }}</strong>
+          <i class="fa fa-angle-right"></i>
+          <p>{{ item.username }}</p>
         </li>
+
         {% endfor %}
       </ol>
     </div>
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="text-center my-2">
-        <div class="text-center fs-5 fw-bold my-2">Most Replied Posts</div>
-      </div>
-
+    <div class="col-12 col-md-6 col-lg-6">
       <ol class="popular-card alternating-colors">
+        <div class="text-center">
+          <div class="subtitle_style my-2">Top Replied Posts</div>
+        </div>
         {% for item in topReplies %}
         <li
           onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
         >
-          <strong>{{ item.title }}</strong>
-          <p>{{ item.description|truncate(10, true, '...') }}</p>
+          <strong class="subtitle">{{ item.title }}</strong>
+          <i class="fa fa-angle-right"></i>
+          <p>{{ item.username }}</p>
         </li>
         {% endfor %}
       </ol>
@@ -41,20 +51,26 @@
   </div>
 </div>
 
-<div class="my-3">
-  <h1 class="text-center">Top Communities</h1>
+<div class="my-3 gap_line">
+  <div class="heading_container">
+    <h1 contenteditable>Popular Community</h1>
+    <p>
+      - Explore the top four trending communities across different categories! -
+    </p>
+  </div>
 
   <ul class="tilesWrap">
     {% for item in topCommunities %}
-    <li>
-      <h2>0{{ loop.index +1 }}</h2>
-      <h3>{{ item.name }}</h3>
+    <li
+      onclick="location.href='{{ url_for('index', community_id=item.id) }}'"
+      style="cursor: pointer"
+    >
+      <h2>0{{ loop.index }}</h2>
+      <h3>{{ item.communityname }}</h3>
       <p>{{ item.description|truncate(120, true, '...') }}</p>
-      <button
-        onclick="location.href='{{ url_for('index', community_id=item.id }}'"
-      >
-        Explore
-      </button>
+      <button>Explore</button>
+      <hr />
+      <span class="tag tag_style{{ loop.index }}">#{{item.category }}</span>
     </li>
     {% endfor %}
   </ul>

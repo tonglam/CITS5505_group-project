@@ -1,10 +1,83 @@
-/*===== popular rank container settings =====*/
+/*===== global style settings =====*/
+
+.gap_line {
+  border-top: 1px solid #8c8c8c93;
+}
+
+/*===== global style settings =====*/
+
+/*===== headings style settings =====*/
+
+.heading_container {
+  width: 100%;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.heading_container h1 {
+  font-size: 80px;
+  text-transform: uppercase;
+  font-family: "Gambetta", serif;
+  letter-spacing: -3px;
+  transition: 700ms ease;
+  font-variation-settings: "wght" 311;
+  margin-bottom: 0.8rem;
+  color: PaleGoldenRod;
+  outline: none;
+  text-align: center;
+}
+
+.heading_container h1:hover {
+  font-variation-settings: "wght" 582;
+  letter-spacing: 1px;
+}
+
+.heading_container p {
+  font-size: 1em;
+  line-height: 150%;
+  text-align: center;
+
+  letter-spacing: 0.5px;
+}
+
+/* subtitle stytle */
+
+.subtitle_style {
+  line-height: 1.5;
+  font-size: 1.1em;
+  display: inline;
+  background-image: linear-gradient(
+    transparent 50%,
+    #e1fffe 50%,
+    #b0f8ff 85%,
+    transparent 85%,
+    transparent 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  animation: animatedBackground 2s cubic-bezier(0.645, 0.045, 0.355, 1) 0.5s
+    forwards;
+}
+
+@keyframes animatedBackground {
+  to {
+    background-size: 100% 100%;
+  }
+}
+/*===== headings style settings =====*/
+
+/*===== popular posts rank container settings =====*/
 #popular {
   font-family: "Space Mono", monospace;
 }
 
 .popular-card {
   border: 1px solid #eee;
+  border-radius: 10px;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.4);
 }
 
@@ -44,10 +117,17 @@
 #popular ol.alternating-colors li:nth-child(even):before {
   border-color: #2378d5;
 }
-/*===== popular rank container settings =====*/
+
+/* effect for each post */
+.subtitle:hover {
+  border-bottom: 2px solid #daecbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+/*===== popular posts rank container settings =====*/
 
 /*===== Community container settings =====*/
-
+/* start community card global styles */
 .tilesWrap {
   padding: 0;
   list-style: none;
@@ -58,15 +138,15 @@
   width: 20%;
   min-width: 200px;
   max-width: 230px;
-  padding: 80px 20px 40px;
+  padding: 80px 20px 20px;
   position: relative;
   vertical-align: top;
   margin: 10px;
   font-family: "helvetica", san-serif;
   min-height: 25vh;
   color: initial;
-  background: #262a2b;
-  border: 1px solid #252727;
+  background: #fff;
+  /* border: 1px solid #252727; */
   text-align: left;
 }
 
@@ -81,8 +161,8 @@
 }
 
 .tilesWrap li h3 {
-  font-size: 20px;
-  color: #b7b7b7;
+  font-size: 25px;
+  color: #269b99;
   margin-bottom: 5px;
 }
 
@@ -172,13 +252,49 @@
 }
 .tilesWrap li:nth-child(3):before {
   background: #c21500;
-  background: -webkit-linear-gradient(to right, #ffc500, #c21500);
-  background: linear-gradient(to right, #ffc500, #c21500);
+  background: -webkit-linear-gradient(to right, #e8d492, #f3cbc7);
+  background: linear-gradient(to right, #d1c7a8, #eb9891);
 }
 .tilesWrap li:nth-child(4):before {
   background: #fc354c;
-  background: -webkit-linear-gradient(to right, #0abfbc, #fc354c);
-  background: linear-gradient(to right, #0abfbc, #fc354c);
+  background: -webkit-linear-gradient(to right, #0abfbc, #e9d0d3);
+  background: linear-gradient(to right, #0abfbc, #d5cacb);
 }
+/* end community card global styles */
+
+/* start category tag styles */
+.tag {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.2em 0.5em 0.3em;
+  border-radius: 2px;
+  background: var(--tag-bg);
+  color: var(--text-color);
+  font-weight: 600;
+  margin: 0.25em 0.1em;
+  border-radius: 4px;
+}
+
+.tag_style1 {
+  color: #fff;
+  background-image: linear-gradient(90deg, #ff8901, #db1d5f);
+}
+
+.tag_style2 {
+  background: #c788a9;
+  color: #fff;
+}
+
+.tag_style3 {
+  background: #3e9370;
+  color: #fff;
+}
+
+.tag_style4 {
+  background: #2775c3;
+  color: #fff;
+}
+
+/* end category tag styles */
 
 /*===== Community container settings =====*/
