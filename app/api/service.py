@@ -553,7 +553,9 @@ def _get_user_community_ids(user_preference: UserPreference) -> list:
 # Api service for community module.
 
 
-def communities_service(community_id:int = None, page: int = 1, per_page: int = 10) -> ApiResponse:
+def communities_service(
+    community_id: int = None, page: int = 1, per_page: int = 10
+) -> ApiResponse:
     """Service for getting all communities."""
 
     # query
@@ -590,11 +592,11 @@ def communities_service(community_id:int = None, page: int = 1, per_page: int = 
     for user_preference in user_preferences:
         communities = json.loads(user_preference.communities)
 
-        for community_id in communities:
-            if community_id in community_counts:
-                community_counts[community_id] += 1
+        for communities_id in communities:
+            if communities_id in community_counts:
+                community_counts[communities_id] += 1
             else:
-                community_counts[community_id] = 1
+                community_counts[communities_id] = 1
 
     for community in community_collection:
         community["members"] = community_counts.get(community["id"], 0)
