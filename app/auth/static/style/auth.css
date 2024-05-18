@@ -376,4 +376,9 @@ button.ghost {
   color: #1e456c;
   margin-right: 5px;
 }
+
+.labelStyle {
+  font-size: 0.8rem !important;
+  color: black !important;
+}
 /*===== Forgotpassword container settings =====*/

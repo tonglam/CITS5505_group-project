@@ -92,7 +92,7 @@ G_NOTICE = "notices"
 MAX_NOTICE_NUM = 99
 
 # Home page popular post number
-POPULAR_POST_NUM = 10
+POPULAR_POST_NUM = 5
 
 # Home page community option number
 COMMUNITY_OPTION_NUM = 20
@@ -108,7 +108,7 @@ JOB_INTERVAL = {
     "create_user_record": 10,
     "create_user_like": 10,
     "create_user_save": 10,
-    "update_trending": 300,
+    "update_trending": 60,
 }
 
 # Max limitation

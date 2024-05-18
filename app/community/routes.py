@@ -210,19 +210,20 @@ def community_management(community_id: int = None):
 
             return redirect(url_for("community.community_management"))
 
-        if form.errors:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    current_app.logger.error(
-                        "Community %s management error in field %s: %s",
-                        {community_entity.name if community_entity else "creation"},
-                        {getattr(form, field).label.text},
-                        {error},
-                    )
-                    flash(
-                        f"{getattr(form, field).label.text}, {error}",
-                        FlashAlertTypeEnum.DANGER.value,
-                    )
+    if form.errors:
+        for field, errors in form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "Community %s management error in field %s: %s",
+                    {community_entity.name if community_entity else "creation"},
+                    {getattr(form, field).label.text},
+                    {error},
+                )
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
+        redirect(url_for("community.community_management"))
 
     return render_template(
         "communityManagement.html",

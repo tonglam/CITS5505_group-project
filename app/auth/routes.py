@@ -133,7 +133,7 @@ def register():
                     FlashAlertTypeEnum.DANGER.value,
                 )
 
-        return render_template("auth.html", form=form)
+        return redirect(url_for("auth.auth"))
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
@@ -210,8 +210,7 @@ def login():
                     f"{getattr(form, field).label.text}, {error}",
                     FlashAlertTypeEnum.DANGER.value,
                 )
-
-        return render_template("auth.html", form=form)
+        return redirect(url_for("auth.auth"))
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
@@ -286,6 +285,7 @@ def forgot_password():
                     f"{getattr(form, field).label.text}, {error}",
                     FlashAlertTypeEnum.DANGER.value,
                 )
+        return redirect(url_for("auth.forgot_password"))
 
     return render_template("forgotPassword.html", form=form)
 

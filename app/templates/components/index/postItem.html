@@ -15,9 +15,11 @@ tag_random_int = range(1, 5) | random %}
       >
         {{ item.title }}
       </h5>
-      <small class="text-secondary"
-        >Posted on {{ item.create_at }} by {{ item.author }}</small
-      >
+      <div>
+        <small class="text-secondary"
+          >Posted on {{ item.create_at }} by {{ item.author }}</small
+        >
+      </div>
     </div>
 
     <div class="col-md-4">
@@ -44,4 +46,4 @@ tag_random_int = range(1, 5) | random %}
     </div>
   </div>
 </div>
-{# #} {%- endmacro %}
+{%- endmacro %}

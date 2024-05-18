@@ -5,7 +5,8 @@
     id="notice-{{notice.id}}"
     name="notice-{{notice.id}}"
   />
-  <label for="notice-{{notice.id}}">{{ notice.content }}</label>
+  <label for="notice-{{notice.id}}"
+    >[{{ notice.subject }}] {{ notice.content }}</label
+  >
 </div>
-
 {%- endmacro %}

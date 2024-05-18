@@ -6,7 +6,7 @@ from flask.testing import FlaskClient
 
 from app.constants import HttpRequestEnum
 from app.models.user import User
-from tests.config import AuthActions, TestBase, Utils
+from tests.config import AuthActions, TestBase
 from tests.seeds.user_seeds import seed_user_data
 
 
@@ -111,8 +111,6 @@ class TestAuth(TestBase):
                 or data["type"] == InvalidLoginEnum.PASSWORD_NOT_CORRECT
             ):
                 self.assertStatus(response, HttpRequestEnum.FOUND.value)
-            else:
-                self.assertStatus(response, HttpRequestEnum.SUCCESS_OK.value)
 
     def test_logout(self, _, client: FlaskClient):
         """Test the logout process."""
@@ -166,27 +164,25 @@ class TestAuth(TestBase):
             "rpassword": "Password@456",
         }
 
-        expected_page_title = "Forgot Password"
-
         # test that the email is not valid
         forgot_password_data["email"] = seed_user_data[0]["email"] + "1"
         response = client.post(url, data=forgot_password_data)
-        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
+        self.assertLocationHeader(response, "/auth/forgot_password")
 
         # test that the security answer is not valid
         forgot_password_data["squestion"] = seed_user_data[0]["security_question"]
         forgot_password_data["sanswer"] = seed_user_data[0]["security_answer"] + "1"
         response = client.post(url, data=forgot_password_data)
-        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
+        self.assertLocationHeader(response, "/auth/forgot_password")
 
         # test that the password is not valid
         forgot_password_data["sanswer"] = seed_user_data[0]["security_answer"]
         forgot_password_data["password"] = "123"
         response = client.post(url, data=forgot_password_data)
-        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
+        self.assertLocationHeader(response, "/auth/forgot_password")
 
         # test that the confirm password is not valid
         forgot_password_data["password"] = "Password@456"
         forgot_password_data["rpassword"] = "Password@4567"
         response = client.post(url, data=forgot_password_data)
-        self.assertEqual(Utils.get_page_title(response, url), expected_page_title)
+        self.assertLocationHeader(response, "/auth/forgot_password")

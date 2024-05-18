@@ -25,6 +25,10 @@ const handle_join_community = async (id) => {
   const response = await postFetch(`/api/v1/communities/${id}/join`)()();
   if (response.code === 200) {
     const current_page = get_current_page();
+    if (current_page === -1) {
+      window.location.reload();
+      return;
+    }
     re_render_community_list(current_page);
     re_render_navbar();
   } else if (response.code === 400) {
@@ -38,6 +42,10 @@ const handle_leave_community = async (id) => {
   const response = await postFetch(`/api/v1/communities/${id}/leave`)()();
   if (response.code === 200) {
     const current_page = get_current_page();
+    if (current_page === -1) {
+      window.location.reload();
+      return;
+    }
     re_render_community_list(current_page);
     re_render_navbar();
   } else if (response.code === 400) {
@@ -48,8 +56,15 @@ const handle_leave_community = async (id) => {
 };
 
 const get_current_page = () => {
-  return document.querySelector(".page-item.active").querySelector("a")
-    .textContent;
+  const activePage = document.querySelector(".page-item.active");
+  if (activePage === null || activePage === undefined) {
+    return -1;
+  }
+  const element = activePage.querySelector("a");
+  if (element === null || element === undefined) {
+    return -1;
+  }
+  return element.textContent;
 };
 
 const re_render_community_list = async (page) => {

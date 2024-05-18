@@ -67,15 +67,8 @@ p.text-primary:hover {
   font-size: calc(1em + 2vmin);
   color: #637498;
 
-  --x-offset: -0.0625em;
-  --y-offset: 0.0625em;
-  --stroke: 0.025em;
-  --background-color: white;
-  --stroke-color: #99bbde;
-
-  text-shadow: var(--x-offset) var(--y-offset) 0px var(--background-color),
-    calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke))
-      0px var(--stroke-color);
+  text-shadow: -0.0625em 0.0625em 0px white,
+    calc(-0.0625em - 0.025em) calc(0.0625em + 0.025em) 0px #99bbde;
 }
 
 .index-post-card {
@@ -107,12 +100,6 @@ p.text-primary:hover {
   display: block;
   font-size: 30px;
   font-weight: 600;
-}
-
-.stat-rounded {
-  -webkit-border-radius: 3px !important;
-  -moz-border-radius: 3px !important;
-  border-radius: 3px !important;
 }
 
 .bg-user {
@@ -657,27 +644,6 @@ p.text-primary:hover {
   height: 100%;
 }
 
-.cta {
-  padding: 16px 32px;
-  color: #637498;
-  background-color: transparent;
-  border: 1px solid rgba(99, 116, 152, 0.4);
-  font-family: "Raleway", sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 600;
-  margin-top: 32px;
-  cursor: pointer;
-  box-shadow: inset 0px 0px 0px rgba(99, 116, 152, 0.2);
-  transition: all 0.4s ease;
-}
-
-.cta:hover {
-  border: 1px solid rgba(99, 116, 152, 0.1);
-  box-shadow: inset 0px -80px 0px rgba(99, 116, 152, 0.1);
-  transform: translateY(-5px);
-}
-
 @media screen and (max-width: 799px) {
   .cta {
     margin-top: 16px;
@@ -712,7 +678,6 @@ p.text-primary:hover {
 
 .bg-gradient-scooter {
   background: #17ead9;
-  background: -webkit-linear-gradient(45deg, #17ead9, #6078ea) !important;
   background: linear-gradient(45deg, #17ead9, #6078ea) !important;
 }
 
@@ -741,29 +706,4 @@ p.text-primary:hover {
 
 .stats-text {
   color: #637498;
-}
-
-/* .bg-gradient-bloody {
-  background: #f54ea2;
-  background: -webkit-linear-gradient(45deg, #f54ea2, #ff7676) !important;
-  background: linear-gradient(45deg, #f54ea2, #ff7676) !important;
-}
-
-.bg-gradient-ohhappiness {
-  background: #00b09b;
-  background: -webkit-linear-gradient(45deg, #00b09b, #96c93d) !important;
-  background: linear-gradient(45deg, #00b09b, #96c93d) !important;
-}
-
-.bg-gradient-blooker {
-  background: #ffdf40;
-  background: -webkit-linear-gradient(45deg, #ffdf40, #ff8359) !important;
-  background: linear-gradient(45deg, #ffdf40, #ff8359) !important;
-} */
-/*===== stats container settings =====*/
-
-/* postItem.html */
-
-.postItem {
-  cursor: pointer;
 }

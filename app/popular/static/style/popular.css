@@ -244,22 +244,18 @@
 }
 .tilesWrap li:nth-child(1):before {
   background: #c9ffbf;
-  background: -webkit-linear-gradient(to right, #ffafbd, #c9ffbf);
   background: linear-gradient(to right, #ffafbd, #c9ffbf);
 }
 .tilesWrap li:nth-child(2):before {
   background: #f2709c;
-  background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
   background: linear-gradient(to right, #ff9472, #f2709c);
 }
 .tilesWrap li:nth-child(3):before {
   background: #c21500;
-  background: -webkit-linear-gradient(to right, #e8d492, #f3cbc7);
   background: linear-gradient(to right, #d1c7a8, #eb9891);
 }
 .tilesWrap li:nth-child(4):before {
   background: #fc354c;
-  background: -webkit-linear-gradient(to right, #71a8be, #e9d0d3);
   background: linear-gradient(to right, #71a8be, #d5cacb);
 }
 /* end community card global styles */
@@ -270,8 +266,6 @@
   border-radius: 3px;
   padding: 0.2em 0.5em 0.3em;
   border-radius: 2px;
-  background: var(--tag-bg);
-  color: var(--text-color);
   font-weight: 600;
   margin: 0.25em 0.1em;
   border-radius: 4px;
