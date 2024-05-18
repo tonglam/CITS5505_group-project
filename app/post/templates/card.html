@@ -1,9 +1,4 @@
 <div class="card">
-  <link
-    rel="stylesheet"
-    href="{{ url_for('post.static', filename='style/card.css') }}"
-  />
-
   <div class="card-header">
     <h5 class="card-title">{{ request.title }}</h5>
   </div>
@@ -38,11 +33,16 @@
     <button
       id="like-button-no-reply"
       class="fa fa-heart btn-like  {% if post_likes %}liked{% endif %}"
+      data-request-id="{{ request.id }}"
       onclick="toggleLike({{ request.id }}, null)"
     >
       like
     </button>
-    <button id="save-button-no-reply" class="fa fa-save btn-save  {% if post_saves %}saved{% endif %}" onclick="toggleSave({{ request.id }}, null)">
+    <button 
+    id="save-button-no-reply" 
+    class="fa fa-save btn-save  {% if post_saves %}saved{% endif %}" 
+    data-request-id="{{ request.id }}"
+    onclick="toggleSave({{ request.id }}, null)">
       SAVE
     </button>
     <button
@@ -51,6 +51,5 @@
     >
       Create New Comment
     </button>
-
   </div>
 </div>

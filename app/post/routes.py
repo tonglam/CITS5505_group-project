@@ -15,18 +15,16 @@ from app.models.tag import Tag
 from app.post import post_bp
 
 
-@post_bp.route('/create_post')
+@post_bp.route('/create/post')
 @login_required
 def create_post():
     """create post"""
     communities = Community.query.all()
     tags = Tag.query.all()
-    requests = Request.query.all()
 
+    return render_template('create.html', mode='post', communities=communities, tags=tags)
 
-    return render_template('create.html', mode='post', communities=communities, tags=tags, requests=requests)
-
-@post_bp.route('/create_comment')
+@post_bp.route('/create/comment')
 @login_required
 def create_comment():
     """create comment"""
@@ -40,7 +38,7 @@ def create_comment():
     return render_template('create.html', mode='comment', post_id=post_id, target_type=target_type, replies=replies)
 
 
-@post_bp.route('/edit_post')
+@post_bp.route('/edit/post')
 @login_required
 def edit_post():
     """edit post"""
@@ -52,7 +50,7 @@ def edit_post():
 
     return render_template('create.html', mode='edit_post', communities=communities, tags=tags, requests=requests)
 
-@post_bp.route('/edit_comment')
+@post_bp.route('/edit/comment')
 @login_required
 def edit_comment():
     """create comment"""

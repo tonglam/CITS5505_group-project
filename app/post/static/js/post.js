@@ -1,5 +1,5 @@
-const postUrl = "/api/v1/posts/create_post";
-const commentUrl = "/api/v1/posts/create_comment";
+const postUrl = "/api/v1/posts/create/post";
+const commentUrl = "/api/v1/posts/create/comment";
 
 
 function toggleReplies(button, className) {
@@ -46,7 +46,6 @@ async function sendRequest(requestId, replyId, actionType, method) {
   };
 
   const url = `${apiUrlBase}${actionType}s`;
-  console.log("Sending request to:", url, "with data:", data);
 
   const response = await (method === 'POST' ? postFetch : deleteFetch)(url)(data)();
   return response;
@@ -65,11 +64,9 @@ function handleResponse(response, requestId, replyId, actionType) {
     case `${actionType} success`:
     case `${actionType} already exists`:
       userStatus[statusKey][requestId][replyKey] = true;
-      alert(`${actionType.charAt(0).toUpperCase() + actionType.slice(1)} successful for request ID ${requestId} replyID ${replyId}`);
       break;
     case `un${actionType} success`:
       userStatus[statusKey][requestId][replyKey] = false;
-      alert(`Un${actionType} successful for request ID ${requestId} replyID ${replyId}`);
       break;
     default:
       alert('Unexpected error occurred.');
@@ -107,7 +104,6 @@ async function toggleAction(requestId, replyId, actionType) {
     handleResponse(response, requestId, replyId, actionType);
   } catch (error) {
     alert(`An internet issue occurred while toggling the ${actionType}. Please try again.`);
-    console.error("Error details:", error);
   }
 }
 
@@ -117,10 +113,8 @@ window.toggleSave = (requestId, replyId) => toggleAction(requestId, replyId, 'sa
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const likeButtons = document.querySelectorAll('.btn-like, .btn-like-reply');
-    console.log('Like buttons found:', likeButtons);
 
     likeButtons.forEach(button => {
-      console.log('Processing button:', button);
       const requestId = button.getAttribute('data-request-id');
       const replyId = button.getAttribute('data-reply-id') || 'no-reply';
 
@@ -129,7 +123,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (button.classList.contains('liked')) {
-        console.log('Button is liked:', button);
         button.innerHTML = 'Unlike';
         button.style.color = 'red';
         userStatus.likes[requestId][replyId] = true;
@@ -140,10 +133,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const saveButtons = document.querySelectorAll('.btn-save, .btn-save-reply');
-    console.log('Save buttons found:', saveButtons);
 
     saveButtons.forEach(button => {
-      console.log('Processing button:', button);
       const requestId = button.getAttribute('data-request-id');
       const replyId = button.getAttribute('data-reply-id') || 'no-reply';
 
@@ -152,7 +143,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (button.classList.contains('saved')) {
-        console.log('Button is saved:', button);
         button.innerHTML = 'Unsave';
         button.style.color = 'blue';
         userStatus.saves[requestId][replyId] = true;
@@ -172,7 +162,6 @@ async function deletePost(postId) {
     post_id: postId
   };
   const response = await deleteFetch(postUrl)(data)();
-  console.log(response)
   if (response.code == 200) {
       window.location.href = "/";
   } else {
@@ -187,7 +176,6 @@ async function deleteComment(postId,replyId) {
     reply_id: replyId
   };
   const response = await deleteFetch(commentUrl)(data)();
-  console.log(response)
 
 }
 
@@ -203,7 +191,6 @@ for (var i = 0; i < deleteButtons.length; i++) {
     deleteComment(postId, replyId).then(() => {
       window.location.reload();
     }).catch((error) => {
-      console.error('Error deleting comment:', error);
     });;
   });
 }
@@ -218,4 +205,3 @@ if (deletePostButton) {
   });
 }
 
-// for set the initial status

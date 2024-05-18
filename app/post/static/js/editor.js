@@ -1,5 +1,5 @@
-const postUrl = "/api/v1/posts/create_post";
-const commentUrl = "/api/v1/posts/create_comment"; 
+const postUrl = "/api/v1/posts/create/post";
+const commentUrl = "/api/v1/posts/create/comment"; 
 
 
 document.addEventListener('DOMContentLoaded', function() {

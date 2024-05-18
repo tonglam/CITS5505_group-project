@@ -1,5 +1,8 @@
 {% extends "layout.html" %} {% block title %}Post List{% endblock %} {% block
-head %} {{ super() }} {% endblock %} {% block content %}
+head %} 
+{{ super() }} 
+<link rel="stylesheet" href="{{ url_for('post.static', filename='style/post.css') }}"/>
+{% endblock %} {% block content %}
 <div class="d-flex flex-column text-center">
   <div class="post">{% include 'card.html' %} {% include 'list.html' %}</div>
 </div>
