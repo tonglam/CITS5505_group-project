@@ -1,5 +1,7 @@
 """Services for api."""
 
+import json
+
 import requests
 from flask import current_app, g
 from flask_login import current_user
@@ -551,11 +553,15 @@ def _get_user_community_ids(user_preference: UserPreference) -> list:
 # Api service for community module.
 
 
-def communities_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def communities_service(community_id:int = None, page: int = 1, per_page: int = 10) -> ApiResponse:
     """Service for getting all communities."""
 
     # query
     query = db.session.query(Community).order_by(Community.id)
+
+    # apply filters
+    if community_id:
+        query = query.filter(Community.id == community_id)
 
     # pagination
     pagination = db.paginate(query, page=page, per_page=per_page)
@@ -579,13 +585,19 @@ def communities_service(page: int = 1, per_page: int = 10) -> ApiResponse:
         community["joined"] = community["id"] in community_ids
 
     # community members number
+    user_preferences = UserPreference.query.all()
+    community_counts = {}
+    for user_preference in user_preferences:
+        communities = json.loads(user_preference.communities)
+
+        for community_id in communities:
+            if community_id in community_counts:
+                community_counts[community_id] += 1
+            else:
+                community_counts[community_id] = 1
+
     for community in community_collection:
-        community["members"] = (
-            db.session.query(User)
-            .join(User.communities)
-            .filter(Community.id == community["id"])
-            .count()
-        )
+        community["members"] = community_counts.get(community["id"], 0)
 
     return ApiResponse(
         data={"communities": community_collection}, pagination=pagination

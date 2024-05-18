@@ -74,7 +74,7 @@ def top_community_service():
 
     top_community_info = [
         {
-            "id": request.id,
+            "id": request.community.id,
             "community": request.community.name,
             "category": community_category_dict[request.community.category_id],
             "description": request.community.description,

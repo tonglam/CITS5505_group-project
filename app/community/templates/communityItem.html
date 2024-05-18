@@ -1,8 +1,8 @@
-{% macro render_community_item(item, user) -%} {% set img_random_int = range(1,
-10) | random %} {% set tag_random_int = range(1, 5) | random %}
+{% macro render_community_item(item, user, index) -%} {% set tag_random_int =
+range(1, 5) | random %}
 <li class="community_card">
   <img
-    src="{{url_for('static',filename='assets/community' ~ img_random_int ~ '.jpg')}}"
+    src="{{url_for('static',filename='assets/community' ~ index ~ '.jpg')}}"
     class="card__image"
     alt="card image"
     width="450"
@@ -60,7 +60,8 @@
       {{ item.description|truncate(114, true, '...') }}
     </p>
     <p class="text-center card__status">
-      - POSTS:{{ item.posts }} FOLLOWER:{{ item.members }} -
+      - POSTS:{{ item.posts }}&nbsp;&nbsp;&nbsp;&nbsp;MEMBERS:{{ item.members }}
+      -
     </p>
   </div>
 </li>

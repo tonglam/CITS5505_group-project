@@ -184,7 +184,7 @@ const init_user_profile = () => {
   // close user profile card
   document
     .getElementById("closeUserProfile")
-    .addEventListener("click", function (event) {
+    .addEventListener("click", function () {
       user_profile_card.classList.add("d-none");
     });
 };
@@ -202,13 +202,13 @@ const init_notification = () => {
     return false;
   }
 
+  // nav bar notification
   const notification = document.getElementById("notification");
   if (notification === undefined || notice === null) {
     console.error("notification is missing");
     return false;
   }
 
-  // nav bar notification
   notice.addEventListener("click", function () {
     if (notification.classList.contains("d-none")) {
       notification.classList.remove("d-none");
@@ -220,43 +220,19 @@ const init_notification = () => {
 
 const handle_notification_change = (notice_id) => {
   // check for notification
-  const check_notification = document.getElementById(
-    "notificationCheck-" + notice_id
-  );
+  const check_notification = document.getElementById("notice-" + notice_id);
   if (check_notification === undefined || check_notification === null) {
     console.error("check_notification is missing");
     return false;
   }
 
-  if (check_notification.classList.contains("unchecked")) {
-    handle_notification_checked(check_notification);
-  } else if (check_notification.classList.contains("checked")) {
-    handle_notification_unchecked(check_notification);
-  }
-
   // wait for 2s, if no more click, close notification
   setTimeout(() => {
-    if (check_notification.classList.contains("checked")) {
-      // call api to update notification
-      update_notification(notice_id);
-      // re-render notification
-      re_render_notification();
-    }
+    // call api to update notification
+    update_notification(notice_id);
+    // re-render notification
+    re_render_notification();
   }, 1000);
-};
-
-const handle_notification_checked = async (check_notification) => {
-  check_notification.classList.remove("unchecked");
-  check_notification.classList.add("checked");
-  // replace icon
-  check_notification.innerHTML = `<i class="fa-regular fa-square-check fa-xl"></i>`;
-};
-
-const handle_notification_unchecked = async (check_notification) => {
-  check_notification.classList.remove("checked");
-  check_notification.classList.add("unchecked");
-  // replace icon
-  check_notification.innerHTML = `<i class="fa-regular fa-square fa-xl"></i>`;
 };
 
 const update_notification = async (notice_id) => {
@@ -264,14 +240,18 @@ const update_notification = async (notice_id) => {
 };
 
 const re_render_notification = async () => {
+  const spanBadge = document.getElementById("notice").querySelector("span");
+  if (spanBadge === undefined || spanBadge === null) {
+    console.error("spanBadge is missing");
+    return false;
+  }
+  let notification_num = parseInt(spanBadge.textContent);
   setTimeout(async () => {
     const response = await getFetch(`/notifications`)()();
     // re-render notification
     document.getElementById("notification").innerHTML = response;
     // re-render navbar notification
-    const notification_num = parseInt(
-      document.getElementById("notification-num").textContent
-    );
+    notification_num -= 1;
     const spanBadge = document.getElementById("notice").querySelector("span");
     spanBadge.textContent = notification_num;
     if (notification_num === 0) {

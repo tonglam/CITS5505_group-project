@@ -22,17 +22,10 @@ from app.utils import get_pagination_details
 def community(community_id: int = None):
     """Render the community page."""
 
-    if community_id:
-        community_entity = db.session.query(Community).get(community_id)
-        return render_template(
-            "community.html",
-            render_id="community-list",
-            render_url="/communities/community_list",
-            communities=[community_entity],
-        )
-
     # communities
-    communities_result = communities_service(per_page=DISPLAY_COMMUNITY_NUM).get_json()
+    communities_result = communities_service(
+        community_id=community_id, per_page=DISPLAY_COMMUNITY_NUM
+    ).get_json()
     communities = communities_result.get("data").get("communities")
 
     # pagination
@@ -179,7 +172,9 @@ def community_management(community_id: int = None):
                 current_app.logger.error("Community create failed: %s.", {message})
                 flash(message, FlashAlertTypeEnum.DANGER.value)
 
-            return redirect(url_for("community.community_management"))
+            return redirect(
+                url_for("community.community", community_id=community_entity.id)
+            )
 
         # only the creator can update the community
         if community_entity.creator_id != form.creator_id.data:
