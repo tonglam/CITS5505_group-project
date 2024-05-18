@@ -127,6 +127,11 @@ def register():
                     {getattr(form, field).label.text},
                     {error},
                 )
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
+
         return render_template("auth.html", form=form)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
@@ -200,6 +205,11 @@ def login():
                     {getattr(form, field).label.text},
                     {error},
                 )
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
+
         return render_template("auth.html", form=form)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
@@ -271,7 +281,10 @@ def forgot_password():
                     {getattr(form, field).label.text},
                     {error},
                 )
-        return render_template("forgotPassword.html", form=form)
+                flash(
+                    f"{getattr(form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
 
     return render_template("forgotPassword.html", form=form)
 
@@ -375,8 +388,12 @@ def callback(provider: str):
             user.use_google = True
         if not user.use_github and provider == OAuthProviderEnum.GITHUB.value:
             user.use_github = True
-        user.username = username
-        user.avatar_url = avatar
+        if not user.avatar_url and avatar:
+            user.avatar_url = avatar
+        if not user.username and username:
+            user.username = username
+        if not user.email and email:
+            user.email = email
         db.session.commit()
 
     login_user(user, remember=True)

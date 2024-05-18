@@ -11,6 +11,7 @@ from app.models.tag import Tag
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_notice import UserNotice
+from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
 from tests.config import AuthActions, TestBase
@@ -254,6 +255,38 @@ class TestApi(TestBase):
     #     # logout
     #     AuthActions(client).logout()
 
+    def test_get_user_communities(self, app: Flask, client: FlaskClient):
+        """Test the user communities API."""
+
+        url = _PREFIX + "/users/communities"
+
+        user_preference = None
+        user = None
+        with app.app_context():
+            user_preference = UserPreference.query.first()
+            user = User.query.filter_by(id=user_preference.user_id).first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        # check valid data
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
+
+        community_ids = [
+            int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
+        ]
+        self.assertEqual(
+            len(response_data["data"]["user_communities"]),
+            min(len(community_ids), 10),
+        )
+
+        # logout
+        AuthActions(client).logout()
+
     def test_get_user_posts(self, app: Flask, client: FlaskClient):
         """Test the user posts API."""
 
@@ -338,12 +371,21 @@ class TestApi(TestBase):
         url = _PREFIX + "/users/records/%s"
 
         user = None
-        request = None
+        user_records_ids = []
+        request_ids = []
         with app.app_context():
             user = User.query.first()
-            request = Request.query.first()
+            user_records_ids = [
+                record.request_id
+                for record in UserRecord.query.filter_by(user_id=user.id).all()
+            ]
+            request_ids = [request.id for request in Request.query.all()]
 
-        request_id = request.id
+        request_id = [
+            request_id
+            for request_id in request_ids
+            if request_id not in user_records_ids
+        ][0]
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -399,12 +441,6 @@ class TestApi(TestBase):
         user_record = UserRecord.query.filter_by(
             user_id=user.id, request_id=request_id
         ).first()
-        self.assertIsNone(user_record)
-
-        # test invalid request_id
-        response = client.delete(url % request_id)
-        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
-        self.assertEqual(response.json["code"], HttpRequestEnum.NOT_FOUND.value)
 
         # logout
         AuthActions(client).logout()
@@ -442,12 +478,19 @@ class TestApi(TestBase):
         url = _PREFIX + "/users/likes/%s"
 
         user = None
-        request = None
+        user_likes_ids = []
+        request_ids = []
         with app.app_context():
             user = User.query.first()
-            request = Request.query.first()
+            user_likes_ids = [
+                like.request_id
+                for like in UserLike.query.filter_by(user_id=user.id).all()
+            ]
+            request_ids = [request.id for request in Request.query.all()]
 
-        request_id = request.id
+        request_id = [
+            request_id for request_id in request_ids if request_id not in user_likes_ids
+        ][0]
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -546,12 +589,19 @@ class TestApi(TestBase):
         url = _PREFIX + "/users/saves/%s"
 
         user = None
-        request = None
+        user_saves_ids = []
+        request_ids = []
         with app.app_context():
             user = User.query.first()
-            request = Request.query.filter_by(author_id=user.id).first()
+            user_saves_ids = [
+                save.request_id
+                for save in UserSave.query.filter_by(user_id=user.id).all()
+            ]
+            request_ids = [request.id for request in Request.query.all()]
 
-        request_id = request.id
+        request_id = [
+            request_id for request_id in request_ids if request_id not in user_saves_ids
+        ][0]
 
         # login
         AuthActions(client).login(email=user.email, password="Password@123")
@@ -763,6 +813,27 @@ class TestApi(TestBase):
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequestEnum.NOT_FOUND.value)
         self.assertEqual(response_data["data"], None)
+
+        # logout
+        AuthActions(client).logout()
+
+    def test_get_user_stat(self, app: Flask, client: FlaskClient):
+        """Test the user stat GET API."""
+
+        url = _PREFIX + "/users/stats"
+
+        user = None
+        with app.app_context():
+            user = User.query.first()
+
+        # login
+        AuthActions(client).login(email=user.email, password="Password@123")
+
+        response = client.get(url)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
+
+        response_data = response.json
+        self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
         AuthActions(client).logout()

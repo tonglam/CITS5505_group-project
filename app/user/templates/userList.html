@@ -1,0 +1,31 @@
+<div class="container custom-colors">
+  <div class="gap_items">
+    <div class="items-body">
+      {% for data in item %} {% set _id = data.id %}
+
+      <div
+        class="items-body-content"
+        onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
+      >
+        <span
+          ><a href="javascript:void(0);" class="text-reset"
+            >{{ data.title }}</a
+          ></span
+        >
+        <i class="fa fa-angle-right"></i>
+      </div>
+
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if pagination.total_items >0 %}
+  <div class="list-border-bottom"></div>
+  {% endif %}
+
+  <!-- List Pagination -->
+  <div class="mt-4">
+    {% if pagination.total_items >0 %} {% import './components/pagination.html'
+    as pageItem %} {{ pageItem.render_pagination(pagination) }} {% endif %}
+  </div>
+</div>

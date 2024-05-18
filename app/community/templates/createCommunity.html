@@ -6,66 +6,63 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
 />
 {% endblock %}
 <div class="contain">
-  <div>
-    <form class="create" action="#" id="createForm">
-      <div class="card2">
-        <div class="card2_title">
-          <div class="card2_title_left_img"></div>
-          <div class="card2_title_text" id="comunityTitle">
-            Create a community
-          </div>
-        </div>
-        <div class="card2_desc">
-          Build and grow a community about something you care about. We'll help
-          you set things up.
-        </div>
-        <div id="form" class="form">
-          <div class="one_input">
-            <label for="name">Name</label>
-            <input id="name" value="" type="text" placeholder="name" />
-          </div>
-          <div class="one_text">
-            Choose wisely. Once you pick a name, it can't be changed
-          </div>
-          <div class="two_input">
-            <label for="type">Type</label>
-            <div class="form-check">
-              <div class="radio_img"></div>
-              <div class="radio_text">
-                <div>Public</div>
-                <div>Anyone can view, post, and comment to this community</div>
-              </div>
-              <input id="type" value="type" type="radio" />
-            </div>
-            <div class="form-check">
-              <div class="radio_img"></div>
-              <div class="radio_text">
-                <div>Restricted</div>
-                <div>
-                  Anyone can view, but only approved users can contribute
-                </div>
-              </div>
-              <input type="radio" />
-            </div>
-            <div class="form-check">
-              <div class="radio_img"></div>
-              <div class="radio_text">
-                <div>Private</div>
-                <div>
-                  Only approved users can view and submit to this community
-                </div>
-              </div>
-              <input type="radio" />
-            </div>
-          </div>
-        </div>
-
-        <div class="bootom_btn">
-          <div>Cancel</div>
-          <div>Create your community</div>
+  <form
+    class="create"
+    action="{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}"
+    method="post"
+    id="createForm"
+  >
+    {{form.csrf_token}}
+    <div class="card2">
+      <div class="card2_title">
+        <div class="card2_title_left_img"></div>
+        <div class="card2_title_text" id="comunityTitle">
+          {% if record_entity %}Edit{% else %}Create{% endif %} a community
         </div>
       </div>
-    </form>
-  </div>
+      <div class="card2_desc">
+        Build and grow a community about something you care about. We'll help
+        you set things up.
+      </div>
+      <div id="form" class="form">
+        <div class="one_input">
+          <label for="name">Name</label>
+          <input
+            name="name"
+            id="name"
+            type="text"
+            placeholder="name"
+            value="{% if record_entity %}{{record_entity.name}}{% else %}{% endif %}"
+          />
+        </div>
+        <div class="one_text">
+          Choose wisely. Once you pick a name, it can't be changed
+        </div>
+        <div class="one_input">
+          <label for="description">description</label>
+          <input
+            name="description"
+            id="description"
+            type="text"
+            placeholder="description"
+            value="{% if record_entity %}{{record_entity.description}}{% else %}{% endif %}"
+          />
+        </div>
+
+        <div class="one_input">
+          <label for="category_id">category</label>
+          <select name="category_id" id="category_id"></select>
+        </div>
+      </div>
+      <div class="bootom_btn">
+        <!-- <div class="bootom_btn_item">Cancel</div> -->
+        <button class="bootom_btn_item" id="submitBtn" type="submit">
+          {% if record_entity %}Edit{% else %}Create{% endif %} your community
+        </button>
+      </div>
+    </div>
+  </form>
 </div>
-{% endblock %}
+{% block javascript %}
+<script src="{{ url_for('community.static', filename='js/community.js') }}"></script>
+{% endblock %} {% endblock %}

@@ -12,23 +12,39 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from flask import Flask, g, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy.exc import (DataError, IntegrityError, OperationalError,
-                            ProgrammingError, SQLAlchemyError)
+from sqlalchemy.exc import (
+    DataError,
+    IntegrityError,
+    OperationalError,
+    ProgrammingError,
+    SQLAlchemyError,
+)
 from sqlalchemy.sql import text
 
-from app.api.service import (communities_service, populars_service,
-                             posts_service, stats_service,
-                             users_notices_service)
-from app.constants import (G_NOTICE, G_NOTICE_NUM, G_USER, POPULAR_POST_NUM,
-                           EnvironmentEnum, HttpRequestEnum)
+from app.api.service import (
+    communities_service,
+    populars_service,
+    posts_service,
+    stats_service,
+    user_stats_service,
+    users_notices_service,
+)
+from app.constants import (
+    G_NOTICE,
+    G_NOTICE_NUM,
+    G_POST_STAT,
+    G_USER,
+    POPULAR_POST_NUM,
+    EnvironmentEnum,
+    HttpRequestEnum,
+)
 from app.models.user_notice import UserNotice
 from app.swagger import get_swagger_config
 
 from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
-from .extensions import (bcrypt, db, jwt, login_manager, migrate, scheduler,
-                         swag)
+from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
@@ -84,6 +100,7 @@ def create_app() -> Flask:
         pagination = get_pagination_details(
             current_page=post_pagination["page"],
             total_pages=post_pagination["total_pages"],
+            total_items=post_pagination["total_items"],
         )
 
         # popular
@@ -121,6 +138,7 @@ def create_app() -> Flask:
         pagination = get_pagination_details(
             current_page=post_pagination["page"],
             total_pages=post_pagination["total_pages"],
+            total_items=post_pagination["total_items"],
         )
 
         return render_template(
@@ -136,7 +154,9 @@ def create_app() -> Flask:
             users_notices_service(status="unread").json.get("data").get("user_notices")
         )
 
-        return render_template("components/layout/notification.html", notices=notices)
+        return render_template(
+            "components/layout/navNotification.html", notices=notices
+        )
 
     return app
 
@@ -145,6 +165,7 @@ def init_config(app: Flask, env: str) -> None:
     """Initialize application configuration."""
 
     app.config["SECRET_KEY"] = get_config("APP", "SECRET_KEY")
+    app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("SQLITE", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
     app.config["SWAGGER"] = get_swagger_config()
@@ -443,6 +464,16 @@ def register_context_processors(app: Flask) -> None:
     @app.context_processor
     def inject_user():
         return {G_USER: current_user}
+
+    @app.context_processor
+    def inject_post_stat():
+        if current_user.is_authenticated:
+            stats_data = user_stats_service().json
+            post_num = stats_data["data"]["user_stats"]["request_num"]
+
+            return {G_POST_STAT: post_num}
+
+        return {G_POST_STAT: 0}
 
     @app.context_processor
     def inject_notice_num():

@@ -81,6 +81,7 @@ GRAVATAR_URL = "https://www.gravatar.com/avatar/"
 
 # Flask Global Variable
 G_USER = "user"
+G_POST_STAT = "post_stat"
 G_NOTICE_NUM = "notice_num"
 G_NOTICE = "notices"
 
@@ -92,3 +93,7 @@ POPULAR_POST_NUM = 10
 
 # Image BB
 IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
+
+# Top data number
+TOP_DATA_NUM = 5
+TOP_COMMUNITY_NUM = 4
