@@ -364,4 +364,16 @@ button.ghost {
   }
 }
 
+.return_btn {
+  border: 1px solid #f4f6f6;
+  border-radius: 3px;
+  color: #637498;
+  padding-inline-start: 10px;
+  padding-inline-end: 10px;
+  font-weight: 500;
+  padding: 5px;
+  background-color: transparent;
+  color: #1e456c;
+  margin-right: 5px;
+}
 /*===== Forgotpassword container settings =====*/
