@@ -1,9 +1,13 @@
-/*===== global font style =====*/
+/*===== global style =====*/
 body {
   font-family: "Lato", sans-serif !important;
 }
 
-/*===== global font style =====*/
+main {
+  min-height: 100vh;
+}
+
+/*===== global style =====*/
 .logo {
   margin-top: 2px;
 }
@@ -29,6 +33,10 @@ body {
 .nav-badge {
   font-size: 0.7rem !important;
   padding: 0.1rem 0.3rem !important;
+}
+
+.nav-font {
+  font-size: 1.2rem !important;
 }
 
 /*===== userProfile card settings =====*/
@@ -134,7 +142,7 @@ a {
 
 /*===== notification container settings =====*/
 .notifications {
-  width: 360px;
+  width: auto;
   height: auto;
   position: absolute;
   top: 0px;
@@ -163,8 +171,21 @@ a {
   border-radius: 0.5rem;
 }
 
-#noticeItem legend {
-  font-weight: 700;
+#noticeItem .lengend {
+  width: 100%;
+  margin-bottom: 0 !important;
+  font-size: calc(1.275rem + 0.3vw);
+  line-height: inherit;
+  font-weight: 700 !important;
+}
+
+#noticeItem .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-top: 0.5rem;
+  padding-right: 0.5rem;
+  cursor: pointer;
 }
 
 #noticeItem fieldset > * + * {
@@ -213,10 +234,14 @@ a {
   z-index: 999;
 }
 
+.click-subtitle {
+  display: inline-block;
+  cursor: pointer;
+}
+
 .click-subtitle:hover {
   border-bottom: 2px solid #637498;
   text-decoration: none;
-  cursor: pointer;
 }
 
 .footer-color {

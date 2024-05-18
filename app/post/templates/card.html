@@ -1,55 +1,58 @@
-<div class="card">
-  <div class="card-header">
-    <h5 class="card-title">{{ request.title }}</h5>
+<div class="card-header">
+  <h5 class="card-title">{{ request.title }}</h5>
+</div>
+<div class="card-body">
+  <h6 class="card-subtitle mb-2 text-muted">
+    By: {{ request.author.username }} | Community: {{ request.community.name }}
+    | Tag: {{ request.tag.name }}
+  </h6>
+  <div class="card-text" data-content="summary">
+    {{ request.content | safe}}
   </div>
-  <div class="card-body">
-    <h6 class="card-subtitle mb-2 text-muted">
-      By: {{ request.author.username }} | Community: {{ request.community.name
-      }} | Tag: {{ request.tag.name
-      }}
-    </h6>
-    <div class="card-text" data-content="summary">{{ request.content | safe}}</div>
-    <button class="expand-button" onclick="toggleTextExpansion()">
-      Show More
-    </button>
-    <footer class="blockquote-footer">
-      Views: {{ request.view_num }}, Likes: {{ request.like_num }}, Replies: {{
-        request.reply_num }}, Saved: {{ request.save_num }} |
-      {{ request.create_at.strftime('%Y-%m-%d') }}
-    </footer>
-    {% if current_user.id == request.author_id %}
-    <button 
+  <footer class="blockquote-footer">
+    Views: {{ request.view_num }}, Likes: {{ request.like_num }}, Replies: {{
+    request.reply_num }}, Saved: {{ request.save_num }} | {{
+    request.create_at.strftime('%Y-%m-%d') }}
+  </footer>
+  {% if current_user.id == request.author_id %}
+  <button
     id="editPostButton"
     data-post-id="{{ request.id }}"
-    onclick="window.open('{{ url_for('post.edit_post', post_id=request.id, target_type='post') }}', '_blank')"
+    onclick="location.href='{{ url_for('post.edit_post', post_id=request.id, target_type='post') }}'"
     class="fa fa-edit btn-edit-request"
-    >Edit</button>
-    <button 
-    id="deletePostButton" data-post-id="{{ request.id }}"
-    class="fa fa-trash btn-delete-request">Delete</button>
-    {% endif %}
-  </div>
-  <div class="card-footer">
-    <button
-      id="like-button-no-reply"
-      class="fa fa-heart btn-like  {% if post_likes %}liked{% endif %}"
-      data-request-id="{{ request.id }}"
-      onclick="toggleLike({{ request.id }}, null)"
-    >
-      like
-    </button>
-    <button 
-    id="save-button-no-reply" 
-    class="fa fa-save btn-save  {% if post_saves %}saved{% endif %}" 
+  >
+    Edit
+  </button>
+  <button
+    id="deletePostButton"
+    data-post-id="{{ request.id }}"
+    class="fa fa-trash btn-delete-request"
+  >
+    Delete
+  </button>
+  {% endif %}
+</div>
+<div class="card-footer">
+  <button
+    id="like-button-no-reply"
+    class="fa fa-heart btn-like {% if post_likes %}liked{% endif %}"
     data-request-id="{{ request.id }}"
-    onclick="toggleSave({{ request.id }}, null)">
-      SAVE
-    </button>
-    <button
-      class="fa fa-reply btn-create"
-      onclick="window.open('{{ url_for('post.create_comment', post_id=request.id, mode='comment', target_type='post') }}', '_blank')"
-    >
-      Create New Comment
-    </button>
-  </div>
+    onclick="toggleLike({{ request.id }}, null)"
+  >
+    like
+  </button>
+  <button
+    id="save-button-no-reply"
+    class="fa fa-save btn-save {% if post_saves %}saved{% endif %}"
+    data-request-id="{{ request.id }}"
+    onclick="toggleSave({{ request.id }}, null)"
+  >
+    SAVE
+  </button>
+  <button
+    class="fa fa-reply btn-create"
+    onclick="location.href='{{ url_for('post.create_comment', post_id=request.id, mode='comment', target_type='post') }}'"
+  >
+    Create New Comment
+  </button>
 </div>

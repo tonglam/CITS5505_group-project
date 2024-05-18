@@ -17,12 +17,12 @@ class UserSave(db.Model):
 
     user = db.relationship("User", backref=db.backref("user_saves", lazy=True))
     request = db.relationship("Request", backref=db.backref("user_saves", lazy=True))
+    reply = db.relationship("Reply", backref=db.backref("user_saves", lazy=True))
 
-    def __init__(self, user_id: str, request_id: int, reply_id: int) -> None:
+    def __init__(self, user_id: str, request_id: int, reply_id: int = None) -> None:
         self.user_id = user_id
         self.request_id = request_id
         self.reply_id = reply_id
-
 
     def __repr__(self) -> str:
         """Return a string representation of the user record."""
@@ -37,5 +37,6 @@ class UserSave(db.Model):
             "id": self.id,
             "user": self.user.to_dict() if self.user else None,
             "request": self.request.to_dict() if self.request else None,
+            "reply": self.reply.to_dict() if self.reply else None,
             "create_at": format_datetime_to_readable_string(self.create_at),
         }

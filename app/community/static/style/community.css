@@ -80,11 +80,6 @@
   z-index: 1;
 }
 
-.card__arc path {
-  fill: var(--surface-color);
-  d: path("M 40 80 c 22 0 40 -22 40 -40 v 40 Z");
-}
-
 .community_card:hover .card__header {
   transform: translateY(0);
 }
@@ -122,9 +117,6 @@
   margin: 0;
   color: #b38a9f;
   font-family: "MockFlowFont";
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
   overflow: hidden;
 }
 

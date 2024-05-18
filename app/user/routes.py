@@ -176,19 +176,20 @@ def user_profile():
             current_app.logger.info("Profile updated for user: %s.", {username})
             flash("Profile has been updated.", FlashAlertTypeEnum.SUCCESS.value)
 
-        if profile_form.errors:
-            for field, errors in profile_form.errors.items():
-                for error in errors:
-                    current_app.logger.error(
-                        "User %s edit profile error in field %s: %s",
-                        {username},
-                        {getattr(profile_form, field).label.text},
-                        {error},
-                    )
-                    flash(
-                        f"{getattr(profile_form, field).label.text}, {error}",
-                        FlashAlertTypeEnum.DANGER.value,
-                    )
+    if profile_form.errors:
+        for field, errors in profile_form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "User %s edit profile error in field %s: %s",
+                    {username},
+                    {getattr(profile_form, field).label.text},
+                    {error},
+                )
+                flash(
+                    f"{getattr(profile_form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
+        return redirect(url_for("user.user_profile"))
 
     return render_template("userProfile.html", tab="profile", form=profile_form)
 
@@ -249,6 +250,7 @@ def user_password():
                     f"{getattr(password_form, field).label.text}, {error}",
                     FlashAlertTypeEnum.DANGER.value,
                 )
+        return redirect(url_for("user.user_password"))
 
     return render_template("userPassword.html", tab="password", form=password_form)
 

@@ -2,15 +2,22 @@
 range(1, 5) | random %}
 <li class="community_card">
   <img
-    src="{{url_for('static',filename='assets/community' ~ index ~ '.jpg')}}"
+    src="{{url_for('static',filename='assets/community' ~ index ~ '.webp')}}"
     class="card__image"
     alt="card image"
     width="450"
   />
   <div class="card__overlay">
     <div class="card__header">
-      <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-        <path />
+      <svg
+        class="card__arc"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 100"
+      >
+        <path
+          d="M 40 80 c 22 0 40 -22 40 -40 v 40 Z"
+          fill="var(--surface-color)"
+        />
       </svg>
       <img
         class="card__thumb"
@@ -25,12 +32,14 @@ range(1, 5) | random %}
         >
           {{ item.name }}
         </h3>
-        <span
-          class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3 px-2"
-          >#{{ item.category.name }}</span
-        >
-        <span class="card__status">{{ item.create_at }}</span>
-        <div class="mx-2">
+        <div>
+          <span
+            class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3 px-2"
+            >#{{ item.category.name }}</span
+          >
+          <span class="card__status">{{ item.create_at }}</span>
+        </div>
+        <div class="mx-2 mt-2">
           {% if not item.joined %}
           <button
             class="btn btn-sm btn_style"
@@ -56,7 +65,7 @@ range(1, 5) | random %}
         </div>
       </div>
     </div>
-    <p class="card__description">
+    <p class="card__description" title="{{ item.description }}">
       {{ item.description|truncate(114, true, '...') }}
     </p>
     <p class="text-center card__status">

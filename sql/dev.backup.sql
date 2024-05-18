@@ -34,54 +34,34 @@ INSERT INTO user_record (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-
 
 -- User Like
 
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 1, '2024-05-03 09:30:00');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 2, '2024-05-03 10:00:00');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 3, '2024-05-03 11:30:00');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 4, '2024-05-03 13:00:00');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 5, '2024-05-03 14:30:00');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 12, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 14, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 16, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 18, '2024-04-22 05:23:36.740414');
-INSERT INTO user_like (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 1, 2, '2024-05-03 09:30:00');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 2, 1, '2024-05-03 10:00:00');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 3, 4, '2024-05-03 11:30:00');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 4, 6, '2024-05-03 13:00:00');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ffe8b047-84a8-45a5-9f15-e573b1e1041a', 5, 6, '2024-05-03 14:30:00');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 6, 2, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 7, 1, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, 3, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 9, 6, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, 10, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 12, 14, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 14, 20, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 16, 14, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 18, 14, '2024-04-22 05:23:36.740414');
+INSERT INTO user_like (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, 1, '2024-04-22 05:23:36.740414');
 
 -- User Save
 
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 11, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 15, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 17, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 19, '2024-04-22 05:23:36.740414');
-INSERT INTO user_save (user_id, request_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, '2024-04-22 05:23:36.740414');
-
--- User Notice
-
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
-INSERT INTO user_notice (user_id, subject, content, module, status, create_at, update_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 'Notification: SYSTEM', 'Announcement successfully!', 'SYSTEM', 0, '2024-04-21 14:41:05.319818', '2024-04-21 14:41:05.319841');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 1, 1, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 2, 4, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 3, 4, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 8, 10, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 10, 6, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 11, 8, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 15, 2, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 17, 2, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 19, 10, '2024-04-22 05:23:36.740414');
+INSERT INTO user_save (user_id, request_id, reply_id, create_at) VALUES ('ab9ef73b-14bf-4031-a199-2ae67ce7f341', 20, 1, '2024-04-22 05:23:36.740414');
 
 -- Community
 
