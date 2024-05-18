@@ -1,5 +1,7 @@
 """Services for api."""
 
+import json
+
 import requests
 from flask import current_app, g
 from flask_login import current_user
@@ -19,6 +21,7 @@ from app.models.user_notice import UserNotice
 from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
+from app.notice.events import NoticeTypeEnum, notice_event
 from app.utils import get_config
 
 from . import ApiResponse
@@ -550,16 +553,181 @@ def _get_user_community_ids(user_preference: UserPreference) -> list:
 # Api service for community module.
 
 
-def communities_service() -> ApiResponse:
+def communities_service(
+    community_id: int = None, page: int = 1, per_page: int = 10
+) -> ApiResponse:
     """Service for getting all communities."""
 
     # query
     query = db.session.query(Community).order_by(Community.id)
 
-    # convert to JSON data
-    community_collection = [community.to_dict() for community in query]
+    # apply filters
+    if community_id:
+        query = query.filter(Community.id == community_id)
 
-    return ApiResponse(data={"communities": community_collection}).json()
+    # pagination
+    pagination = db.paginate(query, page=page, per_page=per_page)
+
+    # convert to JSON data
+    community_collection = [community.to_dict() for community in pagination.items]
+
+    # community posts number
+    for community in community_collection:
+        community["posts"] = (
+            db.session.query(Request).filter_by(community_id=community["id"]).count()
+        )
+
+    # if user joined community
+    user_communities = (
+        db.session.query(UserPreference).filter_by(user_id=current_user.id).first()
+    )
+    community_ids = _get_user_community_ids(user_communities)
+
+    for community in community_collection:
+        community["joined"] = community["id"] in community_ids
+
+    # community members number
+    user_preferences = UserPreference.query.all()
+    community_counts = {}
+    for user_preference in user_preferences:
+        communities = json.loads(user_preference.communities)
+
+        for communities_id in communities:
+            if communities_id in community_counts:
+                community_counts[communities_id] += 1
+            else:
+                community_counts[communities_id] = 1
+
+    for community in community_collection:
+        community["members"] = community_counts.get(community["id"], 0)
+
+    return ApiResponse(
+        data={"communities": community_collection}, pagination=pagination
+    ).json()
+
+
+def join_community_service(community_id: int) -> ApiResponse:
+    """Service for joining a community by community id."""
+
+    user_id: str = current_user.id
+
+    # check if user already joined community
+    community = db.session.query(Community).get(community_id)
+    if community is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="community not found"
+        ).json()
+
+    user_preference = (
+        db.session.query(UserPreference).filter_by(user_id=user_id).first()
+    )
+
+    if user_preference is None:
+        user_preference = UserPreference(
+            user_id=user_id, communities=str([community_id]), interests=str([])
+        )
+        db.session.add(user_preference)
+
+    else:
+        community_ids = _get_user_community_ids(user_preference)
+        if community in community_ids:
+            return ApiResponse(
+                HttpRequestEnum.BAD_REQUEST.value,
+                message="user already joined community",
+            ).json()
+
+        user_preference.communities = str(
+            list(set(_get_user_community_ids(user_preference) + [community_id]))
+        )
+
+    db.session.commit()
+    current_app.logger.info(
+        f"User: {user_id} joined Community {community_id} successfully"
+    )
+    notice_event(notice_type=NoticeTypeEnum.COMMUNITY_JOIN)
+
+    return ApiResponse(
+        HttpRequestEnum.SUCCESS_OK.value, message="join community success"
+    ).json()
+
+
+def leave_community_service(community_id: int) -> ApiResponse:
+    """Service for leaving a community by community id."""
+
+    user_id: str = current_user.id
+
+    # check if user already joined community
+    community = db.session.query(Community).get(community_id)
+    if community is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="community not found"
+        ).json()
+
+    user_preference = (
+        db.session.query(UserPreference).filter_by(user_id=user_id).first()
+    )
+
+    if user_preference is None:
+        return ApiResponse(
+            HttpRequestEnum.BAD_REQUEST.value, message="user not joined community"
+        ).json()
+
+    community_ids = _get_user_community_ids(user_preference)
+    if community_id not in community_ids:
+        return ApiResponse(
+            HttpRequestEnum.BAD_REQUEST.value, message="user not joined community"
+        ).json()
+
+    community_ids.remove(community_id)
+    user_preference.communities = str(community_ids)
+    db.session.commit()
+    current_app.logger.info(
+        f"User: {user_id} left Community {community_id} successfully"
+    )
+    notice_event(notice_type=NoticeTypeEnum.COMMUNITY_LEAVE)
+
+    return ApiResponse(
+        HttpRequestEnum.SUCCESS_OK.value, message="leave community success"
+    ).json()
+
+
+def delete_community_service(community_id: int) -> ApiResponse:
+    """Service for deleting a community by community id."""
+
+    user_id: str = current_user.id
+
+    # check if user is admin of community
+    community = db.session.query(Community).get(community_id)
+    if community is None:
+        return ApiResponse(
+            HttpRequestEnum.NOT_FOUND.value, message="community not found"
+        ).json()
+
+    if community.creator_id != user_id:
+        return ApiResponse(
+            HttpRequestEnum.FORBIDDEN.value, message="user is not creator of community"
+        ).json()
+
+    # delete community
+    db.session.delete(community)
+    db.session.commit()
+    current_app.logger.info(f"User: {user_id} deleted Community {community_id}")
+    notice_event(notice_type=NoticeTypeEnum.COMMUNITY_DELETED)
+
+    return ApiResponse(
+        HttpRequestEnum.NO_CONTENT.value, message="delete community success"
+    ).json()
+
+
+def community_options_service() -> ApiResponse:
+    """Service for getting community options."""
+
+    communities = db.session.query(Community).order_by(Community.id).all()
+    community_options = [
+        {"value": community.id, "label": community.name} for community in communities
+    ]
+
+    return ApiResponse(data={"community_options": community_options}).json()
 
 
 # Api service for popular module.
@@ -626,21 +794,16 @@ def posts_service(
 # Api service for others.
 
 
-def categories_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def categories_service() -> ApiResponse:
     """Service for getting all categories."""
 
     # query
-    query = db.session.query(Category).order_by(Category.id)
-
-    # pagination
-    pagination = db.paginate(query, page=page, per_page=per_page)
+    categories = db.session.query(Category).order_by(Category.id)
 
     # convert to JSON data
-    category_collection = [category.to_dict() for category in pagination]
+    category_collection = [category.to_dict() for category in categories]
 
-    return ApiResponse(
-        data={"categories": category_collection}, pagination=pagination
-    ).json()
+    return ApiResponse(data={"categories": category_collection}).json()
 
 
 def category_service(category_id: int) -> ApiResponse:
@@ -656,19 +819,16 @@ def category_service(category_id: int) -> ApiResponse:
     return ApiResponse(data={"category": category.to_dict()}).json()
 
 
-def tags_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def tags_service() -> ApiResponse:
     """Service for getting all tags."""
 
     # query
-    query = db.session.query(Tag).order_by(Tag.id)
-
-    # pagination
-    pagination = db.paginate(query, page=page, per_page=per_page)
+    tags = db.session.query(Tag).order_by(Tag.id)
 
     # convert to JSON data
-    tags_collection = [tag.to_dict() for tag in pagination.items]
+    tags_collection = [tag.to_dict() for tag in tags]
 
-    return ApiResponse(data={"tags": tags_collection}, pagination=pagination).json()
+    return ApiResponse(data={"tags": tags_collection}).json()
 
 
 def tag_service(tag_id: int) -> ApiResponse:
@@ -711,6 +871,12 @@ def stats_service() -> ApiResponse:
 def upload_image_service(image_file: FileStorage) -> ApiResponse:
     """Service for uploading image."""
 
+    if image_file is None:
+        return ApiResponse(
+            code=HttpRequestEnum.BAD_REQUEST.value,
+            message="Image file is required",
+        ).json()
+
     payload = payload = {"key": get_config("IMGBB", "API_KEY")}
     files = {
         "image": (image_file.filename, image_file, image_file.content_type),
@@ -723,7 +889,7 @@ def upload_image_service(image_file: FileStorage) -> ApiResponse:
         return ApiResponse(
             code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
             message="Image upload failed",
-        )
+        ).json()
 
     image_url = response.json()["data"]["url"]
 

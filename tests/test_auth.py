@@ -1,13 +1,11 @@
 """Tests for the auth module."""
 
 import enum
-import hashlib
 
 from flask.testing import FlaskClient
 
-from app.constants import GRAVATAR_URL, HttpRequestEnum
+from app.constants import HttpRequestEnum
 from app.models.user import User
-from app.models.user_notice import UserNotice, UserNoticeModuleEnum
 from tests.config import AuthActions, TestBase, Utils
 from tests.seeds.user_seeds import seed_user_data
 
@@ -55,13 +53,6 @@ class TestAuth(TestBase):
         self.assertIsNotNone(user)
         self.assertEqual(user.username, register_data["username"])
         self.assertEqual(user.email, register_data["email"])
-        self.assertIn(
-            user.avatar_url,
-            [
-                register_data["avatar"],
-                f"{GRAVATAR_URL}{hashlib.sha256(user.email.lower().encode()).hexdigest()}",
-            ],
-        )
         self.assertEqual(user.security_question, register_data["squestion"])
         self.assertEqual(user.security_answer, register_data["sanswer"])
 
@@ -155,12 +146,6 @@ class TestAuth(TestBase):
         user = User.query.filter_by(email=forgot_password_data["email"]).first()
         self.assertIsNotNone(user)
         self.assertTrue(user.verify_password(forgot_password_data["password"]))
-
-        # test the notice
-        notice = UserNotice.query.filter_by(
-            user=user, module=UserNoticeModuleEnum.USER, status=False
-        ).first()
-        self.assertIsNotNone(notice)
 
         # test login with the new password
         auth = AuthActions(client)

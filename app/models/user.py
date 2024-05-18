@@ -2,15 +2,13 @@
 
 import datetime
 import enum
-import hashlib
 
 from flask_login import UserMixin
 from sqlalchemy import event
 
-from app.constants import GRAVATAR_URL
+from app.constants import DICEBEAR_AVATAR_URL
 from app.extensions import bcrypt, db
-from app.utils import (format_datetime_to_readable_string, generate_time,
-                       generate_uuid)
+from app.utils import format_datetime_to_readable_string, generate_time, generate_uuid
 
 
 class UserStatusEnum(enum.Enum):
@@ -110,12 +108,14 @@ def before_insert_listener(_, __, target) -> None:
     """Update the create time before inserting a new user."""
 
     target.id = generate_uuid()
-    target.avatar_url = check_avatar_url(target.avatar_url, target.email)
+    target.avatar_url = check_avatar_url(target.avatar_url, target.username)
 
 
-def check_avatar_url(avatar_url: str, email: str) -> None:
+def check_avatar_url(avatar_url: str, username: str) -> None:
     """Check the avatar url."""
 
-    if not avatar_url and email:
-        return f"{GRAVATAR_URL}{hashlib.sha256(email.lower().encode()).hexdigest()}"
+    if not avatar_url and username:
+        formatted_username = username.replace(" ", "_")
+        return f"{DICEBEAR_AVATAR_URL}{formatted_username}"
+
     return avatar_url

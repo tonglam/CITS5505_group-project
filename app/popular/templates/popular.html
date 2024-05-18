@@ -19,16 +19,8 @@
         <div class="text-center">
           <div class="subtitle_style my-2">Top Viewed Posts</div>
         </div>
-        {% for item in topViews %}
-
-        <li
-          onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
-        >
-          <strong class="subtitle">{{ item.title }}</strong>
-          <i class="fa fa-angle-right"></i>
-          <p>{{ item.username }}</p>
-        </li>
-
+        {% for item in topViews %} {% import "popularPostItem.html" as
+        popularPostItem %} {{ popularPostItem.render_popular_post_item(item) }}
         {% endfor %}
       </ol>
     </div>
@@ -37,14 +29,8 @@
         <div class="text-center">
           <div class="subtitle_style my-2">Top Replied Posts</div>
         </div>
-        {% for item in topReplies %}
-        <li
-          onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
-        >
-          <strong class="subtitle">{{ item.title }}</strong>
-          <i class="fa fa-angle-right"></i>
-          <p>{{ item.username }}</p>
-        </li>
+        {% for item in topReplies %} {% import "popularPostItem.html" as
+        popularPostItem %} {{ popularPostItem.render_popular_post_item(item) }}
         {% endfor %}
       </ol>
     </div>
@@ -53,26 +39,17 @@
 
 <div class="my-3 gap_line">
   <div class="heading_container">
-    <h1 contenteditable>Popular Community</h1>
+    <h1 contenteditable>Trending Community</h1>
     <p>
       - Explore the top four trending communities across different categories! -
     </p>
   </div>
 
   <ul class="tilesWrap">
-    {% for item in topCommunities %}
-    <li
-      onclick="location.href='{{ url_for('index', community_id=item.id) }}'"
-      style="cursor: pointer"
-    >
-      <h2>0{{ loop.index }}</h2>
-      <h3>{{ item.communityname }}</h3>
-      <p>{{ item.description|truncate(120, true, '...') }}</p>
-      <button>Explore</button>
-      <hr />
-      <span class="tag tag_style{{ loop.index }}">#{{item.category }}</span>
-    </li>
-    {% endfor %}
+    {% for item in topCommunities %} {% set index = loop.index %} {% import
+    "popularCommunityItem.html" as popularCommunityItem %} {{
+    popularCommunityItem.render_popular_community_item(item, index) }} {% endfor
+    %}
   </ul>
 </div>
 {% endblock %}

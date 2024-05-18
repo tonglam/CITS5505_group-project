@@ -23,6 +23,7 @@ from sqlalchemy.sql import text
 
 from app.api.service import (
     communities_service,
+    community_options_service,
     populars_service,
     posts_service,
     stats_service,
@@ -30,6 +31,7 @@ from app.api.service import (
     users_notices_service,
 )
 from app.constants import (
+    COMMUNITY_OPTION_NUM,
     G_NOTICE,
     G_NOTICE_NUM,
     G_POST_STAT,
@@ -45,6 +47,7 @@ from .api import api_bp
 from .auth import auth_bp
 from .community import community_bp
 from .extensions import bcrypt, db, jwt, login_manager, migrate, scheduler, swag
+from .job import job_bp
 from .popular import popular_bp
 from .post import post_bp
 from .search import search_bp
@@ -84,15 +87,23 @@ def create_app() -> Flask:
     # global context processors
     register_context_processors(app)
 
+    # start scheduler
+    if env != EnvironmentEnum.TEST.value:
+        scheduler.start()
+
     # home page
-    @app.route("/")
+    @app.route("/", methods=["GET"])
     @login_required
     def index():
+
+        # request args
+        community_id = request.args.get("community_id", default=None, type=int)
+
         # community
         communities = get_home_communities()
 
         # post
-        post_result = get_home_posts()
+        post_result = get_home_posts(community_id)
         posts = post_result["posts"]
 
         # pagination
@@ -109,18 +120,23 @@ def create_app() -> Flask:
         # stat
         stats = get_home_stats()
 
+        # options
+        community_options = get_home_community_options()
+
         return render_template(
             "index.html",
             render_id="index-posts",
             render_url="/index_posts",
+            community_id=community_id,
             communities=communities,
             posts=posts,
             pagination=pagination,
             populars=populars,
             stats=stats,
+            community_options=community_options,
         )
 
-    @app.route("/index_posts")
+    @app.route("/index_posts", methods=["GET"])
     @login_required
     def index_posts():
 
@@ -143,11 +159,17 @@ def create_app() -> Flask:
 
         return render_template(
             "indexPost.html",
+            community_id=community_id,
             posts=posts,
             pagination=pagination,
         )
 
-    @app.route("/notifications")
+    @app.route("/navbar", methods=["GET"])
+    @login_required
+    def navbar():
+        return render_template("components/layout/navBar.html")
+
+    @app.route("/notifications", methods=["GET"])
     @login_required
     def notification():
         notices = (
@@ -346,6 +368,7 @@ def register_blueprints(app: Flask) -> None:
         url_prefix="/users",
         static_url_path="/users/static",
     )
+    app.register_blueprint(job_bp)
 
 
 def register_error_handlers(app: Flask) -> None:
@@ -594,9 +617,16 @@ def get_home_stats() -> list:
 def get_home_communities() -> list:
     """Get index communities data."""
 
-    communities_response = communities_service().json
+    communities_response = communities_service(per_page=COMMUNITY_OPTION_NUM).json
     communities = communities_response.get("data").get("communities")
 
     return [
         {"id": community["id"], "name": community["name"]} for community in communities
     ]
+
+
+def get_home_community_options() -> list:
+    """Get index community options data."""
+
+    communities_response = community_options_service().json
+    return communities_response.get("data").get("community_options")

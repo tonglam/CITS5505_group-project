@@ -2,7 +2,7 @@
 
 import enum
 
-from flask import current_app
+from flask import current_app, g
 from flask_login import current_user
 
 from app.models.user_notice import UserNoticeActionEnum, UserNoticeModuleEnum
@@ -21,6 +21,12 @@ class NoticeTypeEnum(enum.Enum):
 
     USER_UPDATED_AVATAR = f"{UserNoticeModuleEnum.USER.value}, \
         {UserNoticeActionEnum.UPDATED_AVATAR.value}"
+
+    COMMUNITY_JOIN = f"{UserNoticeModuleEnum.COMMUNITY.value}, \
+        {UserNoticeActionEnum.JOINED.value}"
+
+    COMMUNITY_LEAVE = f"{UserNoticeModuleEnum.COMMUNITY.value}, \
+        {UserNoticeActionEnum.LEAVE.value}"
 
     COMMUNITY_CREATED = (
         f"{UserNoticeModuleEnum.COMMUNITY.value}, {UserNoticeActionEnum.CREATED.value}"
@@ -83,3 +89,4 @@ def notice_event(
         "Notice Event - user_id: %s, notice_type: %s", user_id, notice_type.value
     )
     notification_signal.send("app", user_id=user_id, notice_type=notice_type.value)
+    g.notice_num += 1
