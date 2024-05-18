@@ -282,11 +282,7 @@ def posts() -> ApiResponse:
 def categories() -> ApiResponse:
     """Get all categories."""
 
-    # get pagination parameters
-    page = request.args.get("page", default=1, type=int)
-    per_page = request.args.get("per_page", default=10, type=int)
-
-    return categories_service(page=page, per_page=per_page)
+    return categories_service()
 
 
 @api_bp.route("/categories/<category_id>", methods=["GET"])
@@ -302,11 +298,7 @@ def category(category_id: int) -> ApiResponse:
 def tags() -> ApiResponse:
     """Get all tags."""
 
-    # get pagination parameters
-    page = request.args.get("page", default=1, type=int)
-    per_page = request.args.get("per_page", default=10, type=int)
-
-    return tags_service(page=page, per_page=per_page)
+    return tags_service()
 
 
 @api_bp.route("/tags/<tag_id>", methods=["GET"])

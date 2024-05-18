@@ -572,14 +572,10 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_get_categories(self, app: Flask, client: FlaskClient):
+    def test_get_categories(self, _, client: FlaskClient):
         """Test the categories GET API."""
 
         url = _PREFIX + "/categories"
-
-        category_num = 0
-        with app.app_context():
-            category_num = Category.query.count()
 
         # login
         AuthActions(client).login()
@@ -590,9 +586,6 @@ class TestApi(TestBase):
         response_data = response.json
 
         self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
-        self.assertEqual(response_data["pagination"]["page"], 1)
-        self.assertEqual(response_data["pagination"]["per_page"], 10)
-        self.assertEqual(response_data["pagination"]["total_items"], category_num)
 
         # logout
         AuthActions(client).logout()
@@ -630,14 +623,10 @@ class TestApi(TestBase):
         # logout
         AuthActions(client).logout()
 
-    def test_get_tags(self, app: Flask, client: FlaskClient):
+    def test_get_tags(self, _, client: FlaskClient):
         """Test the tags GET API."""
 
         url = _PREFIX + "/tags"
-
-        tag_num = 0
-        with app.app_context():
-            tag_num = Tag.query.count()
 
         # login
         AuthActions(client).login()
@@ -647,12 +636,6 @@ class TestApi(TestBase):
 
         response_data = response.json
         self.assertEqual(response_data["code"], HttpRequestEnum.SUCCESS_OK.value)
-
-        response_data = response.json
-
-        self.assertEqual(response_data["pagination"]["page"], 1)
-        self.assertEqual(response_data["pagination"]["per_page"], 10)
-        self.assertEqual(response_data["pagination"]["total_items"], tag_num)
 
         # logout
         AuthActions(client).logout()

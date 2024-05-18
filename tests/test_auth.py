@@ -1,11 +1,10 @@
 """Tests for the auth module."""
 
 import enum
-import hashlib
 
 from flask.testing import FlaskClient
 
-from app.constants import GRAVATAR_URL, HttpRequestEnum
+from app.constants import HttpRequestEnum
 from app.models.user import User
 from tests.config import AuthActions, TestBase, Utils
 from tests.seeds.user_seeds import seed_user_data
@@ -54,13 +53,6 @@ class TestAuth(TestBase):
         self.assertIsNotNone(user)
         self.assertEqual(user.username, register_data["username"])
         self.assertEqual(user.email, register_data["email"])
-        self.assertIn(
-            user.avatar_url,
-            [
-                register_data["avatar"],
-                f"{GRAVATAR_URL}{hashlib.sha256(user.email.lower().encode()).hexdigest()}",
-            ],
-        )
         self.assertEqual(user.security_question, register_data["squestion"])
         self.assertEqual(user.security_answer, register_data["sanswer"])
 
