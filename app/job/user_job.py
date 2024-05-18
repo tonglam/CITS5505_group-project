@@ -16,6 +16,7 @@ from app.constants import (
 from app.extensions import db, scheduler
 from app.models.community import Community
 from app.models.request import Request
+from app.models.reply import Reply
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_preference import UserPreference
@@ -147,10 +148,13 @@ def create_user_like():
 
         users = [user.id for user in User.query.all()]
         requests = [request.id for request in Request.query.all()]
+        replies = [reply.id for reply in Reply.query.all()]
+
 
         user_like = UserLike(
             user_id=random.choice(users),
             request_id=random.choice(requests),
+            reply_id=random.choice(replies)
         )
 
         db.session.add(user_like)
@@ -185,10 +189,12 @@ def create_user_save():
 
         users = [user.id for user in User.query.all()]
         requests = [request.id for request in Request.query.all()]
+        replies = [reply.id for reply in Reply.query.all()]
 
         user_save = UserSave(
             user_id=random.choice(users),
             request_id=random.choice(requests),
+            reply_id=random.choice(replies)
         )
 
         db.session.add(user_save)
