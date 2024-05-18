@@ -1,11 +1,12 @@
-{% macro render_post_item(item, color_type) -%} {% set _id = item.id %}
+{% macro render_post_item(item, color_type) -%} {% set _id = item.id %} {% set
+tag_random_int = range(1, 5) | random %}
 <div
   class="postItem card border-color row-hover pos-relative pt-2 px-3 mb-3 border rounded-0"
 >
   <div class="row align-items-center">
     <div class="col-md-8 mb-3 mb-sm-0">
       <span
-        class="badge rounded-pill commmunityTag_style{{ color_type }} module-name mb-3"
+        class="badge rounded-pill commmunityTag_style{{ tag_random_int }}  module-name mb-3"
         >{{ item.tag }}</span
       >
       <h5
