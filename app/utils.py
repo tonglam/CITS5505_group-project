@@ -92,7 +92,7 @@ def format_datetime_to_readable_string(dt):
             "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
         )
 
-    return dt.strftime(f"%-d{day_suffix(dt.day)} %B %Y")
+    return dt.strftime(f"%d{day_suffix(dt.day)} %B %Y").lstrip('0')
 
 
 def format_datetime_to_local_date_diff(dt):

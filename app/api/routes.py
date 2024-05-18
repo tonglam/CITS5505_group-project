@@ -1,4 +1,5 @@
 """Routes for api."""
+from urllib.parse import urlparse, parse_qs
 
 import requests
 from flask import abort, request
@@ -38,6 +39,12 @@ from .service import (
     user_verification_service,
     users_notices_service,
     users_records_service,
+    post_user_comments_service,
+    delete_user_comments_service,
+    update_user_comments_service,
+    user_post_service,
+    delete_post_service,
+    update_user_post_service,
 )
 
 
@@ -143,16 +150,18 @@ def user_likes() -> ApiResponse:
     return user_likes_service(page, per_page)
 
 
-@api_bp.route("/users/likes/<int:request_id>", methods=["POST", "DELETE"])
+@api_bp.route("/users/likes", methods=["POST", "DELETE"])
 @jwt_required()
-def user_like(request_id: int) -> ApiResponse:
+def user_like() -> ApiResponse:
     """Like or unlike a request by user id and request id."""
+    request_id = request.get_json().get("request_id")
+    reply_id = request.get_json().get("reply_id")
 
     if request.method == "POST":
-        return post_user_like_service(request_id)
+        return post_user_like_service(request_id, reply_id)
 
     if request.method == "DELETE":
-        return delete_user_like_service(request_id)
+        return delete_user_like_service(request_id, reply_id)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
@@ -169,16 +178,18 @@ def user_saves() -> ApiResponse:
     return user_saves_service(page, per_page)
 
 
-@api_bp.route("/users/saves/<int:request_id>", methods=["POST", "DELETE"])
+@api_bp.route("/users/saves", methods=["POST", "DELETE"])
 @jwt_required()
-def user_save(request_id: int) -> ApiResponse:
-    """Save or unsave a request by user id and request id."""
+def user_save() -> ApiResponse:
+    """Save or unsave a request or a reply by user id and request id."""
+    request_id = request.get_json().get("request_id")
+    reply_id = request.get_json().get("reply_id")
 
     if request.method == "POST":
-        return post_user_save_service(request_id)
+        return post_user_save_service(request_id, reply_id)
 
     if request.method == "DELETE":
-        return delete_user_save_service(request_id)
+        return delete_user_save_service(request_id, reply_id)
 
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
@@ -273,6 +284,75 @@ def posts() -> ApiResponse:
 
     return posts_service(community_id, order_by, page, per_page)
 
+@api_bp.route("/posts/create/comment", methods=["POST","PUT","DELETE"])
+@jwt_required()
+def post_comment() -> ApiResponse:
+    """Post, update and delete comment."""
+    # Get the information from the referer header.
+    referer = request.headers.get('Referer')
+    if referer:
+        query = urlparse(referer).query
+        params = parse_qs(query)
+        post_id = params.get('post_id', [None])[0]
+        reply_id = params.get('reply_id', [post_id])[0]
+    else:
+        post_id = None
+        reply_id = None
+
+    content = request.json.get('content')
+
+    request_post_id = request.json.get('post_id')
+    request_reply_id = request.json.get('reply_id')
+
+    if request.method == "POST":
+        if not post_id or not content:
+            return ApiResponse(400, 'Wrong parameters for post comment').json()
+        return post_user_comments_service(post_id, reply_id, content)
+
+    if request.method == "PUT":
+        return update_user_comments_service(reply_id, content)
+
+    if request.method == "DELETE":
+        return delete_user_comments_service(request_post_id, request_reply_id)
+
+    return ApiResponse(400, 'Invalid request method').json()
+
+@api_bp.route("/posts/create/post", methods=["POST", "PUT", "DELETE"])
+@jwt_required()
+def post_related() -> ApiResponse:
+    # pylint: disable=too-many-return-statements
+    """Post, update, and delete a post."""
+
+    title = request.json.get('title')
+    community = request.json.get('community')
+    content = request.json.get('content')
+    tag_id = request.json.get('tag')
+    request_post_id = request.json.get('post_id')
+
+    referer = request.headers.get('Referer')
+    if referer:
+        query = urlparse(referer).query
+        params = parse_qs(query)
+        referer_post_id = params.get('post_id', [None])[0]
+    else:
+        referer_post_id = None
+
+    if request.method == "POST":
+        if not title or not community or not content:
+            return ApiResponse(400, 'Wrong parameters for post').json()
+        return user_post_service(title, community, content, tag_id)
+
+    if request.method == "PUT":
+        if not referer_post_id:
+            return ApiResponse(400, 'Post ID missing for update').json()
+        return update_user_post_service(referer_post_id, title, community, content, tag_id)
+
+    if request.method == "DELETE":
+        if not request_post_id:
+            return ApiResponse(400, 'Post ID missing for deletion').json()
+        return delete_post_service(request_post_id)
+
+    return ApiResponse(400, 'Invalid request method').json()
 
 # Api for others.
 

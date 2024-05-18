@@ -1,68 +1,61 @@
-{% extends "layout.html" %} {% block title %}Create{% endblock %} {% block head
-%} {{ super() }}<link
-  href="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/css/style.css"
-  rel="stylesheet"
-/>
-
-<style>
-  #editor—wrapper {
-    border: 1px solid #ccc;
-  }
-  #toolbar-container {
-    border-bottom: 1px solid #ccc;
-  }
-  #editor-container {
-    height: 500px;
-  }
-</style>
-{% endblock %} {% block content %}
-<div class="contain">
-  <p>Create</p>
-
-  <div style="border: 1px solid #ccc">
-    <div id="editor-toolbar" style="border-bottom: 1px solid #ccc"></div>
-    <div id="editor-text-area" style="height: 500px"></div>
-  </div>
-
-  <p style="background-color: #f1f1f1">
-    Text length: <span id="total-length"></span>Selected text length:
-    <span id="selected-length"></span>
-  </p>
+{% extends "layout.html" %} 
+{% block title %}Create{% endblock %} 
+{% block head%} 
+  {{ super() }}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create {{ 'Post' if mode == 'post' else 'Comment' }}</title>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('post.static', filename='style/create.css') }}">
+{%endblock%}
+{% block content %}
+<div class="create-page-container">
+  {% if mode == 'edit_comment' %}
+    <div class="comment-content">
+      <h2>My Comment</h2>
+      <p>{{ replies.content | safe }}</p>
+    </div>
+  {% elif mode == 'edit_post' %}
+    <div class="edit-post-content">
+      <h2>My Post</h2>
+      <p><strong>Title:</strong> {{ requests.title }}</p>
+      <p><strong>Tag:</strong> {{ requests.tag.name }}</p>
+      <p><strong>Community:</strong> {{ requests.community.name }}</p>
+      <p><strong>Content:</strong> {{ requests.content | safe }}</p>
+    </div>
+  {% endif %}
+  <h1>{{ 'Edit' if 'edit' in mode else 'Create' }} {{ 'Post' if 'post' in mode else 'Comment' }}</h1>  
+  <form id="postForm" method="post">
+    {% if 'post' in mode %}
+      <div>
+        <label for="postTitle">Title:</label>
+        <input type="text" id="postTitle" name="title" required placeholder="Enter title">
+      </div>
+      <div>
+        <label for="postCommunity">Community:</label>
+        <select id="postCommunity" name="community" required>
+          {% for community in communities %}
+            <option value="{{ community.name }}">{{ community.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="postTag">Tag:</label>
+        <select id="postTag" name="tag" required>
+          {% for tag in tags %}
+            <option value="{{ tag.name }}">{{ tag.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endif %}
+    <div id="editor-container"></div>
+    <input type="hidden" id="mode" name="mode" value="{{ mode }}">
+    <button type="submit">Submit</button>
+    <input type="file" id="image-upload" style="display: none;">
+  </form>
 </div>
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/index.min.js"
-></script>
-<script>
-  const E = window.wangEditor;
-
-  E.i18nChangeLanguage("en");
-
-  window.editor = E.createEditor({
-    selector: "#editor-text-area",
-    html: "<p><br></p>",
-    config: {
-      placeholder: "Rely here...",
-      MENU_CONF: {
-        uploadImage: {
-          fieldName: "your-fileName",
-          base64LimitSize: 10 * 1024 * 1024,
-        },
-      },
-      onChange(editor) {
-        const selectionText = editor.getSelectionText();
-        document.getElementById("selected-length").innerHTML =
-          selectionText.length;
-        const text = editor.getText().replace(/\n|\r/gm, "");
-        document.getElementById("total-length").innerHTML = text.length;
-      },
-    },
-  });
-
-  window.toolbar = E.createToolbar({
-    editor,
-    selector: "#editor-toolbar",
-    config: {},
-  });
-</script>
+{% block javascript %}
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+  <script src="{{ url_for('post.static', filename='js/editor.js') }}"></script>
+{% endblock %} 
 {% endblock %}

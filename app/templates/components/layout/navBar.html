@@ -24,7 +24,7 @@
   <ul class="navbar-nav flex-row">
     <!-- create button -->
     {{ navItem.create_button(url_for('community.community_management'),
-    "Community") }} {{ navItem.create_button(url_for('post.create'), "Post") }}
+    "Community") }} {{ navItem.create_button(url_for('post.create_post')) }}
 
     <!-- github icon -->
     {{ navItem.icon_button("github",
