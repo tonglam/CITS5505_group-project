@@ -91,7 +91,7 @@ def create_app() -> Flask:
         scheduler.start()
 
     # home page
-    @app.route("/")
+    @app.route("/", methods=["GET"])
     @login_required
     def index():
 
@@ -131,7 +131,7 @@ def create_app() -> Flask:
             stats=stats,
         )
 
-    @app.route("/index_posts")
+    @app.route("/index_posts", methods=["GET"])
     @login_required
     def index_posts():
 
@@ -159,12 +159,12 @@ def create_app() -> Flask:
             pagination=pagination,
         )
 
-    @app.route("/navbar")
+    @app.route("/navbar", methods=["GET"])
     @login_required
     def navbar():
         return render_template("components/layout/navBar.html")
 
-    @app.route("/notifications")
+    @app.route("/notifications", methods=["GET"])
     @login_required
     def notification():
         notices = (

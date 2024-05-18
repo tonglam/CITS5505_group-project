@@ -8,12 +8,13 @@
     />
   </div>
   <div class="text">
-    <a
-      href="javascript:void(0);"
+    <h6
+      class="click-subtitle"
       onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
     >
-      <h3 class="h5">{{ item.title }}</h3></a
-    ><small>Posted on {{ item.create_at }} by {{ item.author }} </small>
+      {{ item.title }}
+    </h6>
+    <small>Posted on {{ item.create_at }} by {{ item.author }} </small>
   </div>
 </div>
 {%- endmacro %}

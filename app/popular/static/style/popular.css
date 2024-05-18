@@ -126,13 +126,6 @@
   border-color: #7b9bba;
 }
 
-#popular
-/* effect for each post */
-.subtitle:hover {
-  border-bottom: 2px solid #637498;
-  text-decoration: none;
-  cursor: pointer;
-}
 /*===== popular posts rank container settings =====*/
 
 /*===== Community container settings =====*/

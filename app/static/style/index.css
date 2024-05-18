@@ -74,7 +74,8 @@ p.text-primary:hover {
   --stroke-color: #99bbde;
 
   text-shadow: var(--x-offset) var(--y-offset) 0px var(--background-color),
-    calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke)) 0px var(--stroke-color);
+    calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke))
+      0px var(--stroke-color);
 }
 
 .index-post-card {
@@ -763,5 +764,5 @@ p.text-primary:hover {
 /* postItem.html */
 
 .postItem {
-  cursor: pointer
+  cursor: pointer;
 }

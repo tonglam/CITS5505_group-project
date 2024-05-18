@@ -92,7 +92,7 @@ G_NOTICE = "notices"
 MAX_NOTICE_NUM = 99
 
 # Home page popular post number
-POPULAR_POST_NUM = 8
+POPULAR_POST_NUM = 10
 
 # Home page community option number
 COMMUNITY_OPTION_NUM = 20

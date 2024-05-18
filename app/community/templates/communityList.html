@@ -3,7 +3,9 @@
   %} {{ community_item.render_community_item(item, user) }} {% endfor %}
 </ul>
 
+{% if pagination %}
 <div class="mt-2 mb-5" id="pagination">
   {% import './components/pagination.html' as pageItem %} {{
   pageItem.render_pagination(pagination) }}
 </div>
+{% endif %}

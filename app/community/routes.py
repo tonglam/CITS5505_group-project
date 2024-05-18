@@ -16,10 +16,20 @@ from app.notice.events import NoticeTypeEnum, notice_event
 from app.utils import get_pagination_details
 
 
-@community_bp.route("/")
+@community_bp.route("/", methods=["GET"])
+@community_bp.route("/<int:community_id>", methods=["GET"])
 @login_required
-def community():
+def community(community_id: int = None):
     """Render the community page."""
+
+    if community_id:
+        community_entity = db.session.query(Community).get(community_id)
+        return render_template(
+            "community.html",
+            render_id="community-list",
+            render_url="/communities/community_list",
+            communities=[community_entity],
+        )
 
     # communities
     communities_result = communities_service(page=1, per_page=6).get_json()
@@ -42,7 +52,7 @@ def community():
     )
 
 
-@community_bp.route("/community_list")
+@community_bp.route("/community_list", methods=["GET"])
 @login_required
 def community_list():
     """Render the community list page."""
@@ -70,7 +80,7 @@ def community_list():
     )
 
 
-@community_bp.route("/user")
+@community_bp.route("/user", methods=["GET"])
 @login_required
 def user_community():
     """Get the user's community."""
@@ -101,7 +111,7 @@ def user_community():
     )
 
 
-@community_bp.route("/community_list/user")
+@community_bp.route("/community_list/user", methods=["GET"])
 @login_required
 def user_community_list():
     """Render the community list page."""

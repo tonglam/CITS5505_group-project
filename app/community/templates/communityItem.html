@@ -1,66 +1,69 @@
 {% macro render_community_item(item, user) -%} {% set img_random_int = range(1,
 10) | random %} {% set tag_random_int = range(1, 5) | random %}
-<li>
-  <a href="javascript:void(0);" class="community_card">
-    <img
-      src="{{url_for('static',filename='assets/community' ~ img_random_int ~ '.jpg')}}"
-      class="card__image"
-      alt="card image"
-      width="450"
-    />
-    <div class="card__overlay">
-      <div class="card__header">
-        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-          <path />
-        </svg>
-        <img
-          class="card__thumb"
-          src="{{ item.avatar_url }}"
-          alt="community avatar"
-        />
+<li class="community_card">
+  <img
+    src="{{url_for('static',filename='assets/community' ~ img_random_int ~ '.jpg')}}"
+    class="card__image"
+    alt="card image"
+    width="450"
+  />
+  <div class="card__overlay">
+    <div class="card__header">
+      <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+        <path />
+      </svg>
+      <img
+        class="card__thumb"
+        src="{{ item.avatar_url }}"
+        alt="community avatar"
+      />
 
-        <div class="card__header-text">
-          <h3 class="card__title">{{ item.name }}</h3>
-          <span
-            class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3"
-            >#{{ item.category.name }}</span
+      <div class="card__header-text">
+        <h3
+          class="card__title click-subtitle"
+          onclick="location.href='{{ url_for('index', community_id=item.id, _anchor='content') }}'"
+        >
+          {{ item.name }}
+        </h3>
+        <span
+          class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3"
+          >#{{ item.category.name }}</span
+        >
+        <span class="card__status">{{ item.create_at }}</span>
+        <div>
+          {% if not item.joined %}
+          <button
+            class="btn btn-sm btn_style"
+            onclick="handle_join_community({{ item.id }})"
           >
-          <span class="card__status">{{ item.create_at }}</span>
-          <div>
-            {% if not item.joined %}
-            <button
-              class="btn btn-sm btn_style"
-              onclick="handle_join_community({{ item.id }})"
-            >
-              Join
-            </button>
-            {% else %}
-            <button
-              class="btn btn-sm btn_style"
-              onclick="handle_leave_community({{ item.id }})"
-            >
-              Leave
-            </button>
-            {% endif %} {% if item.creator.id == user.id %}
-            <button
-              class="btn btn-sm btn_style"
-              onclick="location.href='{{ url_for('community.community_management', community_id=item.id) }}'"
-            >
-              Edit
-            </button>
-            <button
-              class="btn btn-sm btn_style"
-              onclick="handle_delete_community({{ item.id }})"
-            >
-              Delete
-            </button>
-            {% endif %}
-          </div>
+            Join
+          </button>
+          {% else %}
+          <button
+            class="btn btn-sm btn_style"
+            onclick="handle_leave_community({{ item.id }})"
+          >
+            Leave
+          </button>
+          {% endif %} {% if item.creator.id == user.id %}
+          <button
+            class="btn btn-sm btn_style"
+            onclick="location.href='{{ url_for('community.community_management', community_id=item.id) }}'"
+          >
+            Edit
+          </button>
+          <button
+            class="btn btn-sm btn_style"
+            onclick="handle_delete_community({{ item.id }})"
+          >
+            Delete
+          </button>
+          {% endif %}
         </div>
       </div>
-      <p class="card__description">{{ item.description }}</p>
-      <p class="text-center card__status">- POSTS:10086 FOLLOWER:10086 -</p>
     </div>
-  </a>
+    <p class="card__description">{{ item.description }}</p>
+    <p class="text-center card__status">- POSTS:10086 FOLLOWER:10086 -</p>
+  </div>
 </li>
 {%- endmacro %}

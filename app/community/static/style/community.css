@@ -20,6 +20,7 @@
   border-radius: calc(var(--curve) * 1px);
   overflow: hidden;
   text-decoration: none;
+  max-width: 450px;
 }
 
 .card__image {

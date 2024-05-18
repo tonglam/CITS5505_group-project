@@ -216,7 +216,7 @@ def login():
     abort(HttpRequestEnum.METHOD_NOT_ALLOWED.value)
 
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=["GET"])
 @login_required
 def logout():
     """Log out the user."""
@@ -290,7 +290,7 @@ def forgot_password():
     return render_template("forgotPassword.html", form=form)
 
 
-@auth_bp.route("/authorize/<provider>")
+@auth_bp.route("/authorize/<provider>", methods=["GET"])
 def authorize(provider: str):
     """Redirect to provider's OAuth2 login page."""
 
@@ -317,7 +317,7 @@ def authorize(provider: str):
     return redirect(provider_data[AUTHORIZE_URL] + "?" + qs)
 
 
-@auth_bp.route("/callback/<provider>")
+@auth_bp.route("/callback/<provider>", methods=["GET"])
 def callback(provider: str):
     """Receive authorization code from provider and get user info."""
 

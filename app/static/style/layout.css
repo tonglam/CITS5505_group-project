@@ -188,3 +188,9 @@ a {
   position: relative;
   z-index: 999;
 }
+
+.click-subtitle:hover {
+  border-bottom: 2px solid #637498;
+  text-decoration: none;
+  cursor: pointer;
+}
