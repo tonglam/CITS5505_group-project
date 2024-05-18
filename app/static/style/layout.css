@@ -194,3 +194,7 @@ a {
   text-decoration: none;
   cursor: pointer;
 }
+
+.footer-color {
+  background-color: rgba(0, 0, 0, 0.05);
+}
