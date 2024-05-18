@@ -12,7 +12,7 @@ $(document).ready(function () {
 
 const getCookieValue = async () => {
   const response = await getCookies();
-  if (response.includes("<!DOCTYPE html>")) {
+  if (response.toLowerCase().includes("<!doctype html>")) {
     return false;
   }
   cookies = JSON.parse(response);

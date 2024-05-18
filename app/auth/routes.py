@@ -202,7 +202,7 @@ def login():
         for field, errors in form.errors.items():
             for error in errors:
                 current_app.logger.error(
-                    "Register error in field %s: %s",
+                    "Login error in field %s: %s",
                     {getattr(form, field).label.text},
                     {error},
                 )
