@@ -47,18 +47,6 @@ const handle_leave_community = async (id) => {
   }
 };
 
-const handle_delete_community = async (id) => {
-  const response = await deleteFetch(`/api/v1/communities/${id}/delete`)()();
-  if (response.code === 204) {
-    re_render_community_list(1);
-    re_render_navbar();
-  } else if (response.code === 404) {
-    display_alert("Community not found");
-  } else if (response.code === 403) {
-    display_alert("You are not the owner of this community");
-  }
-};
-
 const get_current_page = () => {
   return document.querySelector(".page-item.active").querySelector("a")
     .textContent;
