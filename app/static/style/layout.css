@@ -1,3 +1,9 @@
+/*===== global font style =====*/
+body {
+  font-family: "Lato", sans-serif;
+}
+
+/*===== global font style =====*/
 .logo {
   margin-top: 2px;
 }
