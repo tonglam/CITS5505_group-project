@@ -122,3 +122,6 @@ USER_SAVE_MAX_NUM = 99999
 # Top data number
 TOP_DATA_NUM = 5
 TOP_COMMUNITY_NUM = 4
+
+# Display community number
+DISPLAY_COMMUNITY_NUM = 9

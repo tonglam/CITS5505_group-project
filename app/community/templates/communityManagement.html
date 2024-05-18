@@ -30,14 +30,15 @@
             id="communityForm"
           >
             {{ form.csrf_token }}
-            <div class="card-body media align-items-center text-center mt-4">
+
+            <div class="align-items-center text-center mt-4">
               <img
                 src="{{ community.avatar_url }}"
                 alt="uploadAvatar"
                 class="ui-w-80"
                 id="communityAvatar"
               />
-              <div class="media-body ml-4 mt-1">
+              <div class="ml-4 mt-1">
                 <label class="btn btn-sm edit_btn btn-outline-primary">
                   Upload</label
                 >

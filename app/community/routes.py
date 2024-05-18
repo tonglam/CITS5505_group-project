@@ -9,7 +9,7 @@ from app.api.service import (
     user_communities_service,
 )
 from app.community import community_bp, forms, service
-from app.constants import FlashAlertTypeEnum, HttpRequestEnum
+from app.constants import DISPLAY_COMMUNITY_NUM, FlashAlertTypeEnum, HttpRequestEnum
 from app.extensions import db
 from app.models.community import Community
 from app.notice.events import NoticeTypeEnum, notice_event
@@ -32,7 +32,7 @@ def community(community_id: int = None):
         )
 
     # communities
-    communities_result = communities_service(page=1, per_page=6).get_json()
+    communities_result = communities_service(per_page=DISPLAY_COMMUNITY_NUM).get_json()
     communities = communities_result.get("data").get("communities")
 
     # pagination
@@ -59,7 +59,7 @@ def community_list():
 
     # requests
     page = request.args.get("page", default=1, type=int)
-    per_page = request.args.get("per_page", default=6, type=int)
+    per_page = request.args.get("per_page", default=DISPLAY_COMMUNITY_NUM, type=int)
 
     # communities
     communities_result = communities_service(page=page, per_page=per_page).get_json()

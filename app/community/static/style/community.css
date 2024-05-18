@@ -20,12 +20,17 @@
   border-radius: calc(var(--curve) * 1px);
   overflow: hidden;
   text-decoration: none;
-  max-width: 450px;
+  max-width: 305px;
 }
 
 .card__image {
   width: 450px;
   height: 320px;
+}
+
+.ui-w-80 {
+  width: 80px !important;
+  height: auto;
 }
 
 .card__overlay {
@@ -124,11 +129,30 @@
   padding: 5px !important;
   background-color: transparent;
   color: #1e456c;
+  margin-right: 5px;
 }
 
 .btn_style:hover {
   background-color: #a7d0f6;
   color: #fff;
+}
+
+.community-fileinput {
+  position: absolute;
+  visibility: hidden;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.community-links .list-group-item.active {
+  font-weight: bold !important;
+  color: black !important;
+  background-color: #fff !important;
+}
+
+.community-multiselect ~ .select2-container {
+  width: 100% !important;
 }
 
 /*===== single Community card settings =====*/

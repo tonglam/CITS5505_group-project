@@ -26,11 +26,11 @@
           {{ item.name }}
         </h3>
         <span
-          class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3"
+          class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3 px-2"
           >#{{ item.category.name }}</span
         >
         <span class="card__status">{{ item.create_at }}</span>
-        <div>
+        <div class="mx-2">
           {% if not item.joined %}
           <button
             class="btn btn-sm btn_style"
@@ -62,8 +62,12 @@
         </div>
       </div>
     </div>
-    <p class="card__description">{{ item.description }}</p>
-    <p class="text-center card__status">- POSTS:10086 FOLLOWER:10086 -</p>
+    <p class="card__description">
+      {{ item.description|truncate(114, true, '...') }}
+    </p>
+    <p class="text-center card__status">
+      - POSTS:{{ item.posts }} FOLLOWER:{{ item.members }} -
+    </p>
   </div>
 </li>
 {%- endmacro %}

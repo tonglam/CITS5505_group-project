@@ -212,10 +212,6 @@
   position: relative;
 }
 
-.card-body {
-  padding: 0 !important;
-}
-
 .card-img-holder {
   width: 100%;
   height: auto;

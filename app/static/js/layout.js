@@ -53,7 +53,7 @@ const init_search = () => {
   });
 };
 
-const handle_page_click = async (page) => {
+const handle_page_click = async (page, scrollId) => {
   if (page === undefined || page === null || page === "") {
     console.error("page", page);
     return false;
@@ -83,8 +83,9 @@ const handle_page_click = async (page) => {
   re_render({ page: page });
 
   // scroll to
-  const element = document.getElementById("content");
+  const element = document.getElementById(scrollId);
   if (element === undefined || element === null) {
+    window.scrollTo(0, 0);
     return false;
   }
   element.scrollIntoView({
