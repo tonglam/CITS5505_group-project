@@ -73,7 +73,9 @@
         <input type="email" name="email" placeholder="Email" />
         <input type="password" name="password" placeholder="Password" />
         <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
-        <button type="submit" class="login_btn_style">Sign In</button>
+        <button type="submit" class="login_btn_style" id="signInSubmitLg">
+          Sign In
+        </button>
         <div class="d-flex align-items-center mt-3">
           <input
             class="form-check-input remember_me"
