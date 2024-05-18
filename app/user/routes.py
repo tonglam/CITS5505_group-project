@@ -234,19 +234,21 @@ def user_password():
         current_app.logger.info("Password reset for user: %s.", {username})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
 
-        if password_form.errors:
-            for field, errors in password_form.errors.items():
-                for error in errors:
-                    current_app.logger.error(
-                        "User: %s edit profile error in field %s: %s",
-                        {username},
-                        {getattr(password_form, field).label.text},
-                        {error},
-                    )
-                    flash(
-                        f"{getattr(password_form, field).label.text}, {error}",
-                        FlashAlertTypeEnum.DANGER.value,
-                    )
+        return redirect(url_for("auth.auth"))
+
+    if password_form.errors:
+        for field, errors in password_form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "User: %s edit profile error in field %s: %s",
+                    {username},
+                    {getattr(password_form, field).label.text},
+                    {error},
+                )
+                flash(
+                    f"{getattr(password_form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
 
     return render_template("userPassword.html", tab="password", form=password_form)
 

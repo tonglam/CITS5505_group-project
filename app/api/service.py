@@ -705,6 +705,17 @@ def delete_community_service(community_id: int) -> ApiResponse:
     ).json()
 
 
+def community_options_service() -> ApiResponse:
+    """Service for getting community options."""
+
+    communities = db.session.query(Community).order_by(Community.id).all()
+    community_options = [
+        {"value": community.id, "label": community.name} for community in communities
+    ]
+
+    return ApiResponse(data={"community_options": community_options}).json()
+
+
 # Api service for popular module.
 
 
@@ -769,21 +780,16 @@ def posts_service(
 # Api service for others.
 
 
-def categories_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def categories_service() -> ApiResponse:
     """Service for getting all categories."""
 
     # query
-    query = db.session.query(Category).order_by(Category.id)
-
-    # pagination
-    pagination = db.paginate(query, page=page, per_page=per_page)
+    categories = db.session.query(Category).order_by(Category.id)
 
     # convert to JSON data
-    category_collection = [category.to_dict() for category in pagination.items]
+    category_collection = [category.to_dict() for category in categories]
 
-    return ApiResponse(
-        data={"categories": category_collection}, pagination=pagination
-    ).json()
+    return ApiResponse(data={"categories": category_collection}).json()
 
 
 def category_service(category_id: int) -> ApiResponse:
@@ -799,19 +805,16 @@ def category_service(category_id: int) -> ApiResponse:
     return ApiResponse(data={"category": category.to_dict()}).json()
 
 
-def tags_service(page: int = 1, per_page: int = 10) -> ApiResponse:
+def tags_service() -> ApiResponse:
     """Service for getting all tags."""
 
     # query
-    query = db.session.query(Tag).order_by(Tag.id)
-
-    # pagination
-    pagination = db.paginate(query, page=page, per_page=per_page)
+    tags = db.session.query(Tag).order_by(Tag.id)
 
     # convert to JSON data
-    tags_collection = [tag.to_dict() for tag in pagination.items]
+    tags_collection = [tag.to_dict() for tag in tags]
 
-    return ApiResponse(data={"tags": tags_collection}, pagination=pagination).json()
+    return ApiResponse(data={"tags": tags_collection}).json()
 
 
 def tag_service(tag_id: int) -> ApiResponse:

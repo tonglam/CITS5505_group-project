@@ -213,6 +213,10 @@ button.ghost {
   font-weight: bold;
 }
 
+.forger-style {
+  min-height: 80vh;
+}
+
 @media screen and (max-width: 576px) {
   .login_header {
     font-size: 20px;

@@ -50,13 +50,13 @@
               tabindex="-98"
             >
               <option id="all-community">Community</option>
-              {% for community in communities %} {% if community.id ==
+              {% for option in community_options %} {% if option.value ==
               community_id %}
-              <option id="{{ community.id }}" selected>
-                {{ community.name }}
+              <option id="{{ option.value }}" selected>
+                {{ option.label }}
               </option>
               {% else %}
-              <option id="{{ community.id }}">{{ community.name }}</option>
+              <option id="{{ option.value }}">{{ option.label }}</option>
               {% endif %} {% endfor %}
             </select>
           </div>

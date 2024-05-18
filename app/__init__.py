@@ -23,6 +23,7 @@ from sqlalchemy.sql import text
 
 from app.api.service import (
     communities_service,
+    community_options_service,
     populars_service,
     posts_service,
     stats_service,
@@ -119,6 +120,9 @@ def create_app() -> Flask:
         # stat
         stats = get_home_stats()
 
+        # options
+        community_options = get_home_community_options()
+
         return render_template(
             "index.html",
             render_id="index-posts",
@@ -129,6 +133,7 @@ def create_app() -> Flask:
             pagination=pagination,
             populars=populars,
             stats=stats,
+            community_options=community_options,
         )
 
     @app.route("/index_posts", methods=["GET"])
@@ -618,3 +623,10 @@ def get_home_communities() -> list:
     return [
         {"id": community["id"], "name": community["name"]} for community in communities
     ]
+
+
+def get_home_community_options() -> list:
+    """Get index community options data."""
+
+    communities_response = community_options_service().json
+    return communities_response.get("data").get("community_options")
