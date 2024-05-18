@@ -261,7 +261,7 @@ def posts() -> ApiResponse:
 @jwt_required()
 def post_comment() -> ApiResponse:
     """Post, update and delete comment."""
-    # Get the information from the referer header. 
+    # Get the information from the referer header.
     referer = request.headers.get('Referer')
     if referer:
         query = urlparse(referer).query
@@ -293,6 +293,7 @@ def post_comment() -> ApiResponse:
 @api_bp.route("/posts/create/post", methods=["POST", "PUT", "DELETE"])
 @jwt_required()
 def post_related() -> ApiResponse:
+    # pylint: disable=too-many-return-statements
     """Post, update, and delete a post."""
 
     title = request.json.get('title')
