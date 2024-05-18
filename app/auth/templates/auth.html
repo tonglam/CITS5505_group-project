@@ -8,8 +8,8 @@
 
 <div class="row mt-2">
   <div
-    class="container d-none d-md-flex align-items-center justify-content-center text-center mt-5"
-    id="login_container"
+    class="container login_container d-none d-md-flex align-items-center justify-content-center text-center mt-5"
+    id="login_container_lg"
   >
     <div class="form-container sign-up-container">
       <form
@@ -73,19 +73,17 @@
         <input type="email" name="email" placeholder="Email" />
         <input type="password" name="password" placeholder="Password" />
         <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
-        <button type="submit" class="login_btn_style" id="signInSubmitLg">
-          Sign In
-        </button>
-        <div class="form-check">
+        <button type="submit" class="login_btn_style">Sign In</button>
+        <div class="d-flex align-items-center mt-3">
           <input
-            class="form-check-input exclude"
+            class="form-check-input remember_me"
             type="checkbox"
             value="checked"
             id="rememberMe"
-            name="rememberMe"
+            name="rememberMeLg"
             checked
           />
-          <label class="form-check-label" for="rememberMe"> Remember Me </label>
+          <label class="form-check-label" for="rememberMe">Remember Me</label>
         </div>
       </form>
     </div>
@@ -124,7 +122,7 @@
   </div>
 
   <!-- Nav for small screen - login and register -->
-  <div class="d-sm-flex d-md-none text-center" id="login_container">
+  <div class="login_container d-sm-flex d-md-none text-center">
     <ul class="nav nav-pills justify-content-center mb-3" role="tablist">
       <li class="nav-item" role="presentation">
         <a
@@ -192,7 +190,7 @@
           <div class="py-2">
             <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
           </div>
-          <button class="login_btn_style" id="signInSubmitSm">Sign In</button>
+          <button class="login_btn_style">Sign In</button>
         </form>
       </div>
 

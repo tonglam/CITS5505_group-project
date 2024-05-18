@@ -7,14 +7,14 @@ from app.search import search_bp
 from app.search.service import search_service
 
 
-@search_bp.route("/")
+@search_bp.route("/", methods=["GET"])
 @login_required
 def search():
     """Render the search page."""
     return render_template("search.html")
 
 
-@search_bp.route("/results")
+@search_bp.route("/results", methods=["GET"])
 @login_required
 def search_result():
     """Render the search result page."""

@@ -28,8 +28,8 @@
 
 .login_btn_style {
   border-radius: 20px;
-  border: 1px solid #ff4b2b;
-  background-color: #ff4b2b;
+  border: 1px solid #3a92e5;
+  background-color: #3a92e5;
   color: #ffffff;
   font-size: 12px;
   font-weight: bold;
@@ -63,7 +63,7 @@ button.ghost {
   text-align: center;
 }
 
-#login_container input {
+.login_container input {
   background-color: #eee;
   border: none;
   padding: 12px 15px;
@@ -71,16 +71,21 @@ button.ghost {
   width: 100%;
 }
 
-#login_container input:not(.exclude) {
+.login_container .remember_me {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: 0 2px 0 0 !important;
+}
+
+.login_container input:not(.exclude) {
   border: none;
 }
 
 .container {
   background-color: #fff;
   border-radius: 10px;
-  box-shadow:
-    0 14px 28px rgba(0, 0, 0, 0.25),
-    0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   position: relative;
   overflow: hidden;
   width: 768px;
@@ -138,8 +143,8 @@ button.ghost {
 }
 
 .overlay {
-  background: #ff416c;
-  background: linear-gradient(to right, #ff4b2b, #ff416c);
+  background: #3a92e5;
+  background: linear-gradient(to right, #e37c6a, #52a0e9);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
@@ -208,6 +213,10 @@ button.ghost {
   font-weight: bold;
 }
 
+.forger-style {
+  min-height: 80vh;
+}
+
 @media screen and (max-width: 576px) {
   .login_header {
     font-size: 20px;
@@ -226,7 +235,7 @@ button.ghost {
   width: 90%;
   padding: 20px;
   transform: translate(-50%, -50%);
-  background: #ff416c;
+  background: #3a92e5;
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
@@ -270,7 +279,7 @@ button.ghost {
 .fgtpassword_box .user-box input:valid ~ label {
   top: -20px;
   left: 0;
-  color: #ff416c;
+  color: #3a92e5;
   font-size: 12px;
 }
 
@@ -278,7 +287,7 @@ button.ghost {
   position: relative;
   display: inline-block;
   padding: 10px 20px;
-  color: #ff416c;
+  color: #3a92e5;
   font-size: 16px;
   text-decoration: none;
   text-transform: uppercase;
@@ -293,13 +302,10 @@ button.ghost {
 }
 
 .fgtpassword_box button[type="submit"]:hover {
-  background: #ff416c;
+  background: #3a92e5;
   color: #fff;
-  box-shadow:
-    0 0 5px #ff416c,
-    0 0 25px #ff416c,
-    0 0 50px #ff416c,
-    0 0 100px #ff416c;
+  box-shadow: 0 0 5px #3a92e5, 0 0 25px #3a92e5, 0 0 50px #3a92e5,
+    0 0 100px #3a92e5;
 }
 
 @media screen and (min-width: 1024px) {
@@ -338,7 +344,7 @@ button.ghost {
     font-size: 0.7rem;
   }
 
-  #login_container input {
+  .login_container input {
     padding: 12px 10px;
     margin: 8px 0;
   }

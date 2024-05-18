@@ -1,0 +1,131 @@
+<!-- logo -->
+{% macro logo(src) -%}
+<a
+  class="navbar-brand me-2 mb-1 d-flex align-items-center rounded-circle"
+  href="{{ url_for('index') }}"
+>
+  <img
+    id="logo"
+    src="{{ src }}"
+    height="30"
+    width="30"
+    alt="Logo"
+    loading="lazy"
+  />
+</a>
+{%- endmacro %}
+
+<!-- navlink item -->
+{% macro navlink_item(title, url, item_class = "nav-menu nav-item me-3 me-lg-1")
+-%}
+
+<li class="{{ item_class }}">
+  <a class="nav-link" href="{{ url }}">{{ title }}</a>
+</li>
+
+{%- endmacro %}
+
+<!-- search bar -->
+{% macro search_bar() -%}
+<div class="container-fluid input-group w-100 my-auto d-none d-sm-flex">
+  <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
+  <input
+    autocomplete="on"
+    type="search"
+    class="form-control rounded-pill"
+    placeholder="Search for Anything..."
+    id="search"
+  />
+</div>
+{%- endmacro %}
+
+<!-- create button -->
+{% macro create_button(url, mode) -%}
+<li class="nav-menu nav-item me-3 me-lg-1 d-none d-lg-flex">
+  <button
+    type="button"
+    class="btn btn-outline-dark rounded-pill w-auto fs-8"
+    onclick="window.location.href='{{ url }}'"
+  >
+    +&nbsp;&nbsp;{{ mode }}
+  </button>
+</li>
+{%- endmacro %}
+
+<!-- icon button -->
+{% macro icon_button(title, url, icon_class, targetBlank = False, showBadge =
+False, badgeNum = 0) -%}
+<li class="nav-menu nav-item mx-2 mx-lg-1">
+  {% if targetBlank %}
+  <a
+    class="nav-link position-relative d-inline-block"
+    href="{{ url }}"
+    target="_blank"
+    title="{{ title }}"
+    role="button"
+    id="{{ title }}"
+  >
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if showBadge %}
+    <span
+      class="badge nav-badge position-absolute start-100 translate-middle rounded-pill bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
+  </a>
+  {% else %} {% if url %}
+  <a
+    class="nav-link position-relative d-inline-block"
+    href="{{ url }}"
+    title="{{ title }}"
+    role="button"
+    id="{{ title }}"
+  >
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if (showBadge and badgeNum > 0) %}
+    <span
+      class="badge nav-badge position-absolute start-100 translate-middle rounded-pill bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
+  </a>
+  {% else %}
+  <a
+    class="nav-link position-relative d-inline-block"
+    href="javascript:void(0);"
+    title="{{ title }}"
+    role="button"
+    id="{{ title }}"
+  >
+    <i class="{{ icon_class }}"></i>
+    <!-- badge -->
+    {% if (showBadge and badgeNum > 0) %}
+    <span
+      class="badge nav-badge position-absolute start-100 translate-middle rounded-pill bg-danger"
+      >{{ badgeNum }}</span
+    >
+    {% endif %}
+  </a>
+  {% endif %} {% endif %}
+</li>
+{%- endmacro %}
+
+<!-- user profile -->
+{% macro user_profile(user) -%}
+<li id="navUserProfile">
+  <button
+    class="navUserProfileBtn btn btn-link nav-link py-2 px-0 px-lg-2 d-flex align-items-center"
+    id="useDropdown"
+    type="button"
+    title="Hello, {{ user.username }}"
+  >
+    <img
+      src="{{ user.avatar_url }}"
+      class="navUserProfileImg rounded-circle"
+      alt="User Avatar"
+    />
+  </button>
+</li>
+{%- endmacro %}

@@ -1,52 +1,90 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const submitBtn = document.getElementById("submitBtn");
-  const nameInput = document.getElementById("name");
-  const descriptionInput = document.getElementById("description");
-  const categoryIdSelect = document.getElementById("category_id");
-  const csrf_token = document.getElementById("csrf_token");
-  // Listen for form submission events
-  submitBtn.addEventListener("click", async function (event) {
-    event.preventDefault(); // Prevent form from submitting by default
-    const { postFetch } = await import("../../../static/js/fetch.js");
-
-    // Manually collect form data
-
-    const postDataObj = {
-      name: nameInput.value,
-      description: descriptionInput.value,
-      category_id: categoryIdSelect.value,
-      csrf_token: csrf_token.value,
-    };
-    //Convert ordinary object to FormData instance
-    const postData = new FormData();
-    for (let key in postDataObj) {
-      postData.append(key, postDataObj[key]);
-    }
-    // Send POST request using postFetch
-    const response = await postFetch(
-      "{% if record_entity %}{{ url_for('community.update_community', community_id=record_entity.id) }}{% else %}{{ url_for('community.add_community') }}{% endif %}"
-    )(postData)({});
-    if (response.ok === "ok") {
-      // Handle successful responses such as redirects or prompts
-      alert(response.message);
-      window.location.href = "/communities/";
-    } else {
-      //Handling error responses
-      alert(response.message);
-    }
-  });
+$(document).ready(function () {
+  // init avatar change
+  init_avatar_change();
+  // text area auto resize
+  init_textarea_auto_resize();
 });
 
-async function handDeleteCardClick(id) {
-  const { deleteFetch } = await import("../../../static/js/fetch.js");
-  const response = await deleteFetch(`/communities/update_community/${id}`)()();
-  if (response.ok !== "ok") {
-    alert(response.message);
-  } else {
-    // page update
-    window.location.reload();
+const init_avatar_change = () => {
+  const avatarInput = document.getElementById("avatarInput");
+  if (avatarInput === null || avatarInput === undefined) {
+    return false;
   }
-}
-function handEditCardClick(id) {
-  window.location.href = "/communities/editCommunity/" + id;
-}
+  avatarInput.addEventListener("change", function () {
+    const file = avatarInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function () {
+      const avatar = document.getElementById("communityAvatar");
+      avatar.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+const handle_join_community = async (id) => {
+  const response = await postFetch(`/api/v1/communities/${id}/join`)()();
+  if (response.code === 200) {
+    const current_page = get_current_page();
+    re_render_community_list(current_page);
+    re_render_navbar();
+  } else if (response.code === 400) {
+    display_alert("You are already in this community");
+  } else if (response.code === 404) {
+    display_alert("Community not found");
+  }
+};
+
+const handle_leave_community = async (id) => {
+  const response = await postFetch(`/api/v1/communities/${id}/leave`)()();
+  if (response.code === 200) {
+    const current_page = get_current_page();
+    re_render_community_list(current_page);
+    re_render_navbar();
+  } else if (response.code === 400) {
+    display_alert("You are not in this community");
+  } else if (response.code === 404) {
+    display_alert("Community not found");
+  }
+};
+
+const get_current_page = () => {
+  return document.querySelector(".page-item.active").querySelector("a")
+    .textContent;
+};
+
+const re_render_community_list = async (page) => {
+  const response = await getFetch(`/communities/community_list`)({
+    page: page,
+  })();
+  document.getElementById("community-list").innerHTML = response;
+};
+
+const display_alert = (message) => {
+  // show alert
+  const alert = document.getElementById("communityAlert");
+  alert.innerHTML = message;
+  if (alert.classList.contains("d-none")) {
+    alert.classList.remove("d-none");
+  }
+  // the alert displays 3s
+  setTimeout(() => {
+    alert.classList.add("d-none");
+  }, 3000);
+};
+
+const re_render_navbar = async () => {
+  const response = await getFetch(`/navbar`)()();
+  document.getElementById("navMenu").innerHTML = response;
+};
+
+const init_textarea_auto_resize = () => {
+  const textAreas = document.querySelectorAll("textarea");
+  textAreas.forEach((textArea) => {
+    textArea.style.height = "auto";
+    textArea.style.height = textArea.scrollHeight + "px";
+    textArea.addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = this.scrollHeight + "px";
+    });
+  });
+};

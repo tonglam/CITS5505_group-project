@@ -14,18 +14,17 @@
         >
         <i class="fa fa-angle-right"></i>
       </div>
-
       {% endfor %}
     </div>
   </div>
 
-  {% if pagination.total_items >0 %}
+  {% if pagination and pagination.total_items > 0 %}
   <div class="list-border-bottom"></div>
   {% endif %}
 
   <!-- List Pagination -->
   <div class="mt-4">
-    {% if pagination.total_items >0 %} {% import './components/pagination.html'
+    {% if pagination.total_items > 0 %} {% import './components/pagination.html'
     as pageItem %} {{ pageItem.render_pagination(pagination) }} {% endif %}
   </div>
 </div>

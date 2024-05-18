@@ -36,6 +36,8 @@ class UserNoticeActionEnum(enum.Enum):
     DELETED = "DELETED"
     CANCELLED = "CANCELLED"
     ANNOUNCEMENT = "ANNOUNCEMENT"
+    JOINED = "JOINED"
+    LEAVE = "LEAVE"
 
 
 class UserNotice(db.Model):

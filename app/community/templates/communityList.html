@@ -1,0 +1,12 @@
+<ul class="cards">
+  {% for item in communities %} {% set index = loop.index %} {% import
+  'communityItem.html' as community_item %} {{
+  community_item.render_community_item(item, user, index) }} {% endfor %}
+</ul>
+
+{% if pagination and pagination.total_items > 1 %}
+<div class="mt-5 mb-5" id="pagination">
+  {% import './components/pagination.html' as pageItem %} {{
+  pageItem.render_pagination(pagination) }}
+</div>
+{% endif %}

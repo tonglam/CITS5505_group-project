@@ -2,12 +2,14 @@
 <div class="userProfile_card d-none" id="userProfileCard">
   <div class="card text-center pr-2">
     <div class="d-flex justify-content-end" id="closeUserProfile">
-      <i class="fa-regular fa-circle-xmark fa-lg" style="cursor: pointer"></i>
+      <i class="navUserProfileI fa-regular fa-circle-xmark fa-lg"></i>
     </div>
     <div class="mt-3">
       {% if user.email %}
-      <div class="d-flex align-items-baseline text-muted">
-        <i class="fa-solid fa-envelope pe-2" style="color: #47a7f0"></i>
+      <div
+        class="d-flex justify-content-center pt-3 align-items-baseline text-muted"
+      >
+        <i class="navUserProfileIC fa-solid fa-envelope pe-2"></i>
         <p>{{ user.email }}</p>
       </div>
       {% endif %}
@@ -45,7 +47,7 @@
         class="btn btn-outline-secondary"
         onclick="location.href='{{ url_for('user.user') }}'"
       >
-        <i class="fa-regular fa-user pe-3" style="color: #74c0fc"></i>
+        <i class="navUserProfileIC fa-regular fa-user pe-3"></i>
         Profile
       </button>
 
@@ -55,8 +57,7 @@
         onclick="location.href='{{ url_for('auth.logout') }}'"
       >
         <i
-          class="fa-solid fa-arrow-right-from-bracket pe-3"
-          style="color: #74c0fc"
+          class="navUserProfileIC fa-solid fa-arrow-right-from-bracket pe-3"
         ></i>
         Sign Out
       </button>
