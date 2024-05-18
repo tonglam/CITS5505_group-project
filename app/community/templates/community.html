@@ -6,11 +6,19 @@ head %} {{ super() }} {% endblock %} {% block content %} {% block css %}
 />
 {% endblock %}
 <div class="container">
-  <div class="community">
-    {% for item in communities %} {% import 'communityCard.html' as macros %} {{
-    macros.print_card(item) }} {% endfor %}
-  </div>
+  <!--  Re-Render -->
+  <p class="d-none" id="render-id">{{ render_id }}</p>
+  <p class="d-none" id="render-url">{{ render_url }}</p>
+
+  <div
+    id="communityAlert"
+    class="sticky-top alert alert-danger alert-dismissible text-center fade show d-none"
+    role="alert"
+  ></div>
+
+  <div id="community-list">{% include './communityList.html' %}</div>
 </div>
+
 {% block javascript %}
 <script src="{{ url_for('community.static', filename='js/community.js') }}"></script>
 {% endblock %} {% endblock %}

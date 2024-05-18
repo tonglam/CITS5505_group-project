@@ -12,6 +12,7 @@ from app.api.service import (
     user_stats_service,
     users_records_service,
 )
+from app.constants import HttpRequestEnum
 from app.models.community import Community
 from app.models.user import User, UserStatusEnum
 from app.models.user_preference import UserPreference
@@ -246,19 +247,21 @@ def stat_data():
     return user_stat.get("data").get("user_stats")
 
 
-def community_data():
-    """Get the user's communities."""
+def display_community_data():
+    """Get the user's display communities."""
 
     user_communities = user_communities_service().get_json()
     user_communities_data = user_communities.get("data").get("user_communities")
-    default_data = Community.query.limit(2).all()
+    default_data = Community.query.limit(1).all()
     if user_communities_data == []:
         return default_data
-    return user_communities_data[0:2]
+    return user_communities_data[0:1]
 
 
 def get_upload_avatar_url(avatar_file: FileStorage):
     """Get upload avatar url."""
 
     upload_avatar_response = upload_image_service(avatar_file).get_json()
+    if upload_avatar_response.get("code") != HttpRequestEnum.SUCCESS_OK.value:
+        return None
     return upload_avatar_response.get("data").get("image_url")

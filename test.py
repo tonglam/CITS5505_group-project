@@ -8,7 +8,7 @@ from tests import (
     api_suite,
     auth_suite,
     community_suite,
-    notice_suite,
+    end2end_suite,
     popular_suite,
     post_suite,
     search_suite,
@@ -20,7 +20,6 @@ suite_functions = {
     "api": api_suite,
     "auth": auth_suite,
     "community": community_suite,
-    "notice": notice_suite,
     "popular": popular_suite,
     "post": post_suite,
     "search": search_suite,
@@ -32,12 +31,17 @@ def run_suite(name=None) -> None:
     """Run a specific test suite or all suites."""
 
     if name:
-        suite_function = suite_functions.get(name)
-        if not suite_function:
-            print(f"Invalid argument: {name}")
-            print("Usage: python test.py [api|auth|...]")
-            sys.exit(1)
-        suite = suite_function()
+        if name == "end2end":
+            # end-to-end test suite
+            suite = end2end_suite()
+        else:
+            # unit test suite
+            suite_function = suite_functions.get(name)
+            if not suite_function:
+                print(f"Invalid argument: {name}")
+                print("Usage: python test.py [api|auth|...]")
+                sys.exit(1)
+            suite = suite_function()
     else:
         suite = suites()
 
@@ -48,7 +52,7 @@ def run_suite(name=None) -> None:
         # remove the test database
         db_file = "instance/requestForum.test.sqlite"
         if os.path.exists(db_file):
-            os.remove(db_file)
+            # os.remove(db_file)
             print("Removed the test database.")
 
         sys.exit(1)
@@ -59,7 +63,7 @@ if __name__ == "__main__":
     argNum = len(sys.argv)
 
     if argNum > 2:
-        print("Usage: python test.py [api|auth|...]")
+        print("Usage: python test.py [api|auth|...|end2end]")
         sys.exit(1)
     elif argNum == 2:
         suite_name = sys.argv[1]

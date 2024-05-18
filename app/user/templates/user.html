@@ -16,8 +16,8 @@
           class="avatar_style"
           src="{{ user.avatar_url }}"
           alt="user avatar"
-          width="100%"
-          height="100%"
+          width="100"
+          height="100"
         />
       </div>
 
@@ -88,9 +88,9 @@
       <!-- community card -->
 
       <div class="col-12 col-md-4">
-        {% for community in user_communities %} {% import 'userCommunity.html'
-        as communityItem %} {{ communityItem.render_user_community(community) }}
-        {% endfor %}
+        {% for community in display_user_communities %} {% import
+        'userCommunity.html' as communityItem %} {{
+        communityItem.render_user_community(community) }} {% endfor %}
       </div>
     </div>
   </div>

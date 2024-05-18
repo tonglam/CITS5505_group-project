@@ -1,6 +1,6 @@
 {% extends "layout.html" %} {% block title %}Home{% endblock %} {% block head %}
 {{ super() }} {% block css %}
-<link rel="stylesheet" href="/static/style/home.css" />
+<link rel="stylesheet" href="/static/style/index.css" />
 {% endblock %} {% endblock %} {% block content %}
 <div class="container">
   <!--  Re-Render -->
@@ -14,16 +14,16 @@
       <article class="mainHeading__text">
         <img
           src="{{url_for('static',filename='assets/ASKIFYtransp.png')}}"
-          height="100"
-          alt=""
+          width="300"
+          alt="logotransparent"
+          class="headding_img"
         />
         <h2 class="mainHeading__title">Unlocking Knowledge</h2>
         <p class="mainHeading__description">
-          Far far away, behind the word mountains, far from the countries
-          Vokalia and Consonantia, there live the blind texts.
+          Welcome to ASKIFY, where you can ask questions, find answers, and
+          share knowledge on various topics. Join our community to explore
+          trending discussions and engage with others.
         </p>
-
-        <!-- <button class="cta">know more</button> -->
       </article>
 
       <figure class="mainHeading__image">
@@ -35,38 +35,43 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row container_padding" id="content">
     <!-- Main content -->
     <div class="col-lg-8 mb-3">
       <div class="row text-left mb-3">
         <div class="col-lg-6 mb-3 mb-sm-0">
           <div
-            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50 w-100"
+            class="dropdown bootstrap-select form-control search_container form-control-lg bg-white bg-op-9 text-sm w-lg-50 w-100"
           >
             <select
               id="community-select"
-              class="form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50"
+              class="form-control form-control-lg search_container bg-white bg-op-9 text-sm w-lg-50"
               data-toggle="select"
               tabindex="-98"
             >
-              <option id="all">Community</option>
-              {% for community in communities %}
-              <option id="{{ community.id }}">{{ community.name }}</option>
-              {% endfor %}
+              <option id="all-community">Community</option>
+              {% for option in community_options %} {% if option.value ==
+              community_id %}
+              <option id="{{ option.value }}" selected>
+                {{ option.label }}
+              </option>
+              {% else %}
+              <option id="{{ option.value }}">{{ option.label }}</option>
+              {% endif %} {% endfor %}
             </select>
           </div>
         </div>
         <div class="col-lg-6 text-lg-right">
           <div
-            class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50 w-100"
+            class="dropdown bootstrap-select form-control search_container form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50 w-100"
           >
             <select
               id="sort-select"
-              class="form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50"
+              class="form-control form-control-lg search_container bg-white bg-op-9 ml-auto text-sm w-lg-50"
               data-toggle="select"
               tabindex="-98"
             >
-              <option id="all">Sort by</option>
+              <option id="all-sort">Sort by</option>
               <option id="create_at_desc">Create Time</option>
               <option id="reply_num_desc">Replies</option>
               <option id="view_num_desc">Views</option>
@@ -76,7 +81,7 @@
         </div>
       </div>
 
-      {% include './indexPost.html' %}
+      <div id="index-posts">{% include './indexPost.html' %}</div>
     </div>
 
     <!-- Sidebar content -->
@@ -111,8 +116,9 @@
       </div>
 
       {% block javascript %}
-      <script src="{{ url_for('static', filename='js/home.js') }}"></script>
-      {% endblock %} {% endblock %}
+      <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+      {% endblock %}
     </div>
   </div>
 </div>
+{% endblock %}

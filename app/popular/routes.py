@@ -12,7 +12,7 @@ from app.popular.service import (
 from . import popular_bp
 
 
-@popular_bp.route("/")
+@popular_bp.route("/", methods=["GET"])
 @login_required
 def popular():
     """Render the popular page."""

@@ -4,12 +4,18 @@ $(document).ready(function () {
 
   // check if the user is verified
   const usernameInput = document.getElementById("user_name");
+  if (usernameInput === null || usernameInput === undefined) {
+    return false;
+  }
   usernameInput.addEventListener("blur", function () {
     verify_user(usernameInput);
   });
 
   // check if the email is verified
   const userEmailInput = document.getElementById("user_email");
+  if (userEmailInput === null || userEmailInput === undefined) {
+    return false;
+  }
   userEmailInput.addEventListener("blur", function () {
     verify_email(userEmailInput);
   });

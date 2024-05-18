@@ -19,7 +19,6 @@ def create_seed_reply_data() -> list:
     requests = [request.id for request in Request.query.all()]
     users = [user.id for user in User.query.all()]
     reply_sources = [source.value for source in ReplySourceEnum]
-    request_id = random.choice(requests)
 
     replies = []
     for _ in range(50):  # Create initial replies to requests

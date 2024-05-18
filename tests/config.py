@@ -3,13 +3,15 @@
 # Reference: TotallyNotChase flask-unittest[https://github.com/TotallyNotChase/flask-unittest]
 
 import os
-from typing import Iterator
+from typing import Iterator, Union
 
 import flask_unittest
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask.testing import FlaskClient
 from flask.wrappers import Response as TestResponse
+from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver.support.ui import WebDriverWait
 
 from app import create_app
 from app.extensions import db
@@ -37,10 +39,41 @@ def _create_app(_) -> Iterator[Flask]:
     app.config["WTF_CSRF_ENABLED"] = False
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
+    create_test_database(app)
+
+    yield app
+
+
+def create_test_database(app: Flask) -> None:
+    """Create the test database."""
+
     with app.app_context():
         db.create_all()
 
-    yield app
+
+def execute_seed_functions(app: Flask) -> None:
+    """Execute seed functions to populate the test database."""
+
+    with app.app_context():
+        seed_user()
+        seed_category()
+        seed_tag()
+        seed_community()
+        seed_request()
+        seed_reply()
+        seed_user_record()
+        seed_user_preference()
+        seed_user_notice()
+        seed_trending()
+        seed_user_like()
+        seed_user_save()
+
+
+def clean_up_test_database(app: Flask) -> None:
+    """Clean up the test database."""
+
+    with app.app_context():
+        db.drop_all()
 
 
 class TestBase(flask_unittest.AppClientTestCase):
@@ -52,28 +85,13 @@ class TestBase(flask_unittest.AppClientTestCase):
         """Set up the test case."""
 
         print("\nTestBase: Setting up test case.")
-
-        with app.app_context():
-            seed_user()
-            seed_category()
-            seed_tag()
-            seed_community()
-            seed_request()
-            seed_reply()
-            seed_user_record()
-            seed_user_preference()
-            seed_user_notice()
-            seed_trending()
-            seed_user_like()
-            seed_user_save()
+        execute_seed_functions(app)
 
     def tearDown(self, app: Flask, _):
         """Tear down the test case."""
 
         print("\nTestBase: Tearing down test case.")
-        # clean up test database
-        with app.app_context():
-            db.drop_all()
+        clean_up_test_database(app)
 
 
 class AuthActions:
@@ -124,3 +142,40 @@ class Utils:
         page_title = soup.title.text.strip() if soup.title else "No title found"
         page_title = page_title.split(" - ")[0]
         return page_title
+
+
+class SeleniumTestBase(flask_unittest.LiveTestCase):
+    """Base Selenium test base case for tests."""
+
+    driver: Union[Chrome, None] = None
+    std_wait: Union[WebDriverWait, None] = None
+
+    @classmethod
+    def setUpClass(cls):
+        options = ChromeOptions()
+        options.add_argument("--headless")
+        cls.driver = Chrome(options=options)
+        cls.std_wait = WebDriverWait(cls.driver, 5)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+
+
+class TestSeleniumSetup(SeleniumTestBase):
+    """This class contains the setup test case."""
+
+    def test_setup(self):
+        """Test the setup of the Selenium test case."""
+
+        create_test_database(self.app)
+        execute_seed_functions(self.app)
+
+
+class TestSeleniumCleanup(SeleniumTestBase):
+    """This class contains the cleanup test case."""
+
+    def test_cleanup(self):
+        """Test the cleanup of the Selenium test case."""
+
+        clean_up_test_database(self.app)

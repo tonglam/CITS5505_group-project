@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  // nav active
+  init_nav_active();
   // alert
   init_alert();
   // search
@@ -8,6 +10,32 @@ $(document).ready(function () {
   // notification
   init_notification();
 });
+
+const init_nav_active = () => {
+  const navItems = document.querySelectorAll(".nav-menu");
+  navItems.forEach((navItem) => {
+    const navLink = navItem.querySelector(".nav-link");
+    if (!navLink) {
+      return;
+    }
+    const activeItem = get_nav_item();
+    if (navLink.textContent.trim() === activeItem) {
+      navLink.classList.add("active");
+    } else {
+      navLink.classList.remove("active");
+    }
+  });
+};
+
+const get_nav_item = () => {
+  const path = window.location.pathname;
+  if (path.includes("/populars")) {
+    return "Popular";
+  } else if (path.includes("/communities")) {
+    return "Community";
+  }
+  return "Home";
+};
 
 const init_alert = () => {
   window.setTimeout(function () {
@@ -25,7 +53,7 @@ const init_search = () => {
   });
 };
 
-const handle_page_click = async (page) => {
+const handle_page_click = async (page, scrollId) => {
   if (page === undefined || page === null || page === "") {
     console.error("page", page);
     return false;
@@ -39,7 +67,7 @@ const handle_page_click = async (page) => {
   }
 
   // current page do not fetch again
-  current_page = document
+  const current_page = document
     .getElementById(render_id)
     .querySelector(".page-item.active")
     .querySelector("a").textContent;
@@ -53,6 +81,18 @@ const handle_page_click = async (page) => {
 
   // re-render
   re_render({ page: page });
+
+  // scroll to
+  const element = document.getElementById(scrollId);
+  if (element === undefined || element === null) {
+    window.scrollTo(0, 0);
+    return false;
+  }
+  element.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+    inline: "nearest",
+  });
 };
 
 const re_render = async (paramsToAdd = {}, keysToRemove = []) => {
@@ -128,20 +168,23 @@ const init_user_profile = () => {
   const user_profile_card = document.getElementById("userProfileCard");
 
   // display user profile card
-  document
-    .getElementById("navUserProfile")
-    .addEventListener("click", function () {
-      if (user_profile_card.classList.contains("d-none")) {
-        user_profile_card.classList.remove("d-none");
-      } else {
-        user_profile_card.classList.add("d-none");
-      }
-    });
+  const user_profile = document.getElementById("navUserProfile");
+  if (user_profile === undefined || user_profile === null) {
+    return false;
+  }
+
+  user_profile.addEventListener("click", function () {
+    if (user_profile_card.classList.contains("d-none")) {
+      user_profile_card.classList.remove("d-none");
+    } else {
+      user_profile_card.classList.add("d-none");
+    }
+  });
 
   // close user profile card
   document
     .getElementById("closeUserProfile")
-    .addEventListener("click", function (event) {
+    .addEventListener("click", function () {
       user_profile_card.classList.add("d-none");
     });
 };
@@ -159,13 +202,13 @@ const init_notification = () => {
     return false;
   }
 
+  // nav bar notification
   const notification = document.getElementById("notification");
   if (notification === undefined || notice === null) {
     console.error("notification is missing");
     return false;
   }
 
-  // nav bar notification
   notice.addEventListener("click", function () {
     if (notification.classList.contains("d-none")) {
       notification.classList.remove("d-none");
@@ -177,43 +220,19 @@ const init_notification = () => {
 
 const handle_notification_change = (notice_id) => {
   // check for notification
-  const check_notification = document.getElementById(
-    "notificationCheck-" + notice_id
-  );
+  const check_notification = document.getElementById("notice-" + notice_id);
   if (check_notification === undefined || check_notification === null) {
     console.error("check_notification is missing");
     return false;
   }
 
-  if (check_notification.classList.contains("unchecked")) {
-    handle_notification_checked(check_notification);
-  } else if (check_notification.classList.contains("checked")) {
-    handle_notification_unchecked(check_notification);
-  }
-
   // wait for 2s, if no more click, close notification
   setTimeout(() => {
-    if (check_notification.classList.contains("checked")) {
-      // call api to update notification
-      update_notification(notice_id);
-      // re-render notification
-      re_render_notification();
-    }
+    // call api to update notification
+    update_notification(notice_id);
+    // re-render notification
+    re_render_notification();
   }, 1000);
-};
-
-const handle_notification_checked = async (check_notification) => {
-  check_notification.classList.remove("unchecked");
-  check_notification.classList.add("checked");
-  // replace icon
-  check_notification.innerHTML = `<i class="fa-regular fa-square-check fa-xl"></i>`;
-};
-
-const handle_notification_unchecked = async (check_notification) => {
-  check_notification.classList.remove("checked");
-  check_notification.classList.add("unchecked");
-  // replace icon
-  check_notification.innerHTML = `<i class="fa-regular fa-square fa-xl"></i>`;
 };
 
 const update_notification = async (notice_id) => {
@@ -221,14 +240,18 @@ const update_notification = async (notice_id) => {
 };
 
 const re_render_notification = async () => {
+  const spanBadge = document.getElementById("notice").querySelector("span");
+  if (spanBadge === undefined || spanBadge === null) {
+    console.error("spanBadge is missing");
+    return false;
+  }
+  let notification_num = parseInt(spanBadge.textContent);
   setTimeout(async () => {
     const response = await getFetch(`/notifications`)()();
     // re-render notification
     document.getElementById("notification").innerHTML = response;
     // re-render navbar notification
-    const notification_num = parseInt(
-      document.getElementById("notification-num").textContent
-    );
+    notification_num -= 1;
     const spanBadge = document.getElementById("notice").querySelector("span");
     spanBadge.textContent = notification_num;
     if (notification_num === 0) {

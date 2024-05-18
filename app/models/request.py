@@ -14,7 +14,9 @@ class Request(db.Model):
     author_id: str = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     title: str = db.Column(db.String(40), nullable=False)
     content: str = db.Column(db.String(1000), default="")
-    community_id: int = db.Column(db.Integer, db.ForeignKey("community.id"))
+    community_id: int = db.Column(
+        db.Integer, db.ForeignKey("community.id"), nullable=False
+    )
     tag_id: int = db.Column(db.Integer, db.ForeignKey("tag.id"))
     view_num: int = db.Column(db.Integer)
     like_num: int = db.Column(db.Integer)

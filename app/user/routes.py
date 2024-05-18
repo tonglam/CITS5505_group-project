@@ -1,16 +1,16 @@
 """ User routes for the user blueprint."""
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.api.service import user_email_verify_service, user_verification_service
-from app.constants import FlashAlertTypeEnum
+from app.constants import FlashAlertTypeEnum, HttpRequestEnum
 from app.extensions import db
 from app.models.user import User
 from app.notice.events import NoticeTypeEnum, notice_event
 from app.user import forms, user_bp
 from app.user.service import (
-    community_data,
+    display_community_data,
     get_upload_avatar_url,
     history_data,
     like_data,
@@ -50,8 +50,8 @@ def user():
     # user stat
     user_stat = stat_data()
 
-    # user community
-    user_communities = community_data()
+    # display user community
+    display_user_communities = display_community_data()
 
     return render_template(
         "user.html",
@@ -59,7 +59,7 @@ def user():
         render_url="/users/lists?name=Posts",
         user_stat=user_stat,
         user_data=user_data,
-        user_communities=user_communities,
+        display_user_communities=display_user_communities,
         pagination=pagination,
     )
 
@@ -72,11 +72,11 @@ def user_lists():
     # name, required
     name = request.args.get("name", type=str)
     if name is None:
-        return "Name is required", 400
+        abort(HttpRequestEnum.BAD_REQUEST.value)
 
     # pagination
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
+    page = request.args.get("page", default=1, type=int)
+    per_page = request.args.get("per_page", default=10, type=int)
 
     # retrieve data
     data_result = {}
@@ -171,9 +171,7 @@ def user_profile():
             current_app.logger.info("User: %s profile updated.", {username})
 
             # send notification
-            notice_event(
-                user_id=user_id, notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE
-            )
+            notice_event(notice_type=NoticeTypeEnum.USER_UPDATED_PROFILE)
 
             current_app.logger.info("Profile updated for user: %s.", {username})
             flash("Profile has been updated.", FlashAlertTypeEnum.SUCCESS.value)
@@ -231,24 +229,26 @@ def user_password():
         current_app.logger.info("User: %s password updated.", {username})
 
         # send notification
-        notice_event(user_id=user_id, notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
+        notice_event(notice_type=NoticeTypeEnum.USER_RESET_PASSWORD)
 
         current_app.logger.info("Password reset for user: %s.", {username})
         flash("Password has been reset.", FlashAlertTypeEnum.SUCCESS.value)
 
-        if password_form.errors:
-            for field, errors in password_form.errors.items():
-                for error in errors:
-                    current_app.logger.error(
-                        "User: %s edit profile error in field %s: %s",
-                        {username},
-                        {getattr(password_form, field).label.text},
-                        {error},
-                    )
-                    flash(
-                        f"{getattr(password_form, field).label.text}, {error}",
-                        FlashAlertTypeEnum.DANGER.value,
-                    )
+        return redirect(url_for("auth.auth"))
+
+    if password_form.errors:
+        for field, errors in password_form.errors.items():
+            for error in errors:
+                current_app.logger.error(
+                    "User: %s edit profile error in field %s: %s",
+                    {username},
+                    {getattr(password_form, field).label.text},
+                    {error},
+                )
+                flash(
+                    f"{getattr(password_form, field).label.text}, {error}",
+                    FlashAlertTypeEnum.DANGER.value,
+                )
 
     return render_template("userPassword.html", tab="password", form=password_form)
 

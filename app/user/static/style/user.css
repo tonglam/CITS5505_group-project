@@ -9,7 +9,7 @@
   border: 1px solid #03bfcb;
   border-radius: 3px;
   color: #231e39;
-  font-family: Montserrat, sans-serif;
+
   font-weight: 500;
   padding: 10px 25px;
   background-color: transparent;
@@ -20,7 +20,7 @@
 .avatar_style {
   border: 1px solid #03bfcb;
   border-radius: 50%;
-  padding: 7px;
+  /* padding: 7px; */
 }
 
 /*===== profile container settings =====*/
@@ -72,9 +72,6 @@
   stroke-dasharray: 314.16, 314.16;
   stroke-width: 2;
   fill: transparent;
-  r: 50;
-  cx: 55;
-  cy: 55;
 }
 
 .charts_orb svg circle.fill {
@@ -213,10 +210,6 @@
   padding: 1.5rem;
   overflow: hidden;
   position: relative;
-}
-
-.card-body {
-  padding: 0 !important;
 }
 
 .card-img-holder {

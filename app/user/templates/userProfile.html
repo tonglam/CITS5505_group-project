@@ -6,24 +6,33 @@
   id="profileForm"
 >
   {{ form.csrf_token and form.csrf_token(id='csrf_token_account') }}
-  <div class="card-body media align-items-center text-center mt-2">
+  <div class="align-items-center text-center mt-2">
+    {% if user.avatar_url %}
     <img
       src="{{ user.avatar_url }}"
       alt="uploadAvatar"
       class="ui-w-80"
       id="profileAvatar"
     />
-    <div class="media-body ml-4 mt-1">
-      <label class="btn btn-sm edit_btn btn-outline-primary">
-        Upload
-        <input
-          type="file"
-          class="account-settings-fileinput"
-          name="avatar"
-          id="avatarInput"
-        />
-        {{ form.avatar(class="account-settings-fileinput") }}</label
+    {% else %}
+    <img
+      src="https://api.dicebear.com/8.x/pixel-art/jpg"
+      alt="uploadAvatar"
+      class="ui-w-80"
+      id="profileAvatar"
+    />
+    {% endif %}
+    <div class="ml-4 mt-1">
+      <label class="btn btn-sm edit_btn btn-outline-primary" for="avatarInput"
+        >Upload</label
       >
+      <input
+        type="file"
+        class="account-settings-fileinput"
+        name="avatar"
+        id="avatarInput"
+      />
+      {{ form.avatar(class="account-settings-fileinput") }}
 
       <div class="text-light small mt-1">
         Allowed JPG, JPEG or PNG. Max size of 1M.
@@ -51,14 +60,7 @@
       <input
         type="text"
         class="form-control mb-1"
-        {%
-        if
-        user.email
-        %}
-        value="{{ user.email }}"
-        {%
-        endif
-        %}
+        value="{{ user.email|default('', true) }}"
         name="email"
         id="user_email"
       />

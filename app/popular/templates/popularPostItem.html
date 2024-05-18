@@ -1,0 +1,9 @@
+{% macro render_popular_post_item(item) -%}
+<li
+  onclick="location.href='{{ url_for('post.post_detail', post_id=item.id) }}'"
+>
+  <strong class="click-subtitle">{{ item.title }}</strong>
+  <i class="fa fa-angle-right"></i>
+  <p>{{ item.username }}</p>
+</li>
+{%- endmacro %}

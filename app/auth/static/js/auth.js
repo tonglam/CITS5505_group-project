@@ -1,8 +1,8 @@
 $(document).ready(function () {
   // sign in and sign up
-  const signUpButton = document.getElementById("signUp");
+  const signUpButton = document.getElementById("signUpSubmitSm");
   const signInButton = document.getElementById("signIn");
-  const container = document.getElementById("login_container");
+  const container = document.getElementById("login_container_lg");
 
   if (signUpButton !== null && container !== null) {
     signUpButton.addEventListener("click", () => {

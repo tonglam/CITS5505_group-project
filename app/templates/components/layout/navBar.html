@@ -1,56 +1,53 @@
-{% macro render_navBar(user, current_user, notice_num) -%}
+{% import 'components/layout/navBarItem.html' as navItem %}
+<div class="container-fluid justify-content-between mx-0 mx-md-2">
+  <div class="d-flex">
+    <!-- logo -->
+    {{ navItem.logo('https://i.ibb.co/GV52mLp/logo.webp') }}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary" id="navMenu">
-  <div class="container-fluid justify-content-between mx-0 mx-md-2">
-    <div class="d-flex">
-      <!-- logo -->
-      {{ logo('https://i.ibb.co/GV52mLp/logo.webp') }}
+    <!-- navlinks -->
+    <ul class="navbar-nav flex-row d-none d-md-flex">
+      <!-- home navlink -->
+      {{ navItem.navlink_item("Home", url_for('index')) }}
 
-      <!-- navlinks -->
-      <ul class="navbar-nav flex-row d-none d-md-flex">
-        <!-- home navlink -->
-        {{ navlink_item("Home", url_for('index'), "nav-item me-3 me-lg-1
-        active", True) }}
+      <!-- popular navlink -->
+      {{ navItem.navlink_item("Popular", url_for('popular.popular'))}}
 
-        <!-- popular navlink -->
-        {{ navlink_item("Popular", url_for('popular.popular'))}}
+      <!-- community navlink -->
+      {{ navItem.navlink_item("Community", url_for('community.community')) }}
+    </ul>
 
-        <!-- community navlink -->
-        {{ navlink_item("Community", url_for('community.community')) }}
-      </ul>
-
-      <!-- search bar -->
-      {{ search_bar() }}
-    </div>
+    <!-- search bar -->
+    {{ navItem.search_bar() }}
+  </div>
 
     <!-- right bar -->
     <ul class="navbar-nav flex-row">
       <!-- create button -->
-      {{ create_button(url_for('post.create_post')) }}
+      {{ create_button(url_for('post.create')) }}
 
-      <!-- github icon -->
-      {{ icon_button("github",
-      "https://github.com/tonglam/CITS5505_group-project", "fa-brands fa-github
-      fa-lg", targetBlank=True) }}
+    <!-- github icon -->
+    {{ navItem.icon_button("github",
+    "https://github.com/tonglam/CITS5505_group-project", "fa-brands fa-github
+    fa-lg", targetBlank=True) }}
 
-      <!-- notice icon -->
-      {{ icon_button("notice", None, "fa-solid fa-bell fa-lg", showBadge=True,
-      badgeNum=notice_num ) }}
+    <!-- notice icon -->
+    {{ navItem.icon_button("notice", None, "fa-solid fa-bell fa-lg",
+    showBadge=True, badgeNum=notice_num ) }}
 
-      <!-- login bar -->
+    <!-- login bar -->
 
-      <!-- not authenticated -->
-      {% if not current_user.is_authenticated %}
+    <!-- not authenticated -->
+    {% if not current_user.is_authenticated %}
 
-      <!-- login icon -->
-      {{ icon_button("login", url_for('auth.auth'), "fa-solid
-      fa-arrow-right-to-bracket fa-lg") }}
+    <!-- login icon -->
+    {{ navItem.icon_button("login", url_for('auth.auth'), "fa-solid
+    fa-arrow-right-to-bracket fa-lg") }}
 
-      <!-- authenticated -->
-      {% else %}
+    <!-- authenticated -->
+    {% else %}
 
-      <!-- user profile -->
-      {{ user_profile(current_user) }}
+    <!-- user profile -->
+    {{ navItem.user_profile(current_user) }}
 
       <!-- end login bar -->
       {% endif %}
@@ -120,7 +117,7 @@ False) -%}
   <button
     type="button"
     class="btn btn-outline-dark rounded-pill w-auto fs-8"
-    onclick="window.location.href='{{ url }}'"
+    href="{{ url }}"
   >
     +&nbsp;&nbsp;Create
   </button>

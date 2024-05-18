@@ -1,0 +1,68 @@
+{% macro render_community_item(item, user, index) -%} {% set tag_random_int =
+range(1, 5) | random %}
+<li class="community_card">
+  <img
+    src="{{url_for('static',filename='assets/community' ~ index ~ '.jpg')}}"
+    class="card__image"
+    alt="card image"
+    width="450"
+  />
+  <div class="card__overlay">
+    <div class="card__header">
+      <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+        <path />
+      </svg>
+      <img
+        class="card__thumb"
+        src="{{ item.avatar_url }}"
+        alt="community avatar"
+      />
+
+      <div class="card__header-text">
+        <h3
+          class="card__title click-subtitle"
+          onclick="location.href='{{ url_for('index', community_id=item.id, _anchor='content') }}'"
+        >
+          {{ item.name }}
+        </h3>
+        <span
+          class="badge rounded-pill commmunityTag_style{{ tag_random_int }} module-name mb-3 px-2"
+          >#{{ item.category.name }}</span
+        >
+        <span class="card__status">{{ item.create_at }}</span>
+        <div class="mx-2">
+          {% if not item.joined %}
+          <button
+            class="btn btn-sm btn_style"
+            onclick="handle_join_community({{ item.id }})"
+          >
+            Join
+          </button>
+          {% else %}
+          <button
+            class="btn btn-sm btn_style"
+            onclick="handle_leave_community({{ item.id }})"
+          >
+            Leave
+          </button>
+          {% endif %} {% if item.creator.id == user.id %}
+          <button
+            class="btn btn-sm btn_style"
+            onclick="location.href='{{ url_for('community.community_management', community_id=item.id) }}'"
+          >
+            Edit
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <p class="card__description">
+      {{ item.description|truncate(114, true, '...') }}
+    </p>
+    <p class="text-center card__status">
+      - POSTS:{{ item.posts }}&nbsp;&nbsp;&nbsp;&nbsp;MEMBERS:{{ item.members }}
+      -
+    </p>
+  </div>
+</li>
+{%- endmacro %}
