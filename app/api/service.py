@@ -239,7 +239,6 @@ def delete_user_record_service(request_id: int) -> ApiResponse:
     ).json()
 
 
-
 def user_likes_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     """Service for getting all user likes."""
 
@@ -288,13 +287,17 @@ def post_user_like_service(request_id: int, reply_id: int) -> ApiResponse:
         ).json()
 
     # Add user like
-    user_like_entity = UserLike(user_id=user_id, request_id=request_id, reply_id=reply_id)
+    user_like_entity = UserLike(
+        user_id=user_id, request_id=request_id, reply_id=reply_id
+    )
     db.session.add(user_like_entity)
 
     if reply_id is None:
         request_entity.like_num += 1
         db.session.commit()
-        current_app.logger.info(f"User {user_id} liked Request {request_id} successfully")
+        current_app.logger.info(
+            f"User {user_id} liked Request {request_id} successfully"
+        )
     else:
         reply_entity = db.session.query(Reply).get(reply_id)
         if reply_entity is None:
@@ -306,6 +309,7 @@ def post_user_like_service(request_id: int, reply_id: int) -> ApiResponse:
         current_app.logger.info(f"User {user_id} liked Reply {reply_id} successfully")
 
     return ApiResponse(HttpRequestEnum.CREATED.value, message="like success").json()
+
 
 def delete_user_like_service(request_id: int, reply_id: int) -> ApiResponse:
     """Service for unliking a request or a reply."""
@@ -336,7 +340,9 @@ def delete_user_like_service(request_id: int, reply_id: int) -> ApiResponse:
         request_entity.like_num -= 1
         db.session.delete(user_like_entity)
         db.session.commit()
-        current_app.logger.info(f"User {user_id} unliked Request {request_id} successfully")
+        current_app.logger.info(
+            f"User {user_id} unliked Request {request_id} successfully"
+        )
     else:
         reply_entity = db.session.query(Reply).get(reply_id)
         if reply_entity is None:
@@ -377,6 +383,7 @@ def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
         pagination=pagination,
     ).json()
 
+
 def post_user_save_service(request_id: int, reply_id: int) -> ApiResponse:
     """Service for saving a request or a reply."""
 
@@ -402,13 +409,17 @@ def post_user_save_service(request_id: int, reply_id: int) -> ApiResponse:
         ).json()
 
     # Add user save
-    user_save_entity = UserSave(user_id=user_id, request_id=request_id, reply_id=reply_id)
+    user_save_entity = UserSave(
+        user_id=user_id, request_id=request_id, reply_id=reply_id
+    )
     db.session.add(user_save_entity)
 
     if reply_id is None:
         request_entity.save_num += 1
         db.session.commit()
-        current_app.logger.info(f"User {user_id} saved Request {request_id} successfully")
+        current_app.logger.info(
+            f"User {user_id} saved Request {request_id} successfully"
+        )
     else:
         reply_entity = db.session.query(Reply).get(reply_id)
         if reply_entity is None:
@@ -451,7 +462,9 @@ def delete_user_save_service(request_id: int, reply_id: int) -> ApiResponse:
         request_entity.save_num -= 1
         db.session.delete(user_save_entity)
         db.session.commit()
-        current_app.logger.info(f"User {user_id} unsaved Request {request_id} successfully")
+        current_app.logger.info(
+            f"User {user_id} unsaved Request {request_id} successfully"
+        )
     else:
         reply_entity = db.session.query(Reply).get(reply_id)
         if reply_entity is None:
@@ -838,17 +851,29 @@ def update_user_comments_service(reply_id1, content):
 
     comment_query = db.session.query(Reply).filter_by(id=reply_id1).first()
     if not comment_query:
-        return ApiResponse(404, 'Comment not found or not authorized', {"comment_id": reply_id1,"message": reply_id1}).json() # pylint: disable=C0301
+        return ApiResponse(
+            404,
+            "Comment not found or not authorized",
+            {"comment_id": reply_id1, "message": reply_id1},
+        ).json()  # pylint: disable=C0301
 
     comment_query.content = content
     db.session.commit()
-    return ApiResponse(200, 'Comment updated successfully', {'comment_id': comment_query.id, 'post_id':comment_query.request_id}).json() # pylint: disable=C0301
+
+    # notice event
+    notice_event(notice_type=NoticeTypeEnum.REPLY_UPDATED)
+
+    return ApiResponse(
+        200,
+        "Comment updated successfully",
+        {"comment_id": comment_query.id, "post_id": comment_query.request_id},
+    ).json()  # pylint: disable=C0301
+
 
 def post_user_comments_service(post_id, reply_id, content):
     """Service for user post comment."""
 
     user_id: str = current_user.id
-
 
     request_entity = db.session.query(Request).get(post_id)
 
@@ -869,7 +894,15 @@ def post_user_comments_service(post_id, reply_id, content):
 
     db.session.commit()
 
-    return ApiResponse(201, 'Comment posted successfully', {'id': new_comment.id, 'post_id': new_comment.request_id}).json() # pylint: disable=C0301
+    # notice event
+    notice_event(notice_type=NoticeTypeEnum.REPLY_CREATED)
+
+    return ApiResponse(
+        201,
+        "Comment posted successfully",
+        {"id": new_comment.id, "post_id": new_comment.request_id},
+    ).json()  # pylint: disable=C0301
+
 
 def user_post_service(title_name, community_name, content, tag_name):
     """Service for user post."""
@@ -877,11 +910,13 @@ def user_post_service(title_name, community_name, content, tag_name):
     user_id: str = current_user.id
     community_query = db.session.query(Community).filter_by(name=community_name).first()
     if not community_query:
-        return ApiResponse(404, 'Community not found', {"community":community_name}).json()
+        return ApiResponse(
+            404, "Community not found", {"community": community_name}
+        ).json()
     community_id = community_query.id
     tag_query = db.session.query(Tag).filter_by(name=tag_name).first()
     if not tag_query:
-        return ApiResponse(404, 'Tag not found').json()
+        return ApiResponse(404, "Tag not found").json()
     tag_id = tag_query.id
     new_post = Request(
         author_id=user_id,
@@ -898,7 +933,12 @@ def user_post_service(title_name, community_name, content, tag_name):
     db.session.add(new_post)
     db.session.commit()
 
-    return ApiResponse(201, 'Comment posted successfully', {'post_id': new_post.id}).json()
+    # notice event
+    notice_event(notice_type=NoticeTypeEnum.POST_CREATED)
+
+    return ApiResponse(
+        201, "Comment posted successfully", {"post_id": new_post.id}
+    ).json()
 
 
 def update_user_post_service(post_id, title_name, community_name, content, tag_name):
@@ -906,23 +946,33 @@ def update_user_post_service(post_id, title_name, community_name, content, tag_n
 
     post_query = db.session.query(Request).filter_by(id=post_id).first()
     if not post_query:
-        return ApiResponse(404, 'Post not found or not authorized', {"post_id": post_id}).json()
+        return ApiResponse(
+            404, "Post not found or not authorized", {"post_id": post_id}
+        ).json()
 
     community_query = db.session.query(Community).filter_by(name=community_name).first()
     if not community_query:
-        return ApiResponse(404, 'Community not found', {"community": community_name}).json()
+        return ApiResponse(
+            404, "Community not found", {"community": community_name}
+        ).json()
     community_id = community_query.id
 
     tag_query = db.session.query(Tag).filter_by(name=tag_name).first()
     if not tag_query:
-        return ApiResponse(404, 'Tag not found', {"tag": tag_name}).json()
+        return ApiResponse(404, "Tag not found", {"tag": tag_name}).json()
     tag_id = tag_query.id
     post_query.title = title_name
     post_query.content = content
     post_query.community_id = community_id
     post_query.tag_id = tag_id
     db.session.commit()
-    return ApiResponse(200, 'Post updated successfully', {'post_id': post_query.id}).json()
+
+    # notice event
+    notice_event(notice_type=NoticeTypeEnum.POST_UPDATED)
+
+    return ApiResponse(
+        200, "Post updated successfully", {"post_id": post_query.id}
+    ).json()
 
 
 def delete_post_service(post_id):
@@ -948,13 +998,23 @@ def delete_post_service(post_id):
     for like in user_likes:
         db.session.delete(like)
 
+    # remove trending post
+    trendings = db.session.query(Trending).filter_by(request_id=post_id).all()
+    if trendings:
+        for trending in trendings:
+            db.session.delete(trending)
+
     # Delete the post
     post = db.session.query(Request).get(post_id)
     if not post:
-        return ApiResponse(404, 'Post not found', {'post_id': post_id}).json()
+        return ApiResponse(404, "Post not found", {"post_id": post_id}).json()
     db.session.delete(post)
     db.session.commit()
-    return ApiResponse(200, 'Post deleted successfully', {'post_id': post_id}).json()
+
+    # notice event
+    notice_event(notice_type=NoticeTypeEnum.POST_DELETED)
+
+    return ApiResponse(200, "Post deleted successfully", {"post_id": post_id}).json()
 
 
 def delete_user_comments_service(post_id, reply_id):
@@ -980,11 +1040,17 @@ def delete_user_comments_service(post_id, reply_id):
 
     if reply:
         db.session.delete(reply)
+        request.reply_num -= child_count + 1
+
         db.session.commit()
-        request.reply_num -= (child_count + 1)
-        db.session.commit()
-        return ApiResponse(200, 'Comment and its child comments deleted successfully').json()
-    return ApiResponse(404, 'Comment not found').json()
+
+        # notice event
+        notice_event(notice_type=NoticeTypeEnum.REPLY_DELETED)
+
+        return ApiResponse(
+            200, "Comment and its child comments deleted successfully"
+        ).json()
+    return ApiResponse(404, "Comment not found").json()
 
 
 # Api service for notice module.

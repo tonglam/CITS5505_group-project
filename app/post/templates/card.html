@@ -14,6 +14,13 @@
     request.reply_num }}, Saved: {{ request.save_num }} | {{
     request.create_at.strftime('%Y-%m-%d') }}
   </footer>
+  <button
+    id="editPostButton"
+    onclick="location.href='{{ url_for('index', _anchor='content') }}'"
+    class="fa-solid fa-person-walking-arrow-loop-left btn-edit-request"
+  >
+    Reutrn
+  </button>
   {% if current_user.id == request.author_id %}
   <button
     id="editPostButton"

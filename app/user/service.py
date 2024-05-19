@@ -176,7 +176,7 @@ def like_data(page: int = 1, per_page: int = 10):
 
     user_likes_data = likes_data["data"]["user_likes"]
     likes_item_data = [
-        {"id": like["id"], "title": like["request"]["title"]}
+        {"id": like["request"]["id"], "title": like["request"]["title"]}
         for like in user_likes_data
     ]
 
@@ -201,7 +201,7 @@ def history_data(page: int = 1, per_page: int = 10):
 
     user_histories_data = histories_data["data"]["user_records"]
     histories_item_data = [
-        {"id": history["id"], "title": history["request"]["title"]}
+        {"id": history["request"]["id"], "title": history["request"]["title"]}
         for history in user_histories_data
     ]
 
@@ -227,7 +227,7 @@ def save_data(page: int = 1, per_page: int = 10):
     user_saves_data = saves_data["data"]["user_saves"]
 
     saves_item_data = [
-        {"id": save["id"], "title": save["request"]["title"]}
+        {"id": save["request"]["id"], "title": save["request"]["title"]}
         for save in user_saves_data
     ]
 

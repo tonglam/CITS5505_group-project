@@ -1,5 +1,6 @@
 [APP]
 SECRET_KEY =  
+JWT_SECRET_KEY =
 
 [SQLITE]
 DATABASE_URL =
@@ -21,9 +22,6 @@ CALLBACK_URL =
 AUTHORIZE_URL =https://github.com/login/oauth/authorize
 TOKEN_URL = https://github.com/login/oauth/access_token
 USER_URL = https://api.github.com/user
-
-[OPENAI]
-API_KEY = 
 
 [IMGBB]
 API_KEY = 

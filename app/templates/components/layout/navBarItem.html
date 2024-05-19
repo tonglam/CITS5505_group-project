@@ -54,7 +54,7 @@
 
 <!-- icon button -->
 {% macro icon_button(title, url, icon_class, targetBlank = False, showBadge =
-False, badgeNum = 0) -%}
+False, badgeNum = 0, handleClick = "javascript:void(0);") -%}
 <li class="nav-menu nav-item mx-2 mx-lg-1">
   {% if targetBlank %}
   <a
@@ -64,6 +64,7 @@ False, badgeNum = 0) -%}
     title="{{ title }}"
     role="button"
     id="{{ title }}"
+    onclick="{{ handleClick }}"
   >
     <i class="{{ icon_class }}"></i>
     <!-- badge -->
@@ -81,6 +82,7 @@ False, badgeNum = 0) -%}
     title="{{ title }}"
     role="button"
     id="{{ title }}"
+    onclick="{{ handleClick }}"
   >
     <i class="{{ icon_class }}"></i>
     <!-- badge -->
@@ -98,6 +100,7 @@ False, badgeNum = 0) -%}
     title="{{ title }}"
     role="button"
     id="{{ title }}"
+    onclick="{{ handleClick }}"
   >
     <i class="{{ icon_class }}"></i>
     <!-- badge -->
@@ -120,6 +123,7 @@ False, badgeNum = 0) -%}
     id="useDropdown"
     type="button"
     title="Hello, {{ user.username }}"
+    onclick="handle_user_profile_click()"
   >
     <img
       src="{{ user.avatar_url }}"
