@@ -11,7 +11,7 @@ tag_random_int = range(1, 5) | random %}
       >
       <h5
         class="text-primary click-subtitle"
-        onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
+        onclick="location.href='{{ url_for('post.post_detail', post_id=_id) }}'"
       >
         {{ item.title }}
       </h5>

@@ -10,7 +10,7 @@
   <div class="text">
     <h6
       class="click-subtitle"
-      onclick="window.open('{{ url_for('post.post_detail', post_id=_id) }}', '_blank')"
+      onclick="location.href='{{ url_for('post.post_detail', post_id=_id) }}'"
     >
       {{ item.title }}
     </h6>

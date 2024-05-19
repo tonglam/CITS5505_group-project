@@ -1,64 +1,66 @@
 .create-page-container {
-   width: 90%;
-   margin: auto;
-   padding: 20px;
-   background-color: #ffffff;
-   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-   border-radius: 8px;
- }
- 
- .create-page-container h1 {
-   color: #5f9ea0;
- }
- 
- .create-page-container label {
-   display: block;
-   margin-bottom: 10px;
-   font-weight: bold;
- }
- 
- .create-page-container input[type="text"], 
- .create-page-container select {
-   width: 100%;
-   padding: 8px;
-   margin-bottom: 20px;
-   border: 1px solid #ccc;
-   border-radius: 4px;
- }
- 
- .create-page-container button {
-   background-color: #add8e6;
-   color: white;
-   border: none;
-   padding: 10px 20px;
-   text-transform: uppercase;
-   letter-spacing: 1px;
-   font-weight: bold;
-   border-radius: 4px;
-   cursor: pointer;
- }
- 
- .create-page-container button:hover {
-   background-color: #87ceeb;
- }
- 
- .comment-content, .edit-post-content {
-   background-color: #e0f7fa;
-   border: 2px solid #acf2fb;
-   border-radius: 25px;
-   padding: 15px;
-   margin: 10px 0;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
- }
- 
- .comment-content h2, .edit-post-content h2 {
-   margin-top: 0;
-   color: #00796b;
- }
- 
- .comment-content p, .edit-post-content p {
-   margin: 0;
-   font-size: 1em;
-   color: #012822;
- }
- 
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.create-page-container h1 {
+  color: #5f9ea0;
+}
+
+.create-page-container label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.create-page-container input[type="text"],
+.create-page-container select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.create-page-container button {
+  background-color: #add8e6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.create-page-container button:hover {
+  background-color: #87ceeb;
+}
+
+.comment-content,
+.edit-post-content {
+  background-color: #e0f7fa;
+  border: 2px solid #acf2fb;
+  border-radius: 25px;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comment-content h2,
+.edit-post-content h2 {
+  margin-top: 0;
+  color: #00796b;
+}
+
+.comment-content p,
+.edit-post-content p {
+  margin: 0;
+  font-size: 1em;
+  color: #012822;
+}

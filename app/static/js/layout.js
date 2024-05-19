@@ -5,10 +5,6 @@ $(document).ready(function () {
   init_alert();
   // search
   init_search();
-  // user
-  init_user_profile();
-  // notification
-  init_notification();
 });
 
 const init_nav_active = () => {
@@ -164,7 +160,7 @@ const create_remove_param_render_url = (render_url, keyArray) => {
   return `${url.pathname}${url.search}${url.hash}`;
 };
 
-const init_user_profile = () => {
+const handle_user_profile_click = async () => {
   const user_profile_card = document.getElementById("userProfileCard");
 
   // display user profile card
@@ -173,13 +169,11 @@ const init_user_profile = () => {
     return false;
   }
 
-  user_profile.addEventListener("click", function () {
-    if (user_profile_card.classList.contains("d-none")) {
-      user_profile_card.classList.remove("d-none");
-    } else {
-      user_profile_card.classList.add("d-none");
-    }
-  });
+  if (user_profile_card.classList.contains("d-none")) {
+    user_profile_card.classList.remove("d-none");
+  } else {
+    user_profile_card.classList.add("d-none");
+  }
 
   // close user profile card
   document
@@ -189,7 +183,7 @@ const init_user_profile = () => {
     });
 };
 
-const init_notification = () => {
+const handle_notification_click = async () => {
   const notice = document.getElementById("notice");
   if (notice === undefined || notice === null) {
     console.error("notice is missing");
@@ -209,13 +203,11 @@ const init_notification = () => {
     return false;
   }
 
-  notice.addEventListener("click", function () {
-    if (notification.classList.contains("d-none")) {
-      notification.classList.remove("d-none");
-    } else {
-      notification.classList.add("d-none");
-    }
-  });
+  if (notification.classList.contains("d-none")) {
+    notification.classList.remove("d-none");
+  } else {
+    notification.classList.add("d-none");
+  }
 };
 
 const handle_notification_change = (notice_id) => {
