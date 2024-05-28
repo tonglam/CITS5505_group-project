@@ -200,15 +200,6 @@ The Search module provides services for full-text search.
 
 The User module provides services for displaying, editing user profiles, and tracing user behaviors on the platform.
 
-# Contributor
-
-| Student ID | Name       | GitHub Username    |
-| ---------- | ---------- | ------------------ |
-| 24056082   | Tong Lan   | tonglam            |
-| 24070974   | Hanyu Xue  | Hayeensss          |
-| 23941282   | Jiasen Niu | AsenMax/Jiasen Niu |
-| 23894459   | Enoch Liu  | enoch2022new       |
-
 # Main Techniques
 
 - **Flask** for creating the web server.
