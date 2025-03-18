@@ -148,7 +148,9 @@ class TestAuth(TestBase):
         # test login with the new password
         auth = AuthActions(client)
         response = auth.login(
-            forgot_password_data["email"], forgot_password_data["password"]
+            forgot_password_data["email"],
+            forgot_password_data["password"],
+            follow_redirects=True,
         )
         self.assertStatus(response, HttpRequestEnum.SUCCESS_OK.value)
 

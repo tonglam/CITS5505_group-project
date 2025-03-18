@@ -1,6 +1,6 @@
 FROM python:3.11-slim-bullseye
 
-WORKDIR /home/workspace/cits5505
+WORKDIR /home/workspace/askify
 
 COPY requirements.txt .
 

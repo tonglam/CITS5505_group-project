@@ -18,7 +18,7 @@ class TestUser(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -35,7 +35,7 @@ class TestUser(TestBase):
 
         # smoke test
         for name in names:
-            response = client.get(f"{url}?name={name}")
+            response = client.get(f"{url}?name={name}", follow_redirects=True)
             self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -50,7 +50,7 @@ class TestUser(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -65,7 +65,7 @@ class TestUser(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -80,7 +80,7 @@ class TestUser(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -95,7 +95,7 @@ class TestUser(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout

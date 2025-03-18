@@ -1,7 +1,7 @@
 """Routes for authentication."""
 
 import secrets
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import urlencode
 
 import requests
@@ -20,37 +20,26 @@ from flask import (
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
-    get_csrf_token,
-    get_current_user,
     get_jwt_identity,
     jwt_required,
     set_access_cookies,
     set_refresh_cookies,
     unset_jwt_cookies,
-    verify_jwt_in_request,
 )
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import generate_csrf
 
 from app.auth import auth_bp, forms
 from app.constants import (
-    AUTHORIZATION_CODE,
-    AUTHORIZE_URL,
-    CALLBACK_URL,
-    CLIENT_ID,
-    CLIENT_SECRET,
     OAUTH2_PROVIDERS,
     OAUTH2_STATE,
     RESPONSE_TYPE,
-    SCOPES,
-    TOKEN_URL,
     FlashAlertTypeEnum,
     HttpRequestEnum,
     OAuthProviderEnum,
 )
 from app.extensions import db, login_manager
 from app.models.user import User
-from app.models.user_preference import UserPreference
 from app.notice.events import NoticeTypeEnum, notice_event
 
 
@@ -187,7 +176,9 @@ def login():
             # Create JWT tokens with proper expiration
             access_token = create_access_token(
                 identity=user.id,
-                expires_delta=timedelta(minutes=15),  # 15 minutes expiration
+                expires_delta=timedelta(
+                    hours=5
+                ),  # 5 hours expiration to match app config
             )
             refresh_token = create_refresh_token(
                 identity=user.id, expires_delta=timedelta(days=30)  # 30 days expiration
@@ -211,7 +202,7 @@ def login():
             flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
             return response
 
-        except Exception as e:
+        except (RuntimeError, ValueError) as e:
             current_app.logger.error(
                 "Error creating tokens for user %s: %s", {user.id}, {str(e)}
             )
@@ -316,6 +307,7 @@ def forgot_password():
 @auth_bp.route("/authorize/<provider>", methods=["GET"])
 def authorize(provider: str):
     """Redirect to provider's OAuth2 login page."""
+    current_app.logger.debug("Starting OAuth authorization for provider: %s", provider)
 
     if not current_user.is_anonymous:
         current_app.logger.info("User is already logged in, id: %s.", {current_user.id})
@@ -326,152 +318,211 @@ def authorize(provider: str):
         current_app.logger.error("Provider not found: %s.", {provider})
         abort(404)
 
+    current_app.logger.debug("Provider data: %s", provider_data)
     session[OAUTH2_STATE] = secrets.token_urlsafe(16)
+    current_app.logger.debug("Generated state: %s", session[OAUTH2_STATE])
 
     qs = urlencode(
         {
-            "client_id": provider_data[CLIENT_ID],
-            "redirect_uri": provider_data[CALLBACK_URL],
+            "client_id": provider_data["client_id"],
+            "redirect_uri": provider_data["redirect_uri"],
             "response_type": RESPONSE_TYPE,
-            "scope": " ".join(provider_data[SCOPES]),
+            "scope": " ".join(provider_data["scopes"]),
             "state": session[OAUTH2_STATE],
         }
     )
-    return redirect(provider_data[AUTHORIZE_URL] + "?" + qs)
+    auth_url = provider_data["authorize_url"] + "?" + qs
+    current_app.logger.debug("Redirecting to auth URL: %s", auth_url)
+    return redirect(auth_url)
+
+
+def _get_oauth_token(provider: str, code: str) -> dict:
+    """Get OAuth token from provider."""
+    try:
+        current_app.logger.debug(
+            "Getting OAuth token for provider %s with code %s", provider, code
+        )
+        provider_data = current_app.config[OAUTH2_PROVIDERS][provider]
+        token_url = provider_data["token_url"]
+        client_id = provider_data["client_id"]
+        client_secret = provider_data["client_secret"]
+        redirect_uri = provider_data["redirect_uri"]
+
+        token_params = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "code": code,
+            "redirect_uri": redirect_uri,
+            "grant_type": "authorization_code",  # Required for both GitHub and Google
+        }
+
+        headers = {"Accept": "application/json"}
+
+        if provider == OAuthProviderEnum.GITHUB.value:
+            token_params["grant_type"] = "authorization_code"
+
+        current_app.logger.debug("Token request to URL: %s", token_url)
+        current_app.logger.debug("Token request params: %s", token_params)
+        current_app.logger.debug("Token request headers: %s", headers)
+
+        token_response = requests.post(
+            token_url, data=token_params, headers=headers, timeout=30
+        )
+        current_app.logger.debug(
+            "Token response status: %s", token_response.status_code
+        )
+        current_app.logger.debug("Token response content: %s", token_response.text)
+
+        token_response.raise_for_status()
+
+        response_data = token_response.json()
+        if provider == OAuthProviderEnum.GITHUB.value and "error" in response_data:
+            raise ValueError(f"GitHub OAuth error: {response_data['error']}")
+
+        return response_data
+    except requests.RequestException as e:
+        current_app.logger.error("Failed to get OAuth token: %s", str(e))
+        raise ValueError("Failed to get OAuth token") from e
+
+
+def _get_user_info(provider: str, access_token: str) -> dict:
+    """Get user info from provider."""
+    try:
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json",
+        }
+
+        if provider == OAuthProviderEnum.GITHUB.value:
+            # First get user profile
+            user_response = requests.get(
+                "https://api.github.com/user", headers=headers, timeout=30
+            )
+            user_response.raise_for_status()
+            user_data = user_response.json()
+
+            # Then get user email if not present
+            if not user_data.get("email"):
+                email_response = requests.get(
+                    "https://api.github.com/user/emails", headers=headers, timeout=30
+                )
+                email_response.raise_for_status()
+                emails = email_response.json()
+                primary_email = next(
+                    (email["email"] for email in emails if email["primary"]), None
+                )
+                if primary_email:
+                    user_data["email"] = primary_email
+
+            return user_data
+
+        # Google
+        user_response = requests.get(
+            "https://www.googleapis.com/oauth2/v1/userinfo",
+            headers=headers,
+            timeout=30,
+        )
+        user_response.raise_for_status()
+        return user_response.json()
+
+    except requests.RequestException as e:
+        current_app.logger.error("Failed to get user info: %s", str(e))
+        raise ValueError("Failed to get user info") from e
 
 
 @auth_bp.route("/callback/<provider>", methods=["GET"])
 def callback(provider: str):
-    """Receive authorization code from provider and get user info."""
+    """Handle the OAuth callback."""
+    current_app.logger.debug("OAuth callback received for provider: %s", provider)
 
-    provider_data = current_app.config[OAUTH2_PROVIDERS].get(provider)
-
-    # get token from provider
-    response = requests.post(
-        provider_data[TOKEN_URL],
-        data={
-            "client_id": provider_data[CLIENT_ID],
-            "client_secret": provider_data[CLIENT_SECRET],
-            "code": request.args[RESPONSE_TYPE],
-            "grant_type": AUTHORIZATION_CODE,
-            "redirect_uri": url_for("auth.callback", provider=provider, _external=True),
-        },
-        headers={"Accept": "application/json"},
-        timeout=30,
-    )
-
-    if response.status_code != 200:
+    # Check if provider exists in config
+    providers = current_app.config.get(OAUTH2_PROVIDERS)
+    if not providers or provider not in providers:
         current_app.logger.error(
-            "Failed to get token from provider: %s, status code: %s.",
-            {provider},
-            {response.status_code},
+            "Provider %s not found in OAUTH2_PROVIDERS config: %s", provider, providers
         )
-        abort(401)
+        abort(HttpRequestEnum.NOT_FOUND.value)
 
-    oauth2_token = response.json().get("access_token")
-    if not oauth2_token:
-        current_app.logger.error("Failed to get token from provider: %s.", {provider})
-        abort(401)
-
-    # get user info from provider
-    response = requests.get(
-        provider_data["userinfo"]["url"],
-        headers={
-            "Authorization": "Bearer " + oauth2_token,
-            "Accept": "application/json",
-        },
-        timeout=30,
+    # Verify state to prevent CSRF
+    state = request.args.get("state")
+    stored_state = session.get(OAUTH2_STATE)
+    current_app.logger.debug(
+        "Comparing states - Received: %s, Stored: %s", state, stored_state
     )
-    user_info = response.json()
 
-    username = None
-    email = None
-    avatar = None
-
-    if provider == OAuthProviderEnum.GOOGLE.value:
-        username = user_info.get("name")
-        email = user_info.get("email")
-        avatar = user_info.get("picture")
-    elif provider == OAuthProviderEnum.GITHUB.value:
-        username = user_info.get("login")
-        email = user_info.get("email")
-        avatar = user_info.get("avatar_url")
-
-    user = db.session.scalar(db.select(User).where(User.email == email))
-
-    if user is None:
-        # add a new user
-        user = User(
-            username=username,
-            email=email,
-            avatar_url=avatar,
-            use_google=provider == OAuthProviderEnum.GOOGLE.value,
-            use_github=provider == OAuthProviderEnum.GITHUB.value,
-            security_question="",
-            security_answer="",
+    if state != stored_state:
+        current_app.logger.error(
+            "Invalid state parameter. Received: %s, Expected: %s", state, stored_state
         )
-        db.session.add(user)
+        flash("Invalid state parameter.", FlashAlertTypeEnum.DANGER.value)
+        return redirect(url_for("auth.auth"))
 
-        # add user preference
-        user_preference = UserPreference(user_id=user.id)
-        db.session.add(user_preference)
-
-    else:
-        if not user.use_google and provider == OAuthProviderEnum.GOOGLE.value:
-            user.use_google = True
-        if not user.use_github and provider == OAuthProviderEnum.GITHUB.value:
-            user.use_github = True
-        if not user.avatar_url and avatar:
-            user.avatar_url = avatar
-        if not user.username and username:
-            user.username = username
-        if not user.email and email:
-            user.email = email
-
-    db.session.commit()
+    code = request.args.get("code")
+    if not code:
+        current_app.logger.error("No code parameter")
+        flash("Authentication failed.", FlashAlertTypeEnum.DANGER.value)
+        return redirect(url_for("auth.auth"))
 
     try:
-        # Log in the user with Flask-Login
+        # Get OAuth token
+        token_data = _get_oauth_token(provider, code)
+        access_token = token_data.get("access_token")
+        if not access_token:
+            raise ValueError("No access token in response")
+
+        # Get user info
+        user_info = _get_user_info(provider, access_token)
+
+        # Process user info
+        email = user_info.get("email")
+        if not email:
+            raise ValueError("No email in user info")
+
+        # Find or create user
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            username = user_info.get("name", "").split()[0]
+            avatar_url = user_info.get("avatar_url") or user_info.get("picture")
+
+            user = User(
+                username=username,
+                email=email,
+                avatar_url=avatar_url,
+                use_google=provider == OAuthProviderEnum.GOOGLE.value,
+                use_github=provider == OAuthProviderEnum.GITHUB.value,
+                security_question="",  # Default empty for OAuth users
+                security_answer="",  # Default empty for OAuth users
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        # Update OAuth flags
+        if provider == OAuthProviderEnum.GOOGLE.value:
+            user.use_google = True
+        else:
+            user.use_github = True
+        db.session.commit()
+
+        # Log in user
         login_user(user, remember=True)
-        current_app.logger.info(
-            "User logged in with %s, id: %s.", {provider}, {current_user.id}
-        )
+        current_app.logger.info("User logged in with %s, id: %s", provider, user.id)
 
-        # Create JWT tokens with proper expiration
-        access_token = create_access_token(
-            identity=user.id,
-            expires_delta=timedelta(minutes=15),  # 15 minutes expiration
-        )
-        refresh_token = create_refresh_token(
-            identity=user.id, expires_delta=timedelta(days=30)  # 30 days expiration
-        )
+        # Create JWT tokens
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
 
-        # Create response
         response = redirect(url_for("index"))
-
-        # Set JWT cookies with secure flags
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
-        current_app.logger.info("JWT tokens created for user, id: %s", {user.id})
 
-        # Set CSRF token with secure flags
-        csrf_token = generate_csrf()
-        response.set_cookie(
-            "csrf_token", csrf_token, httponly=True, secure=True, samesite="Strict"
+        flash(
+            f"Successfully logged in with {provider}.", FlashAlertTypeEnum.SUCCESS.value
         )
-        current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
-
-        flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
         return response
 
-    except Exception as e:
-        current_app.logger.error(
-            "Error during OAuth login for user %s: %s", {user.id}, {str(e)}
-        )
-        flash(
-            "Error during login process. Please try again.",
-            FlashAlertTypeEnum.DANGER.value,
-        )
+    except (ValueError, requests.RequestException) as e:
+        current_app.logger.error("OAuth callback error: %s", str(e))
+        flash("Authentication failed.", FlashAlertTypeEnum.DANGER.value)
         return redirect(url_for("auth.auth"))
 
 
@@ -502,104 +553,62 @@ def test_jwt():
 @jwt_required()
 def test_auth():
     """Test endpoint for JWT authentication."""
-    try:
-        current_identity = get_jwt_identity()
-        user = User.query.get(current_identity)
-        if not user:
-            return jsonify({"message": "User not found", "status": "error"}), 404
+    current_identity = get_jwt_identity()
+    user = User.query.get(current_identity)
+    if not user:
+        return jsonify({"message": "User not found", "status": "error"}), 404
 
-        response = jsonify(
-            {
-                "message": "Protected endpoint accessed successfully",
-                "user_id": current_identity,
-                "username": user.username,
-                "status": "success",
-            }
-        )
-        return response
-    except Exception as e:
-        current_app.logger.error(f"Error in test_auth: {str(e)}")
-        return (
-            jsonify(
-                {
-                    "message": "Error accessing protected endpoint",
-                    "error": str(e),
-                    "status": "error",
-                }
-            ),
-            500,
-        )
+    return jsonify(
+        {
+            "message": "Protected endpoint accessed successfully",
+            "user_id": current_identity,
+            "username": user.username,
+            "status": "success",
+        }
+    )
 
 
 @auth_bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh():
     """Refresh access token."""
+    try:
+        identity = get_jwt_identity()
+        access_token = create_access_token(identity=identity)
 
-    # Get user identity from refresh token
-    user_id = get_jwt_identity()
+        response = jsonify({"msg": "Token refreshed successfully"})
+        set_access_cookies(response, access_token)
 
-    # Create new access token
-    access_token = create_access_token(identity=user_id)
-
-    # Create response
-    response = jsonify({"msg": "Token refreshed successfully"})
-
-    # Set the JWT access cookies in response
-    set_access_cookies(response, access_token)
-
-    current_app.logger.info("Access token refreshed for user, id: %s.", {user_id})
-
-    return response
+        return response
+    except (RuntimeError, ValueError) as e:
+        current_app.logger.error("Token refresh error: %s", str(e))
+        return jsonify({"msg": "Token refresh failed"}), 401
 
 
 @auth_bp.route("/force-expire", methods=["POST"])
 @login_required
 def force_expire():
-    """Force expire the access token for testing."""
+    """Force expire the user's tokens."""
     try:
-        # Get current user from Flask-Login session
-        if not current_user or not current_user.is_authenticated:
-            return (
-                jsonify({"message": "User not authenticated", "status": "error"}),
-                401,
-            )
-
-        # Create an immediately expired token without verifying current token
-        expired_token = create_access_token(
-            identity=current_user.id,
-            expires_delta=timedelta(seconds=-1),  # Set to already expired
-        )
-
-        # Create response with expired token info
-        response = jsonify(
-            {
-                "message": "Access token expired",
-                "user_id": current_user.id,
-                "username": current_user.username,
-                "status": "success",
-            }
-        )
-
-        # Set the expired token in cookies
-        set_access_cookies(response, expired_token)
-
-        # Generate new CSRF token
-        csrf = generate_csrf()
-        response.set_cookie("csrf_token", csrf)
-
-        current_app.logger.info(f"Token expired for user {current_user.id}")
+        response = jsonify({"msg": "Tokens expired"})
+        unset_jwt_cookies(response)
         return response
+    except (RuntimeError, ValueError) as e:
+        current_app.logger.error("Force expire error: %s", str(e))
+        return jsonify({"msg": "Failed to expire tokens"}), 500
 
-    except Exception as e:
-        current_app.logger.error(f"Error in force_expire: {str(e)}")
-        return (
-            jsonify(
-                {
-                    "message": "Failed to expire token",
-                    "error": str(e),
-                    "status": "error",
-                }
-            ),
-            500,
-        )
+
+@auth_bp.route("/debug-jwt", methods=["GET"])
+@jwt_required()
+def debug_jwt():
+    """Debug JWT tokens."""
+    headers = dict(request.headers.items())
+    cookies = dict(request.cookies.items())
+
+    return jsonify(
+        {
+            "headers": headers,
+            "cookies": cookies,
+            "current_user": current_user.to_dict() if current_user else None,
+        }
+    )

@@ -24,14 +24,15 @@ def get_swagger_config() -> dict:
         "basePath": "/api/v1",
         "components": {
             "securitySchemes": {
-                "cookieAuth": {
-                    "type": "apiKey",
-                    "in": "cookie",
-                    "name": "access_token",
-                },
+                "bearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                }
             },
             "schemas": schema,
         },
+        "security": [{"bearerAuth": []}],
         "servers": [
             {
                 "url": "http://127.0.0.1:5000/api/v1",
@@ -525,6 +526,33 @@ def get_swagger_schema() -> dict:
                 },
             },
         },
+        "PaginationParams": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "description": "Page number",
+                    "default": 1,
+                    "minimum": 1,
+                },
+                "per_page": {
+                    "type": "integer",
+                    "description": "Items per page",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                },
+            },
+        },
+        "Stats": {
+            "type": "object",
+            "properties": {
+                "posts_count": {"type": "integer"},
+                "replies_count": {"type": "integer"},
+                "likes_count": {"type": "integer"},
+                "saves_count": {"type": "integer"},
+            },
+        },
     }
 
 
@@ -532,6 +560,139 @@ def get_swagger_path() -> dict:
     """Returns the swagger paths."""
 
     return {
+        "/users/username/{user_name}": {
+            "get": {
+                "tags": ["Auth"],
+                "summary": "Verify user's identity",
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name": "user_name",
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "string"},
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User verified",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {"type": "boolean"},
+                                        "message": {"type": "string"},
+                                    },
+                                }
+                            }
+                        },
+                    }
+                },
+            }
+        },
+        "/users/communities": {
+            "get": {
+                "tags": ["User"],
+                "summary": "Get user's communities",
+                "security": [{"bearerAuth": []}],
+                "parameters": [{"$ref": "#/components/schemas/PaginationParams"}],
+                "responses": {
+                    "200": {
+                        "description": "Communities found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Community"
+                                            },
+                                        },
+                                        "message": {"type": "string"},
+                                    },
+                                }
+                            }
+                        },
+                    }
+                },
+            }
+        },
+        "/communities/{community_id}/join": {
+            "post": {
+                "tags": ["Community"],
+                "summary": "Join a community",
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name": "community_id",
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "integer"},
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Joined community successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": None,
+                                        "message": {"type": "string"},
+                                    },
+                                }
+                            }
+                        },
+                    }
+                },
+            }
+        },
+        "/upload/image": {
+            "post": {
+                "tags": ["Upload"],
+                "summary": "Upload an image",
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "image": {"type": "string", "format": "binary"}
+                                },
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Image uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer", "example": 200},
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {"url": {"type": "string"}},
+                                        },
+                                        "message": {"type": "string"},
+                                    },
+                                }
+                            }
+                        },
+                    }
+                },
+            }
+        },
         "/users/records": {
             "get": {
                 "tags": ["User"],

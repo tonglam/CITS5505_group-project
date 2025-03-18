@@ -1,59 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block head %}
 
-  {% block head %}
+    <!-- global links -->
+    {% import './components/layout/globalLinks.html' as globalLinks %} {{
+    globalLinks.render_links() }}
 
-  <!-- global links -->
-  {% import './components/layout/globalLinks.html' as globalLinks %} {{
-  globalLinks.render_links() }}
+    <!-- page title -->
+    <title>{% block title %}Welcome {% endblock %} - ASKIFY</title>
 
-  <!-- page title -->
-  <title>{% block title %}Welcome {% endblock %} - ASKIFY</title>
+    <!-- end head -->
+    {% endblock %}
+  </head>
 
-  <!-- end head -->
-  {% endblock %}
-</head>
+  <body>
+    <header>
+      <!-- navbar -->
+      <nav
+        class="navbar navbar-expand-lg navbar-light bg-body-tertiary"
+        id="navMenu"
+      >
+        {% include './components/layout/navBar.html' %}
+      </nav>
+    </header>
 
-<body>
-  <header>
-    <!-- navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary" id="navMenu">
-      {% include './components/layout/navBar.html' %}
-    </nav>
-  </header>
+    <div class="layoutBox">
+      <!-- profile -->
+      {% if current_user.is_authenticated %} {% import
+      './components/layout/navUserProfile.html' as userProfile %} {{
+      userProfile.render_user_userProfile(user, post_stat) }} {% endif %}
 
-  <div class="layoutBox">
-    <!-- profile -->
-    {% if current_user.is_authenticated %} {% import
-    './components/layout/navUserProfile.html' as userProfile %} {{
-    userProfile.render_user_userProfile(user, post_stat) }} {% endif %}
-
-    <!-- notification -->
-    <div class="notifications notification-card d-none" id="notification">
-      {% include './components/layout/navNotification.html' %}
+      <!-- notification -->
+      <div
+        class="notifications notification-card {% if not notices %}d-none{% endif %}"
+        id="notification"
+      >
+        {% include './components/layout/navNotification.html' %}
+      </div>
     </div>
-  </div>
 
-  <main class="container-fluid vw-50 p-4" id="main">
-    <!-- alert message -->
-    {% import './components/alert.html' as alert %} {{
-    alert.render_sticky_alert() }}
+    <main class="container-fluid vw-50 p-4" id="main">
+      <!-- alert message -->
+      {% import './components/alert.html' as alert %} {{
+      alert.render_sticky_alert() }}
 
-    <!-- page content -->
-    <div class="mt-0" id="pageContent">{% block content %}{% endblock %}</div>
-  </main>
+      <!-- page content -->
+      <div class="mt-0" id="pageContent">{% block content %}{% endblock %}</div>
+    </main>
 
-  <!-- footer -->
-  {% import './components/layout/footer.html' as footer %} {{
-  footer.render_footer() }}
+    <!-- footer -->
+    {% import './components/layout/footer.html' as footer %} {{
+    footer.render_footer() }}
 
-  <!-- global scrpits -->
-  {% import './components/layout/globalScripts.html' as globalScripts %} {{
-  globalScripts.render_scripts() }}
-</body>
-
+    <!-- global scrpits -->
+    {% import './components/layout/globalScripts.html' as globalScripts %} {{
+    globalScripts.render_scripts() }}
+  </body>
 </html>

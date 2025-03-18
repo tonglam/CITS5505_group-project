@@ -21,41 +21,150 @@ document.addEventListener("DOMContentLoaded", function () {
           ["clean"],
           ["link", "image"],
         ],
+        handlers: {
+          image: function () {
+            document.getElementById("image-upload").click();
+          },
+        },
+      },
+      clipboard: {
+        matchVisual: false,
       },
       imageResize: {
+        parchment: Quill.import("parchment"),
         displayStyles: {
           backgroundColor: "black",
           border: "none",
           color: "white",
         },
         modules: ["Resize", "DisplaySize", "Toolbar"],
+        overlayStyles: {
+          position: "absolute",
+          boxSizing: "border-box",
+          border: "1px dashed #444",
+        },
+        handleStyles: {
+          backgroundColor: "black",
+          border: "none",
+          color: "white",
+        },
+        toolbarStyles: {
+          backgroundColor: "black",
+          border: "none",
+          color: "white",
+        },
       },
     },
     placeholder: "Enter content",
     readOnly: false,
   };
 
-  // Initialize Quill editor
+  // Initialize Quill editor with custom observer
   const quill = new Quill("#editor-container", options);
+
+  // Use MutationObserver instead of deprecated DOMNodeInserted
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeName === "IMG") {
+            // Handle new image insertion
+            node.addEventListener("load", () => {
+              quill.update();
+            });
+          }
+        });
+      }
+    });
+  });
+
+  // Start observing the editor
+  observer.observe(quill.root, {
+    childList: true,
+    subtree: true,
+  });
 
   // Handle image upload event
   const imageInput = document.getElementById("image-upload");
-  quill.getModule("toolbar").addHandler("image", function () {
-    imageInput.click();
-  });
-
-  imageInput.addEventListener("change", function () {
+  imageInput.addEventListener("change", async function () {
     const file = imageInput.files[0];
-    handleBeforeUpload(file).then((valid) => {
+    try {
+      const valid = await handleBeforeUpload(file);
       if (valid) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const base64Image = e.target.result;
-          insertImage(base64Image);
-        };
-        reader.readAsDataURL(file);
+        // Create FormData and append file
+        const formData = new FormData();
+        formData.append("image", file);
+
+        // Log the file details for debugging
+        console.log("Uploading file:", {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        });
+
+        // Upload to R2 using postFetch service
+        try {
+          const rawResponse = await postFetch("/api/v1/upload/image")(
+            formData
+          )();
+          console.log("Raw response:", rawResponse);
+
+          // Parse the response if it's a Response object
+          const response =
+            rawResponse instanceof Response
+              ? await rawResponse.json()
+              : rawResponse;
+
+          console.log("Parsed response:", response);
+
+          // Check if response exists
+          if (!response) {
+            throw new Error("No response received from server");
+          }
+
+          // Handle successful upload - checking both response types
+          if (
+            response.code === 201 ||
+            response.code === 200 ||
+            (rawResponse instanceof Response && rawResponse.ok)
+          ) {
+            // Try to get the image URL from various possible response structures
+            const imageUrl =
+              response.data?.image_url ||
+              response.message?.image_url ||
+              response.url;
+
+            if (!imageUrl) {
+              console.error("Response structure:", response);
+              throw new Error("Could not find image URL in response");
+            }
+
+            console.log("Successfully uploaded image, URL:", imageUrl);
+            const length = quill.getSelection()?.index || 0;
+            quill.insertEmbed(length, "image", imageUrl);
+            quill.setSelection(length + 1);
+          } else {
+            console.error("Unexpected response:", response);
+            const errorMsg =
+              response.message ||
+              (response.msg
+                ? `Server error: ${response.msg}`
+                : `Server returned unexpected status: ${
+                    response.code || rawResponse.status || "undefined"
+                  }`);
+            throw new Error(errorMsg);
+          }
+        } catch (uploadError) {
+          console.error("Upload request failed:", uploadError);
+          throw new Error(
+            uploadError.message || "Failed to process server response"
+          );
+        }
       }
-    });
+    } catch (error) {
+      console.error("Error details:", error);
+      alert(`Error uploading image: ${error.message}`);
+    }
   });
 
   // Check format and size before upload
@@ -76,13 +185,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Insert image into the editor
-  function insertImage(base64Image) {
-    const length = quill.getSelection().index;
-    quill.insertEmbed(length, "image", base64Image);
-    quill.setSelection(length + 1);
-  }
-
   const content = document.createElement("input");
   content.setAttribute("type", "hidden");
   content.setAttribute("name", "content");
@@ -98,11 +200,39 @@ async function createPost(title, community, content, tag) {
     tag: tag,
   };
 
-  const response = await postFetch(postUrl)(data)();
-  if (response.code == 201) {
-    window.location.href = "/posts/" + response.message.post_id;
-  } else {
-    alert(response.message);
+  try {
+    const rawResponse = await postFetch(postUrl)(data)();
+    console.log("Raw create post response:", rawResponse); // Debug log
+
+    // Parse the response if it's a Response object
+    const response =
+      rawResponse instanceof Response ? await rawResponse.json() : rawResponse;
+
+    console.log("Parsed create post response:", response); // Debug log
+
+    if (
+      response.code === 201 ||
+      (rawResponse instanceof Response && rawResponse.status === 201)
+    ) {
+      const postId = response.data?.post_id;
+      if (postId) {
+        window.location.href = "/posts/" + postId;
+      } else {
+        console.error("Post created but no post_id in response:", response);
+        window.location.href = "/";
+      }
+    } else {
+      console.error("Failed to create post:", response);
+      alert(
+        response.message ||
+          `Failed to create post: ${
+            response.code || response.status || "Unknown error"
+          }`
+      );
+    }
+  } catch (error) {
+    console.error("Error creating post:", error);
+    alert("Error creating post: " + (error.message || "Unknown error"));
   }
 }
 

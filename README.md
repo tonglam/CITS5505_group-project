@@ -59,30 +59,46 @@ Replace the following keys to start the Flask app with the minimum configuration
 SECRET_KEY = example-key
 JWT_SECRET_KEY = jwt-example-key
 
+[POSTGRESQL]
+DATABASE_URL = postgresql://username:password@localhost:5432/dbname
+
 [SQLITE]
-DATABASE_URL = sqlite:///example.dev.sqlite
+DATABASE_URL = sqlite:///example.test.sqlite  # Used for unit tests
 ```
 
 - Replace the following keys using your own [Google OAuth token](https://console.cloud.google.com/apis/dashboard) and [Github OAuth token](https://github.com/settings/developers), to use Google/Github authentication.
 
 ```
 [GOOGLE]
-CLIENT_ID = example_id
-CLIENT_SECRET = example_secret
-CALLBACK_URL = http://127.0.0.1:5000/auth/callback/google
+GOOGLE_OAUTH_CLIENT_ID = your-google-client-id
+GOOGLE_OAUTH_CLIENT_SECRET = your-google-client-secret
+GOOGLE_OAUTH_REDIRECT_URI = http://127.0.0.1:5000/auth/callback/google
+# The following URLs are constants, no need to change
+GOOGLE_OAUTH_AUTH_URL = https://accounts.google.com/o/oauth2/v2/auth
+GOOGLE_OAUTH_TOKEN_URL = https://oauth2.googleapis.com/token
+GOOGLE_OAUTH_USER_INFO_URL = https://www.googleapis.com/oauth2/v3/userinfo
+GOOGLE_OAUTH_SCOPE_PROFILE = https://www.googleapis.com/auth/userinfo.profile
+GOOGLE_OAUTH_SCOPE_EMAIL = https://www.googleapis.com/auth/userinfo.email
 
 [GITHUB]
-CLIENT_ID = example_id
-CLIENT_SECRET = example_secret
-CALLBACK_URL = http://127.0.0.1:5000/auth/callback/github
+GITHUB_OAUTH_CLIENT_ID = your-github-client-id
+GITHUB_OAUTH_CLIENT_SECRET = your-github-client-secret
+GITHUB_OAUTH_REDIRECT_URI = http://127.0.0.1:5000/auth/callback/github
+# The following URLs are constants, no need to change
+GITHUB_OAUTH_AUTH_URL = https://github.com/login/oauth/authorize
+GITHUB_OAUTH_TOKEN_URL = https://github.com/login/oauth/access_token
+GITHUB_OAUTH_USER_INFO_URL = https://api.github.com/user
+
+[CLOUDFLARE]
+ACCOUNT_ID = your-cloudflare-account-id
+API_TOKEN = your-cloudflare-api-token
+R2_BUCKET_NAME = your-r2-bucket-name
+R2_PUBLIC_URL = your-r2-public-url
+
 ```
 
-- Replace the following keys using your [ImageBB Api key](https://api.imgbb.com/) to use upload picture service.
-
-```
 [IMGBB]
 API_KEY = example_key
-```
 
 ```python
 # using command line
@@ -107,7 +123,7 @@ A simpler way to enjoy Ask is to use our Docker image.
 
 ### Start the Docker daemon
 
-Start the Docker daemon, such as `Docker Desktop`, on your local machine or server.
+Start the Docker daemon, such as `Docker Desktop` or `Orbstack`, on your local machine or server.
 
 ### Run and Stop the Docker
 
@@ -120,16 +136,31 @@ docker-compose -f docker-compose.dev.yml up
 # run docker container in background
 docker-compose -f docker-compose.dev.yml up -d
 
-# stop docer container
+# stop docker container
 docker-compose -f docker-compose.dev.yml down
 ```
 
 Alternatively, if you want to run Docker directly:
 
 ```shell
-docker run -p 5000:5000 tonglam/cits5505_group-project:lastest
+# run docker container
+docker run -p 5000:5000 docker.io/tonglam/askify:latest
 
-docker run -d -p 5000:5000 tonglam/cits5505_group-project:lastest
+# run docker container in background
+docker run -d -p 5000:5000 docker.io/tonglam/askify:latest
+```
+
+Note: When running with Docker, make sure to set up the required environment variables. You can use the `-e` flag or create a `.env` file:
+
+```shell
+# Example of setting environment variables
+docker run -p 5000:5000 \
+  -e SECRET_KEY=your-secret-key \
+  -e JWT_SECRET_KEY=your-jwt-secret \
+  -e DATABASE_URL=your-database-url \
+  -e GOOGLE_OAUTH_CLIENT_ID=your-google-client-id \
+  ... (other environment variables) \
+  docker.io/tonglam/askify:latest
 ```
 
 # Run Test
@@ -140,7 +171,7 @@ The `test.py` file is located in the root directory.
 
 ## Unit Test
 
-To run all the unit tests, execute the following command in the terminal:
+To run all the unit tests, execute the following command in the terminal. Note that unit tests use SQLite as the database for faster execution and easier setup:
 
 ```python
 python test.py
@@ -152,14 +183,6 @@ If you want to run unit tests for a specific module, use the following command:
 
 ```python
 python test.py [api|auth|community|popular|post|search|user]
-```
-
-## End to End Test
-
-To run the Selenium end-to-end tests, execute the following command in the terminal:
-
-```python
-python test.py end2end
 ```
 
 # Module
@@ -204,16 +227,20 @@ The User module provides services for displaying, editing user profiles, and tra
 
 - **Flask** for creating the web server.
 - **Jinja2** for rendering the templates.
-- **SQLite** for database.
+- **PostgreSQL** for production database.
+- **SQLite** for testing database.
 - **Bootstrap** for frontend UI.
 - **JavaScript** and **jQuery** for DOM manipulation and Ajax.
 - **Flask-Login** for user session management.
-- **Flask-SQLAlchemy** and Flask-Migrate for SQLite database - management.
+- **Flask-SQLAlchemy** and Flask-Migrate for database management.
 - **Flask-WTF** for form validation.
 - **Flask-JWT-Extended** for implementing JWT for APIs.
 - **flasgger** for creating Swagger documentation.
 - **Flask-APScheduler** for implementing scheduled jobs.
 - **flask-unittest** for integrating unit tests and selenium tests.
+- **Cloudflare R2** for object storage and image hosting.
+- **Docker** for containerization and deployment.
+- **GitHub Actions** for CI/CD pipeline.
 
 # Documentation
 

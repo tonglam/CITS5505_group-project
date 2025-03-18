@@ -8,7 +8,8 @@ from sqlalchemy import event
 
 from app.constants import DICEBEAR_AVATAR_URL
 from app.extensions import bcrypt, db
-from app.utils import format_datetime_to_readable_string, generate_time, generate_uuid
+from app.utils import (format_datetime_to_readable_string, generate_time,
+                       generate_uuid)
 
 
 class UserStatusEnum(enum.Enum):

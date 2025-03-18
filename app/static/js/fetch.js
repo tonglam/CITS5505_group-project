@@ -102,10 +102,8 @@ const isTokenExpired = (token) => {
 
 async function refreshToken() {
   try {
-    console.log("Refreshing token...");
-    await getCookieValue(); // Get fresh tokens before refresh
+    await getCookieValue();
     const csrfRefreshToken = getCsrfRefreshToken();
-    console.log("Using refresh CSRF token:", csrfRefreshToken);
 
     const response = await fetch("/auth/refresh", {
       method: "POST",
@@ -119,12 +117,9 @@ async function refreshToken() {
       throw new Error("Token refresh failed");
     }
 
-    // Wait for cookies to be updated
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Force refresh the cookies object
     await getCookieValue();
-    console.log("Token refreshed successfully");
     return true;
   } catch (error) {
     console.error("Error refreshing token:", error);
@@ -139,18 +134,14 @@ async function fetchData(url, options = {}) {
     let accessToken = getJwtToken();
     let csrfToken = getCsrfAccessToken();
 
-    console.log("Using access token:", accessToken ? "Present" : "Not present");
-    console.log("Using CSRF token:", csrfToken);
-
     // Add headers
     options.headers = {
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
-      "X-CSRF-Token": csrfToken,
+      "X-CSRF-TOKEN": csrfToken,
     };
 
     // Make the request
-    console.log(`Making request to ${url}...`);
     const response = await fetch(url, {
       ...options,
       credentials: "same-origin",
@@ -158,9 +149,6 @@ async function fetchData(url, options = {}) {
 
     // Handle different response statuses
     if (response.status === 401) {
-      console.log("401 Unauthorized - attempting token refresh");
-
-      // Token expired or invalid, try to refresh
       const refreshSuccess = await refreshToken();
       if (refreshSuccess) {
         // Wait for cookies to be updated
@@ -171,12 +159,6 @@ async function fetchData(url, options = {}) {
         accessToken = getJwtToken();
         csrfToken = getCsrfAccessToken();
 
-        console.log(
-          "Retrying with new access token:",
-          accessToken ? "Present" : "Not present"
-        );
-        console.log("Retrying with new CSRF token:", csrfToken);
-
         // Retry original request with new token
         const retryResponse = await fetch(url, {
           ...options,
@@ -184,7 +166,7 @@ async function fetchData(url, options = {}) {
           headers: {
             ...options.headers,
             Authorization: `Bearer ${accessToken}`,
-            "X-CSRF-Token": csrfToken,
+            "X-CSRF-TOKEN": csrfToken,
           },
         });
 
@@ -195,7 +177,6 @@ async function fetchData(url, options = {}) {
         return retryResponse;
       } else {
         // Refresh failed, redirect to login
-        console.log("Token refresh failed, redirecting to login");
         window.location.href = "/auth/auth";
         return null;
       }
@@ -225,7 +206,7 @@ const getFetch =
     const getUrl = `${urlObject.pathname}${urlObject.search}`;
     const access_token = getJwtToken();
     const getHeaders = { ...jwtHeader(access_token), ...headers };
-    return await fetchData(getUrl, { getHeaders });
+    return await fetchData(getUrl, { headers: getHeaders });
   };
 
 const postFetch =

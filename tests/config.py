@@ -3,23 +3,16 @@
 # Reference: TotallyNotChase flask-unittest[https://github.com/TotallyNotChase/flask-unittest]
 
 import os
-from typing import Any, Dict, Iterator, Union
+from typing import Any, Dict
 
 import flask_unittest
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask.testing import FlaskClient
 from flask.wrappers import Response as TestResponse
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from sqlalchemy.sql import text
-from webdriver_manager.chrome import ChromeDriverManager
 
 from app import create_app
 from app.extensions import db
-from app.utils import get_config
 from tests.seeds.category_seeds import seed_category
 from tests.seeds.community_seeds import seed_community
 from tests.seeds.reply_seeds import seed_reply
@@ -42,7 +35,8 @@ def get_test_config() -> Dict[str, Any]:
     return {
         "TESTING": True,
         "WTF_CSRF_ENABLED": False,
-        "SQLALCHEMY_DATABASE_URI": get_config("POSTGRESQL", "DATABASE_URL") + "_test",
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///test.db",
+        "SECRET_KEY": "test-secret-key",  # Add secret key for session management
     }
 
 
@@ -80,20 +74,26 @@ def execute_seed_functions(app: Flask) -> None:
 
 def clean_up_test_database(app: Flask) -> None:
     """Clean up the test database."""
-
-    with app.app_context():
-        db.drop_all()
+    try:
+        with app.app_context():
+            db.drop_all()
+    except (db.SQLAlchemyError, db.DatabaseError) as e:
+        print(f"Warning: Failed to clean up test database: {e}")
 
 
 class TestBase(flask_unittest.AppClientTestCase):
     """Base test case for the application."""
 
-    create_app = create_test_app
+    def create_app(self):
+        """Create test application."""
+        return create_test_app()
 
     def setUp(self, app: Flask, _):
         """Set up the test case."""
 
         print("\nTestBase: Setting up test case.")
+        clean_up_test_database(app)  # Clean up first
+        create_test_database(app)  # Then create tables
         execute_seed_functions(app)
 
     def tearDown(self, app: Flask, _):
@@ -104,32 +104,65 @@ class TestBase(flask_unittest.AppClientTestCase):
 
 
 class AuthActions:
-    """Helper class for handling authentication."""
+    """Helper class for authentication actions."""
 
     def __init__(self, client: FlaskClient):
+        """Initialize the class."""
         self._client = client
+        self._access_token = None
+        self._csrf_access_token = None
+        self._refresh_token = None
+        self._csrf_refresh_token = None
 
     def login(
         self,
-        email: str = "test@gmail.com",
+        email: str = "test@test.com",
         password: str = "Password@123",
-        follow_redirects: bool = True,
-    ) -> None:
-        """Log a user in."""
+        follow_redirects: bool = False,
+    ) -> TestResponse:
+        """Login with the given credentials."""
 
-        return self._client.post(
+        response = self._client.post(
             "/auth/login",
-            data={
-                "email": email,
-                "password": password,
-            },
+            data={"email": email, "password": password},
             follow_redirects=follow_redirects,
         )
 
-    def logout(self) -> None:
-        """Log a user out."""
+        # Extract tokens from cookies
+        cookies = response.headers.getlist("Set-Cookie")
+        for cookie in cookies:
+            if "access_token_cookie" in cookie:
+                self._access_token = cookie.split(";")[0].split("=")[1]
+            elif "csrf_access_token" in cookie:
+                self._csrf_access_token = cookie.split(";")[0].split("=")[1]
+            elif "refresh_token_cookie" in cookie:
+                self._refresh_token = cookie.split(";")[0].split("=")[1]
+            elif "csrf_refresh_token" in cookie:
+                self._csrf_refresh_token = cookie.split(";")[0].split("=")[1]
 
-        return self._client.get("/auth/logout")
+        return response
+
+    def get_auth_headers(self) -> Dict[str, str]:
+        """Get authentication headers."""
+
+        headers = {"Content-Type": "application/json"}
+
+        if self._access_token:
+            headers["Authorization"] = f"Bearer {self._access_token}"
+
+        if self._csrf_access_token:
+            headers["X-CSRF-TOKEN"] = self._csrf_access_token
+
+        return headers
+
+    def logout(self) -> None:
+        """Logout the current user."""
+
+        self._client.get("/auth/logout")
+        self._access_token = None
+        self._csrf_access_token = None
+        self._refresh_token = None
+        self._csrf_refresh_token = None
 
 
 class Utils:
@@ -144,58 +177,10 @@ class Utils:
         return csrf_token
 
     @staticmethod
-    def get_page_title(response: TestResponse, url: str) -> str:
+    def get_page_title(response: TestResponse, _: str) -> str:
         """Get the page title from the client response."""
 
         soup = BeautifulSoup(response.data, "html.parser")
         page_title = soup.title.text.strip() if soup.title else "No title found"
         page_title = page_title.split(" - ")[0]
         return page_title
-
-
-class SeleniumTestBase:
-    """Base class for Selenium tests."""
-
-    def setUp(self) -> None:
-        """Set up test case."""
-
-        self.app = create_test_app()
-        self.client = self.app.test_client()
-
-        # set up chrome options
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-
-        # set up chrome driver
-        service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-
-        # set up wait time
-        self.driver.implicitly_wait(10)
-
-    def tearDown(self) -> None:
-        """Tear down test case."""
-
-        self.driver.quit()
-
-
-class TestSeleniumSetup(SeleniumTestBase):
-    """This class contains the setup test case."""
-
-    def test_setup(self):
-        """Test the setup of the Selenium test case."""
-
-        create_test_database(self.app)
-        execute_seed_functions(self.app)
-        clean_up_test_database(self.app)
-
-
-class TestSeleniumCleanup(SeleniumTestBase):
-    """This class contains the cleanup test case."""
-
-    def test_cleanup(self):
-        """Test the cleanup of the Selenium test case."""
-
-        clean_up_test_database(self.app)

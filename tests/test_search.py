@@ -17,8 +17,8 @@ class TestSearch(TestBase):
         # login
         AuthActions(client).login()
 
-        # smoke test
-        response = client.get(url)
+        # smoke test - don't follow redirects when testing redirect status
+        response = client.get(url, follow_redirects=False)
         self.assertEqual(response.status_code, HttpRequestEnum.PERMANENT_REDIRECT.value)
 
         # logout
@@ -33,7 +33,7 @@ class TestSearch(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout

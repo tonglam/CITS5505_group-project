@@ -1,15 +1,14 @@
 """This module contains the routes for the community blueprint."""
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import (current_app, flash, redirect, render_template, request,
+                   url_for)
 from flask_login import current_user, login_required
 
-from app.api.service import (
-    categories_service,
-    communities_service,
-    user_communities_service,
-)
+from app.api.service import (categories_service, communities_service,
+                             user_communities_service)
 from app.community import community_bp, forms, service
-from app.constants import DISPLAY_COMMUNITY_NUM, FlashAlertTypeEnum, HttpRequestEnum
+from app.constants import (DISPLAY_COMMUNITY_NUM, FlashAlertTypeEnum,
+                           HttpRequestEnum)
 from app.extensions import db
 from app.models.community import Community
 from app.notice.events import NoticeTypeEnum, notice_event

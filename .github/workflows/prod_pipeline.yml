@@ -43,7 +43,7 @@ jobs:
 
       - name: Run tests
         env:
-          POSTGRESQL_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/askify_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/askify_test
         run: |
           pytest --cov=app tests/
 
@@ -57,45 +57,51 @@ jobs:
 
       - name: Fetch Prod Configurations
         env:
-          APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
+          FLASK_ENV: prod
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          POSTGRESQL_DATABASE_URL: ${{ secrets.POSTGRESQL_DATABASE_URL }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
-          GITHUB_CLIENT_ID: ${{ secrets.MY_GITHUB_CLIENT_ID }}
-          GITHUB_CLIENT_SECRET: ${{ secrets.MY_GITHUB_CLIENT_SECRET }}
-          GITHUB_CALLBACK_URL: ${{ secrets.MY_GITHUB_CALLBACK_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REDIRECT_URI: ${{ secrets.GOOGLE_OAUTH_REDIRECT_URI }}
+          GITHUB_OAUTH_CLIENT_ID: ${{ secrets.GITHUB_OAUTH_CLIENT_ID }}
+          GITHUB_OAUTH_CLIENT_SECRET: ${{ secrets.GITHUB_OAUTH_CLIENT_SECRET }}
+          GITHUB_OAUTH_REDIRECT_URI: ${{ secrets.GITHUB_OAUTH_REDIRECT_URI }}
+          ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
         run: |
           echo "[APP]" > config.ini
-          echo "SECRET_KEY = $APP_SECRET_KEY" >> config.ini
+          echo "SECRET_KEY = $SECRET_KEY" >> config.ini
           echo "JWT_SECRET_KEY = $JWT_SECRET_KEY" >> config.ini
           echo "" >> config.ini
           echo "[POSTGRESQL]" >> config.ini
-          echo "DATABASE_URL = $POSTGRESQL_DATABASE_URL" >> config.ini
+          echo "DATABASE_URL = $DATABASE_URL" >> config.ini
           echo "" >> config.ini
           echo "[GOOGLE]" >> config.ini
-          echo "CLIENT_ID = $GOOGLE_CLIENT_ID" >> config.ini
-          echo "CLIENT_SECRET = $GOOGLE_CLIENT_SECRET" >> config.ini
-          echo "CALLBACK_URL = $GOOGLE_CALLBACK_URL" >> config.ini
-          echo "AUTHORIZE_URL = https://accounts.google.com/o/oauth2/v2/auth" >> config.ini
-          echo "TOKEN_URL = https://oauth2.googleapis.com/token" >> config.ini
-          echo "USER_URL = https://www.googleapis.com/oauth2/v3/userinfo" >> config.ini
-          echo "SCOPES_PROFILE = https://www.googleapis.com/auth/userinfo.profile" >> config.ini
-          echo "SCOPES_EMAIL = https://www.googleapis.com/auth/userinfo.email" >> config.ini
+          echo "GOOGLE_OAUTH_CLIENT_ID = ${GOOGLE_OAUTH_CLIENT_ID}" >> config.ini
+          echo "GOOGLE_OAUTH_CLIENT_SECRET = ${GOOGLE_OAUTH_CLIENT_SECRET}" >> config.ini
+          echo "GOOGLE_OAUTH_REDIRECT_URI = ${GOOGLE_OAUTH_REDIRECT_URI}" >> config.ini
+          echo "GOOGLE_OAUTH_AUTH_URL = https://accounts.google.com/o/oauth2/v2/auth" >> config.ini
+          echo "GOOGLE_OAUTH_TOKEN_URL = https://oauth2.googleapis.com/token" >> config.ini
+          echo "GOOGLE_OAUTH_USER_INFO_URL = https://www.googleapis.com/oauth2/v3/userinfo" >> config.ini
+          echo "GOOGLE_OAUTH_SCOPE_PROFILE = https://www.googleapis.com/auth/userinfo.profile" >> config.ini
+          echo "GOOGLE_OAUTH_SCOPE_EMAIL = https://www.googleapis.com/auth/userinfo.email" >> config.ini
           echo "" >> config.ini
           echo "[GITHUB]" >> config.ini
-          echo "CLIENT_ID = $GITHUB_CLIENT_ID" >> config.ini
-          echo "CLIENT_SECRET = $GITHUB_CLIENT_SECRET" >> config.ini
-          echo "CALLBACK_URL = $GITHUB_CALLBACK_URL" >> config.ini
-          echo "AUTHORIZE_URL = https://github.com/login/oauth/authorize" >> config.ini
-          echo "TOKEN_URL = https://github.com/login/oauth/access_token" >> config.ini
-          echo "USER_URL = https://api.github.com/user" >> config.ini
+          echo "GITHUB_OAUTH_CLIENT_ID = ${GITHUB_OAUTH_CLIENT_ID}" >> config.ini
+          echo "GITHUB_OAUTH_CLIENT_SECRET = ${GITHUB_OAUTH_CLIENT_SECRET}" >> config.ini
+          echo "GITHUB_OAUTH_REDIRECT_URI = ${GITHUB_OAUTH_REDIRECT_URI}" >> config.ini
+          echo "GITHUB_OAUTH_AUTH_URL = https://github.com/login/oauth/authorize" >> config.ini
+          echo "GITHUB_OAUTH_TOKEN_URL = https://github.com/login/oauth/access_token" >> config.ini
+          echo "GITHUB_OAUTH_USER_INFO_URL = https://api.github.com/user" >> config.ini
           echo "" >> config.ini
-          echo "[IMGBB]" >> config.ini
-          echo "API_KEY = $IMGBB_API_KEY" >> config.ini
+          echo "[CLOUDFLARE]" >> config.ini
+          echo "ACCOUNT_ID = $ACCOUNT_ID" >> config.ini
+          echo "API_TOKEN = $API_TOKEN" >> config.ini
+          echo "R2_BUCKET_NAME = $R2_BUCKET_NAME" >> config.ini
+          echo "R2_PUBLIC_URL = $R2_PUBLIC_URL" >> config.ini
 
       - name: Deploy to Render
         env:

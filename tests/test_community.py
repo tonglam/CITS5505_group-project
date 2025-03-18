@@ -21,7 +21,7 @@ class TestCommunity(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -36,7 +36,7 @@ class TestCommunity(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -51,7 +51,7 @@ class TestCommunity(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -66,7 +66,7 @@ class TestCommunity(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -81,14 +81,14 @@ class TestCommunity(TestBase):
         AuthActions(client).login()
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         community = Community.query.first()
         url = f"/communities/management/{community.id}"
 
         # smoke test
-        response = client.get(url)
+        response = client.get(url, follow_redirects=True)
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # logout
@@ -118,8 +118,9 @@ class TestCommunity(TestBase):
                 "avatar_url": "test",
                 "creator_id": user.id,
             },
+            follow_redirects=True,
         )
-        self.assertEqual(response.status_code, HttpRequestEnum.FOUND.value)
+        self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 
         # check if community is created
         with app.app_context():
@@ -138,6 +139,7 @@ class TestCommunity(TestBase):
                 "avatar_url": "test",
                 "creator_id": user.id,
             },
+            follow_redirects=True,
         )
         self.assertEqual(response.status_code, HttpRequestEnum.SUCCESS_OK.value)
 

@@ -36,7 +36,9 @@ class ApiResponse:
                 "total_pages": self.pagination.pages,
             }
 
-        return jsonify(response_dict)
+        response = jsonify(response_dict)
+        response.status_code = self.code
+        return response
 
 
 from . import routes

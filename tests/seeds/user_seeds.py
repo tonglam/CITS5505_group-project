@@ -1,4 +1,4 @@
-"""This module seeds the database with initial user data for testing. """
+"""This module seeds the database with initial user data for testing."""
 
 import random
 import string
@@ -17,14 +17,14 @@ def create_seed_user_data() -> list:
 
     users = [
         {
-            "username": faker.name(),
+            "username": f"{faker.name()}_{i}",
             "email": generate_test_email(),
             "avatar_url": f"https://api.dicebear.com/5.x/adventurer/svg?seed={random.randint(1, 1000)}",
             "password": "Password@123",
             "security_question": "What is your favorite color?",
             "security_answer": "blue",
         }
-        for _ in range(10)
+        for i in range(10)
     ]
 
     users.append(

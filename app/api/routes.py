@@ -1,25 +1,27 @@
 """Routes for api."""
-from urllib.parse import urlparse, parse_qs
 
-import requests
+from urllib.parse import parse_qs, urlparse
+
 from flask import abort, request
 from flask_jwt_extended import jwt_required
 
 from app.api import api_bp
-from app.constants import IMAGE_BB_UPLOAD_URL, HttpRequestEnum
-from app.utils import get_config
+from app.constants import HttpRequestEnum
 
 from . import ApiResponse
 from .service import (
     categories_service,
     category_service,
     delete_community_service,
+    delete_post_service,
+    delete_user_comments_service,
     delete_user_like_service,
     delete_user_record_service,
     delete_user_save_service,
     get_user_notice_service,
     join_community_service,
     leave_community_service,
+    post_user_comments_service,
     post_user_like_service,
     post_user_record_service,
     post_user_save_service,
@@ -28,10 +30,14 @@ from .service import (
     stats_service,
     tag_service,
     tags_service,
+    update_user_comments_service,
+    update_user_post_service,
+    upload_image_service,
     user_communities_service,
     user_email_verify_service,
     user_likes_service,
     user_password_verify_service,
+    user_post_service,
     user_posts_service,
     user_replies_service,
     user_saves_service,
@@ -39,12 +45,6 @@ from .service import (
     user_verification_service,
     users_notices_service,
     users_records_service,
-    post_user_comments_service,
-    delete_user_comments_service,
-    update_user_comments_service,
-    user_post_service,
-    delete_post_service,
-    update_user_post_service,
 )
 
 
@@ -113,7 +113,7 @@ def user_replies() -> ApiResponse:
 
 
 @api_bp.route("/users/records", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def user_records() -> ApiResponse:
     """Retrieve all records associated with the logged-in user."""
 
@@ -139,7 +139,7 @@ def users_record(request_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/likes", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def user_likes() -> ApiResponse:
     """Get all likes by user id."""
 
@@ -186,7 +186,8 @@ def user_save() -> ApiResponse:
     reply_id = request.get_json().get("reply_id")
 
     if request.method == "POST":
-        return post_user_save_service(request_id, reply_id)
+        response = post_user_save_service(request_id, reply_id)
+        return response
 
     if request.method == "DELETE":
         return delete_user_save_service(request_id, reply_id)
@@ -228,6 +229,7 @@ def user_notice(notice_id: int) -> ApiResponse:
 
 
 @api_bp.route("/users/stats", methods=["GET"])
+@jwt_required()
 def user_stats():
     """Get the user's statistics."""
 
@@ -284,29 +286,30 @@ def posts() -> ApiResponse:
 
     return posts_service(community_id, order_by, page, per_page)
 
-@api_bp.route("/posts/create/comment", methods=["POST","PUT","DELETE"])
+
+@api_bp.route("/posts/create/comment", methods=["POST", "PUT", "DELETE"])
 @jwt_required()
 def post_comment() -> ApiResponse:
     """Post, update and delete comment."""
     # Get the information from the referer header.
-    referer = request.headers.get('Referer')
+    referer = request.headers.get("Referer")
     if referer:
         query = urlparse(referer).query
         params = parse_qs(query)
-        post_id = params.get('post_id', [None])[0]
-        reply_id = params.get('reply_id', [post_id])[0]
+        post_id = params.get("post_id", [None])[0]
+        reply_id = params.get("reply_id", [post_id])[0]
     else:
         post_id = None
         reply_id = None
 
-    content = request.json.get('content')
+    content = request.json.get("content")
 
-    request_post_id = request.json.get('post_id')
-    request_reply_id = request.json.get('reply_id')
+    request_post_id = request.json.get("post_id")
+    request_reply_id = request.json.get("reply_id")
 
     if request.method == "POST":
         if not post_id or not content:
-            return ApiResponse(400, 'Wrong parameters for post comment').json()
+            return ApiResponse(400, "Wrong parameters for post comment").json()
         return post_user_comments_service(post_id, reply_id, content)
 
     if request.method == "PUT":
@@ -315,7 +318,8 @@ def post_comment() -> ApiResponse:
     if request.method == "DELETE":
         return delete_user_comments_service(request_post_id, request_reply_id)
 
-    return ApiResponse(400, 'Invalid request method').json()
+    return ApiResponse(400, "Invalid request method").json()
+
 
 @api_bp.route("/posts/create/post", methods=["POST", "PUT", "DELETE"])
 @jwt_required()
@@ -323,36 +327,39 @@ def post_related() -> ApiResponse:
     # pylint: disable=too-many-return-statements
     """Post, update, and delete a post."""
 
-    title = request.json.get('title')
-    community = request.json.get('community')
-    content = request.json.get('content')
-    tag_id = request.json.get('tag')
-    request_post_id = request.json.get('post_id')
+    title = request.json.get("title")
+    community = request.json.get("community")
+    content = request.json.get("content")
+    tag_id = request.json.get("tag")
+    request_post_id = request.json.get("post_id")
 
-    referer = request.headers.get('Referer')
+    referer = request.headers.get("Referer")
     if referer:
         query = urlparse(referer).query
         params = parse_qs(query)
-        referer_post_id = params.get('post_id', [None])[0]
+        referer_post_id = params.get("post_id", [None])[0]
     else:
         referer_post_id = None
 
     if request.method == "POST":
         if not title or not community or not content:
-            return ApiResponse(400, 'Wrong parameters for post').json()
+            return ApiResponse(400, "Wrong parameters for post").json()
         return user_post_service(title, community, content, tag_id)
 
     if request.method == "PUT":
         if not referer_post_id:
-            return ApiResponse(400, 'Post ID missing for update').json()
-        return update_user_post_service(referer_post_id, title, community, content, tag_id)
+            return ApiResponse(400, "Post ID missing for update").json()
+        return update_user_post_service(
+            referer_post_id, title, community, content, tag_id
+        )
 
     if request.method == "DELETE":
         if not request_post_id:
-            return ApiResponse(400, 'Post ID missing for deletion').json()
+            return ApiResponse(400, "Post ID missing for deletion").json()
         return delete_post_service(request_post_id)
 
-    return ApiResponse(400, 'Invalid request method').json()
+    return ApiResponse(400, "Invalid request method").json()
+
 
 # Api for others.
 
@@ -400,28 +407,5 @@ def stats() -> ApiResponse:
 @api_bp.route("/upload/image", methods=["POST"])
 @jwt_required()
 def upload_image() -> ApiResponse:
-    """Upload image to imgbb."""
-
-    # image file
-    image_file = request.files.get("image")
-
-    # post image to imgbb
-    payload = payload = {
-        "key": get_config("IMG_BB", "API_KEY"),
-        "image": image_file.read(),
-    }
-
-    # request
-    response = requests.post(IMAGE_BB_UPLOAD_URL, files=payload, timeout=10)
-
-    if response.status_code != 200:
-        return ApiResponse(
-            code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
-            message="Image upload failed",
-        )
-
-    image_url = response.json()["data"]["url"]
-
-    return ApiResponse(
-        data={"image_url": image_url}, message="Image uploaded successfully"
-    )
+    """Upload image to R2."""
+    return upload_image_service(request.files.get("image"))

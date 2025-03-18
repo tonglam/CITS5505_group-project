@@ -19,12 +19,19 @@ from app.api.service import (
     users_notices_service,
 )
 from app.constants import (
+    AUTH_URL,
+    CLIENT_ID,
+    CLIENT_SECRET,
     COMMUNITY_OPTION_NUM,
     G_NOTICE,
     G_NOTICE_NUM,
     G_POST_STAT,
     G_USER,
     POPULAR_POST_NUM,
+    REDIRECT_URI,
+    SCOPES,
+    TOKEN_URL,
+    USER_INFO_URL,
     EnvironmentEnum,
     HttpRequestEnum,
 )
@@ -43,7 +50,7 @@ from .user import user_bp
 from .utils import get_config, get_env, get_pagination_details
 
 
-def create_app() -> Flask:
+def create_app(test_config: dict = None) -> Flask:
     """Create the Flask application."""
 
     app = Flask(__name__)
@@ -52,7 +59,10 @@ def create_app() -> Flask:
     env = get_env()
 
     # configuration
-    init_config(app, env)
+    if test_config is not None:
+        app.config.update(test_config)
+    else:
+        init_config(app, env)
 
     # extensions
     init_extensions(app)
@@ -71,10 +81,6 @@ def create_app() -> Flask:
 
     # global context processors
     register_context_processors(app)
-
-    # start scheduler
-    if env != EnvironmentEnum.TEST.value:
-        scheduler.start()
 
     # home page
     @app.route("/", methods=["GET"])
@@ -158,7 +164,9 @@ def create_app() -> Flask:
     @login_required
     def notification():
         notices = (
-            users_notices_service(status="unread").json.get("data").get("user_notices")
+            users_notices_service(status="unread")
+            .json.get("data")
+            .get("user_notifications")
         )
 
         return render_template(
@@ -176,6 +184,16 @@ def init_config(app: Flask, env: str) -> None:
     app.config["SQLALCHEMY_DATABASE_URI"] = get_config("POSTGRESQL", "DATABASE_URL")
     app.config["OAUTH2_PROVIDERS"] = get_oauth2_config()
     app.config["SWAGGER"] = get_swagger_config()
+
+    # Session configuration
+    app.config["SESSION_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # Required for OAuth redirects
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
+    app.config["SESSION_COOKIE_NAME"] = "askify_session"
+    app.config["SESSION_TYPE"] = "filesystem"
+
+    # JWT configuration
     app.config["JWT_SECRET_KEY"] = get_config("APP", "JWT_SECRET_KEY")
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
     app.config["JWT_COOKIE_SECURE"] = env == EnvironmentEnum.PROD.value
@@ -186,6 +204,11 @@ def init_config(app: Flask, env: str) -> None:
     app.config["JWT_REFRESH_COOKIE_PATH"] = "/auth/refresh"
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+    app.config["JWT_COOKIE_SAMESITE"] = "Strict"
+    app.config["JWT_ACCESS_CSRF_HEADER_NAME"] = "X-CSRF-TOKEN"
+    app.config["JWT_REFRESH_CSRF_HEADER_NAME"] = "X-CSRF-TOKEN"
+    app.config["JWT_CSRF_IN_COOKIES"] = True
+    app.config["JWT_CSRF_METHODS"] = ["POST", "PUT", "PATCH", "DELETE"]
 
 
 def init_extensions(app: Flask) -> None:
@@ -272,23 +295,21 @@ def register_error_handlers(app: Flask) -> None:
 
 
 def register_logging(app: Flask) -> None:
-    """log config"""
+    """Register logging for the application."""
 
     if not os.path.exists("logs"):
         os.mkdir("logs")
 
     file_handler = TimedRotatingFileHandler(
-        "logs/application.log", when="D", interval=1, backupCount=30
+        "logs/askify.log", when="D", interval=1, backupCount=10
     )
     file_handler.setFormatter(
-        logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
+        logging.Formatter(
+            "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
+        )
     )
-    file_handler.setLevel(logging.DEBUG)
-
     app.logger.addHandler(file_handler)
-    app.logger.setLevel(logging.DEBUG)
-
-    app.logger.info("Application startup")
+    app.logger.setLevel(logging.INFO)
 
 
 def register_middleware(app: Flask) -> None:
@@ -372,52 +393,52 @@ def register_context_processors(app: Flask) -> None:
             ).count()
 
         g.notice_num = notice_num
-
         return {G_NOTICE_NUM: g.notice_num}
 
     @app.context_processor
     def inject_notice():
-        notices = {}
+        notices = []
         if current_user.is_authenticated:
-            notices = (
-                users_notices_service(status="unread")
-                .json.get("data")
-                .get("user_notices")
-            )
+            response = users_notices_service(status="unread").json
+            data = response.get("data", {})
+            notices = data.get("user_notifications", [])
 
         return {G_NOTICE: notices}
 
 
 def get_oauth2_config() -> dict:
     """Get OAuth2 configuration."""
-
     return {
         "google": {
-            "client_id": get_config("GOOGLE", "CLIENT_ID"),
-            "client_secret": get_config("GOOGLE", "CLIENT_SECRET"),
-            "callback_url": get_config("GOOGLE", "CALLBACK_URL"),
-            "authorize_url": get_config("GOOGLE", "AUTHORIZE_URL"),
-            "token_url": get_config("GOOGLE", "TOKEN_URL"),
-            "userinfo": {
-                "url": get_config("GOOGLE", "USER_URL"),
-                "email": lambda json: json["email"],
+            "client_id": get_config("GOOGLE", "GOOGLE_OAUTH_CLIENT_ID"),
+            "client_secret": get_config("GOOGLE", "GOOGLE_OAUTH_CLIENT_SECRET"),
+            "redirect_uri": get_config("GOOGLE", "GOOGLE_OAUTH_REDIRECT_URI"),
+            "authorize_url": get_config("GOOGLE", "GOOGLE_OAUTH_AUTH_URL"),
+            "token_url": get_config("GOOGLE", "GOOGLE_OAUTH_TOKEN_URL"),
+            "user_info": {
+                "url": get_config("GOOGLE", "GOOGLE_OAUTH_USER_INFO_URL"),
+                "email_key": "email",
+                "name_key": "name",
+                "picture_key": "picture",
             },
             "scopes": [
-                get_config("GOOGLE", "SCOPES_PROFILE"),
-                get_config("GOOGLE", "SCOPES_EMAIL"),
+                get_config("GOOGLE", "GOOGLE_OAUTH_SCOPE_PROFILE"),
+                get_config("GOOGLE", "GOOGLE_OAUTH_SCOPE_EMAIL"),
             ],
         },
         "github": {
-            "client_id": get_config("GITHUB", "CLIENT_ID"),
-            "client_secret": get_config("GITHUB", "CLIENT_SECRET"),
-            "callback_url": get_config("GITHUB", "CALLBACK_URL"),
-            "authorize_url": get_config("GITHUB", "AUTHORIZE_URL"),
-            "token_url": get_config("GITHUB", "TOKEN_URL"),
-            "userinfo": {
-                "url": get_config("GITHUB", "USER_URL"),
-                "email": lambda json: json[0]["email"],
+            "client_id": get_config("GITHUB", "GITHUB_OAUTH_CLIENT_ID"),
+            "client_secret": get_config("GITHUB", "GITHUB_OAUTH_CLIENT_SECRET"),
+            "redirect_uri": get_config("GITHUB", "GITHUB_OAUTH_REDIRECT_URI"),
+            "authorize_url": get_config("GITHUB", "GITHUB_OAUTH_AUTH_URL"),
+            "token_url": get_config("GITHUB", "GITHUB_OAUTH_TOKEN_URL"),
+            "user_info": {
+                "url": get_config("GITHUB", "GITHUB_OAUTH_USER_INFO_URL"),
+                "email_key": "email",
+                "name_key": "name",
+                "picture_key": "avatar_url",
             },
-            "scopes": ["user"],
+            "scopes": ["read:user", "user:email"],
         },
     }
 

@@ -3,11 +3,8 @@
 from flask import render_template
 from flask_login import login_required
 
-from app.popular.service import (
-    top_community_service,
-    top_replied_service,
-    top_viewed_service,
-)
+from app.popular.service import (top_community_service, top_replied_service,
+                                 top_viewed_service)
 
 from . import popular_bp
 

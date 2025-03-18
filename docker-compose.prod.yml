@@ -2,13 +2,33 @@ version: "3.9"
 
 services:
   app:
-    build: .
+    container_name: askify-prod
+    image: tonglam/askify:${TAG:-latest}
+    build:
+      context: .
     environment:
       - FLASK_ENV=prod
+      - PYTHONUNBUFFERED=1
     ports:
       - "5000:5000"
     volumes:
-      - instance:/home/workspace/cits5505/instance
+      - instance:/home/workspace/askify/instance:rw
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c ''import urllib.request; urllib.request.urlopen("http://localhost:5000/health")''',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   instance:
+    driver: local

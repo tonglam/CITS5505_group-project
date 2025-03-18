@@ -22,36 +22,70 @@ const init_avatar_change = () => {
 };
 
 const handle_join_community = async (id) => {
-  const response = await postFetch(`/api/v1/communities/${id}/join`)()();
-  if (response.code === 200) {
-    const current_page = get_current_page();
-    if (current_page === -1) {
-      window.location.reload();
-      return;
+  try {
+    const response = await postFetch(`/api/v1/communities/${id}/join`)()();
+    const jsonResponse = await response.json();
+
+    if (jsonResponse.code === 200) {
+      // Update button state immediately
+      const button = document.querySelector(
+        `button[onclick="handle_join_community(${id})"]`
+      );
+      if (button) {
+        button.onclick = () => handle_leave_community(id);
+        button.textContent = "Leave";
+      }
+
+      // Re-render other parts if needed
+      const current_page = get_current_page();
+      if (current_page === -1) {
+        window.location.reload();
+        return;
+      }
+      await re_render_community_list(current_page);
+      await re_render_navbar();
+    } else if (jsonResponse.code === 400) {
+      display_alert("You are already in this community");
+    } else if (jsonResponse.code === 404) {
+      display_alert("Community not found");
     }
-    re_render_community_list(current_page);
-    re_render_navbar();
-  } else if (response.code === 400) {
-    display_alert("You are already in this community");
-  } else if (response.code === 404) {
-    display_alert("Community not found");
+  } catch (error) {
+    console.error("Error joining community:", error);
+    display_alert("Failed to join community");
   }
 };
 
 const handle_leave_community = async (id) => {
-  const response = await postFetch(`/api/v1/communities/${id}/leave`)()();
-  if (response.code === 200) {
-    const current_page = get_current_page();
-    if (current_page === -1) {
-      window.location.reload();
-      return;
+  try {
+    const response = await postFetch(`/api/v1/communities/${id}/leave`)()();
+    const jsonResponse = await response.json();
+
+    if (jsonResponse.code === 200) {
+      // Update button state immediately
+      const button = document.querySelector(
+        `button[onclick="handle_leave_community(${id})"]`
+      );
+      if (button) {
+        button.onclick = () => handle_join_community(id);
+        button.textContent = "Join";
+      }
+
+      // Re-render other parts if needed
+      const current_page = get_current_page();
+      if (current_page === -1) {
+        window.location.reload();
+        return;
+      }
+      await re_render_community_list(current_page);
+      await re_render_navbar();
+    } else if (jsonResponse.code === 400) {
+      display_alert("You are not in this community");
+    } else if (jsonResponse.code === 404) {
+      display_alert("Community not found");
     }
-    re_render_community_list(current_page);
-    re_render_navbar();
-  } else if (response.code === 400) {
-    display_alert("You are not in this community");
-  } else if (response.code === 404) {
-    display_alert("Community not found");
+  } catch (error) {
+    console.error("Error leaving community:", error);
+    display_alert("Failed to leave community");
   }
 };
 
@@ -68,10 +102,25 @@ const get_current_page = () => {
 };
 
 const re_render_community_list = async (page) => {
-  const response = await getFetch(`/communities/community_list`)({
-    page: page,
-  })();
-  document.getElementById("community-list").innerHTML = response;
+  try {
+    const response = await getFetch(`/communities/community_list`)({
+      page: page,
+    })();
+    if (!response || !response.ok) {
+      console.error("Failed to get community list:", response);
+      return false;
+    }
+    const responseText = await response.text();
+
+    // re-render community list
+    const communityList = document.getElementById("community-list");
+    if (communityList) {
+      communityList.innerHTML = responseText;
+    }
+  } catch (error) {
+    console.error("Error re-rendering community list:", error);
+    return false;
+  }
 };
 
 const display_alert = (message) => {
@@ -88,8 +137,18 @@ const display_alert = (message) => {
 };
 
 const re_render_navbar = async () => {
-  const response = await getFetch(`/navbar`)()();
-  document.getElementById("navMenu").innerHTML = response;
+  const response = await getFetch("/navbar")()();
+  if (!response || !response.ok) {
+    console.error("Failed to get navbar:", response);
+    return false;
+  }
+  const responseText = await response.text();
+
+  // re-render navbar
+  const navbar = document.getElementById("navMenu");
+  if (navbar) {
+    navbar.innerHTML = responseText;
+  }
 };
 
 const init_textarea_auto_resize = () => {

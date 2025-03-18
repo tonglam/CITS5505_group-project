@@ -68,6 +68,8 @@ instance/
 *.sqlite
 *.db
 .webassets-cache
+config.ini
+config.*.ini
 
 # Scrapy stuff:
 .scrapy

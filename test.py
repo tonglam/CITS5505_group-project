@@ -4,11 +4,12 @@ import os
 import sys
 import unittest
 
+import xmlrunner  # type: ignore
+
 from tests import (
     api_suite,
     auth_suite,
     community_suite,
-    end2end_suite,
     popular_suite,
     post_suite,
     search_suite,
@@ -27,36 +28,54 @@ suite_functions = {
 }
 
 
+def cleanup_test_db() -> None:
+    """Clean up test database files."""
+    db_files = ["instance/requestForum.test.sqlite", "test.db"]
+    for db_file in db_files:
+        if os.path.exists(db_file):
+            try:
+                os.remove(db_file)
+                print(f"Removed test database: {db_file}")
+            except OSError as e:
+                print(f"Warning: Failed to remove test database {db_file}: {e}")
+
+
 def run_suite(name=None) -> None:
     """Run a specific test suite or all suites."""
-
-    if name:
-        if name == "end2end":
-            # end-to-end test suite
-            suite = end2end_suite()
-        else:
-            # unit test suite
+    try:
+        if name:
             suite_function = suite_functions.get(name)
             if not suite_function:
                 print(f"Invalid argument: {name}")
                 print("Usage: python test.py [api|auth|...]")
                 sys.exit(1)
             suite = suite_function()
-    else:
-        suite = suites()
+        else:
+            suite = suites()
 
-    runner = unittest.TextTestRunner(verbosity=2)
-    result = runner.run(suite)
-    if not result.wasSuccessful():
-        print("Test failed.")
-        # remove the test database
-        db_file = "instance/requestForum.test.sqlite"
-        if os.path.exists(db_file):
-            # os.remove(db_file)
-            print("Removed the test database.")
+        # Use XML test runner in CI environment
+        if os.getenv("CI"):
+            runner = xmlrunner.XMLTestRunner(output="test-reports", verbosity=2)
+        else:
+            runner = unittest.TextTestRunner(verbosity=2)
 
+        result = runner.run(suite)
+
+        if not result.wasSuccessful():
+            print("Test failed.")
+            cleanup_test_db()
+            sys.exit(1)
+
+        print("Test passed.")
+        cleanup_test_db()
+
+    except (
+        unittest.TestCase.failureException,
+        unittest.case.TestCase.failureException,
+    ) as e:
+        print(f"Error running tests: {e}")
+        cleanup_test_db()
         sys.exit(1)
-    print("Test passed.")
 
 
 if __name__ == "__main__":

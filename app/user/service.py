@@ -3,15 +3,10 @@
 from email_validator import EmailNotValidError, validate_email
 from werkzeug.datastructures import FileStorage
 
-from app.api.service import (
-    upload_image_service,
-    user_communities_service,
-    user_likes_service,
-    user_posts_service,
-    user_saves_service,
-    user_stats_service,
-    users_records_service,
-)
+from app.api.service import (upload_image_service, user_communities_service,
+                             user_likes_service, user_posts_service,
+                             user_saves_service, user_stats_service,
+                             users_records_service)
 from app.constants import HttpRequestEnum
 from app.models.community import Community
 from app.models.user import User, UserStatusEnum

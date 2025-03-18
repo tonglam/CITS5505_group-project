@@ -32,11 +32,6 @@ $(document).ready(function () {
 });
 
 async function checkEmail(email) {
-  console.log("checkEmail", email);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (emailRegex.test(email)) {
-    console.log("Valid email");
-  } else {
-    console.log("Invalid email");
-  }
+  return emailRegex.test(email);
 }

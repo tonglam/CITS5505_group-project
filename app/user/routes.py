@@ -1,23 +1,19 @@
 """ User routes for the user blueprint."""
 
-from flask import abort, current_app, flash, redirect, render_template, request, url_for
+from flask import (abort, current_app, flash, redirect, render_template,
+                   request, url_for)
 from flask_login import current_user, login_required
 
-from app.api.service import user_email_verify_service, user_verification_service
+from app.api.service import (user_email_verify_service,
+                             user_verification_service)
 from app.constants import FlashAlertTypeEnum, HttpRequestEnum
 from app.extensions import db
 from app.models.user import User
 from app.notice.events import NoticeTypeEnum, notice_event
 from app.user import forms, user_bp
-from app.user.service import (
-    display_community_data,
-    get_upload_avatar_url,
-    history_data,
-    like_data,
-    post_data,
-    save_data,
-    stat_data,
-)
+from app.user.service import (display_community_data, get_upload_avatar_url,
+                              history_data, like_data, post_data, save_data,
+                              stat_data)
 
 
 @user_bp.route("/")

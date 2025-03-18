@@ -1,13 +1,10 @@
 """Services for api."""
 
-import json
-
-import requests
 from flask import current_app, g
 from flask_login import current_user
 from werkzeug.datastructures import FileStorage
 
-from app.constants import IMAGE_BB_UPLOAD_URL, HttpRequestEnum
+from app.constants import HttpRequestEnum
 from app.extensions import db
 from app.models.category import Category
 from app.models.community import Community
@@ -22,7 +19,7 @@ from app.models.user_preference import UserPreference
 from app.models.user_record import UserRecord
 from app.models.user_save import UserSave
 from app.notice.events import NoticeTypeEnum, notice_event
-from app.utils import get_config
+from app.services.r2_service import R2Service
 
 from . import ApiResponse
 
@@ -378,7 +375,7 @@ def user_saves_service(page: int = 1, per_page: int = 10) -> ApiResponse:
     save_collection = [save.to_dict() for save in pagination.items]
 
     return ApiResponse(
-        HttpRequestEnum.CREATED.value,
+        HttpRequestEnum.SUCCESS_OK.value,
         data={"user_saves": save_collection},
         pagination=pagination,
     ).json()
@@ -504,8 +501,9 @@ def users_notices_service(
     if notice_type:
         query = query.filter(UserNotice.module == notice_type)
     if status:
-        status = True if status == "read" else False
-        query = query.filter(UserNotice.status == status)
+        # True for read notifications, False for unread
+        status_bool = status.lower() == "read"
+        query = query.filter(UserNotice.status == status_bool)
 
     # apply sort
     if order_by == "create_at":
@@ -522,7 +520,7 @@ def users_notices_service(
     notice_collection = [notice.to_dict() for notice in pagination.items]
 
     return ApiResponse(
-        data={"user_notices": notice_collection}, pagination=pagination
+        data={"user_notifications": notice_collection}, pagination=pagination
     ).json()
 
 
@@ -536,7 +534,7 @@ def get_user_notice_service(notice_id: int) -> ApiResponse:
             HttpRequestEnum.NOT_FOUND.value, message="user notice not found"
         ).json()
 
-    return ApiResponse(data={"user_notice": notice_entity.to_dict()}).json()
+    return ApiResponse(data={"user_notification": notice_entity.to_dict()}).json()
 
 
 def put_user_notice_service(notice_id: int) -> ApiResponse:
@@ -554,7 +552,7 @@ def put_user_notice_service(notice_id: int) -> ApiResponse:
     db.session.commit()
 
     # update global notice number
-    g.notice_num = db.session.query(UserNotice).filter_by(status=0).count()
+    g.notice_num = db.session.query(UserNotice).filter_by(status=False).count()
 
     return ApiResponse(
         HttpRequestEnum.NO_CONTENT.value,
@@ -662,11 +660,11 @@ def communities_service(
                 if isinstance(user_preference.communities, list)
                 else _get_user_community_ids(user_preference)
             )
-            for community_id in communities:
-                if community_id in community_counts:
-                    community_counts[community_id] += 1
+            for comm_id in communities:
+                if comm_id in community_counts:
+                    community_counts[comm_id] += 1
                 else:
-                    community_counts[community_id] = 1
+                    community_counts[comm_id] = 1
 
     for community in community_collection:
         community["members"] = community_counts.get(community["id"], 0)
@@ -1074,13 +1072,16 @@ def delete_user_comments_service(post_id, reply_id):
 def categories_service() -> ApiResponse:
     """Service for getting all categories."""
 
-    # query
-    categories = db.session.query(Category).order_by(Category.id)
+    # query with pagination
+    query = db.session.query(Category).order_by(Category.id)
+    pagination = db.paginate(query, page=1, per_page=10)
 
     # convert to JSON data
-    category_collection = [category.to_dict() for category in categories]
+    category_collection = [category.to_dict() for category in pagination.items]
 
-    return ApiResponse(data={"categories": category_collection}).json()
+    return ApiResponse(
+        data={"categories": category_collection}, pagination=pagination
+    ).json()
 
 
 def category_service(category_id: int) -> ApiResponse:
@@ -1099,13 +1100,14 @@ def category_service(category_id: int) -> ApiResponse:
 def tags_service() -> ApiResponse:
     """Service for getting all tags."""
 
-    # query
-    tags = db.session.query(Tag).order_by(Tag.id)
+    # query with pagination
+    query = db.session.query(Tag).order_by(Tag.id)
+    pagination = db.paginate(query, page=1, per_page=10)
 
     # convert to JSON data
-    tags_collection = [tag.to_dict() for tag in tags]
+    tags_collection = [tag.to_dict() for tag in pagination.items]
 
-    return ApiResponse(data={"tags": tags_collection}).json()
+    return ApiResponse(data={"tags": tags_collection}, pagination=pagination).json()
 
 
 def tag_service(tag_id: int) -> ApiResponse:
@@ -1154,21 +1156,15 @@ def upload_image_service(image_file: FileStorage) -> ApiResponse:
             message="Image file is required",
         ).json()
 
-    payload = payload = {"key": get_config("IMGBB", "API_KEY")}
-    files = {
-        "image": (image_file.filename, image_file, image_file.content_type),
-    }
+    r2_service = R2Service()
 
-    response = requests.post(IMAGE_BB_UPLOAD_URL, data=payload, files=files, timeout=10)
-    current_app.logger.info(f"Image BB upload response: {response}")
+    image_url = r2_service.upload_file(image_file)
 
-    if response.status_code != 200:
+    if image_url is None:
         return ApiResponse(
             code=HttpRequestEnum.INTERNAL_SERVER_ERROR.value,
             message="Image upload failed",
         ).json()
-
-    image_url = response.json()["data"]["url"]
 
     return ApiResponse(
         data={"image_url": image_url}, message="Image uploaded successfully"

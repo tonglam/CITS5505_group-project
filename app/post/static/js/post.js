@@ -45,10 +45,16 @@ async function sendRequest(requestId, replyId, actionType, method) {
 
   const url = `${apiUrlBase}${actionType}s`;
 
-  const response = await (method === "POST" ? postFetch : deleteFetch)(url)(
-    data
-  )();
-  return response;
+  try {
+    const response = await (method === "POST" ? postFetch : deleteFetch)(url)(
+      data
+    )();
+    const jsonResponse = await response.json();
+    return jsonResponse;
+  } catch (error) {
+    console.error("Error in sendRequest:", error);
+    throw error;
+  }
 }
 
 function handleResponse(response, requestId, replyId, actionType) {
@@ -60,19 +66,19 @@ function handleResponse(response, requestId, replyId, actionType) {
 
   const replyKey = replyId || "no-reply";
 
-  switch (response.message) {
-    case `${actionType} success`:
-    case `${actionType} already exists`:
+  if (response.code === 200 || response.code === 201 || response.code === 204) {
+    if (response.code === 200 || response.code === 201) {
       userStatus[statusKey][requestId][replyKey] = true;
-      break;
-    case `un${actionType} success`:
+    } else if (response.code === 204) {
       userStatus[statusKey][requestId][replyKey] = false;
-      break;
-    default:
-      alert("Unexpected error occurred.");
-      break;
+    }
+    updateButtonStyle(requestId, replyKey, actionType);
+  } else {
+    console.error("Error response:", response);
+    alert(
+      response.message || `Failed to ${actionType} the item. Please try again.`
+    );
   }
-  updateButtonStyle(requestId, replyKey, actionType);
 }
 
 function updateButtonStyle(requestId, replyKey, actionType) {
@@ -104,10 +110,15 @@ async function toggleAction(requestId, replyId, actionType) {
   const method = isActioned ? "DELETE" : "POST";
   try {
     const response = await sendRequest(requestId, replyId, actionType, method);
-    handleResponse(response, requestId, replyId, actionType);
+    if (response) {
+      handleResponse(response, requestId, replyId, actionType);
+    }
   } catch (error) {
+    console.error(`Error toggling ${actionType}:`, error);
     alert(
-      `An internet issue occurred while toggling the ${actionType}. Please try again.`
+      `An error occurred while ${
+        isActioned ? "removing" : "adding"
+      } your ${actionType}. Please try again.`
     );
   }
 }

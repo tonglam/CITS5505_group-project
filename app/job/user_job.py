@@ -4,6 +4,7 @@ import random
 import string
 
 from faker import Faker
+from flask_apscheduler import APScheduler
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.constants import (
@@ -13,10 +14,10 @@ from app.constants import (
     USER_RECORD_MAX_NUM,
     USER_SAVE_MAX_NUM,
 )
-from app.extensions import db, scheduler
+from app.extensions import db
 from app.models.community import Community
-from app.models.request import Request
 from app.models.reply import Reply
+from app.models.request import Request
 from app.models.user import User
 from app.models.user_like import UserLike
 from app.models.user_preference import UserPreference
@@ -26,12 +27,30 @@ from app.models.user_save import UserSave
 faker = Faker()
 random.seed(5505)
 
+scheduler = APScheduler()
 
-@scheduler.task("interval", id="create_user", seconds=JOB_INTERVAL.get("create_user"))
+
+def init_scheduler(app):
+    """Initialize the scheduler."""
+    scheduler.init_app(app)
+    scheduler.start()
+
+
+@scheduler.task(
+    "interval",
+    id="create_user",
+    seconds=JOB_INTERVAL.get("create_user"),
+    misfire_grace_time=900,  # Allow 15 minutes grace time
+    max_instances=1,  # Prevent multiple instances
+)
 def create_user_job():
-    """Create a new user job."""
-
+    """Create user job."""
     try:
+        # Skip if maximum users reached
+        with scheduler.app.app_context():
+            if User.query.count() >= USER_MAX_NUM:
+                return
+
         scheduler.app.logger.info("Start [create_user_job]...")
         create_user()
         scheduler.app.logger.info("End [create_user_job]...")
@@ -41,12 +60,7 @@ def create_user_job():
 
 def create_user():
     """Create a new user."""
-
     with scheduler.app.app_context():
-        if User.query.count() >= USER_MAX_NUM:
-            scheduler.app.logger.info("User reached the maximum number.")
-            return
-
         username = faker.name()
 
         user = User(
@@ -60,39 +74,42 @@ def create_user():
         )
 
         db.session.add(user)
+        db.session.flush()  # Get user.id without committing
 
-        communities = [community.id for community in Community.query.all()]
-        user_communities = random.choices(communities, k=random.randint(1, 5))
+        communities = Community.query.with_entities(Community.id).all()
+        user_communities = random.choices(
+            [c[0] for c in communities], k=random.randint(1, 5)
+        )
 
         user_preference = UserPreference(
             user_id=user.id,
             communities=str(user_communities),
         )
         db.session.add(user_preference)
-
         db.session.commit()
-
-        scheduler.app.logger.info(
-            "Community created successfully from [create_user_job]."
-        )
 
 
 def generate_test_email(domain="gmail.com", length=10):
     """Generate a test email."""
-
     username = "".join(random.choices(string.ascii_letters + string.digits, k=length))
     return f"{username}@{domain}"
 
 
 @scheduler.task(
     "interval",
-    id="create_user_record_job",
+    id="create_user_record",
     seconds=JOB_INTERVAL.get("create_user_record"),
+    misfire_grace_time=300,
+    max_instances=1,
 )
 def create_user_record_job():
-    """Create a new user record job."""
-
+    """Create user record job."""
     try:
+        # Skip if maximum records reached
+        with scheduler.app.app_context():
+            if UserRecord.query.count() >= USER_RECORD_MAX_NUM:
+                return
+
         scheduler.app.logger.info("Start [create_user_record_job]...")
         create_user_record()
         scheduler.app.logger.info("End [create_user_record_job]...")
@@ -102,35 +119,38 @@ def create_user_record_job():
 
 def create_user_record():
     """Create a new user record."""
-
     with scheduler.app.app_context():
-        if User.query.count() >= USER_RECORD_MAX_NUM:
-            scheduler.app.logger.info("User Record reached the maximum number.")
+        # Get random user and request IDs efficiently
+        user = User.query.order_by(db.func.random()).first()
+        request = Request.query.order_by(db.func.random()).first()
+
+        if not user or not request:
             return
 
-        users = [user.id for user in User.query.all()]
-        requests = [request.id for request in Request.query.all()]
-
         user_record = UserRecord(
-            user_id=random.choice(users),
-            request_id=random.choice(requests),
+            user_id=user.id,
+            request_id=request.id,
         )
 
         db.session.add(user_record)
         db.session.commit()
 
-        scheduler.app.logger.info(
-            "User Record created successfully from [create_user_record_job]."
-        )
-
 
 @scheduler.task(
-    "interval", id="create_user_like", seconds=JOB_INTERVAL.get("create_user_like")
+    "interval",
+    id="create_user_like",
+    seconds=JOB_INTERVAL.get("create_user_like"),
+    misfire_grace_time=300,
+    max_instances=1,
 )
 def create_user_like_job():
-    """Create a new user like job."""
-
+    """Create user like job."""
     try:
+        # Skip if maximum likes reached
+        with scheduler.app.app_context():
+            if UserLike.query.count() >= USER_LIKE_MAX_NUM:
+                return
+
         scheduler.app.logger.info("Start [create_user_like_job]...")
         create_user_like()
         scheduler.app.logger.info("End [create_user_like_job]...")
@@ -140,38 +160,40 @@ def create_user_like_job():
 
 def create_user_like():
     """Create a new user like."""
-
     with scheduler.app.app_context():
-        if User.query.count() >= USER_LIKE_MAX_NUM:
-            scheduler.app.logger.info("User like reached the maximum number.")
+        # Get random records efficiently
+        user = User.query.order_by(db.func.random()).first()
+        request = Request.query.order_by(db.func.random()).first()
+        reply = Reply.query.order_by(db.func.random()).first()
+
+        if not user or not request or not reply:
             return
 
-        users = [user.id for user in User.query.all()]
-        requests = [request.id for request in Request.query.all()]
-        replies = [reply.id for reply in Reply.query.all()]
-
-
         user_like = UserLike(
-            user_id=random.choice(users),
-            request_id=random.choice(requests),
-            reply_id=random.choice(replies)
+            user_id=user.id,
+            request_id=request.id,
+            reply_id=reply.id,
         )
 
         db.session.add(user_like)
         db.session.commit()
 
-        scheduler.app.logger.info(
-            "User Like created successfully from [create_user_like_job]."
-        )
-
 
 @scheduler.task(
-    "interval", id="create_user_save", seconds=JOB_INTERVAL.get("create_user_save")
+    "interval",
+    id="create_user_save",
+    seconds=JOB_INTERVAL.get("create_user_save"),
+    misfire_grace_time=300,
+    max_instances=1,
 )
 def create_user_save_job():
-    """Create a new user save job."""
-
+    """Create user save job."""
     try:
+        # Skip if maximum saves reached
+        with scheduler.app.app_context():
+            if UserSave.query.count() >= USER_SAVE_MAX_NUM:
+                return
+
         scheduler.app.logger.info("Start [create_user_save_job]...")
         create_user_save()
         scheduler.app.logger.info("End [create_user_save_job]...")
@@ -181,25 +203,20 @@ def create_user_save_job():
 
 def create_user_save():
     """Create a new user save."""
-
     with scheduler.app.app_context():
-        if User.query.count() >= USER_SAVE_MAX_NUM:
-            scheduler.app.logger.info("User save reached the maximum number.")
+        # Get random records efficiently
+        user = User.query.order_by(db.func.random()).first()
+        request = Request.query.order_by(db.func.random()).first()
+        reply = Reply.query.order_by(db.func.random()).first()
+
+        if not user or not request or not reply:
             return
 
-        users = [user.id for user in User.query.all()]
-        requests = [request.id for request in Request.query.all()]
-        replies = [reply.id for reply in Reply.query.all()]
-
         user_save = UserSave(
-            user_id=random.choice(users),
-            request_id=random.choice(requests),
-            reply_id=random.choice(replies)
+            user_id=user.id,
+            request_id=request.id,
+            reply_id=reply.id,
         )
 
         db.session.add(user_save)
         db.session.commit()
-
-        scheduler.app.logger.info(
-            "User Save created successfully from [create_user_save_job]."
-        )

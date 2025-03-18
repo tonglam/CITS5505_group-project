@@ -59,14 +59,18 @@ class FlashAlertTypeEnum(enum.Enum):
 # OAuth provider
 OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS"
 OAUTH2_STATE = "oauth2_state"
-CLIENT_ID = "client_id"
-CLIENT_SECRET = "client_secret"
-CALLBACK_URL = "callback_url"
+CLIENT_ID = "oauth_client_id"
+CLIENT_SECRET = "oauth_client_secret"
+REDIRECT_URI = "oauth_redirect_uri"
+AUTH_URL = "oauth_auth_url"
+TOKEN_URL = "oauth_token_url"
+USER_INFO_URL = "oauth_user_info_url"
+SCOPE_PROFILE = "oauth_scope_profile"
+SCOPE_EMAIL = "oauth_scope_email"
 RESPONSE_TYPE = "code"
 SCOPES = "scopes"
 AUTHORIZATION_CODE = "authorization_code"
 AUTHORIZE_URL = "authorize_url"
-TOKEN_URL = "token_url"
 
 
 class OAuthProviderEnum(enum.Enum):
@@ -97,18 +101,15 @@ POPULAR_POST_NUM = 5
 # Home page community option number
 COMMUNITY_OPTION_NUM = 20
 
-# Image BB
-IMAGE_BB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
-
 # Scheduler job interval
 JOB_INTERVAL = {
-    "create_request": 60,
-    "create_reply": 60,
-    "create_user": 60,
-    "create_user_record": 10,
-    "create_user_like": 10,
-    "create_user_save": 10,
-    "update_trending": 60,
+    "create_request": 300,  # 5 minutes
+    "create_reply": 300,  # 5 minutes
+    "create_user": 300,  # 5 minutes
+    "create_user_record": 300,  # 5 minutes
+    "create_user_like": 300,  # 5 minutes
+    "create_user_save": 300,  # 5 minutes
+    "update_trending": 600,  # 10 minutes
 }
 
 # Max limitation
