@@ -70,7 +70,8 @@ class R2Service:
         ext = filename.rsplit(".", 1)[1].lower() if "." in filename else ""
         if ext not in self.ALLOWED_EXTENSIONS:
             raise R2UploadError(
-                f"File type '{ext}' not allowed. Allowed types: {', '.join(self.ALLOWED_EXTENSIONS)}"
+                f"File type '{ext}' not allowed. \
+                    Allowed types: {', '.join(self.ALLOWED_EXTENSIONS)}"
             )
 
     def _generate_key(self, file: FileStorage, folder: str) -> str:

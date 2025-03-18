@@ -31,8 +31,18 @@ def get_env() -> str:
 
 
 def get_config(section, key) -> str:
-    """Function to get config value from config.ini file."""
-    return load_config()[section][key]
+    """Function to get config value from config.ini file or environment variable."""
+    try:
+        return load_config()[section][key]
+    except (configparser.Error, KeyError) as exc:
+        # Try to get from environment variables
+        env_key = f"{section}_{key}"
+        value = os.environ.get(env_key)
+        if value is None:
+            raise KeyError(
+                f"Configuration {section}.{key} not found in config file or environment variables"
+            ) from exc
+        return value
 
 
 def generate_uuid() -> str:
@@ -92,7 +102,7 @@ def format_datetime_to_readable_string(dt):
             "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
         )
 
-    return dt.strftime(f"%d{day_suffix(dt.day)} %B %Y").lstrip('0')
+    return dt.strftime(f"%d{day_suffix(dt.day)} %B %Y").lstrip("0")
 
 
 def format_datetime_to_local_date_diff(dt):

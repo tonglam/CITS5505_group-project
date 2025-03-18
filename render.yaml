@@ -7,5 +7,52 @@ services:
     envVars:
       - key: FLASK_ENV
         value: prod
+      # APP section
+      - key: APP_SECRET_KEY
+        sync: false
+      - key: APP_JWT_SECRET_KEY
+        sync: false
+      # POSTGRESQL section
+      - key: POSTGRESQL_DATABASE_URL
+        sync: false
+      # GOOGLE section
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_OAUTH_REDIRECT_URI
+        sync: false
+      - key: GOOGLE_OAUTH_AUTH_URL
+        sync: false
+      - key: GOOGLE_OAUTH_TOKEN_URL
+        sync: false
+      - key: GOOGLE_OAUTH_USER_INFO_URL
+        sync: false
+      - key: GOOGLE_OAUTH_SCOPE_PROFILE
+        sync: false
+      - key: GOOGLE_OAUTH_SCOPE_EMAIL
+        sync: false
+      # GITHUB section
+      - key: GITHUB_OAUTH_CLIENT_ID
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_OAUTH_REDIRECT_URI
+        sync: false
+      - key: GITHUB_OAUTH_AUTH_URL
+        sync: false
+      - key: GITHUB_OAUTH_TOKEN_URL
+        sync: false
+      - key: GITHUB_OAUTH_USER_INFO_URL
+        sync: false
+      # CLOUDFLARE section
+      - key: CLOUDFLARE_ACCOUNT_ID
+        sync: false
+      - key: CLOUDFLARE_API_TOKEN
+        sync: false
+      - key: CLOUDFLARE_R2_BUCKET_NAME
+        sync: false
+      - key: CLOUDFLARE_R2_PUBLIC_URL
+        sync: false
     healthCheckPath: /
     autoDeploy: true
