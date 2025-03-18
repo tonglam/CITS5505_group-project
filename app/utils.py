@@ -5,6 +5,7 @@ import logging
 import os
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
 from app.constants import EnvironmentEnum
 
@@ -25,24 +26,55 @@ def load_config() -> configparser.ConfigParser:
     return config
 
 
+def load_env_file() -> dict:
+    """Function to load .env file."""
+    env_vars = {}
+    env_path = Path(".env")
+
+    if env_path.exists():
+        with env_path.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    # Remove quotes if present
+                    env_vars[key.strip()] = value.strip().strip("\"'")
+
+    return env_vars
+
+
 def get_env() -> str:
     """Function to get environment."""
     return os.environ.get("FLASK_ENV", EnvironmentEnum.DEV.value)
 
 
 def get_config(section, key) -> str:
-    """Function to get config value from config.ini file or environment variable."""
+    """Function to get config value following priority order:
+    1. config.ini file
+    2. .env file
+    3. environment variables
+    """
+    # Try config file first
     try:
         return load_config()[section][key]
-    except (configparser.Error, KeyError) as exc:
-        # Try to get from environment variables
-        env_key = f"{section}_{key}"
+    except (configparser.Error, KeyError):
+        pass
+
+    # Try environment variables (both with and without section prefix)
+    env_keys = [
+        f"{section}_{key}",  # e.g. GOOGLE_OAUTH_CLIENT_ID
+        key,  # e.g. OAUTH_CLIENT_ID
+    ]
+
+    for env_key in env_keys:
         value = os.environ.get(env_key)
-        if value is None:
-            raise KeyError(
-                f"Configuration {section}.{key} not found in config file or environment variables"
-            ) from exc
-        return value
+        if value is not None:
+            return value
+
+    # If nothing found, raise error
+    raise KeyError(
+        f"Configuration {section}.{key} not found in config file or environment variables"
+    )
 
 
 def generate_uuid() -> str:

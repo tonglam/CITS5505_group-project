@@ -70,6 +70,7 @@ instance/
 .webassets-cache
 config.ini
 config.*.ini
+config.*.ini.bak
 
 # Scrapy stuff:
 .scrapy
