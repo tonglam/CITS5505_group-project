@@ -174,7 +174,7 @@ async function fetchData(url, options = {}) {
           throw new Error(`HTTP error! status: ${retryResponse.status}`);
         }
 
-        return retryResponse;
+        return await processResponse(retryResponse);
       } else {
         // Refresh failed, redirect to login
         window.location.href = "/auth/auth";
@@ -187,11 +187,24 @@ async function fetchData(url, options = {}) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response;
+    return await processResponse(response);
   } catch (error) {
     console.error("Error:", error);
     throw error;
   }
+}
+
+async function processResponse(response) {
+  // Return the response as is for 204 No Content
+  if (response.status === 204) {
+    return response;
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    return await response.json();
+  }
+  return await response.text();
 }
 
 const getFetch =

@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from flask import Blueprint, jsonify
-from flask_sqlalchemy import pagination as Pagination
+from flask_sqlalchemy.pagination import Pagination
 
 from app.constants import HttpRequestEnum
 

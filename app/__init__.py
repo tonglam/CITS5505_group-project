@@ -287,6 +287,7 @@ def register_error_handlers(app: Flask) -> None:
 
     @app.errorhandler(HttpRequestEnum.INTERNAL_SERVER_ERROR.value)
     def internal_server_error(_):
+        # pylint: disable=no-member
         db.session.rollback()
         return (
             render_template("errors/500.html"),

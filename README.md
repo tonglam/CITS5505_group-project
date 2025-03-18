@@ -14,6 +14,54 @@ You can quickly access the platform using your Google or GitHub account, or you 
 
 > ASKIFY, UNLOCKING KNOWLEDGE.
 
+## Tech Stack
+
+- 🎯 **Backend**: Flask, Python, Jinja2
+- 🗄️ **Database**: PostgreSQL (Production), SQLite (Testing), Flask-SQLAlchemy, Flask-Migrate
+- 🔐 **Authentication**: Flask-Login, JWT (Flask-JWT-Extended), OAuth2 (Google/GitHub)
+- 🎨 **Frontend**: Bootstrap 5, JavaScript, jQuery
+- 🔍 **Search**: Full-text search with PostgreSQL
+- 📦 **Storage**: Cloudflare R2
+- 🚀 **Deployment**: Docker, Render
+- 📝 **Documentation**: Swagger/Flasgger
+- 🔄 **CI/CD**: GitHub Actions
+- 🧪 **Testing**: flask-unittest (Unit & Selenium Tests)
+- 🛠️ **Utils**: Flask-WTF (Form Validation), Flask-APScheduler (Scheduled Jobs)
+
+## System Architecture
+
+```mermaid
+graph TD
+    Client[Web Browser] -->|HTTP/HTTPS| Flask[Flask Application]
+    Flask -->|Authentication| Auth[Auth Module]
+    Auth -->|OAuth| OAuth[Google/GitHub OAuth]
+    Auth -->|JWT| JWT[JWT Service]
+    Flask -->|Data Access| DB[(PostgreSQL)]
+    Flask -->|File Storage| R2[Cloudflare R2]
+    Flask -->|Search| Search[Search Module]
+    Flask -->|Community| Community[Community Module]
+    Flask -->|Post| Post[Post Module]
+    Flask -->|User| User[User Module]
+    Search -->|Query| DB
+    Community -->|CRUD| DB
+    Post -->|CRUD| DB
+    User -->|Profile| DB
+    User -->|Avatar| R2
+```
+
+## Deployment Flow
+
+```mermaid
+graph LR
+    Dev[Local Development] -->|Git Push| GitHub[GitHub Repository]
+    GitHub -->|Auto Deploy| Render[Render Platform]
+    Render -->|Build| Build[Build Process]
+    Build -->|Deploy| Web[Web Service]
+    Web -->|Serve| Users[End Users]
+    Web -->|Connect| DB[(PostgreSQL DB)]
+    Web -->|Store| R2[Cloudflare R2]
+```
+
 # Get Started
 
 There are two ways to get started; you can choose either way you prefer.
@@ -24,7 +72,7 @@ You can clone the repo and set it up by following these steps:
 
 ### Clone from Github
 
-Use `https://github.com/tonglam/CITS5505_group-project.git` to clone the repo to your machine.
+Use `https://github.com/tonglam/Askify.git` to clone the repo to your machine.
 
 ### Set Up Virtual Environment
 
@@ -46,9 +94,48 @@ pip install -r requirements.txt
 
 ### Set Up Environment Config
 
+You can configure the application using either a `.ini` file or a `.env` file:
+
+#### Option 1: Using `.ini` files (Traditional method)
+
 Use the `config.ini.example` as a template to create a `config.dev.ini` file or `config.prod.ini` file, which will be used in the dev or prod environment accordingly.
 
 If you only want to run it under `dev` environment, all you need is to create a `config.dev.ini` file under root directory.
+
+#### Option 2: Using `.env` file (Alternative method)
+
+Alternatively, you can create a `.env` file in the root directory. This is a common modern approach that's well-supported by many tools and hosting platforms.
+
+Here's an example of the minimum required configuration in your `.env` file:
+
+```shell
+# Flask Application Settings
+FLASK_ENV=development
+APP_SECRET_KEY=your-secret-key
+APP_JWT_SECRET_KEY=your-jwt-secret-key
+
+# PostgreSQL Database
+POSTGRESQL_DATABASE_URL=postgresql://username:password@localhost:5432/dbname
+
+# OAuth Configuration (Optional)
+GOOGLE_OAUTH_CLIENT_ID=your-google-client-id
+GOOGLE_OAUTH_CLIENT_SECRET=your-google-client-secret
+GOOGLE_OAUTH_REDIRECT_URI=http://127.0.0.1:5000/auth/callback/google
+
+GITHUB_OAUTH_CLIENT_ID=your-github-client-id
+GITHUB_OAUTH_CLIENT_SECRET=your-github-client-secret
+GITHUB_OAUTH_REDIRECT_URI=http://127.0.0.1:5000/auth/callback/github
+
+# Cloudflare Configuration (Optional)
+CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+CLOUDFLARE_R2_BUCKET=your-r2-bucket-name
+CLOUDFLARE_R2_PUBLIC_URL=your-r2-public-url
+```
+
+The application will automatically detect and use the `.env` file if present. If both `.ini` and `.env` files exist, the `.env` file takes precedence.
+
+> Note: Make sure to add `.env` to your `.gitignore` file to prevent sensitive information from being committed to version control.
 
 #### `config.ini` Explanation:
 
@@ -223,36 +310,19 @@ The Search module provides services for full-text search.
 
 The User module provides services for displaying, editing user profiles, and tracing user behaviors on the platform.
 
-# Main Techniques
-
-- **Flask** for creating the web server.
-- **Jinja2** for rendering the templates.
-- **PostgreSQL** for production database.
-- **SQLite** for testing database.
-- **Bootstrap** for frontend UI.
-- **JavaScript** and **jQuery** for DOM manipulation and Ajax.
-- **Flask-Login** for user session management.
-- **Flask-SQLAlchemy** and Flask-Migrate for database management.
-- **Flask-WTF** for form validation.
-- **Flask-JWT-Extended** for implementing JWT for APIs.
-- **flasgger** for creating Swagger documentation.
-- **Flask-APScheduler** for implementing scheduled jobs.
-- **flask-unittest** for integrating unit tests and selenium tests.
-- **Cloudflare R2** for object storage and image hosting.
-- **Docker** for containerization and deployment.
-- **GitHub Actions** for CI/CD pipeline.
-
 # Documentation
 
-If you encounter any issues when using Askify, you can look into the [Wiki](https://github.com/tonglam/CITS5505_group-project/wiki) for this repo. It may contain useful information, as we maintain the documentation throughout the development process.
+If you encounter any issues when using Askify, you can look into the [Wiki](https://github.com/tonglam/Askify/wiki) for this repo. It may contain useful information, as we maintain the documentation throughout the development process.
 
 # Deployment
 
-The main branch is used for deploying to production. [Visit Here](https://letletme.cc)
+The main branch is deployed on [Render](https://render.com), a modern cloud platform that automatically builds and deploys web services from Git. [Visit Here](https://askify-q4k0.onrender.com)
+
+> Note: The application is hosted on Render's free tier, which may cause the initial load to take a few seconds if the service has been inactive.
 
 # Swagger
 
-We also use Swagger (Flasgger) for API documentation in this project. [Visit Here](https://letletme.cc/apidocs/).
+We also use Swagger (Flasgger) for API documentation in this project. [Visit Here](https://askify-q4k0.onrender.com/apidocs/).
 
 # Reference
 
@@ -266,3 +336,6 @@ We also use Swagger (Flasgger) for API documentation in this project. [Visit Her
 - [Flask](https://flask.palletsprojects.com/en/3.0.x/).
 - [flask-bones](https://github.com/cburmeister/flask-bones).
 - [flask-unittest](https://github.com/TotallyNotChase/flask-unittest).
+- [Render Documentation](https://docs.render.com/).
+- [Cloudflare R2 Documentation](https://developers.cloudflare.com/r2/).
+- [Cloudflare API Documentation](https://api.cloudflare.com/).

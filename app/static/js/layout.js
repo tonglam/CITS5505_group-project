@@ -132,8 +132,22 @@ const re_render = async (paramsToAdd = {}, keysToRemove = []) => {
     return false;
   }
 
-  // re-render search results, client side rendering here
-  document.getElementById(render_id).innerHTML = response;
+  try {
+    let content;
+    if (typeof response === "object" && response.data !== undefined) {
+      // Handle JSON response
+      content = response.data;
+    } else {
+      // Handle HTML response
+      content = response;
+    }
+
+    // re-render search results, client side rendering here
+    document.getElementById(render_id).innerHTML = content;
+  } catch (error) {
+    console.error("Error processing response:", error);
+    return false;
+  }
 };
 
 const create_add_param_render_url = (render_url, paramsArray) => {
@@ -229,12 +243,18 @@ const update_notification = async (notice_id) => {
     if (response.status === 204) {
       return true;
     }
-    // For other responses, check the JSON response code
-    if (!response || response.code !== 200) {
-      console.error("Failed to update notification:", response);
+    // For other responses that are not 204, try to parse JSON
+    try {
+      const jsonResponse = await response.json();
+      if (jsonResponse && jsonResponse.code === 200) {
+        return true;
+      }
+      console.error("Failed to update notification:", jsonResponse);
+      return false;
+    } catch (parseError) {
+      console.error("Error parsing response:", parseError);
       return false;
     }
-    return true;
   } catch (error) {
     console.error("Error updating notification:", error);
     return false;
@@ -255,30 +275,32 @@ const re_render_notification = async () => {
   }
 
   let notification_num = parseInt(spanBadge.textContent) || 0;
-  const response = await getFetch(`/notifications`)()();
-  if (!response || !response.ok) {
-    console.error("Failed to get notifications:", response);
-    return false;
-  }
-  const responseText = await response.text();
+  try {
+    const response = await getFetch(`/notifications`)()();
 
-  // re-render notification
-  const notification = document.getElementById("notification");
-  if (notification) {
-    notification.innerHTML = responseText;
-  }
-
-  // re-render navbar notification
-  notification_num = Math.max(0, notification_num - 1);
-  spanBadge.textContent = notification_num;
-
-  if (notification_num === 0) {
-    // hide notification badge
-    spanBadge.classList.add("d-none");
-    // close notification
+    // re-render notification
+    const notification = document.getElementById("notification");
     if (notification) {
-      notification.classList.add("d-none");
+      // The response is already processed HTML from the server
+      notification.innerHTML = response;
     }
+
+    // re-render navbar notification
+    notification_num = Math.max(0, notification_num - 1);
+    spanBadge.textContent = notification_num;
+
+    if (notification_num === 0) {
+      // hide notification badge
+      spanBadge.classList.add("d-none");
+      // close notification
+      if (notification) {
+        notification.classList.add("d-none");
+      }
+    }
+    return true;
+  } catch (error) {
+    console.error("Failed to get notifications:", error);
+    return false;
   }
 };
 

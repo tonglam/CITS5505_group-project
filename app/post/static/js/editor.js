@@ -95,27 +95,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData();
         formData.append("image", file);
 
-        // Log the file details for debugging
-        console.log("Uploading file:", {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        });
-
         // Upload to R2 using postFetch service
         try {
           const rawResponse = await postFetch("/api/v1/upload/image")(
             formData
           )();
-          console.log("Raw response:", rawResponse);
 
           // Parse the response if it's a Response object
           const response =
             rawResponse instanceof Response
               ? await rawResponse.json()
               : rawResponse;
-
-          console.log("Parsed response:", response);
 
           // Check if response exists
           if (!response) {
@@ -139,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
               throw new Error("Could not find image URL in response");
             }
 
-            console.log("Successfully uploaded image, URL:", imageUrl);
             const length = quill.getSelection()?.index || 0;
             quill.insertEmbed(length, "image", imageUrl);
             quill.setSelection(length + 1);
@@ -202,13 +191,10 @@ async function createPost(title, community, content, tag) {
 
   try {
     const rawResponse = await postFetch(postUrl)(data)();
-    console.log("Raw create post response:", rawResponse); // Debug log
 
     // Parse the response if it's a Response object
     const response =
       rawResponse instanceof Response ? await rawResponse.json() : rawResponse;
-
-    console.log("Parsed create post response:", response); // Debug log
 
     if (
       response.code === 201 ||
