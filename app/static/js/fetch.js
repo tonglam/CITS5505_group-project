@@ -16,6 +16,7 @@ const getCookieValue = async () => {
     return false;
   }
   cookies = JSON.parse(response);
+  return cookies;
 };
 
 const getCookies = async () => {
@@ -30,9 +31,45 @@ const getCookies = async () => {
   }
 };
 
-const getJwtToken = () => cookies.access_token;
-const getCsrfAccessToken = () => cookies.csrf_access_token;
-const getCsrfRefreshToken = () => cookies.csrf_refresh_token;
+const getJwtToken = () => {
+  if (!cookies.access_token) {
+    // Attempt to get it from document.cookie if it exists there
+    const match = document.cookie.match(/(^|;)\s*access_token\s*=\s*([^;]+)/);
+    return match ? match[2] : "";
+  }
+  return cookies.access_token;
+};
+
+const getCsrfAccessToken = () => {
+  if (!cookies.csrf_access_token) {
+    // Attempt to get it from document.cookie if it exists there
+    const match = document.cookie.match(
+      /(^|;)\s*csrf_access_token\s*=\s*([^;]+)/
+    );
+    return match ? match[2] : "";
+  }
+  return cookies.csrf_access_token;
+};
+
+const getCsrfRefreshToken = () => {
+  if (!cookies.csrf_refresh_token) {
+    // Attempt to get it from document.cookie if it exists there
+    const match = document.cookie.match(
+      /(^|;)\s*csrf_refresh_token\s*=\s*([^;]+)/
+    );
+    return match ? match[2] : "";
+  }
+  return cookies.csrf_refresh_token;
+};
+
+const getRefreshToken = () => {
+  if (!cookies.refresh_token) {
+    // Attempt to get it from document.cookie if it exists there
+    const match = document.cookie.match(/(^|;)\s*refresh_token\s*=\s*([^;]+)/);
+    return match ? match[2] : "";
+  }
+  return cookies.refresh_token;
+};
 
 const jwtHeader = (access_token) => ({
   "X-CSRF-TOKEN": getCsrfAccessToken(),
@@ -46,43 +83,135 @@ const csrfHeaders = () => ({
 });
 
 const isTokenExpired = (token) => {
-  const payloadBase64 = token
-    .split(".")[1]
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
-  const decodedJson = atob(payloadBase64);
-  const decoded = JSON.parse(decodedJson);
-  const now = Date.now() / 1000;
-  return decoded.exp < now;
-};
-
-const fetchData = async (url, options = {}) => {
-  const access_token = getJwtToken();
-  if (isTokenExpired(access_token)) {
-    window.location.href = "/auth/logout";
-    return false;
-  }
-
-  options.headers = {
-    ...options.headers,
-    ...jwtHeader(access_token),
-  };
+  if (!token) return true;
 
   try {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      console.error(`HTTP error! Status: ${response.status}`);
-    }
-    const contentType = response.headers.get("Content-Type");
-    if (contentType && contentType.includes("application/json")) {
-      return await response.json();
-    } else {
-      return await response.text();
-    }
+    const payloadBase64 = token
+      .split(".")[1]
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const decodedJson = atob(payloadBase64);
+    const decoded = JSON.parse(decodedJson);
+    const now = Date.now() / 1000;
+    return decoded.exp < now;
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error checking token expiration:", error);
+    return true;
   }
 };
+
+async function refreshToken() {
+  try {
+    console.log("Refreshing token...");
+    await getCookieValue(); // Get fresh tokens before refresh
+    const csrfRefreshToken = getCsrfRefreshToken();
+    console.log("Using refresh CSRF token:", csrfRefreshToken);
+
+    const response = await fetch("/auth/refresh", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "X-CSRF-Token": csrfRefreshToken,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Token refresh failed");
+    }
+
+    // Wait for cookies to be updated
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Force refresh the cookies object
+    await getCookieValue();
+    console.log("Token refreshed successfully");
+    return true;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return false;
+  }
+}
+
+async function fetchData(url, options = {}) {
+  try {
+    // Always get fresh tokens before making a request
+    await getCookieValue();
+    let accessToken = getJwtToken();
+    let csrfToken = getCsrfAccessToken();
+
+    console.log("Using access token:", accessToken ? "Present" : "Not present");
+    console.log("Using CSRF token:", csrfToken);
+
+    // Add headers
+    options.headers = {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken}`,
+      "X-CSRF-Token": csrfToken,
+    };
+
+    // Make the request
+    console.log(`Making request to ${url}...`);
+    const response = await fetch(url, {
+      ...options,
+      credentials: "same-origin",
+    });
+
+    // Handle different response statuses
+    if (response.status === 401) {
+      console.log("401 Unauthorized - attempting token refresh");
+
+      // Token expired or invalid, try to refresh
+      const refreshSuccess = await refreshToken();
+      if (refreshSuccess) {
+        // Wait for cookies to be updated
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Get fresh tokens after refresh
+        await getCookieValue();
+        accessToken = getJwtToken();
+        csrfToken = getCsrfAccessToken();
+
+        console.log(
+          "Retrying with new access token:",
+          accessToken ? "Present" : "Not present"
+        );
+        console.log("Retrying with new CSRF token:", csrfToken);
+
+        // Retry original request with new token
+        const retryResponse = await fetch(url, {
+          ...options,
+          credentials: "same-origin",
+          headers: {
+            ...options.headers,
+            Authorization: `Bearer ${accessToken}`,
+            "X-CSRF-Token": csrfToken,
+          },
+        });
+
+        if (!retryResponse.ok) {
+          throw new Error(`HTTP error! status: ${retryResponse.status}`);
+        }
+
+        return retryResponse;
+      } else {
+        // Refresh failed, redirect to login
+        console.log("Token refresh failed, redirecting to login");
+        window.location.href = "/auth/auth";
+        return null;
+      }
+    }
+
+    // Handle other error statuses
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
 
 const getFetch =
   (url) =>

@@ -1,6 +1,7 @@
 """Routes for authentication."""
 
 import secrets
+from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 import requests
@@ -8,6 +9,8 @@ from flask import (
     abort,
     current_app,
     flash,
+    jsonify,
+    make_response,
     redirect,
     render_template,
     request,
@@ -17,9 +20,14 @@ from flask import (
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
+    get_csrf_token,
+    get_current_user,
+    get_jwt_identity,
+    jwt_required,
     set_access_cookies,
     set_refresh_cookies,
     unset_jwt_cookies,
+    verify_jwt_in_request,
 )
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import generate_csrf
@@ -144,9 +152,7 @@ def login():
 
     form = forms.LoginForm(request.form)
     if form.validate_on_submit():
-
         email = form.email.data
-
         user = User.query.filter_by(email=email).first()
 
         if user is None:
@@ -167,36 +173,53 @@ def login():
 
         if not user.verify_password(form.password.data):
             current_app.logger.error("Invalid email or password, email: %s.", {email})
-
             flash(
                 "Invalid email or password. Please try a different login method or attempt again.",
                 FlashAlertTypeEnum.DANGER.value,
             )
             return redirect(url_for("auth.auth"))
 
+        # Log in the user with Flask-Login
         login_user(user, remember=True)
         current_app.logger.info("User logged in, id: %s.", {user.id})
 
-        # jwt token
-        response = redirect(url_for("index"))
+        try:
+            # Create JWT tokens with proper expiration
+            access_token = create_access_token(
+                identity=user.id,
+                expires_delta=timedelta(minutes=15),  # 15 minutes expiration
+            )
+            refresh_token = create_refresh_token(
+                identity=user.id, expires_delta=timedelta(days=30)  # 30 days expiration
+            )
 
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+            # Create response
+            response = redirect(url_for("index"))
 
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
-        current_app.logger.info(
-            "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
-        )
+            # Set JWT cookies with secure flags
+            set_access_cookies(response, access_token)
+            set_refresh_cookies(response, refresh_token)
+            current_app.logger.info("JWT tokens created for user, id: %s", {user.id})
 
-        # csrf token
-        csrf_token = generate_csrf()
-        response.set_cookie("csrf_token", csrf_token)
-        current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
+            # Set CSRF token with secure flags
+            csrf_token = generate_csrf()
+            response.set_cookie(
+                "csrf_token", csrf_token, httponly=True, secure=True, samesite="Strict"
+            )
+            current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
 
-        flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
+            flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
+            return response
 
-        return response
+        except Exception as e:
+            current_app.logger.error(
+                "Error creating tokens for user %s: %s", {user.id}, {str(e)}
+            )
+            flash(
+                "Error during login process. Please try again.",
+                FlashAlertTypeEnum.DANGER.value,
+            )
+            return redirect(url_for("auth.auth"))
 
     if form.errors:
         for field, errors in form.errors.items():
@@ -361,6 +384,10 @@ def callback(provider: str):
     )
     user_info = response.json()
 
+    username = None
+    email = None
+    avatar = None
+
     if provider == OAuthProviderEnum.GOOGLE.value:
         username = user_info.get("name")
         email = user_info.get("email")
@@ -403,39 +430,176 @@ def callback(provider: str):
 
     db.session.commit()
 
-    login_user(user, remember=True)
-    current_app.logger.info(
-        "User logged in with %s, id: %s.", {provider}, {current_user.id}
-    )
+    try:
+        # Log in the user with Flask-Login
+        login_user(user, remember=True)
+        current_app.logger.info(
+            "User logged in with %s, id: %s.", {provider}, {current_user.id}
+        )
 
-    # jwt token
-    response = redirect(url_for("index"))
+        # Create JWT tokens with proper expiration
+        access_token = create_access_token(
+            identity=user.id,
+            expires_delta=timedelta(minutes=15),  # 15 minutes expiration
+        )
+        refresh_token = create_refresh_token(
+            identity=user.id, expires_delta=timedelta(days=30)  # 30 days expiration
+        )
 
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+        # Create response
+        response = redirect(url_for("index"))
 
-    set_access_cookies(response, access_token)
-    set_refresh_cookies(response, refresh_token)
-    current_app.logger.info(
-        "JWT created for user, id: %s, JWT: %s.", {user.id}, {access_token}
-    )
+        # Set JWT cookies with secure flags
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+        current_app.logger.info("JWT tokens created for user, id: %s", {user.id})
 
-    # csrf token
-    csrf_token = generate_csrf()
-    response.set_cookie("csrf_token", csrf_token)
-    current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
+        # Set CSRF token with secure flags
+        csrf_token = generate_csrf()
+        response.set_cookie(
+            "csrf_token", csrf_token, httponly=True, secure=True, samesite="Strict"
+        )
+        current_app.logger.info("CSRF token created for user, id: %s.", {user.id})
 
-    flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
+        flash("You have been logged in.", FlashAlertTypeEnum.SUCCESS.value)
+        return response
+
+    except Exception as e:
+        current_app.logger.error(
+            "Error during OAuth login for user %s: %s", {user.id}, {str(e)}
+        )
+        flash(
+            "Error during login process. Please try again.",
+            FlashAlertTypeEnum.DANGER.value,
+        )
+        return redirect(url_for("auth.auth"))
+
+
+@auth_bp.route("/cookies", methods=["GET"])
+def get_cookies():
+    """Get all cookies."""
+    cookies = {}
+    for key, value in request.cookies.items():
+        cookies[key] = value
+    return jsonify(cookies)
+
+
+@auth_bp.route("/test-jwt", methods=["GET"])
+@login_required
+def test_jwt():
+    """Render the JWT test page."""
+    response = make_response(render_template("test_jwt.html"))
+
+    # Ensure CSRF token is set
+    if "csrf_token" not in request.cookies:
+        csrf = generate_csrf()
+        response.set_cookie("csrf_token", csrf)
 
     return response
 
 
-@auth_bp.route("/cookies", methods=["GET"])
+@auth_bp.route("/test-auth", methods=["GET"])
+@jwt_required()
+def test_auth():
+    """Test endpoint for JWT authentication."""
+    try:
+        current_identity = get_jwt_identity()
+        user = User.query.get(current_identity)
+        if not user:
+            return jsonify({"message": "User not found", "status": "error"}), 404
+
+        response = jsonify(
+            {
+                "message": "Protected endpoint accessed successfully",
+                "user_id": current_identity,
+                "username": user.username,
+                "status": "success",
+            }
+        )
+        return response
+    except Exception as e:
+        current_app.logger.error(f"Error in test_auth: {str(e)}")
+        return (
+            jsonify(
+                {
+                    "message": "Error accessing protected endpoint",
+                    "error": str(e),
+                    "status": "error",
+                }
+            ),
+            500,
+        )
+
+
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    """Refresh access token."""
+
+    # Get user identity from refresh token
+    user_id = get_jwt_identity()
+
+    # Create new access token
+    access_token = create_access_token(identity=user_id)
+
+    # Create response
+    response = jsonify({"msg": "Token refreshed successfully"})
+
+    # Set the JWT access cookies in response
+    set_access_cookies(response, access_token)
+
+    current_app.logger.info("Access token refreshed for user, id: %s.", {user_id})
+
+    return response
+
+
+@auth_bp.route("/force-expire", methods=["POST"])
 @login_required
-def cookie():
-    """Get cookies."""
+def force_expire():
+    """Force expire the access token for testing."""
+    try:
+        # Get current user from Flask-Login session
+        if not current_user or not current_user.is_authenticated:
+            return (
+                jsonify({"message": "User not authenticated", "status": "error"}),
+                401,
+            )
 
-    if current_user.is_anonymous:
-        return []
+        # Create an immediately expired token without verifying current token
+        expired_token = create_access_token(
+            identity=current_user.id,
+            expires_delta=timedelta(seconds=-1),  # Set to already expired
+        )
 
-    return request.cookies
+        # Create response with expired token info
+        response = jsonify(
+            {
+                "message": "Access token expired",
+                "user_id": current_user.id,
+                "username": current_user.username,
+                "status": "success",
+            }
+        )
+
+        # Set the expired token in cookies
+        set_access_cookies(response, expired_token)
+
+        # Generate new CSRF token
+        csrf = generate_csrf()
+        response.set_cookie("csrf_token", csrf)
+
+        current_app.logger.info(f"Token expired for user {current_user.id}")
+        return response
+
+    except Exception as e:
+        current_app.logger.error(f"Error in force_expire: {str(e)}")
+        return (
+            jsonify(
+                {
+                    "message": "Failed to expire token",
+                    "error": str(e),
+                    "status": "error",
+                }
+            ),
+            500,
+        )

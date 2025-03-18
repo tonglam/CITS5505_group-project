@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="cits5505-group",
-    version="0.0.1",
+    version="1.0.0",
     description="This repository is dedicated to the CITS5505 group project, \
         focused on building a request forum application.",
     long_description=long_description,

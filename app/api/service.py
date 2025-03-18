@@ -504,7 +504,7 @@ def users_notices_service(
     if notice_type:
         query = query.filter(UserNotice.module == notice_type)
     if status:
-        status = 1 if status == "read" else 0
+        status = True if status == "read" else False
         query = query.filter(UserNotice.status == status)
 
     # apply sort
@@ -603,9 +603,17 @@ def _get_user_community_ids(user_preference: UserPreference) -> list:
     if user_preference.communities is None or user_preference.communities == "":
         return []
 
-    return [
-        int(id.strip()) for id in user_preference.communities.strip("[]").split(",")
-    ]
+    try:
+        # Try to parse as a list string
+        communities_str = user_preference.communities.strip()
+        if communities_str.startswith("[") and communities_str.endswith("]"):
+            communities_str = communities_str[1:-1]
+            if not communities_str:
+                return []
+            return [int(id.strip()) for id in communities_str.split(",") if id.strip()]
+        return []
+    except (ValueError, AttributeError):
+        return []
 
 
 # Api service for community module.
@@ -648,13 +656,17 @@ def communities_service(
     user_preferences = UserPreference.query.all()
     community_counts = {}
     for user_preference in user_preferences:
-        communities = json.loads(user_preference.communities)
-
-        for communities_id in communities:
-            if communities_id in community_counts:
-                community_counts[communities_id] += 1
-            else:
-                community_counts[communities_id] = 1
+        if user_preference.communities:
+            communities = (
+                user_preference.communities
+                if isinstance(user_preference.communities, list)
+                else _get_user_community_ids(user_preference)
+            )
+            for community_id in communities:
+                if community_id in community_counts:
+                    community_counts[community_id] += 1
+                else:
+                    community_counts[community_id] = 1
 
     for community in community_collection:
         community["members"] = community_counts.get(community["id"], 0)

@@ -3,18 +3,23 @@
 # Reference: TotallyNotChase flask-unittest[https://github.com/TotallyNotChase/flask-unittest]
 
 import os
-from typing import Iterator, Union
+from typing import Any, Dict, Iterator, Union
 
 import flask_unittest
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask.testing import FlaskClient
 from flask.wrappers import Response as TestResponse
-from selenium.webdriver import Chrome, ChromeOptions
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
+from sqlalchemy.sql import text
+from webdriver_manager.chrome import ChromeDriverManager
 
 from app import create_app
 from app.extensions import db
+from app.utils import get_config
 from tests.seeds.category_seeds import seed_category
 from tests.seeds.community_seeds import seed_community
 from tests.seeds.reply_seeds import seed_reply
@@ -31,17 +36,21 @@ from tests.seeds.user_seeds import seed_user
 os.environ["FLASK_ENV"] = "test"
 
 
-# pylint: disable=unused-argument
-def _create_app(_) -> Iterator[Flask]:
-    """Create and configure a new app instance for each test."""
+def get_test_config() -> Dict[str, Any]:
+    """Get test configuration."""
 
-    app = create_app()
-    app.config["WTF_CSRF_ENABLED"] = False
-    app.config["JWT_COOKIE_CSRF_PROTECT"] = False
+    return {
+        "TESTING": True,
+        "WTF_CSRF_ENABLED": False,
+        "SQLALCHEMY_DATABASE_URI": get_config("POSTGRESQL", "DATABASE_URL") + "_test",
+    }
 
-    create_test_database(app)
 
-    yield app
+def create_test_app() -> Flask:
+    """Create test application."""
+
+    app = create_app(get_test_config())
+    return app
 
 
 def create_test_database(app: Flask) -> None:
@@ -79,7 +88,7 @@ def clean_up_test_database(app: Flask) -> None:
 class TestBase(flask_unittest.AppClientTestCase):
     """Base test case for the application."""
 
-    create_app = _create_app
+    create_app = create_test_app
 
     def setUp(self, app: Flask, _):
         """Set up the test case."""
@@ -144,22 +153,32 @@ class Utils:
         return page_title
 
 
-class SeleniumTestBase(flask_unittest.LiveTestCase):
-    """Base Selenium test base case for tests."""
+class SeleniumTestBase:
+    """Base class for Selenium tests."""
 
-    driver: Union[Chrome, None] = None
-    std_wait: Union[WebDriverWait, None] = None
+    def setUp(self) -> None:
+        """Set up test case."""
 
-    @classmethod
-    def setUpClass(cls):
-        options = ChromeOptions()
-        options.add_argument("--headless")
-        cls.driver = Chrome(options=options)
-        cls.std_wait = WebDriverWait(cls.driver, 5)
+        self.app = create_test_app()
+        self.client = self.app.test_client()
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.driver.quit()
+        # set up chrome options
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        # set up chrome driver
+        service = Service(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(service=service, options=chrome_options)
+
+        # set up wait time
+        self.driver.implicitly_wait(10)
+
+    def tearDown(self) -> None:
+        """Tear down test case."""
+
+        self.driver.quit()
 
 
 class TestSeleniumSetup(SeleniumTestBase):
@@ -170,6 +189,7 @@ class TestSeleniumSetup(SeleniumTestBase):
 
         create_test_database(self.app)
         execute_seed_functions(self.app)
+        clean_up_test_database(self.app)
 
 
 class TestSeleniumCleanup(SeleniumTestBase):

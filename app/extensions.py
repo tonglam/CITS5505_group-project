@@ -5,14 +5,13 @@ from flask_apscheduler import APScheduler
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
 from .constants import FlashAlertTypeEnum
 
 
-def get_db_meta_data() -> str:
+def get_db_meta_data() -> MetaData:
     """Get the database metadata."""
 
     naming_convention = {
@@ -29,9 +28,6 @@ def get_db_meta_data() -> str:
 # flask-sqlalchemy
 meta_data = get_db_meta_data()
 db = SQLAlchemy(metadata=meta_data)
-
-# flask-migrate
-migrate = Migrate()
 
 # flask-login
 login_manager = LoginManager()
