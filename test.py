@@ -4,8 +4,6 @@ import os
 import sys
 import unittest
 
-import xmlrunner  # type: ignore
-
 from tests import (
     api_suite,
     auth_suite,
@@ -53,12 +51,7 @@ def run_suite(name=None) -> None:
         else:
             suite = suites()
 
-        # Use XML test runner in CI environment
-        if os.getenv("CI"):
-            runner = xmlrunner.XMLTestRunner(output="test-reports", verbosity=2)
-        else:
-            runner = unittest.TextTestRunner(verbosity=2)
-
+        runner = unittest.TextTestRunner(verbosity=2)
         result = runner.run(suite)
 
         if not result.wasSuccessful():
