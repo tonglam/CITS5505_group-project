@@ -56,3 +56,5 @@ logs/
 # Local config
 config.*.ini
 !config.ini.example 
+config.*.ini.bak
+.env

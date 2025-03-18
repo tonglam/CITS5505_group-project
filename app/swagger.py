@@ -38,7 +38,10 @@ def get_swagger_config() -> dict:
                 "url": "http://127.0.0.1:5000/api/v1",
                 "description": "Development server",
             },
-            {"url": "https://letletme.cc/api/v1", "description": "Production server"},
+            {
+                "url": "https://askify-q4k0.onrender.com/api/v1",
+                "description": "Production server",
+            },
         ],
         "paths": path,
     }
