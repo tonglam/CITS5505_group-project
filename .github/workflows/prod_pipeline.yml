@@ -45,7 +45,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/askify_test
         run: |
-          pytest --cov=app tests/
+          python test.py
 
   deploy:
     needs: test

@@ -3,7 +3,7 @@ services:
     name: askify
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn run:app
     envVars:
       - key: FLASK_ENV
         value: prod
